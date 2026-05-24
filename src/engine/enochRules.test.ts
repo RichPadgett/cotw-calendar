@@ -93,8 +93,8 @@ describe("applyEnochOverlay", () => {
       dayOfYear: 91,
       quarter: 1,
       isIntercalary: true,
-      season: "spring",
-      label: "Spring Intercalary Day",
+      season: "summer",
+      label: "Summer Gate Day",
     });
 
     expect(node.enoch?.month).toBeUndefined();
