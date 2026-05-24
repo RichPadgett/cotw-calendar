@@ -1,16 +1,25 @@
 // src/components/calendar/MonthHeader.tsx
 
-import { Image, Text, View } from "react-native";
+import {
+  Image,
+  Pressable,
+  Text,
+  View,
+} from "react-native";
+
 import { EnochMonth } from "../../models/calendar";
-import { Pressable } from "react-native";
 
 type Props = {
+  // Currently active Enoch month
   month?: EnochMonth;
 
+  // Top secondary label
+  // Example:
+  // "Enoch Year 2026"
   gregorianLabel: string;
 
+  // Optional navigation actions
   onPreviousMonth?: () => void;
-
   onNextMonth?: () => void;
 };
 
@@ -23,105 +32,141 @@ export default function MonthHeader({
   return (
     <View
       style={{
+        /*
+          Main sticky header card
+        */
         marginBottom: 16,
+
         padding: 16,
+
         borderRadius: 20,
+
         backgroundColor: "#f9fafb",
+
         borderWidth: 1,
         borderColor: "#e5e7eb",
       }}
     >
-    <View
-    style={{
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-    }}
-    >
-    <Text
+      {/* ====================================================
+          TOP ROW
+          Title + Navigation Buttons
+      ==================================================== */}
+
+      <View
         style={{
-        fontSize: 28,
-        fontWeight: "800",
+          flexDirection: "row",
+
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
-    >
-        Enoch Calendar
-    </Text>
+      >
+        {/* Calendar Title */}
 
-    <View
-        style={{
-        flexDirection: "row",
-        gap: 8,
-        }}
-    >
-        <Pressable
-        onPress={onPreviousMonth}
-        style={{
-            width: 36,
-            height: 36,
-
-            borderRadius: 18,
-
-            backgroundColor: "#e5e7eb",
-
-            alignItems: "center",
-            justifyContent: "center",
-        }}
-        >
         <Text
-            style={{
-            fontSize: 18,
-            fontWeight: "700",
-            }}
+          style={{
+            fontSize: 28,
+            fontWeight: "800",
+          }}
         >
-            ‹
+          Enoch Calendar
         </Text>
-        </Pressable>
 
-        <Pressable
-        onPress={onNextMonth}
-        style={{
-            width: 36,
-            height: 36,
+        {/* Navigation Buttons */}
 
-            borderRadius: 18,
-
-            backgroundColor: "#e5e7eb",
-
-            alignItems: "center",
-            justifyContent: "center",
-        }}
+        <View
+          style={{
+            flexDirection: "row",
+            gap: 8,
+          }}
         >
-        <Text
+          {/* Previous Month */}
+
+          <Pressable
+            onPress={onPreviousMonth}
             style={{
-            fontSize: 18,
-            fontWeight: "700",
+              width: 36,
+              height: 36,
+
+              borderRadius: 18,
+
+              backgroundColor: "#e5e7eb",
+
+              alignItems: "center",
+              justifyContent: "center",
             }}
-        >
-            ›
-        </Text>
-        </Pressable>
-    </View>
-    </View>
+          >
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: "700",
+              }}
+            >
+              ‹
+            </Text>
+          </Pressable>
+
+          {/* Next Month */}
+
+          <Pressable
+            onPress={onNextMonth}
+            style={{
+              width: 36,
+              height: 36,
+
+              borderRadius: 18,
+
+              backgroundColor: "#e5e7eb",
+
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: "700",
+              }}
+            >
+              ›
+            </Text>
+          </Pressable>
+        </View>
+      </View>
+
+      {/* ====================================================
+          SECONDARY LABEL
+      ==================================================== */}
 
       <Text
         style={{
           marginTop: 4,
+
           fontSize: 16,
+
           color: "#6b7280",
         }}
       >
         {gregorianLabel}
       </Text>
 
+      {/* ====================================================
+          ACTIVE MONTH INFORMATION
+      ==================================================== */}
+
       {month && (
         <View
           style={{
             marginTop: 16,
+
             flexDirection: "row",
+
             alignItems: "center",
+
             gap: 12,
           }}
         >
+          {/* Month Symbol/Icon */}
+
           {month.symbolImage && (
             <Image
               source={month.symbolImage}
@@ -133,43 +178,44 @@ export default function MonthHeader({
             />
           )}
 
+          {/* Month Metadata */}
+
           <View>
+            {/* Primary Month Label */}
+
             <Text
               style={{
                 fontSize: 22,
                 fontWeight: "800",
               }}
             >
-              {month.name}
+              Month {month.number}
             </Text>
 
-            <Text
-              style={{
-                fontSize: 16,
-                color: "#374151",
-              }}
-            >
-              {month.hebrew}
-            </Text>
-
-            <Text
-              style={{
-                fontSize: 18,
-              }}
-            >
-              {month.paleoHebrew}
-            </Text>
+            {/* Season Label */}
 
             <Text
               style={{
                 marginTop: 2,
-                fontSize: 12,
+
+                fontSize: 14,
+
                 color: "#6b7280",
+
                 textTransform: "capitalize",
               }}
             >
-              Month {month.number} · {month.season}
+              {month.season}
             </Text>
+
+            {/* Future Optional Metadata
+                Hebrew / Paleo Hebrew / Babylonian names
+            */}
+
+            {/*
+            <Text>{month.hebrew}</Text>
+            <Text>{month.paleoHebrew}</Text>
+            */}
           </View>
         </View>
       )}

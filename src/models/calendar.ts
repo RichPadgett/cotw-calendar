@@ -30,6 +30,7 @@ export type EnochDayEvent = {
 
   englishName: string;
   hebrewName?: string;
+  shortName?: string;
 
   type:
     | "weekly-sabbath"
@@ -60,6 +61,7 @@ export type CalendarNode = {
     year: number;
     month: number;
     day: number;
+    dayOfWeek: number;
   };
 
   enoch?: {

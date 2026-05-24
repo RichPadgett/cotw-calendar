@@ -37,6 +37,27 @@ export function DayCell({ node }: Props) {
   const primaryEvent = enoch?.events?.[0];
 
   /*
+  ============================================================
+  SABBATH DETECTION
+  ============================================================
+
+  Weekly Sabbath:
+    Blue Paleo Hebrew Shin
+
+  High Sabbath:
+    Gold Paleo Hebrew Shin
+*/
+
+const sabbathEvent = enoch?.events?.find(
+  (event) =>
+    event.type === "weekly-sabbath" ||
+    event.type === "high-sabbath"
+);
+
+const isHighSabbath =
+  sabbathEvent?.type === "high-sabbath";
+
+  /*
     ============================================================
     SEASON / MONTH COLOR
     ============================================================
@@ -145,6 +166,37 @@ export function DayCell({ node }: Props) {
         </View>
 
         {/* ==================================================
+              SABBATH MARKER
+          ================================================== */}
+
+          {sabbathEvent && (
+            <View
+              style={{
+                position: "absolute",
+
+                top: 22,
+                right: 6,
+
+                zIndex: 10,
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 14,
+
+                  fontWeight: "700",
+
+                  color: isHighSabbath
+                    ? "#ca8a04"
+                    : "#2563eb",
+                }}
+              >
+                𐤔
+              </Text>
+            </View>
+          )}
+
+        {/* ==================================================
             ENOCH DAY NUMBER
         ================================================== */}
 
@@ -189,7 +241,7 @@ export function DayCell({ node }: Props) {
                 color: "white",
               }}
             >
-              {primaryEvent.englishName}
+              {primaryEvent.shortName ?? primaryEvent.englishName}
             </Text>
           </View>
         )}

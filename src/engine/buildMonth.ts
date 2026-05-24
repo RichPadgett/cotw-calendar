@@ -12,6 +12,8 @@ export function buildMonth(year: number, month: number): CalendarNode[] {
       day
     ).padStart(2, "0")}`;
 
+    const date = new Date(year, month - 1, day);
+
     nodes.push({
       id: gregorianDate,
       type: "month-day",
@@ -20,6 +22,7 @@ export function buildMonth(year: number, month: number): CalendarNode[] {
         year,
         month,
         day,
+        dayOfWeek: date.getDay()
       },
     });
   }

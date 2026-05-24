@@ -39,6 +39,7 @@ export function buildEnochYear(
         year,
         month,
         day,
+        dayOfWeek: currentDate.getDay()
       },
     });
   }

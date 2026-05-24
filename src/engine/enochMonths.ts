@@ -16,7 +16,7 @@ export const ENOCH_MONTHS: EnochMonth[] = [
 
     season: "spring",
 
-    symbolImage: require("../../assets/enoch/months/abib-grain.png"),
+    symbolImage: require("../../assets/enoch/months/abib.png"),
 
     themeColor: "#a1d050" // Abib
   },
