@@ -6,11 +6,15 @@ import { Modal, Pressable, ScrollView, Text, View } from "react-native";
 import MonthHeader from "../src/components/calendar/MonthHeader";
 import YearView from "../src/components/calendar/YearView";
 import YearWheelView from "../src/components/calendar/YearWheelView";
+
 import { buildEnochYear } from "../src/engine/buildEnochYear";
 import { CalendarNode } from "../src/models/calendar";
 
 const BASE_ENOCH_YEAR = 2026;
 const BASE_START_DATE = "2026-03-18";
+
+const STICKY_HEADER_OFFSET = 220;
+const YEAR_VIEW_TOP_OFFSET = 685;
 
 function addDays(dateString: string, days: number): string {
   const date = new Date(`${dateString}T00:00:00`);
@@ -30,6 +34,7 @@ export default function HomeScreen() {
   const [visibleEnochYear, setVisibleEnochYear] = useState(2026);
   const [activeMonthNumber, setActiveMonthNumber] = useState(1);
   const [selectedNode, setSelectedNode] = useState<CalendarNode | null>(null);
+  const [dayContent, setDayContent] = useState<any>(null);
 
   const yearOffset = visibleEnochYear - BASE_ENOCH_YEAR;
 
@@ -43,6 +48,30 @@ export default function HomeScreen() {
   const currentMonth = nodes.find(
     (node) => node.enoch?.month?.number === activeMonthNumber
   )?.enoch?.month;
+
+  async function openDay(node: CalendarNode) {
+    setSelectedNode(node);
+    setDayContent(null);
+
+    const year = node.enoch?.year;
+    const month = node.enoch?.month?.number;
+    const day = node.enoch?.day;
+
+    if (!year || !month || !day) return;
+
+    try {
+      const response = await fetch(
+        `http://localhost:3001/api/calendar/${year}/${month}/${day}`
+      );
+
+      if (!response.ok) return;
+
+      const data = await response.json();
+      setDayContent(data);
+    } catch (error) {
+      console.log("Failed to load day content", error);
+    }
+  }
 
   function handleMonthLayout(monthNumber: number, y: number) {
     monthOffsetsRef.current[monthNumber] = y;
@@ -60,33 +89,38 @@ export default function HomeScreen() {
     }
   }
 
-const STICKY_HEADER_OFFSET = 220;
+  function scrollToMonth(monthNumber: number) {
+    const y = monthOffsetsRef.current[monthNumber];
 
-function scrollToMonth(monthNumber: number) {
-  const y = monthOffsetsRef.current[monthNumber];
+    if (typeof y !== "number") return;
 
-  if (typeof y !== "number") {
-    return;
+    scrollViewRef.current?.scrollTo({
+      y: Math.max(0, y + YEAR_VIEW_TOP_OFFSET - STICKY_HEADER_OFFSET),
+      animated: true,
+    });
+
+    setActiveMonthNumber(monthNumber);
   }
-
-  scrollViewRef.current?.scrollTo({
-    y: Math.max(0, y + 685 - STICKY_HEADER_OFFSET),
-    animated: true,
-  });
-
-  setActiveMonthNumber(monthNumber);
-}
 
   function goPreviousYear() {
     setVisibleEnochYear((year) => year - 1);
     setActiveMonthNumber(1);
+    setSelectedNode(null);
+    setDayContent(null);
     scrollViewRef.current?.scrollTo({ y: 0, animated: true });
   }
 
   function goNextYear() {
     setVisibleEnochYear((year) => year + 1);
     setActiveMonthNumber(1);
+    setSelectedNode(null);
+    setDayContent(null);
     scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+  }
+
+  function closeDay() {
+    setSelectedNode(null);
+    setDayContent(null);
   }
 
   return (
@@ -120,16 +154,16 @@ function scrollToMonth(monthNumber: number) {
           />
         </View>
 
-        <YearWheelView 
+        <YearWheelView
           nodes={nodes}
           onPressMonth={scrollToMonth}
-          onPressDay={setSelectedNode}
+          onPressDay={openDay}
         />
 
         <YearView
           nodes={nodes}
           onMonthLayout={handleMonthLayout}
-          onPressDay={setSelectedNode}
+          onPressDay={openDay}
         />
       </ScrollView>
 
@@ -155,15 +189,13 @@ function scrollToMonth(monthNumber: number) {
             }}
           >
             <Pressable
-              onPress={() => setSelectedNode(null)}
+              onPress={closeDay}
               style={{
                 alignSelf: "flex-end",
                 padding: 12,
               }}
             >
-              <Text style={{ fontSize: 18, fontWeight: "700" }}>
-                Close
-              </Text>
+              <Text style={{ fontSize: 18, fontWeight: "700" }}>Close</Text>
             </Pressable>
 
             <Text style={{ fontSize: 32, fontWeight: "800" }}>
@@ -210,6 +242,35 @@ function scrollToMonth(monthNumber: number) {
                 </Text>
               </View>
             ))}
+
+            {dayContent?.scriptureReadings?.map((reading: any) => (
+              <View
+                key={reading.reference}
+                style={{
+                  marginTop: 16,
+                  padding: 12,
+                  borderRadius: 12,
+                  backgroundColor: "#f3f4f6",
+                }}
+              >
+                <Text style={{ fontWeight: "800" }}>{reading.label}</Text>
+                <Text style={{ marginTop: 4, color: "#4b5563" }}>
+                  {reading.reference}
+                </Text>
+              </View>
+            ))}
+
+            {dayContent?.notes && (
+              <Text
+                style={{
+                  marginTop: 16,
+                  fontSize: 14,
+                  color: "#374151",
+                }}
+              >
+                {dayContent.notes}
+              </Text>
+            )}
           </View>
         </View>
       </Modal>
