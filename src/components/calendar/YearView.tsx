@@ -9,6 +9,7 @@ import IntercalaryRow from "./IntercalaryRow";
 type Props = {
   nodes: CalendarNode[];
   onMonthLayout?: (monthNumber: number, y: number) => void;
+  onPressDay?: (node: CalendarNode) => void;
 };
 
 const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sab"];
@@ -33,7 +34,7 @@ function groupByEnochMonth(nodes: CalendarNode[]) {
   return groups;
 }
 
-export default function YearView({ nodes, onMonthLayout }: Props) {
+export default function YearView({ nodes, onMonthLayout, onPressDay }: Props) {
   const monthGroups = groupByEnochMonth(nodes);
 
   return (
@@ -43,8 +44,19 @@ export default function YearView({ nodes, onMonthLayout }: Props) {
         const firstNode = monthNodes[0];
         const month = firstNode.enoch?.month;
 
+        const firstSabbathIndex = monthNodes.findIndex((node) =>
+          node.enoch?.events?.some(
+            (event) => event.type === "weekly-sabbath"
+          )
+        );
+
+        const leadingOffset =
+          firstSabbathIndex >= 0
+            ? (6 - firstSabbathIndex) % 7
+            : ENOCH_WEEK_OFFSET;
+
         const leadingBlanks = Array.from({
-          length: ENOCH_WEEK_OFFSET,
+          length: leadingOffset,
         });
 
         const intercalaryNode =
@@ -144,7 +156,10 @@ export default function YearView({ nodes, onMonthLayout }: Props) {
                     padding: 2,
                   }}
                 >
-                  <DayCell node={node} />
+                  <DayCell
+                    node={node}
+                    onPressDay={onPressDay}
+                  />
                 </View>
               ))}
             </View>

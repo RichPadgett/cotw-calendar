@@ -1,14 +1,21 @@
 // src/components/calendar/DayCell.tsx
 
-import { Image, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 
 import { CalendarNode } from "../../models/calendar";
 
+import ScrollIcon from "../../../assets/enoch/icons/scroll.png";
+
+
 type Props = {
   node: CalendarNode;
+  onPressDay?: (node: CalendarNode) => void;
 };
 
-export function DayCell({ node }: Props) {
+export function DayCell({
+  node,
+  onPressDay,
+}: Props) {
   /*
     ============================================================
     DEVELOPMENT TODAY OVERRIDE
@@ -26,6 +33,7 @@ export function DayCell({ node }: Props) {
 
   const isToday = node.gregorianDate === todayId;
 
+
   /*
     ============================================================
     ENOCH DATA
@@ -35,6 +43,17 @@ export function DayCell({ node }: Props) {
   const enoch = node.enoch;
 
   const primaryEvent = enoch?.events?.[0];
+
+  /*
+  ============================================================
+  ADMIN NOTES / SCROLL DATA
+  ============================================================
+
+  If a day has attached admin content,
+  we render the scroll icon.
+  */
+
+  const hasNotes = isToday;
 
   /*
   ============================================================
@@ -92,54 +111,81 @@ const isHighSabbath =
     ============================================================
   */
 
-  return (
+return (
+  <Pressable
+  onPress={() => {
+    console.log("Pressed day", node.gregorianDate);
+    onPressDay?.(node);
+  }}
+>
     <View
-      style={{
-        /*
-          Main cell dimensions
-        */
-        height: 120,
-
-        /*
-          Rounded card appearance
-        */
-        borderRadius: 14,
-
-        /*
-          Today highlighting
-        */
-        borderWidth: isToday ? 3 : 1.5,
-
-        borderColor: isToday
-          ? "#2563eb"
-          : "#d1d5db",
-
-        /*
-          Neutral main background
-        */
-        backgroundColor: "#f9fafb",
-
-        /*
-          Prevent child overflow
-        */
-        overflow: "hidden",
-      }}
-    >
-      {/* ======================================================
-          MAIN CONTENT AREA
-      ====================================================== */}
-
-      <View
         style={{
-          flex: 1,
+          /*
+            Main cell dimensions
+          */
+          height: 120,
 
-          paddingHorizontal: 6,
-          paddingVertical: 6,
+          /*
+            Rounded card appearance
+          */
+          borderRadius: 14,
+
+          /*
+            Today highlighting
+          */
+          borderWidth: isToday ? 3 : 1.5,
+
+          borderColor: isToday
+            ? "#2563eb"
+            : "#d1d5db",
+
+          /*
+            Neutral main background
+          */
+          backgroundColor: "#f9fafb",
+
+          /*
+            Prevent child overflow
+          */
+          overflow: "hidden",
         }}
       >
-        {/* ==================================================
-            MINI MONTH ICON
-        ================================================== */}
+        {/* ======================================================
+            MAIN CONTENT AREA
+        ====================================================== */}
+
+        <View
+          style={{
+            flex: 1,
+
+            paddingHorizontal: 6,
+            paddingVertical: 6,
+          }}
+        >
+          {/* ==================================================
+              MINI MONTH ICON
+          ================================================== */}
+          
+          {/* ==================================================
+              SCROLL INFO ICON
+          ================================================== */} 
+          {hasNotes && (
+          <Image
+            source={ScrollIcon}
+            style={{
+              position: "absolute",
+
+              bottom: 28,
+              right: 6,
+
+              width: 16,
+              height: 16,
+
+              opacity: 0.9,
+            }}
+            resizeMode="contain"
+          />
+        )}
 
         <View
           style={{
@@ -151,156 +197,157 @@ const isHighSabbath =
             zIndex: 10,
           }}
         >
-          {enoch?.month?.symbolImage && (
-            <Image
-              source={enoch.month.symbolImage}
-              style={{
-                width: 14,
-                height: 14,
+            {enoch?.month?.symbolImage && (
+              <Image
+                source={enoch.month.symbolImage}
+                style={{
+                  width: 14,
+                  height: 14,
 
-                opacity: 0.7,
-              }}
-              resizeMode="contain"
-            />
-          )}
-        </View>
+                  opacity: 0.7,
+                }}
+                resizeMode="contain"
+              />
+            )}
+          </View>
 
-        {/* ==================================================
-              SABBATH MARKER
+          {/* ==================================================
+                SABBATH MARKER
+            ================================================== */}
+
+            {sabbathEvent && (
+              <View
+                style={{
+                  position: "absolute",
+
+                  top: 22,
+                  right: 6,
+
+                  zIndex: 10,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 14,
+
+                    fontWeight: "700",
+
+                    color: isHighSabbath
+                      ? "#ca8a04"
+                      : "#2563eb",
+                  }}
+                >
+                  𐤔
+                </Text>
+              </View>
+            )}
+
+          {/* ==================================================
+              ENOCH DAY NUMBER
           ================================================== */}
 
-          {sabbathEvent && (
+          <Text
+            numberOfLines={1}
+            style={{
+              fontSize: 18,
+              lineHeight: 28,
+
+              fontWeight: "800",
+
+              color: "#000000",
+            }}
+          >
+            {enoch?.day}
+          </Text>
+
+          {/* ==================================================
+              PRIMARY EVENT BADGE
+          ================================================== */}
+
+          {primaryEvent && (
             <View
               style={{
-                position: "absolute",
+                marginTop: 6,
 
-                top: 22,
-                right: 6,
+                paddingHorizontal: 5,
+                paddingVertical: 2,
 
-                zIndex: 10,
+                borderRadius: 999,
+
+                backgroundColor:
+                  primaryEvent.color,
               }}
             >
               <Text
+                numberOfLines={1}
                 style={{
-                  fontSize: 14,
-
+                  fontSize: 8,
                   fontWeight: "700",
 
-                  color: isHighSabbath
-                    ? "#ca8a04"
-                    : "#2563eb",
+                  color: "white",
                 }}
               >
-                𐤔
+                {primaryEvent.shortName ?? primaryEvent.englishName}
               </Text>
             </View>
           )}
+        </View>
 
-        {/* ==================================================
-            ENOCH DAY NUMBER
-        ================================================== */}
+        {/* ======================================================
+            FOOTER AREA
+        ====================================================== */}
 
-        <Text
-          numberOfLines={1}
+        <View
           style={{
-            fontSize: 18,
-            lineHeight: 28,
-
-            fontWeight: "800",
-
-            color: "#000000",
+            height: 24,
           }}
         >
-          {enoch?.day}
-        </Text>
+          {/* ==================================================
+              SEASON / MONTH COLOR STRIP
+          ================================================== */}
 
-        {/* ==================================================
-            PRIMARY EVENT BADGE
-        ================================================== */}
-
-        {primaryEvent && (
           <View
             style={{
-              marginTop: 6,
+              height: 3,
 
-              paddingHorizontal: 5,
-              paddingVertical: 2,
+              backgroundColor: footerColor,
+            }}
+          />
 
-              borderRadius: 999,
+          {/* ==================================================
+              GREGORIAN DATE FOOTER
+          ================================================== */}
 
-              backgroundColor:
-                primaryEvent.color,
+          <View
+            style={{
+              height: 21,
+
+              paddingHorizontal: 2,
+
+              backgroundColor: "#f3f4f6",
+
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
             <Text
               numberOfLines={1}
               style={{
                 fontSize: 8,
-                fontWeight: "700",
+                lineHeight: 10,
 
-                color: "white",
+                fontWeight: "600",
+
+                color: "#6b7280",
+
+                textAlign: "center",
               }}
             >
-              {primaryEvent.shortName ?? primaryEvent.englishName}
+              {gregorianDay} | {gregorianMonth}
             </Text>
           </View>
-        )}
-      </View>
-
-      {/* ======================================================
-          FOOTER AREA
-      ====================================================== */}
-
-      <View
-        style={{
-          height: 24,
-        }}
-      >
-        {/* ==================================================
-            SEASON / MONTH COLOR STRIP
-        ================================================== */}
-
-        <View
-          style={{
-            height: 3,
-
-            backgroundColor: footerColor,
-          }}
-        />
-
-        {/* ==================================================
-            GREGORIAN DATE FOOTER
-        ================================================== */}
-
-        <View
-          style={{
-            height: 21,
-
-            paddingHorizontal: 2,
-
-            backgroundColor: "#f3f4f6",
-
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Text
-            numberOfLines={1}
-            style={{
-              fontSize: 8,
-              lineHeight: 10,
-
-              fontWeight: "600",
-
-              color: "#6b7280",
-
-              textAlign: "center",
-            }}
-          >
-            {gregorianDay} | {gregorianMonth}
-          </Text>
         </View>
       </View>
-    </View>
+    </Pressable>  
   );
 }

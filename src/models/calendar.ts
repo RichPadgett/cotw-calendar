@@ -64,6 +64,22 @@ export type CalendarNode = {
     dayOfWeek: number;
   };
 
+  export type DayNote = {
+  id: string;
+  title: string;
+  body?: string;
+  verses?: string[];
+  links?: {
+    label: string;
+    url: string;
+  }[];
+  };
+
+  export type EnochDay = {
+    ...
+    notes?: DayNote[];
+  };
+
   enoch?: {
     year: number;
 

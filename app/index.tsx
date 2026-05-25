@@ -1,226 +1,217 @@
 // app/index.tsx
 
 import { useRef, useState } from "react";
-
-import { ScrollView, View } from "react-native";
+import { Modal, Pressable, ScrollView, Text, View } from "react-native";
 
 import MonthHeader from "../src/components/calendar/MonthHeader";
 import YearView from "../src/components/calendar/YearView";
-
+import YearWheelView from "../src/components/calendar/YearWheelView";
 import { buildEnochYear } from "../src/engine/buildEnochYear";
+import { CalendarNode } from "../src/models/calendar";
+
+const BASE_ENOCH_YEAR = 2026;
+const BASE_START_DATE = "2026-03-18";
+
+function addDays(dateString: string, days: number): string {
+  const date = new Date(`${dateString}T00:00:00`);
+  date.setDate(date.getDate() + days);
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
 
 export default function HomeScreen() {
-  /*
-    ============================================================
-    ENOCH YEAR CONFIGURATION
-    ============================================================
+  const scrollViewRef = useRef<ScrollView>(null);
+  const monthOffsetsRef = useRef<Record<number, number>>({});
 
-    Defines:
-    - which Enoch year is being rendered
-    - the Gregorian start date for Day 1
-  */
+  const [visibleEnochYear, setVisibleEnochYear] = useState(2026);
+  const [activeMonthNumber, setActiveMonthNumber] = useState(1);
+  const [selectedNode, setSelectedNode] = useState<CalendarNode | null>(null);
+
+  const yearOffset = visibleEnochYear - BASE_ENOCH_YEAR;
 
   const config = {
-    enochYear: 2026,
-    startsOnGregorianDate: "2026-03-18",
+    enochYear: visibleEnochYear,
+    startsOnGregorianDate: addDays(BASE_START_DATE, yearOffset * 364),
   };
-
-  /*
-    ============================================================
-    FULL ENOCH YEAR NODE GENERATION
-    ============================================================
-  */
 
   const nodes = buildEnochYear(config);
 
-  /*
-    ============================================================
-    SCROLL + ACTIVE MONTH STATE
-    ============================================================
-
-    scrollViewRef
-      Allows programmatic scrolling.
-
-    activeMonthNumber
-      Tracks which Enoch month is currently visible.
-
-    monthOffsetsRef
-      Stores vertical Y positions for each month section.
-  */
-
-  const scrollViewRef = useRef<ScrollView>(null);
-
-  const [activeMonthNumber, setActiveMonthNumber] =
-    useState(1);
-
-  const monthOffsetsRef = useRef<
-    Record<number, number>
-  >({});
-
-  /*
-    ============================================================
-    CURRENT ACTIVE MONTH
-    ============================================================
-
-    Used by the sticky MonthHeader.
-  */
-
   const currentMonth = nodes.find(
-    (node) =>
-      node.enoch?.month?.number ===
-      activeMonthNumber
+    (node) => node.enoch?.month?.number === activeMonthNumber
   )?.enoch?.month;
 
-  /*
-    ============================================================
-    MONTH LAYOUT TRACKING
-    ============================================================
-
-    YearView reports each month section's Y offset
-    so we can scroll directly to it later.
-  */
-
-  function handleMonthLayout(
-    monthNumber: number,
-    y: number
-  ) {
+  function handleMonthLayout(monthNumber: number, y: number) {
     monthOffsetsRef.current[monthNumber] = y;
   }
 
-  /*
-    ============================================================
-    PROGRAMMATIC MONTH SCROLLING
-    ============================================================
-
-    Used by the header navigation buttons.
-  */
-
-  function scrollToMonth(monthNumber: number) {
-    const y =
-      monthOffsetsRef.current[monthNumber];
-
-    if (y === undefined) {
-      return;
-    }
-
-    scrollViewRef.current?.scrollTo({
-      y,
-      animated: true,
-    });
-
-    setActiveMonthNumber(monthNumber);
-  }
-
-  /*
-    ============================================================
-    HEADER NAVIGATION
-    ============================================================
-  */
-
-  function goPreviousMonth() {
-    scrollToMonth(
-      Math.max(1, activeMonthNumber - 1)
-    );
-  }
-
-  function goNextMonth() {
-    scrollToMonth(
-      Math.min(12, activeMonthNumber + 1)
-    );
-  }
-
-  /*
-    ============================================================
-    SCROLL TRACKING
-    ============================================================
-
-    Detects which month section is currently
-    near the top of the screen and updates
-    the sticky header.
-  */
-
   function handleScroll(event: any) {
-    const scrollY =
-      event.nativeEvent.contentOffset.y;
+    const scrollY = event.nativeEvent.contentOffset.y;
 
-    const activeMonth = Object.entries(
-      monthOffsetsRef.current
-    )
+    const activeMonth = Object.entries(monthOffsetsRef.current)
       .filter(([, y]) => y <= scrollY + 180)
       .sort((a, b) => b[1] - a[1])[0];
 
     if (activeMonth) {
-      setActiveMonthNumber(
-        Number(activeMonth[0])
-      );
+      setActiveMonthNumber(Number(activeMonth[0]));
     }
   }
 
-  /*
-    ============================================================
-    RENDER
-    ============================================================
-  */
+const STICKY_HEADER_OFFSET = 220;
+
+function scrollToMonth(monthNumber: number) {
+  const y = monthOffsetsRef.current[monthNumber];
+
+  if (typeof y !== "number") {
+    return;
+  }
+
+  scrollViewRef.current?.scrollTo({
+    y: Math.max(0, y + 665 - STICKY_HEADER_OFFSET),
+    animated: true,
+  });
+
+  setActiveMonthNumber(monthNumber);
+}
+
+  function goPreviousYear() {
+    setVisibleEnochYear((year) => year - 1);
+    setActiveMonthNumber(1);
+    scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+  }
+
+  function goNextYear() {
+    setVisibleEnochYear((year) => year + 1);
+    setActiveMonthNumber(1);
+    scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+  }
 
   return (
-    <ScrollView
-      /*
-        Enables programmatic scrolling
-      */
-      ref={scrollViewRef}
-
-      /*
-        Sticky MonthHeader
-      */
-      stickyHeaderIndices={[0]}
-
-      /*
-        Active month tracking
-      */
-      onScroll={handleScroll}
-
-      scrollEventThrottle={16}
-
-      style={{
-        flex: 1,
-
-        backgroundColor: "#ffffff",
-      }}
-      contentContainerStyle={{
-        paddingHorizontal: 16,
-
-        paddingTop: 56,
-
-        paddingBottom: 24,
-      }}
-    >
-      {/* ======================================================
-          STICKY MONTH HEADER
-      ====================================================== */}
-
-      <View
+    <>
+      <ScrollView
+        ref={scrollViewRef}
+        stickyHeaderIndices={[0]}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
         style={{
+          flex: 1,
           backgroundColor: "#ffffff",
-
-          paddingBottom: 12,
+        }}
+        contentContainerStyle={{
+          paddingHorizontal: 16,
+          paddingTop: 56,
+          paddingBottom: 24,
         }}
       >
-        <MonthHeader
-          month={currentMonth}
-          gregorianLabel={`Enoch Year ${config.enochYear}`}
-          onPreviousMonth={goPreviousMonth}
-          onNextMonth={goNextMonth}
+        <View
+          style={{
+            backgroundColor: "#ffffff",
+            paddingBottom: 12,
+          }}
+        >
+          <MonthHeader
+            month={currentMonth}
+            gregorianLabel={`Enoch Year ${config.enochYear} · Starts ${config.startsOnGregorianDate}`}
+            onPreviousMonth={goPreviousYear}
+            onNextMonth={goNextYear}
+          />
+        </View>
+
+        <YearWheelView 
+          nodes={nodes}
+          onPressMonth={scrollToMonth}
         />
-      </View>
 
-      {/* ======================================================
-          FULL ENOCH YEAR VIEW
-      ====================================================== */}
+        <YearView
+          nodes={nodes}
+          onMonthLayout={handleMonthLayout}
+          onPressDay={setSelectedNode}
+        />
+      </ScrollView>
 
-      <YearView
-        nodes={nodes}
-        onMonthLayout={handleMonthLayout}
-      />
-    </ScrollView>
+      <Modal
+        visible={Boolean(selectedNode)}
+        animationType="slide"
+        transparent={true}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0,0,0,0.35)",
+            justifyContent: "flex-end",
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: "#ffffff",
+              padding: 24,
+              borderTopLeftRadius: 24,
+              borderTopRightRadius: 24,
+              minHeight: "70%",
+            }}
+          >
+            <Pressable
+              onPress={() => setSelectedNode(null)}
+              style={{
+                alignSelf: "flex-end",
+                padding: 12,
+              }}
+            >
+              <Text style={{ fontSize: 18, fontWeight: "700" }}>
+                Close
+              </Text>
+            </Pressable>
+
+            <Text style={{ fontSize: 32, fontWeight: "800" }}>
+              Day {selectedNode?.enoch?.day}
+            </Text>
+
+            <Text
+              style={{
+                marginTop: 8,
+                fontSize: 18,
+                color: "#6b7280",
+              }}
+            >
+              Month {selectedNode?.enoch?.month?.number}
+            </Text>
+
+            <Text
+              style={{
+                marginTop: 8,
+                fontSize: 16,
+                color: "#6b7280",
+              }}
+            >
+              {selectedNode?.gregorianDate}
+            </Text>
+
+            {selectedNode?.enoch?.events?.map((event) => (
+              <View
+                key={event.id}
+                style={{
+                  marginTop: 16,
+                  padding: 12,
+                  borderRadius: 12,
+                  backgroundColor: event.color,
+                }}
+              >
+                <Text
+                  style={{
+                    color: "white",
+                    fontWeight: "800",
+                  }}
+                >
+                  {event.englishName}
+                </Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      </Modal>
+    </>
   );
 }
