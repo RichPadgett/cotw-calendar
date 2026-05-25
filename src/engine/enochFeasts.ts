@@ -94,6 +94,18 @@ export function getEnochDayEvents(params: {
     });
   }
 
+  if (monthNumber === 1 && day === 16) {
+      events.push({
+        id: "firstfruits",
+        englishName: "Firstfruits",
+        hebrewName: "Bikkurim",
+        shortName: "First",
+        type: "feast",
+        icon: "firstfruits",
+        color: "#65a30d",
+      });
+    }
+
   /*
     Month 1, Days 16–20
     Middle days of Unleavened Bread
@@ -129,6 +141,18 @@ export function getEnochDayEvents(params: {
       isHighSabbath: true,
     });
   }
+
+  if (monthNumber === 3 && day === 15) {
+      events.push({
+        id: "shavuot",
+        englishName: "Shavuot",
+        hebrewName: "Shavuot",
+        shortName: "Shav",
+        type: "feast",
+        icon: "wheat",
+        color: "#eab308",
+      });
+    }
 
   /*
     Month 7, Day 1

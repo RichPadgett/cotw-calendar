@@ -70,7 +70,7 @@ function scrollToMonth(monthNumber: number) {
   }
 
   scrollViewRef.current?.scrollTo({
-    y: Math.max(0, y + 665 - STICKY_HEADER_OFFSET),
+    y: Math.max(0, y + 685 - STICKY_HEADER_OFFSET),
     animated: true,
   });
 
@@ -123,6 +123,7 @@ function scrollToMonth(monthNumber: number) {
         <YearWheelView 
           nodes={nodes}
           onPressMonth={scrollToMonth}
+          onPressDay={setSelectedNode}
         />
 
         <YearView
