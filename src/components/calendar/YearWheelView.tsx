@@ -38,7 +38,7 @@ const RADIUS = 135;
   inside the wheel instead of
   on the outer edge.
 */
-const GATE_LABEL_RADIUS = 92;
+const GATE_LABEL_RADIUS = 72;
 
 const MAJOR_EVENT_IDS = [
   "passover",
@@ -151,55 +151,7 @@ export default function YearWheelView({
           backgroundColor: "#f9fafb",
         }}
       >
-        {/* ==================================================
-            MONTH CIRCLES
-        ================================================== */}
 
-        {months.map((monthNumber, index) => {
-          const point = pointOnCircle(index, 12);
-
-          const month = nodes.find(
-            (node) =>
-              node.enoch?.month?.number === monthNumber
-          )?.enoch?.month;
-
-          return (
-            <Pressable
-              key={monthNumber}
-              onPress={() =>
-                onPressMonth?.(monthNumber)
-              }
-              style={{
-                position: "absolute",
-
-                left: point.x - 18,
-                top: point.y - 18,
-
-                width: 36,
-                height: 36,
-
-                borderRadius: 18,
-
-                alignItems: "center",
-                justifyContent: "center",
-
-                backgroundColor:
-                  month?.themeColor ?? "#e5e7eb",
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 13,
-                  fontWeight: "800",
-
-                  color: "#111827",
-                }}
-              >
-                {monthNumber}
-              </Text>
-            </Pressable>
-          );
-        })}
         {/* ==================================================
           Feast / High Sabbath markers
         ================================================== */}
@@ -220,9 +172,9 @@ export default function YearWheelView({
     const dayOfYear = node.enoch?.dayOfYear ?? 1;
     const angle = -((dayOfYear - 1) / 364) * Math.PI * 2;
 
-    const lineStartRadius = 48;
-    const lineEndRadius = 108;
-    const labelRadius = 118;
+    const lineStartRadius = 28;
+    const lineEndRadius = 160;
+    const labelRadius = 170;
 
     const startX = CENTER + Math.cos(angle) * lineStartRadius;
     const startY = CENTER + Math.sin(angle) * lineStartRadius;
@@ -277,6 +229,56 @@ export default function YearWheelView({
       </View>
     );
   })}
+
+          {/* ==================================================
+            MONTH CIRCLES
+        ================================================== */}
+
+        {months.map((monthNumber, index) => {
+          const point = pointOnCircle(index, 12);
+
+          const month = nodes.find(
+            (node) =>
+              node.enoch?.month?.number === monthNumber
+          )?.enoch?.month;
+
+          return (
+            <Pressable
+              key={monthNumber}
+              onPress={() =>
+                onPressMonth?.(monthNumber)
+              }
+              style={{
+                position: "absolute",
+
+                left: point.x - 18,
+                top: point.y - 18,
+
+                width: 36,
+                height: 36,
+
+                borderRadius: 18,
+
+                alignItems: "center",
+                justifyContent: "center",
+
+                backgroundColor:
+                  month?.themeColor ?? "#e5e7eb",
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 13,
+                  fontWeight: "800",
+
+                  color: "#111827",
+                }}
+              >
+                {monthNumber}
+              </Text>
+            </Pressable>
+          );
+        })}
 
         {/* ==================================================
             GATE LABELS
