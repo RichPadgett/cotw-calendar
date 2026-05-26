@@ -1,6 +1,7 @@
 // src/engine/enochRules.ts
 
 import { CalendarNode, EnochSeason } from "../models/calendar";
+import { ComputedFeasts } from "./enochComputedFeasts";
 import { getEnochDayEvents } from "./enochFeasts";
 import { ENOCH_MONTHS } from "./enochMonths";
 
@@ -9,6 +10,16 @@ import {
   ENOCH_DAYS_PER_QUARTER,
   ENOCH_DAYS_PER_YEAR,
 } from "./enochConstants";
+
+const FIRSTFRUITS_DAY_OF_YEAR = 19;
+
+const FIRST_OMER_SABBATH_DAY_OF_YEAR = 21;
+
+const SEVENTH_OMER_SABBATH_DAY_OF_YEAR =
+  FIRST_OMER_SABBATH_DAY_OF_YEAR + 6 * 7;
+
+const SHAVUOT_DAY_OF_YEAR =
+  SEVENTH_OMER_SABBATH_DAY_OF_YEAR + 1;
 
 /*
   Applies the Enoch overlay to Gregorian-backed CalendarNodes.
@@ -24,7 +35,8 @@ export type EnochYearConfig = {
 
 export function applyEnochOverlay(
   nodes: CalendarNode[],
-  config: EnochYearConfig
+  config: EnochYearConfig,
+  computedFeasts?: ComputedFeasts
 ): CalendarNode[] {
   return nodes.map((node) => {
     const dayOfYear = getEnochDayOfYear(
@@ -35,19 +47,12 @@ export function applyEnochOverlay(
     return {
       ...node,
 
-      enoch: getEnochDay({
-        enochYear: config.enochYear,
-        dayOfYear,
-
-        /*
-          Needed for weekly Sabbath detection.
-
-          JS Date.getDay():
-          0 = Sunday
-          6 = Saturday
-        */
-        gregorianDayOfWeek: node.gregorian.dayOfWeek,
-      }),
+enoch: getEnochDay({
+  enochYear: config.enochYear,
+  dayOfYear,
+  gregorianDayOfWeek: node.gregorian.dayOfWeek,
+  computedFeasts,
+}),
     };
   });
 }
@@ -91,12 +96,14 @@ function getEnochDay(params: {
   enochYear: number;
   dayOfYear: number;
   gregorianDayOfWeek: number;
+  computedFeasts?: ComputedFeasts;
 }) {
-  const {
-    enochYear,
-    dayOfYear,
-    gregorianDayOfWeek,
-  } = params;
+const {
+  enochYear,
+  dayOfYear,
+  gregorianDayOfWeek,
+  computedFeasts,
+} = params;
 
   /*
     Validate Enoch year bounds.
@@ -169,7 +176,9 @@ function getEnochDay(params: {
       label: `${capitalize(season)} Gate Day`,
 
       events: getEnochDayEvents({
+        dayOfYear,
         isWeeklySabbath,
+        computedFeasts,
       }),
     };
   }
@@ -214,11 +223,13 @@ function getEnochDay(params: {
     Attach feast / Sabbath / appointed-day metadata.
   */
 
-  const events = getEnochDayEvents({
-    monthNumber: monthDefinition.number,
-    day,
-    isWeeklySabbath,
-  });
+const events = getEnochDayEvents({
+  monthNumber: monthDefinition.number,
+  day,
+  dayOfYear,
+  isWeeklySabbath,
+  computedFeasts,
+});
 
   return {
     year: enochYear,

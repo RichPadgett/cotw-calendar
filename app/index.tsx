@@ -1,7 +1,14 @@
 // app/index.tsx
 
 import { useRef, useState } from "react";
-import { Modal, Pressable, ScrollView, Text, View } from "react-native";
+import {
+  Linking,
+  Modal,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 
 import MonthHeader from "../src/components/calendar/MonthHeader";
 import YearView from "../src/components/calendar/YearView";
@@ -105,22 +112,26 @@ export default function HomeScreen() {
   function goPreviousYear() {
     setVisibleEnochYear((year) => year - 1);
     setActiveMonthNumber(1);
-    setSelectedNode(null);
-    setDayContent(null);
+    closeDay();
     scrollViewRef.current?.scrollTo({ y: 0, animated: true });
   }
 
   function goNextYear() {
     setVisibleEnochYear((year) => year + 1);
     setActiveMonthNumber(1);
-    setSelectedNode(null);
-    setDayContent(null);
+    closeDay();
     scrollViewRef.current?.scrollTo({ y: 0, animated: true });
   }
 
   function closeDay() {
     setSelectedNode(null);
     setDayContent(null);
+  }
+
+  function openUrl(url?: string) {
+    if (url) {
+      Linking.openURL(url);
+    }
   }
 
   return (
@@ -140,12 +151,7 @@ export default function HomeScreen() {
           paddingBottom: 24,
         }}
       >
-        <View
-          style={{
-            backgroundColor: "#ffffff",
-            paddingBottom: 12,
-          }}
-        >
+        <View style={{ backgroundColor: "#ffffff", paddingBottom: 12 }}>
           <MonthHeader
             month={currentMonth}
             gregorianLabel={`Enoch Year ${config.enochYear} · Starts ${config.startsOnGregorianDate}`}
@@ -167,11 +173,7 @@ export default function HomeScreen() {
         />
       </ScrollView>
 
-      <Modal
-        visible={Boolean(selectedNode)}
-        animationType="slide"
-        transparent={true}
-      >
+      <Modal visible={Boolean(selectedNode)} animationType="slide" transparent>
         <View
           style={{
             flex: 1,
@@ -179,13 +181,16 @@ export default function HomeScreen() {
             justifyContent: "flex-end",
           }}
         >
-          <View
+          <ScrollView
             style={{
               backgroundColor: "#ffffff",
-              padding: 24,
               borderTopLeftRadius: 24,
               borderTopRightRadius: 24,
-              minHeight: "70%",
+              maxHeight: "85%",
+            }}
+            contentContainerStyle={{
+              padding: 24,
+              paddingBottom: 40,
             }}
           >
             <Pressable
@@ -199,26 +204,11 @@ export default function HomeScreen() {
             </Pressable>
 
             <Text style={{ fontSize: 32, fontWeight: "800" }}>
-              Day {selectedNode?.enoch?.day}
+              {dayContent?.title ?? `Day ${selectedNode?.enoch?.day}`}
             </Text>
 
-            <Text
-              style={{
-                marginTop: 8,
-                fontSize: 18,
-                color: "#6b7280",
-              }}
-            >
-              Month {selectedNode?.enoch?.month?.number}
-            </Text>
-
-            <Text
-              style={{
-                marginTop: 8,
-                fontSize: 16,
-                color: "#6b7280",
-              }}
-            >
+            <Text style={{ marginTop: 8, fontSize: 18, color: "#6b7280" }}>
+              Month {selectedNode?.enoch?.month?.number} ·{" "}
               {selectedNode?.gregorianDate}
             </Text>
 
@@ -226,52 +216,157 @@ export default function HomeScreen() {
               <View
                 key={event.id}
                 style={{
-                  marginTop: 16,
-                  padding: 12,
+                  marginTop: 12,
+                  padding: 10,
                   borderRadius: 12,
                   backgroundColor: event.color,
                 }}
               >
-                <Text
-                  style={{
-                    color: "white",
-                    fontWeight: "800",
-                  }}
-                >
+                <Text style={{ color: "white", fontWeight: "800" }}>
                   {event.englishName}
                 </Text>
               </View>
             ))}
 
-            {dayContent?.scriptureReadings?.map((reading: any) => (
+
+
+
+
+            {dayContent?.notes && (
               <View
-                key={reading.reference}
                 style={{
-                  marginTop: 16,
-                  padding: 12,
-                  borderRadius: 12,
+                  marginTop: 24,
+                  padding: 14,
+                  borderRadius: 14,
                   backgroundColor: "#f3f4f6",
                 }}
               >
-                <Text style={{ fontWeight: "800" }}>{reading.label}</Text>
-                <Text style={{ marginTop: 4, color: "#4b5563" }}>
+                <Text style={{ fontWeight: "800", marginBottom: 6 }}>
+                  Notes
+                </Text>
+
+                <Text style={{ fontSize: 14, color: "#374151" }}>
+                  {dayContent.notes}
+                </Text>
+              </View>
+            )}
+
+            {dayContent?.scriptureReadings?.length > 0 && (
+              <Text
+                style={{
+                  marginTop: 24,
+                  marginBottom: 10,
+                  fontSize: 20,
+                  fontWeight: "800",
+                }}
+              >
+                Scripture Readings
+              </Text>
+            )}
+
+            {dayContent?.scriptureReadings?.map((reading: any) => (
+              <Pressable
+                key={reading.reference}
+                onPress={() => openUrl(reading.url)}
+                style={{
+                  backgroundColor: "white",
+                  borderRadius: 12,
+                  padding: 12,
+                  marginBottom: 10,
+                  borderLeftWidth: 4,
+                  borderLeftColor: "#2563eb",
+                  borderWidth: 1,
+                  borderColor: "#e5e7eb",
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "700",
+                    color: "#111827",
+                  }}
+                >
+                  {reading.label}
+                </Text>
+
+                <Text style={{ marginTop: 2, fontSize: 13, color: "#6b7280" }}>
                   {reading.reference}
                 </Text>
+
+                {reading.url && (
+                  <Text
+                    style={{
+                      marginTop: 8,
+                      fontSize: 12,
+                      fontWeight: "700",
+                      color: "#2563eb",
+                    }}
+                  >
+                    ↗ Open Scripture
+                  </Text>
+                )}
+              </Pressable>
+            ))}
+
+            {dayContent?.sections?.map((section: any) => (
+              <View key={section.title}>
+                <Text
+                  style={{
+                    marginTop: 24,
+                    marginBottom: 10,
+                    fontSize: 20,
+                    fontWeight: "800",
+                  }}
+                >
+                  {section.title}
+                </Text>
+
+                {section.items?.map((item: any) => (
+                  <Pressable
+                    key={item.label}
+                    onPress={() => openUrl(item.url)}
+                    style={{
+                      backgroundColor: "#f9fafb",
+                      borderRadius: 12,
+                      padding: 12,
+                      marginBottom: 10,
+                      borderWidth: 1,
+                      borderColor: "#e5e7eb",
+                    }}
+                  >
+                    <Text style={{ fontSize: 15, fontWeight: "800" }}>
+                      {item.label}
+                    </Text>
+
+                    <Text
+                      style={{
+                        marginTop: 4,
+                        fontSize: 12,
+                        color: "#6b7280",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      {item.type} · {item.access}
+                    </Text>
+
+                    {item.url && (
+                      <Text
+                        style={{
+                          marginTop: 8,
+                          fontSize: 12,
+                          fontWeight: "700",
+                          color: "#2563eb",
+                        }}
+                      >
+                        ↗ Open
+                      </Text>
+                    )}
+                  </Pressable>
+                ))}
               </View>
             ))}
 
-            {dayContent?.notes && (
-              <Text
-                style={{
-                  marginTop: 16,
-                  fontSize: 14,
-                  color: "#374151",
-                }}
-              >
-                {dayContent.notes}
-              </Text>
-            )}
-          </View>
+          </ScrollView>
         </View>
       </Modal>
     </>

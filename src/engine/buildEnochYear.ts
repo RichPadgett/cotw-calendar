@@ -1,6 +1,7 @@
 // src/engine/buildEnochYear.ts
 
 import { CalendarNode } from "../models/calendar";
+import { computeEnochFeasts } from "./enochComputedFeasts";
 import { applyEnochOverlay, EnochYearConfig } from "./enochRules";
 
 function formatDateOnly(date: Date): string {
@@ -44,5 +45,13 @@ export function buildEnochYear(
     });
   }
 
-  return applyEnochOverlay(gregorianNodes, config);
+  const firstPassNodes = applyEnochOverlay(gregorianNodes, config);
+
+  const computedFeasts = computeEnochFeasts(firstPassNodes);
+
+  return applyEnochOverlay(
+    gregorianNodes,
+    config,
+    computedFeasts
+  );
 }

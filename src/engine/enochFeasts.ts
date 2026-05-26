@@ -1,33 +1,24 @@
 // src/engine/enochFeasts.ts
 
 import { EnochDayEvent } from "../models/calendar";
-
-/*
-  Returns feast / sabbath / appointed-day metadata
-  for a given Enoch month/day.
-
-  This file should stay focused on:
-  - appointed times
-  - feast labels
-  - short UI labels
-  - icon/color metadata
-
-  The UI can render shortName in small cells,
-  while full screens can use englishName + hebrewName.
-*/
+import { ComputedFeasts } from "./enochComputedFeasts";
 
 export function getEnochDayEvents(params: {
   monthNumber?: number;
   day?: number;
+  dayOfYear: number;
   isWeeklySabbath: boolean;
+  computedFeasts?: ComputedFeasts;
 }): EnochDayEvent[] {
-  const { monthNumber, day, isWeeklySabbath } = params;
+  const {
+    monthNumber,
+    day,
+    dayOfYear,
+    isWeeklySabbath,
+    computedFeasts,
+  } = params;
 
   const events: EnochDayEvent[] = [];
-
-  /*
-    Weekly Sabbath
-  */
 
   if (isWeeklySabbath) {
     events.push({
@@ -41,11 +32,6 @@ export function getEnochDayEvents(params: {
     });
   }
 
-  /*
-    Month 1, Day 10
-    Passover lambs selected
-  */
-
   if (monthNumber === 1 && day === 10) {
     events.push({
       id: "passover-lamb-selection",
@@ -58,10 +44,47 @@ export function getEnochDayEvents(params: {
     });
   }
 
-  /*
-    Month 1, Day 14
-    Passover
-  */
+  if (computedFeasts?.firstfruitsDayOfYear === dayOfYear) {
+  events.push({
+    id: "firstfruits",
+    englishName: "Firstfruits",
+    hebrewName: "Bikkurim",
+    shortName: "Omer",
+    type: "feast",
+    icon: "firstfruits",
+    color: "#65a30d",
+  });
+}
+
+const omerIndex =
+  computedFeasts?.omerSabbathDaysOfYear.indexOf(dayOfYear) ?? -1;
+
+if (omerIndex >= 0) {
+  const omerNumber = omerIndex + 1;
+
+  events.push({
+    id: `omer-sabbath-${omerNumber}`,
+    englishName: `Omer Sabbath ${omerNumber}`,
+    hebrewName: "Counting of the Omer",
+    shortName: `Omer ${omerNumber}`,
+    type: "counting-day",
+    icon: "omer",
+    color: "#84cc16",
+  });
+}
+
+if (computedFeasts?.shavuotDayOfYear === dayOfYear) {
+  events.push({
+    id: "shavuot",
+    englishName: "Shavuot",
+    hebrewName: "Shavuot",
+    shortName: "Shav",
+    type: "high-sabbath",
+    icon: "wheat",
+    color: "#eab308",
+    isHighSabbath: true,
+  });
+}
 
   if (monthNumber === 1 && day === 14) {
     events.push({
@@ -74,12 +97,6 @@ export function getEnochDayEvents(params: {
       color: "#dc2626",
     });
   }
-
-  /*
-    Month 1, Day 15
-    First day of Unleavened Bread
-    High Sabbath
-  */
 
   if (monthNumber === 1 && day === 15) {
     events.push({
@@ -94,23 +111,6 @@ export function getEnochDayEvents(params: {
     });
   }
 
-  if (monthNumber === 1 && day === 16) {
-      events.push({
-        id: "firstfruits",
-        englishName: "Firstfruits",
-        hebrewName: "Bikkurim",
-        shortName: "First",
-        type: "feast",
-        icon: "firstfruits",
-        color: "#65a30d",
-      });
-    }
-
-  /*
-    Month 1, Days 16–20
-    Middle days of Unleavened Bread
-  */
-
   if (monthNumber === 1 && day && day >= 16 && day <= 20) {
     events.push({
       id: `unleavened-bread-day-${day - 14}`,
@@ -122,12 +122,6 @@ export function getEnochDayEvents(params: {
       color: "#eab308",
     });
   }
-
-  /*
-    Month 1, Day 21
-    Seventh day of Unleavened Bread
-    High Sabbath
-  */
 
   if (monthNumber === 1 && day === 21) {
     events.push({
@@ -142,24 +136,6 @@ export function getEnochDayEvents(params: {
     });
   }
 
-  if (monthNumber === 3 && day === 15) {
-      events.push({
-        id: "shavuot",
-        englishName: "Shavuot",
-        hebrewName: "Shavuot",
-        shortName: "Shav",
-        type: "feast",
-        icon: "wheat",
-        color: "#eab308",
-      });
-    }
-
-  /*
-    Month 7, Day 1
-    Feast of Trumpets
-    High Sabbath
-  */
-
   if (monthNumber === 7 && day === 1) {
     events.push({
       id: "feast-of-trumpets",
@@ -173,11 +149,6 @@ export function getEnochDayEvents(params: {
     });
   }
 
-  /*
-    Month 7, Day 9
-    Affliction begins at sundown
-  */
-
   if (monthNumber === 7 && day === 9) {
     events.push({
       id: "atonement-affliction-begins",
@@ -189,12 +160,6 @@ export function getEnochDayEvents(params: {
       color: "#475569",
     });
   }
-
-  /*
-    Month 7, Day 10
-    Day of Atonement
-    High Sabbath
-  */
 
   if (monthNumber === 7 && day === 10) {
     events.push({
@@ -209,12 +174,6 @@ export function getEnochDayEvents(params: {
     });
   }
 
-  /*
-    Month 7, Days 15–21
-    Feast of Booths / Sukkot
-    Day 1 is a High Sabbath
-  */
-
   if (monthNumber === 7 && day && day >= 15 && day <= 21) {
     events.push({
       id: `sukkot-day-${day - 14}`,
@@ -227,12 +186,6 @@ export function getEnochDayEvents(params: {
       isHighSabbath: day === 15,
     });
   }
-
-  /*
-    Month 7, Day 22
-    Eighth Day Assembly / Shemini Atzeret
-    High Sabbath
-  */
 
   if (monthNumber === 7 && day === 22) {
     events.push({
