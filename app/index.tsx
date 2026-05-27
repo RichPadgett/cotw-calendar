@@ -141,6 +141,34 @@ export default function HomeScreen() {
     scrollViewRef.current?.scrollTo({ y: 0, animated: true });
   }
 
+function goToNextDay() {
+  if (!selectedNode) return;
+
+  const currentIndex = nodes.findIndex(
+    (node) => node.id === selectedNode.id
+  );
+
+  const nextNode = nodes[currentIndex + 1];
+
+  if (nextNode) {
+    openDay(nextNode);
+  }
+}
+
+function goToPreviousDay() {
+  if (!selectedNode) return;
+
+  const currentIndex = nodes.findIndex(
+    (node) => node.id === selectedNode.id
+  );
+
+  const previousNode = nodes[currentIndex - 1];
+
+  if (previousNode) {
+    openDay(previousNode);
+  }
+}
+
   function closeDay() {
     setSelectedNode(null);
     setDayContent(null);
@@ -246,7 +274,85 @@ export default function HomeScreen() {
               </View>
             ))}
 
+{/* =========================================
+    EVENT TAGS
+========================================= */}
 
+{selectedNode?.enoch?.events?.map((event) => (
+  <View
+    key={event.id}
+    style={{
+      marginTop: 12,
+      padding: 10,
+      borderRadius: 12,
+      backgroundColor: event.color,
+    }}
+  >
+    <Text
+      style={{
+        color: "white",
+        fontWeight: "800",
+      }}
+    >
+      {event.englishName}
+    </Text>
+  </View>
+))}
+
+{/* =========================================
+    DAY NAVIGATION
+========================================= */}
+
+<View
+  style={{
+    marginTop: 32,
+
+    paddingTop: 20,
+
+    borderTopWidth: 1,
+    borderTopColor: "#e5e7eb",
+
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  }}
+>
+  <Pressable
+    onPress={goToPreviousDay}
+    style={{
+      paddingVertical: 10,
+      paddingHorizontal: 14,
+    }}
+  >
+    <Text
+      style={{
+        fontSize: 16,
+        fontWeight: "700",
+        color: "#2563eb",
+      }}
+    >
+      ← Previous
+    </Text>
+  </Pressable>
+
+  <Pressable
+    onPress={goToNextDay}
+    style={{
+      paddingVertical: 10,
+      paddingHorizontal: 14,
+    }}
+  >
+    <Text
+      style={{
+        fontSize: 16,
+        fontWeight: "700",
+        color: "#2563eb",
+      }}
+    >
+      Next →
+    </Text>
+  </Pressable>
+</View>
 
 
 
