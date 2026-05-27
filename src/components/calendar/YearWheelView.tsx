@@ -136,21 +136,54 @@ export default function YearWheelView({
           MAIN WHEEL
       ====================================================== */}
 
-      <View
-        style={{
-          width: SIZE,
-          height: SIZE,
+<View
+  style={{
+    width: SIZE,
+    height: SIZE,
+    borderRadius: SIZE / 2,
+    borderWidth: 2,
+    borderColor: "#111827",
+    position: "relative",
+    backgroundColor: "#f9fafb",
+    overflow: "hidden",
+  }}
+>
 
-          borderRadius: SIZE / 2,
+  {/* =========================================
+      DAY / NIGHT BACKGROUND
+  ========================================= */}
 
-          borderWidth: 2,
-          borderColor: "#111827",
+  <View
+    style={{
+      position: "absolute",
 
-          position: "relative",
+      top: 0,
+      left: 0,
+      right: 0,
 
-          backgroundColor: "#f9fafb",
-        }}
-      >
+      height: SIZE / 2,
+
+      backgroundColor: "#fef3c7",
+
+      opacity: 0.65,
+    }}
+  />
+
+  <View
+    style={{
+      position: "absolute",
+
+      bottom: 0,
+      left: 0,
+      right: 0,
+
+      height: SIZE / 2,
+
+      backgroundColor: "#dbeafe",
+
+      opacity: 0.75,
+    }}
+  />
 
         {/* ==================================================
           Feast / High Sabbath markers
