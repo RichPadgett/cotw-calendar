@@ -214,15 +214,15 @@ export default function HomeScreen() {
               overflow: "hidden",
             }}
           >
-<ScrollView
-  style={{
-    flex: 1,
-  }}
-  contentContainerStyle={{
-    padding: 24,
-    paddingBottom: 24,
-  }}
->
+            <ScrollView
+              style={{
+                flex: 1,
+              }}
+              contentContainerStyle={{
+                padding: 24,
+                paddingBottom: 24,
+              }}
+            >
               <Pressable
                 onPress={closeDay}
                 style={{
@@ -436,7 +436,7 @@ export default function HomeScreen() {
             </View>
           </View>
         </View>
-      </Modal>
+      </Modal >
     </>
   );
 }
