@@ -23,15 +23,33 @@ const BASE_START_DATE = "2026-03-18";
 const STICKY_HEADER_OFFSET = 220;
 const YEAR_VIEW_TOP_OFFSET = 685;
 
-function addDays(dateString: string, days: number): string {
-  const date = new Date(`${dateString}T00:00:00`);
-  date.setDate(date.getDate() + days);
+function addDays(
+  dateString: string,
+  days: number
+): string {
+  /*
+    Parse safely in UTC
+  */
+  const [year, month, day] =
+    dateString.split("-").map(Number);
 
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
+  const date = new Date(
+    Date.UTC(year, month - 1, day)
+  );
 
-  return `${year}-${month}-${day}`;
+  date.setUTCDate(date.getUTCDate() + days);
+
+  const nextYear = date.getUTCFullYear();
+
+  const nextMonth = String(
+    date.getUTCMonth() + 1
+  ).padStart(2, "0");
+
+  const nextDay = String(
+    date.getUTCDate()
+  ).padStart(2, "0");
+
+  return `${nextYear}-${nextMonth}-${nextDay}`;
 }
 
 export default function HomeScreen() {

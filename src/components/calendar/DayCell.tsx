@@ -51,14 +51,35 @@ const visibleEvents = displayEvents.slice(0, 2);
 
   const footerColor = enoch?.month?.themeColor ?? "#f3f4f6";
 
-  const gregorianDay = new Date(node.gregorianDate).toLocaleDateString(
+/*
+  Parse safely as local calendar date
+  to avoid timezone rollback.
+*/
+const [gYear, gMonth, gDay] =
+  node.gregorianDate
+    .split("-")
+    .map(Number);
+
+const gregorianDate = new Date(
+  gYear,
+  gMonth - 1,
+  gDay
+);
+
+const gregorianDay =
+  gregorianDate.toLocaleDateString(
     "en-US",
-    { day: "numeric" }
+    {
+      day: "numeric",
+    }
   );
 
-  const gregorianMonth = new Date(node.gregorianDate).toLocaleDateString(
+const gregorianMonth =
+  gregorianDate.toLocaleDateString(
     "en-US",
-    { month: "short" }
+    {
+      month: "short",
+    }
   );
 
   return (
