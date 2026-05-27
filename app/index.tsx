@@ -23,31 +23,15 @@ const BASE_START_DATE = "2026-03-18";
 const STICKY_HEADER_OFFSET = 220;
 const YEAR_VIEW_TOP_OFFSET = 685;
 
-function addDays(
-  dateString: string,
-  days: number
-): string {
-  /*
-    Parse safely in UTC
-  */
-  const [year, month, day] =
-    dateString.split("-").map(Number);
+function addDays(dateString: string, days: number): string {
+  const [year, month, day] = dateString.split("-").map(Number);
 
-  const date = new Date(
-    Date.UTC(year, month - 1, day)
-  );
-
+  const date = new Date(Date.UTC(year, month - 1, day));
   date.setUTCDate(date.getUTCDate() + days);
 
   const nextYear = date.getUTCFullYear();
-
-  const nextMonth = String(
-    date.getUTCMonth() + 1
-  ).padStart(2, "0");
-
-  const nextDay = String(
-    date.getUTCDate()
-  ).padStart(2, "0");
+  const nextMonth = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const nextDay = String(date.getUTCDate()).padStart(2, "0");
 
   return `${nextYear}-${nextMonth}-${nextDay}`;
 }
@@ -98,6 +82,11 @@ export default function HomeScreen() {
     }
   }
 
+  function closeDay() {
+    setSelectedNode(null);
+    setDayContent(null);
+  }
+
   function handleMonthLayout(monthNumber: number, y: number) {
     monthOffsetsRef.current[monthNumber] = y;
   }
@@ -141,37 +130,26 @@ export default function HomeScreen() {
     scrollViewRef.current?.scrollTo({ y: 0, animated: true });
   }
 
-function goToNextDay() {
-  if (!selectedNode) return;
+  function goToPreviousDay() {
+    if (!selectedNode) return;
 
-  const currentIndex = nodes.findIndex(
-    (node) => node.id === selectedNode.id
-  );
+    const currentIndex = nodes.findIndex((node) => node.id === selectedNode.id);
+    const previousNode = nodes[currentIndex - 1];
 
-  const nextNode = nodes[currentIndex + 1];
-
-  if (nextNode) {
-    openDay(nextNode);
+    if (previousNode) {
+      openDay(previousNode);
+    }
   }
-}
 
-function goToPreviousDay() {
-  if (!selectedNode) return;
+  function goToNextDay() {
+    if (!selectedNode) return;
 
-  const currentIndex = nodes.findIndex(
-    (node) => node.id === selectedNode.id
-  );
+    const currentIndex = nodes.findIndex((node) => node.id === selectedNode.id);
+    const nextNode = nodes[currentIndex + 1];
 
-  const previousNode = nodes[currentIndex - 1];
-
-  if (previousNode) {
-    openDay(previousNode);
-  }
-}
-
-  function closeDay() {
-    setSelectedNode(null);
-    setDayContent(null);
+    if (nextNode) {
+      openDay(nextNode);
+    }
   }
 
   function openUrl(url?: string) {
@@ -227,213 +205,79 @@ function goToPreviousDay() {
             justifyContent: "flex-end",
           }}
         >
-          <ScrollView
+          <View
             style={{
               backgroundColor: "#ffffff",
               borderTopLeftRadius: 24,
               borderTopRightRadius: 24,
-              maxHeight: "85%",
-            }}
-            contentContainerStyle={{
-              padding: 24,
-              paddingBottom: 40,
+              height: "85%",
+              overflow: "hidden",
             }}
           >
-            <Pressable
-              onPress={closeDay}
-              style={{
-                alignSelf: "flex-end",
-                padding: 12,
-              }}
-            >
-              <Text style={{ fontSize: 18, fontWeight: "700" }}>Close</Text>
-            </Pressable>
-
-            <Text style={{ fontSize: 32, fontWeight: "800" }}>
-              {dayContent?.title ?? `Day ${selectedNode?.enoch?.day}`}
-            </Text>
-
-            <Text style={{ marginTop: 8, fontSize: 18, color: "#6b7280" }}>
-              Month {selectedNode?.enoch?.month?.number} ·{" "}
-              {selectedNode?.gregorianDate}
-            </Text>
-
-            {selectedNode?.enoch?.events?.map((event) => (
-              <View
-                key={event.id}
-                style={{
-                  marginTop: 12,
-                  padding: 10,
-                  borderRadius: 12,
-                  backgroundColor: event.color,
-                }}
-              >
-                <Text style={{ color: "white", fontWeight: "800" }}>
-                  {event.englishName}
-                </Text>
-              </View>
-            ))}
-
-{/* =========================================
-    EVENT TAGS
-========================================= */}
-
-{selectedNode?.enoch?.events?.map((event) => (
-  <View
-    key={event.id}
-    style={{
-      marginTop: 12,
-      padding: 10,
-      borderRadius: 12,
-      backgroundColor: event.color,
-    }}
-  >
-    <Text
-      style={{
-        color: "white",
-        fontWeight: "800",
-      }}
-    >
-      {event.englishName}
-    </Text>
-  </View>
-))}
-
-{/* =========================================
-    DAY NAVIGATION
-========================================= */}
-
-<View
+<ScrollView
   style={{
-    marginTop: 32,
-
-    paddingTop: 20,
-
-    borderTopWidth: 1,
-    borderTopColor: "#e5e7eb",
-
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flex: 1,
+  }}
+  contentContainerStyle={{
+    padding: 24,
+    paddingBottom: 24,
   }}
 >
-  <Pressable
-    onPress={goToPreviousDay}
-    style={{
-      paddingVertical: 10,
-      paddingHorizontal: 14,
-    }}
-  >
-    <Text
-      style={{
-        fontSize: 16,
-        fontWeight: "700",
-        color: "#2563eb",
-      }}
-    >
-      ← Previous
-    </Text>
-  </Pressable>
-
-  <Pressable
-    onPress={goToNextDay}
-    style={{
-      paddingVertical: 10,
-      paddingHorizontal: 14,
-    }}
-  >
-    <Text
-      style={{
-        fontSize: 16,
-        fontWeight: "700",
-        color: "#2563eb",
-      }}
-    >
-      Next →
-    </Text>
-  </Pressable>
-</View>
-
-
-
-            {dayContent?.notes && (
-              <View
-                style={{
-                  marginTop: 24,
-                  padding: 14,
-                  borderRadius: 14,
-                  backgroundColor: "#f3f4f6",
-                }}
-              >
-                <Text style={{ fontWeight: "800", marginBottom: 6 }}>
-                  Notes
-                </Text>
-
-                <Text style={{ fontSize: 14, color: "#374151" }}>
-                  {dayContent.notes}
-                </Text>
-              </View>
-            )}
-
-            {dayContent?.scriptureReadings?.length > 0 && (
-              <Text
-                style={{
-                  marginTop: 24,
-                  marginBottom: 10,
-                  fontSize: 20,
-                  fontWeight: "800",
-                }}
-              >
-                Scripture Readings
-              </Text>
-            )}
-
-            {dayContent?.scriptureReadings?.map((reading: any) => (
               <Pressable
-                key={reading.reference}
-                onPress={() => openUrl(reading.url)}
+                onPress={closeDay}
                 style={{
-                  backgroundColor: "white",
-                  borderRadius: 12,
+                  alignSelf: "flex-end",
                   padding: 12,
-                  marginBottom: 10,
-                  borderLeftWidth: 4,
-                  borderLeftColor: "#2563eb",
-                  borderWidth: 1,
-                  borderColor: "#e5e7eb",
                 }}
               >
-                <Text
+                <Text style={{ fontSize: 18, fontWeight: "700" }}>Close</Text>
+              </Pressable>
+
+              <Text style={{ fontSize: 32, fontWeight: "800" }}>
+                {dayContent?.title ?? `Day ${selectedNode?.enoch?.day}`}
+              </Text>
+
+              <Text style={{ marginTop: 8, fontSize: 18, color: "#6b7280" }}>
+                Month {selectedNode?.enoch?.month?.number} ·{" "}
+                {selectedNode?.gregorianDate}
+              </Text>
+
+              {selectedNode?.enoch?.events?.map((event) => (
+                <View
+                  key={event.id}
                   style={{
-                    fontSize: 16,
-                    fontWeight: "700",
-                    color: "#111827",
+                    marginTop: 12,
+                    padding: 10,
+                    borderRadius: 12,
+                    backgroundColor: event.color,
                   }}
                 >
-                  {reading.label}
-                </Text>
-
-                <Text style={{ marginTop: 2, fontSize: 13, color: "#6b7280" }}>
-                  {reading.reference}
-                </Text>
-
-                {reading.url && (
-                  <Text
-                    style={{
-                      marginTop: 8,
-                      fontSize: 12,
-                      fontWeight: "700",
-                      color: "#2563eb",
-                    }}
-                  >
-                    ↗ Open Scripture
+                  <Text style={{ color: "white", fontWeight: "800" }}>
+                    {event.englishName}
                   </Text>
-                )}
-              </Pressable>
-            ))}
+                </View>
+              ))}
 
-            {dayContent?.sections?.map((section: any) => (
-              <View key={section.title}>
+              {dayContent?.notes && (
+                <View
+                  style={{
+                    marginTop: 24,
+                    padding: 14,
+                    borderRadius: 14,
+                    backgroundColor: "#f3f4f6",
+                  }}
+                >
+                  <Text style={{ fontWeight: "800", marginBottom: 6 }}>
+                    Notes
+                  </Text>
+
+                  <Text style={{ fontSize: 14, color: "#374151" }}>
+                    {dayContent.notes}
+                  </Text>
+                </View>
+              )}
+
+              {dayContent?.scriptureReadings?.length > 0 && (
                 <Text
                   style={{
                     marginTop: 24,
@@ -442,55 +286,155 @@ function goToPreviousDay() {
                     fontWeight: "800",
                   }}
                 >
-                  {section.title}
+                  Scripture Readings
                 </Text>
+              )}
 
-                {section.items?.map((item: any) => (
-                  <Pressable
-                    key={item.label}
-                    onPress={() => openUrl(item.url)}
+              {dayContent?.scriptureReadings?.map((reading: any) => (
+                <Pressable
+                  key={reading.reference}
+                  onPress={() => openUrl(reading.url)}
+                  style={{
+                    backgroundColor: "white",
+                    borderRadius: 12,
+                    padding: 12,
+                    marginBottom: 10,
+                    borderLeftWidth: 4,
+                    borderLeftColor: "#2563eb",
+                    borderWidth: 1,
+                    borderColor: "#e5e7eb",
+                  }}
+                >
+                  <Text
                     style={{
-                      backgroundColor: "#f9fafb",
-                      borderRadius: 12,
-                      padding: 12,
-                      marginBottom: 10,
-                      borderWidth: 1,
-                      borderColor: "#e5e7eb",
+                      fontSize: 16,
+                      fontWeight: "700",
+                      color: "#111827",
                     }}
                   >
-                    <Text style={{ fontSize: 15, fontWeight: "800" }}>
-                      {item.label}
-                    </Text>
+                    {reading.label}
+                  </Text>
 
+                  <Text
+                    style={{
+                      marginTop: 2,
+                      fontSize: 13,
+                      color: "#6b7280",
+                    }}
+                  >
+                    {reading.reference}
+                  </Text>
+
+                  {reading.url && (
                     <Text
                       style={{
-                        marginTop: 4,
+                        marginTop: 8,
                         fontSize: 12,
-                        color: "#6b7280",
-                        textTransform: "uppercase",
+                        fontWeight: "700",
+                        color: "#2563eb",
                       }}
                     >
-                      {item.type} · {item.access}
+                      ↗ Open Scripture
                     </Text>
+                  )}
+                </Pressable>
+              ))}
 
-                    {item.url && (
+              {dayContent?.sections?.map((section: any) => (
+                <View key={section.title}>
+                  <Text
+                    style={{
+                      marginTop: 24,
+                      marginBottom: 10,
+                      fontSize: 20,
+                      fontWeight: "800",
+                    }}
+                  >
+                    {section.title}
+                  </Text>
+
+                  {section.items?.map((item: any) => (
+                    <Pressable
+                      key={item.label}
+                      onPress={() => openUrl(item.url)}
+                      style={{
+                        backgroundColor: "#f9fafb",
+                        borderRadius: 12,
+                        padding: 12,
+                        marginBottom: 10,
+                        borderWidth: 1,
+                        borderColor: "#e5e7eb",
+                      }}
+                    >
+                      <Text style={{ fontSize: 15, fontWeight: "800" }}>
+                        {item.label}
+                      </Text>
+
                       <Text
                         style={{
-                          marginTop: 8,
+                          marginTop: 4,
                           fontSize: 12,
-                          fontWeight: "700",
-                          color: "#2563eb",
+                          color: "#6b7280",
+                          textTransform: "uppercase",
                         }}
                       >
-                        ↗ Open
+                        {item.type} · {item.access}
                       </Text>
-                    )}
-                  </Pressable>
-                ))}
-              </View>
-            ))}
 
-          </ScrollView>
+                      {item.url && (
+                        <Text
+                          style={{
+                            marginTop: 8,
+                            fontSize: 12,
+                            fontWeight: "700",
+                            color: "#2563eb",
+                          }}
+                        >
+                          ↗ Open
+                        </Text>
+                      )}
+                    </Pressable>
+                  ))}
+                </View>
+              ))}
+            </ScrollView>
+
+            <View
+              style={{
+                paddingVertical: 14,
+                paddingHorizontal: 24,
+                borderTopWidth: 1,
+                borderTopColor: "#e5e7eb",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                backgroundColor: "#ffffff",
+              }}
+            >
+              <Pressable onPress={goToPreviousDay}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "700",
+                    color: "#2563eb",
+                  }}
+                >
+                  ← Previous
+                </Text>
+              </Pressable>
+
+              <Pressable onPress={goToNextDay}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "700",
+                    color: "#2563eb",
+                  }}
+                >
+                  Next →
+                </Text>
+              </Pressable>
+            </View>
+          </View>
         </View>
       </Modal>
     </>
