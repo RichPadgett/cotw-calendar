@@ -1,37 +1,35 @@
 // src/models/calendar.ts
 import { ImageSourcePropType } from "react-native";
 
-export type EnochSeason =
-  | "spring"
-  | "summer"
-  | "fall"
-  | "winter";
+export type EnochSeason = "spring" | "summer" | "fall" | "winter";
 
 export type EnochMonth = {
   number: number;
-
   name: string;
-
   alternateName?: string;
-
   hebrew?: string;
-
   paleoHebrew?: string;
-
   symbolImage?: ImageSourcePropType;
-
   season: EnochSeason;
-
   themeColor?: string;
+};
+
+export type DayNote = {
+  id: string;
+  title: string;
+  body?: string;
+  verses?: string[];
+  links?: {
+    label: string;
+    url: string;
+  }[];
 };
 
 export type EnochDayEvent = {
   id: string;
-
   englishName: string;
   hebrewName?: string;
   shortName?: string;
-
   type:
     | "weekly-sabbath"
     | "high-sabbath"
@@ -39,22 +37,19 @@ export type EnochDayEvent = {
     | "fast"
     | "preparation"
     | "counting-day";
-
   icon?: string;
   color?: string;
-
   isHighSabbath?: boolean;
 };
 
 export type CalendarNodeType =
   | "month-day"
-  | "intercalary";
+  | "intercalary"
+  | "sabbath-week";
 
 export type CalendarNode = {
   id: string;
-
   type: CalendarNodeType;
-
   gregorianDate: string;
 
   gregorian: {
@@ -64,40 +59,22 @@ export type CalendarNode = {
     dayOfWeek: number;
   };
 
-  export type DayNote = {
-  id: string;
-  title: string;
-  body?: string;
-  verses?: string[];
-  links?: {
-    label: string;
-    url: string;
-  }[];
-  };
-
-  export type EnochDay = {
-    ...
-    notes?: DayNote[];
-  };
-
   enoch?: {
     year: number;
-
     dayOfYear: number;
-
     month?: EnochMonth;
-
     day?: number;
-
     quarter: number;
-
     isIntercalary: boolean;
-
     season?: EnochSeason;
-
     events?: EnochDayEvent[];
+    notes?: DayNote[];
 
+    isSabbathWeek?: boolean;
     label?: string;
-
+    dateRange?: {
+      start: string;
+      end: string;
+    };
   };
 };

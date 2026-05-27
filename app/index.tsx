@@ -234,7 +234,9 @@ export default function HomeScreen() {
               </Pressable>
 
               <Text style={{ fontSize: 32, fontWeight: "800" }}>
-                {dayContent?.title ?? `Day ${selectedNode?.enoch?.day}`}
+                {dayContent?.title ??
+                  selectedNode?.enoch?.label ??
+                  `Day ${selectedNode?.enoch?.day}`}
               </Text>
 
               <Text style={{ marginTop: 8, fontSize: 18, color: "#6b7280" }}>

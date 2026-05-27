@@ -5,6 +5,7 @@ import { Text, View } from "react-native";
 import { CalendarNode } from "../../models/calendar";
 import { DayCell } from "./DayCell";
 import IntercalaryRow from "./IntercalaryRow";
+import SabbathWeekRow from "./SabbathWeekRow";
 
 type Props = {
   nodes: CalendarNode[];
@@ -34,11 +35,72 @@ function groupByEnochMonth(nodes: CalendarNode[]) {
   return groups;
 }
 
+function addDays(dateString: string, days: number): string {
+  const [year, month, day] = dateString.split("-").map(Number);
+
+  const date = new Date(year, month - 1, day);
+  date.setHours(12, 0, 0, 0);
+  date.setDate(date.getDate() + days);
+
+  const nextYear = date.getFullYear();
+  const nextMonth = String(date.getMonth() + 1).padStart(2, "0");
+  const nextDay = String(date.getDate()).padStart(2, "0");
+
+  return `${nextYear}-${nextMonth}-${nextDay}`;
+}
+
 export default function YearView({ nodes, onMonthLayout, onPressDay }: Props) {
   const monthGroups = groupByEnochMonth(nodes);
 
+
+        const firstNode = nodes[0];
+
+        const isSabbathYear =
+          firstNode?.enoch?.year &&
+          (firstNode.enoch.year - 2026 + 1) % 7 === 0;
+
+        const sabbathWeekNode: CalendarNode | undefined =
+          isSabbathYear
+            ? {
+              id: `${firstNode.enoch?.year}-sabbath-week`,
+              type: "sabbath-week",
+              gregorianDate: firstNode.gregorianDate,
+              gregorian: firstNode.gregorian,
+              enoch: {
+                year: firstNode.enoch.year,
+                dayOfYear: 0,
+                quarter: 0,
+                isIntercalary: false,
+                isSabbathWeek: true,
+                label: "Sabbath Week",
+                dateRange: {
+                  start: addDays(firstNode.gregorianDate, -7),
+                  end: addDays(firstNode.gregorianDate, -1),
+                },
+                events: [
+                  {
+                    id: "sabbath-week",
+                    englishName: "Sabbath Week",
+                    shortName: "Rest",
+                    type: "high-sabbath",
+                    icon: "sabbath",
+                    color: "#2563eb",
+                    isHighSabbath: true,
+                  },
+                ],
+              },
+            }
+            : undefined;
+
   return (
     <View>
+      {/* Sabbath Week */}
+      {sabbathWeekNode && (
+        <SabbathWeekRow
+          node={sabbathWeekNode}
+          onPressDay={onPressDay}
+        />
+      )}
       {Object.entries(monthGroups).map(([monthNumber, monthNodes]) => {
         const numericMonth = Number(monthNumber);
         const firstNode = monthNodes[0];
@@ -62,14 +124,15 @@ export default function YearView({ nodes, onMonthLayout, onPressDay }: Props) {
         const intercalaryNode =
           numericMonth % 3 === 0
             ? nodes.find(
-                (node) =>
-                  node.enoch?.isIntercalary &&
-                  node.enoch?.quarter === numericMonth / 3
-              )
+              (node) =>
+                node.enoch?.isIntercalary &&
+                node.enoch?.quarter === numericMonth / 3
+            )
             : undefined;
 
         return (
           <View
+
             key={monthNumber}
             onLayout={(event) => {
               onMonthLayout?.(numericMonth, event.nativeEvent.layout.y);
@@ -78,6 +141,7 @@ export default function YearView({ nodes, onMonthLayout, onPressDay }: Props) {
               marginBottom: 24,
             }}
           >
+
             {/* Month section title */}
             <Text
               style={{
