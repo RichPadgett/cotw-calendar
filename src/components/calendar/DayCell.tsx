@@ -11,8 +11,18 @@ type Props = {
   onPressDay?: (node: CalendarNode) => void;
 };
 
+function getTodayDateId(): string {
+  const date = new Date();
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
 export function DayCell({ node, onPressDay }: Props) {
-  const DEV_TODAY_ID = "2026-05-17";
+  const DEV_TODAY_ID = getTodayDateId();
 
   const todayId = __DEV__
     ? DEV_TODAY_ID
