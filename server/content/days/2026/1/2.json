@@ -1,0 +1,32 @@
+{
+  "enochYear": 2026,
+  "month": 1,
+  "day": 2,
+  "title": "Month 1 Day 2",
+  "notes": "Here ARe some notes\n        -Formatted Different\n         -And Stuff",
+  "scriptureReadings": [
+    {
+      "label": "Test Reading",
+      "reference": "Gen1",
+      "url": "Genesis 1:1"
+    }
+  ],
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "items": [
+        {
+          "label": "Here is a file upload test",
+          "type": "external-link",
+          "url": "",
+          "access": "public"
+        },
+        {
+          "label": "niv.logoist",
+          "type": "pdf",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

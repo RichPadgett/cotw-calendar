@@ -7,11 +7,12 @@ import {
   View,
 } from "react-native";
 
-import { EnochMonth } from "../../models/calendar";
+import { CalendarNode, EnochMonth } from "../../models/calendar";
 
 type Props = {
   // Currently active Enoch month
   month?: EnochMonth;
+  todayNode?: CalendarNode;
 
   // Top secondary label
   // Example:
@@ -28,6 +29,7 @@ export default function MonthHeader({
   gregorianLabel,
   onPreviousMonth,
   onNextMonth,
+  todayNode,
 }: Props) {
   return (
     <View
@@ -35,7 +37,7 @@ export default function MonthHeader({
         /*
           Main sticky header card
         */
-        marginBottom: 16,
+        marginBottom: 0,
 
         padding: 16,
 
@@ -68,10 +70,11 @@ export default function MonthHeader({
             fontWeight: "800",
           }}
         >
-          Enoch Calendar
+          YHWH Perpetual Calendar
         </Text>
+        
 
-        {/* Navigation Buttons */}
+        {/* Navigation יהוה Buttons */}
 
         <View
           style={{
@@ -121,6 +124,7 @@ export default function MonthHeader({
               justifyContent: "center",
             }}
           >
+
             <Text
               style={{
                 fontSize: 18,
@@ -208,6 +212,60 @@ export default function MonthHeader({
               {month.season}
             </Text>
 
+            {todayNode ? (
+              <View
+                style={{
+                  marginTop: 8,
+
+                  paddingHorizontal: 10,
+                  paddingVertical: 6,
+
+                  borderRadius: 999,
+
+                  backgroundColor:
+                    todayNode.enoch?.events?.[0]
+                      ? "#eff6ff"
+                      : "#ffffff",
+
+                  borderWidth: 1,
+                  borderColor:
+                    todayNode.enoch?.events?.[0]
+                      ? "#bfdbfe"
+                      : "#e5e7eb",
+
+                  alignSelf: "flex-start",
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 11,
+                    fontWeight: "800",
+                    color: "#374151",
+                  }}
+                >
+                  {`Today • M${todayNode.enoch?.month?.number ?? ""} D${todayNode.enoch?.day ?? ""
+                    }`}
+                </Text>
+
+                {todayNode.enoch?.events?.[0] ? (
+                  <Text
+                    style={{
+                      marginTop: 2,
+
+                      fontSize: 10,
+                      fontWeight: "700",
+
+                      color:
+                        todayNode.enoch.events[0].color ??
+                        "#2563eb",
+                    }}
+                  >
+                    {todayNode.enoch.events[0].englishName}
+                  </Text>
+                ) : null}
+              </View>
+            ) : null}
+
             {/* Future Optional Metadata
                 Hebrew / Paleo Hebrew / Babylonian names
             */}
@@ -216,7 +274,10 @@ export default function MonthHeader({
             <Text>{month.hebrew}</Text>
             <Text>{month.paleoHebrew}</Text>
             */}
+
+
           </View>
+
         </View>
       )}
     </View>

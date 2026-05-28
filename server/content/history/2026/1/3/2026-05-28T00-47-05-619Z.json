@@ -1,0 +1,20 @@
+{
+  "enochYear": 2026,
+  "month": 1,
+  "day": 3,
+  "title": "Month 1 Day 3",
+  "notes": "tet",
+  "scriptureReadings": [
+    {
+      "label": "test",
+      "reference": "test",
+      "url": "test"
+    }
+  ],
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "items": []
+    }
+  ]
+}

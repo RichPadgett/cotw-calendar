@@ -1,6 +1,8 @@
-import express from "express";
 import cors from "cors";
+import express from "express";
 
+import adminCalendarRoutes from "./routes/adminCalendarRoutes";
+import adminFileRoutes from "./routes/adminFileRoutes";
 import calendarRoutes from "./routes/calendarRoutes";
 
 const app = express();
@@ -11,6 +13,11 @@ app.use(express.json());
 app.get("/", (_req, res) => {
   res.send("Calendar API is running");
 });
+
+app.use("/api/calendar", calendarRoutes);
+app.use("/api/admin/calendar", adminCalendarRoutes);
+app.use("/api/admin/calendar", adminFileRoutes);
+app.use("/files", express.static("content/files"));
 
 /*
   ============================================================

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { dayContent } from "../data/dayContent";
+import { getCalendarDayContent } from "../services/calendarContentStore";
 const router = Router();
 
 /*
@@ -22,9 +22,11 @@ router.get("/health", (_req, res) => {
 router.get("/:year/:month/:day", (req, res) => {
   const { year, month, day } = req.params;
 
-  const key = `${year}-${month}-${day}`;
-
-  const content = dayContent[key];
+  const content = getCalendarDayContent(
+    year,
+    month,
+    day
+  );
 
   if (!content) {
     return res.status(404).json({

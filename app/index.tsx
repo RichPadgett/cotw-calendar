@@ -10,6 +10,7 @@ import {
   View,
 } from "react-native";
 
+import AdminDayContentForm from "../src/components/admin/AdminDayContentForm";
 import MonthHeader from "../src/components/calendar/MonthHeader";
 import YearView from "../src/components/calendar/YearView";
 import YearWheelView from "../src/components/calendar/YearWheelView";
@@ -22,6 +23,32 @@ const BASE_START_DATE = "2026-03-18";
 
 const STICKY_HEADER_OFFSET = 220;
 const YEAR_VIEW_TOP_OFFSET = 685;
+
+
+type ScriptureReading = {
+  label?: string;
+  reference?: string;
+  url?: string;
+};
+
+type DayContentItem = {
+  label?: string;
+  type?: string;
+  url?: string;
+  access?: string;
+};
+
+type DayContentSection = {
+  title?: string;
+  items?: DayContentItem[];
+};
+
+type DayContent = {
+  title?: string;
+  notes?: string;
+  scriptureReadings?: ScriptureReading[];
+  sections?: DayContentSection[];
+};
 
 function addDays(dateString: string, days: number): string {
   const [year, month, day] = dateString.split("-").map(Number);
@@ -42,14 +69,21 @@ export default function HomeScreen() {
 
   const [visibleEnochYear, setVisibleEnochYear] = useState(2026);
   const [activeMonthNumber, setActiveMonthNumber] = useState(1);
-  const [selectedNode, setSelectedNode] = useState<CalendarNode | null>(null);
-  const [dayContent, setDayContent] = useState<any>(null);
+
+  const [selectedNode, setSelectedNode] =
+    useState<CalendarNode | null>(null);
+
+  const [dayContent, setDayContent] =
+    useState<DayContent | null>(null);
 
   const yearOffset = visibleEnochYear - BASE_ENOCH_YEAR;
 
   const config = {
     enochYear: visibleEnochYear,
-    startsOnGregorianDate: addDays(BASE_START_DATE, yearOffset * 364),
+    startsOnGregorianDate: addDays(
+      BASE_START_DATE,
+      yearOffset * 364
+    ),
   };
 
   const nodes = buildEnochYear(config);
@@ -75,7 +109,7 @@ export default function HomeScreen() {
 
       if (!response.ok) return;
 
-      const data = await response.json();
+      const data: DayContent = await response.json();
       setDayContent(data);
     } catch (error) {
       console.log("Failed to load day content", error);
@@ -109,7 +143,10 @@ export default function HomeScreen() {
     if (typeof y !== "number") return;
 
     scrollViewRef.current?.scrollTo({
-      y: Math.max(0, y + YEAR_VIEW_TOP_OFFSET - STICKY_HEADER_OFFSET),
+      y: Math.max(
+        0,
+        y + YEAR_VIEW_TOP_OFFSET - STICKY_HEADER_OFFSET
+      ),
       animated: true,
     });
 
@@ -133,7 +170,10 @@ export default function HomeScreen() {
   function goToPreviousDay() {
     if (!selectedNode) return;
 
-    const currentIndex = nodes.findIndex((node) => node.id === selectedNode.id);
+    const currentIndex = nodes.findIndex(
+      (node) => node.id === selectedNode.id
+    );
+
     const previousNode = nodes[currentIndex - 1];
 
     if (previousNode) {
@@ -144,7 +184,10 @@ export default function HomeScreen() {
   function goToNextDay() {
     if (!selectedNode) return;
 
-    const currentIndex = nodes.findIndex((node) => node.id === selectedNode.id);
+    const currentIndex = nodes.findIndex(
+      (node) => node.id === selectedNode.id
+    );
+
     const nextNode = nodes[currentIndex + 1];
 
     if (nextNode) {
@@ -153,10 +196,30 @@ export default function HomeScreen() {
   }
 
   function openUrl(url?: string) {
-    if (url) {
-      Linking.openURL(url);
-    }
+    if (!url) return;
+    Linking.openURL(url);
   }
+
+  const modalTitle =
+    dayContent?.title ??
+    selectedNode?.enoch?.label ??
+    `Day ${selectedNode?.enoch?.day ?? ""}`;
+
+  const modalDateLabel = selectedNode?.enoch?.month?.number
+    ? `Month ${selectedNode.enoch.month.number} • ${
+        selectedNode.gregorianDate ?? ""
+      }`
+    : selectedNode?.gregorianDate ?? "";
+
+    const todayNode = nodes.find((node) => {
+  const today = new Date();
+
+  const todayId = `${today.getFullYear()}-${String(
+    today.getMonth() + 1
+  ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+
+  return node.gregorianDate === todayId;
+});
 
   return (
     <>
@@ -175,13 +238,20 @@ export default function HomeScreen() {
           paddingBottom: 24,
         }}
       >
-        <View style={{ backgroundColor: "#ffffff", paddingBottom: 12 }}>
+        <View
+          style={{
+            backgroundColor: "#ffffff",
+            paddingBottom: 12,
+          }}
+        >
           <MonthHeader
             month={currentMonth}
+            todayNode={todayNode}
             gregorianLabel={`Enoch Year ${config.enochYear} · Starts ${config.startsOnGregorianDate}`}
             onPreviousMonth={goPreviousYear}
             onNextMonth={goNextYear}
           />
+
         </View>
 
         <YearWheelView
@@ -215,9 +285,7 @@ export default function HomeScreen() {
             }}
           >
             <ScrollView
-              style={{
-                flex: 1,
-              }}
+              style={{ flex: 1 }}
               contentContainerStyle={{
                 padding: 24,
                 paddingBottom: 24,
@@ -230,18 +298,23 @@ export default function HomeScreen() {
                   padding: 12,
                 }}
               >
-                <Text style={{ fontSize: 18, fontWeight: "700" }}>Close</Text>
+                <Text style={{ fontSize: 18, fontWeight: "700" }}>
+                  Close
+                </Text>
               </Pressable>
 
               <Text style={{ fontSize: 32, fontWeight: "800" }}>
-                {dayContent?.title ??
-                  selectedNode?.enoch?.label ??
-                  `Day ${selectedNode?.enoch?.day}`}
+                {modalTitle}
               </Text>
 
-              <Text style={{ marginTop: 8, fontSize: 18, color: "#6b7280" }}>
-                Month {selectedNode?.enoch?.month?.number} ·{" "}
-                {selectedNode?.gregorianDate}
+              <Text
+                style={{
+                  marginTop: 8,
+                  fontSize: 18,
+                  color: "#6b7280",
+                }}
+              >
+                {modalDateLabel}
               </Text>
 
               {selectedNode?.enoch?.events?.map((event) => (
@@ -251,7 +324,7 @@ export default function HomeScreen() {
                     marginTop: 12,
                     padding: 10,
                     borderRadius: 12,
-                    backgroundColor: event.color,
+                    backgroundColor: event.color ?? "#2563eb",
                   }}
                 >
                   <Text style={{ color: "white", fontWeight: "800" }}>
@@ -260,7 +333,35 @@ export default function HomeScreen() {
                 </View>
               ))}
 
-              {dayContent?.notes && (
+              {selectedNode?.enoch?.month?.number &&
+                selectedNode?.enoch?.day && (
+                  <View
+                    style={{
+                      marginTop: 24,
+                      paddingTop: 20,
+                      borderTopWidth: 1,
+                      borderTopColor: "#e5e7eb",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        marginBottom: 12,
+                        fontSize: 22,
+                        fontWeight: "800",
+                      }}
+                    >
+                      Admin Content
+                    </Text>
+
+                    <AdminDayContentForm
+                      enochYear={selectedNode.enoch.year}
+                      month={selectedNode.enoch.month.number}
+                      day={selectedNode.enoch.day}
+                    />
+                  </View>
+                )}
+
+              {dayContent?.notes ? (
                 <View
                   style={{
                     marginTop: 24,
@@ -274,12 +375,13 @@ export default function HomeScreen() {
                   </Text>
 
                   <Text style={{ fontSize: 14, color: "#374151" }}>
-                    {dayContent.notes}
+                    {String(dayContent.notes)}
                   </Text>
                 </View>
-              )}
+              ) : null}
 
-              {dayContent?.scriptureReadings?.length > 0 && (
+              {Array.isArray(dayContent?.scriptureReadings) &&
+              dayContent.scriptureReadings.length > 0 ? (
                 <Text
                   style={{
                     marginTop: 24,
@@ -290,115 +392,133 @@ export default function HomeScreen() {
                 >
                   Scripture Readings
                 </Text>
-              )}
+              ) : null}
 
-              {dayContent?.scriptureReadings?.map((reading: any) => (
-                <Pressable
-                  key={reading.reference}
-                  onPress={() => openUrl(reading.url)}
-                  style={{
-                    backgroundColor: "white",
-                    borderRadius: 12,
-                    padding: 12,
-                    marginBottom: 10,
-                    borderLeftWidth: 4,
-                    borderLeftColor: "#2563eb",
-                    borderWidth: 1,
-                    borderColor: "#e5e7eb",
-                  }}
-                >
-                  <Text
+              {Array.isArray(dayContent?.scriptureReadings) &&
+                dayContent.scriptureReadings.map((reading, index) => (
+                  <View
+                    key={`reading-${index}`}
                     style={{
-                      fontSize: 16,
-                      fontWeight: "700",
-                      color: "#111827",
+                      backgroundColor: "white",
+                      borderRadius: 12,
+                      padding: 12,
+                      marginBottom: 10,
+                      borderLeftWidth: 4,
+                      borderLeftColor: "#2563eb",
+                      borderWidth: 1,
+                      borderColor: "#e5e7eb",
                     }}
                   >
-                    {reading.label}
-                  </Text>
-
-                  <Text
-                    style={{
-                      marginTop: 2,
-                      fontSize: 13,
-                      color: "#6b7280",
-                    }}
-                  >
-                    {reading.reference}
-                  </Text>
-
-                  {reading.url && (
                     <Text
                       style={{
-                        marginTop: 8,
-                        fontSize: 12,
+                        fontSize: 16,
                         fontWeight: "700",
-                        color: "#2563eb",
+                        color: "#111827",
                       }}
                     >
-                      ↗ Open Scripture
+                      {String(reading.label ?? "Scripture")}
                     </Text>
-                  )}
-                </Pressable>
-              ))}
 
-              {dayContent?.sections?.map((section: any) => (
-                <View key={section.title}>
-                  <Text
-                    style={{
-                      marginTop: 24,
-                      marginBottom: 10,
-                      fontSize: 20,
-                      fontWeight: "800",
-                    }}
-                  >
-                    {section.title}
-                  </Text>
-
-                  {section.items?.map((item: any) => (
-                    <Pressable
-                      key={item.label}
-                      onPress={() => openUrl(item.url)}
+                    <Text
                       style={{
-                        backgroundColor: "#f9fafb",
-                        borderRadius: 12,
-                        padding: 12,
-                        marginBottom: 10,
-                        borderWidth: 1,
-                        borderColor: "#e5e7eb",
+                        marginTop: 2,
+                        fontSize: 13,
+                        color: "#6b7280",
                       }}
                     >
-                      <Text style={{ fontSize: 15, fontWeight: "800" }}>
-                        {item.label}
-                      </Text>
+                      {String(reading.reference ?? "")}
+                    </Text>
 
-                      <Text
-                        style={{
-                          marginTop: 4,
-                          fontSize: 12,
-                          color: "#6b7280",
-                          textTransform: "uppercase",
-                        }}
+                    {reading.url ? (
+                      <Pressable
+                        onPress={() => openUrl(reading.url)}
+                        style={{ marginTop: 8 }}
                       >
-                        {item.type} · {item.access}
-                      </Text>
-
-                      {item.url && (
                         <Text
                           style={{
-                            marginTop: 8,
                             fontSize: 12,
                             fontWeight: "700",
                             color: "#2563eb",
                           }}
                         >
-                          ↗ Open
+                          Open Scripture
                         </Text>
-                      )}
-                    </Pressable>
-                  ))}
-                </View>
-              ))}
+                      </Pressable>
+                    ) : null}
+                  </View>
+                ))}
+
+              {Array.isArray(dayContent?.sections) &&
+                dayContent.sections.map((section, sectionIndex) => (
+                  <View key={`section-${sectionIndex}`}>
+                    <Text
+                      style={{
+                        marginTop: 24,
+                        marginBottom: 10,
+                        fontSize: 20,
+                        fontWeight: "800",
+                      }}
+                    >
+                      {String(section.title ?? "Section")}
+                    </Text>
+
+                    {Array.isArray(section.items) &&
+                      section.items.map((item, itemIndex) => (
+                        <View
+                          key={`item-${sectionIndex}-${itemIndex}`}
+                          style={{
+                            backgroundColor: "#f9fafb",
+                            borderRadius: 12,
+                            padding: 12,
+                            marginBottom: 10,
+                            borderWidth: 1,
+                            borderColor: "#e5e7eb",
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: 15,
+                              fontWeight: "800",
+                            }}
+                          >
+                            {String(item.label ?? "Untitled")}
+                          </Text>
+
+                          <Text
+                            style={{
+                              marginTop: 4,
+                              fontSize: 12,
+                              color: "#6b7280",
+                              textTransform: "uppercase",
+                            }}
+                          >
+                            {String(
+                              `${item.type ?? "link"} • ${
+                                item.access ?? "public"
+                              }`
+                            )}
+                          </Text>
+
+                          {item.url ? (
+                            <Pressable
+                              onPress={() => openUrl(item.url)}
+                              style={{ marginTop: 10 }}
+                            >
+                              <Text
+                                style={{
+                                  fontSize: 12,
+                                  fontWeight: "700",
+                                  color: "#2563eb",
+                                }}
+                              >
+                                Open
+                              </Text>
+                            </Pressable>
+                          ) : null}
+                        </View>
+                      ))}
+                  </View>
+                ))}
             </ScrollView>
 
             <View
@@ -420,7 +540,7 @@ export default function HomeScreen() {
                     color: "#2563eb",
                   }}
                 >
-                  ← Previous
+                  Previous
                 </Text>
               </Pressable>
 
@@ -432,13 +552,13 @@ export default function HomeScreen() {
                     color: "#2563eb",
                   }}
                 >
-                  Next →
+                  Next
                 </Text>
               </Pressable>
             </View>
           </View>
         </View>
-      </Modal >
+      </Modal>
     </>
   );
 }
