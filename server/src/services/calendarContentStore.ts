@@ -5,26 +5,31 @@ import path from "path";
 
 import { CalendarDayContent } from "../types/calendarContent";
 
-const CONTENT_ROOT = path.join(process.cwd(), "content");
+const CONTENT_ROOT = path.join(
+  process.cwd(),
+  "content",
+  "groups"
+);
 
-function getDayFolder(year: string, month: string) {
-  return path.join(CONTENT_ROOT, "days", year, month);
+function getDayFolder(groupCode: string, year: string, month: string) {
+  return path.join(CONTENT_ROOT, groupCode, "days", year, month);
 }
 
-function getDayFilePath(year: string, month: string, day: string) {
-  return path.join(getDayFolder(year, month), `${day}.json`);
+function getDayFilePath(groupCode: string, year: string, month: string, day: string) {
+  return path.join(getDayFolder(groupCode, year, month), `${day}.json`);
 }
 
-function getHistoryFolder(year: string, month: string, day: string) {
-  return path.join(CONTENT_ROOT, "history", year, month, day);
+function getHistoryFolder(groupCode: string, year: string, month: string, day: string) {
+  return path.join(CONTENT_ROOT, groupCode, "history", year, month, day);
 }
 
 export function getCalendarDayContent(
+  groupCode: string,
   year: string,
   month: string,
   day: string
 ): CalendarDayContent | null {
-  const filePath = getDayFilePath(year, month, day);
+  const filePath = getDayFilePath(groupCode, year, month, day);
 
   if (!fs.existsSync(filePath)) {
     return null;
@@ -34,18 +39,19 @@ export function getCalendarDayContent(
 }
 
 export function saveCalendarDayContent(
+  groupCode: string,
   year: string,
   month: string,
   day: string,
   content: CalendarDayContent
 ): CalendarDayContent {
-  const dayFolder = getDayFolder(year, month);
-  const filePath = getDayFilePath(year, month, day);
+  const dayFolder = getDayFolder(groupCode, year, month);
+  const filePath = getDayFilePath(groupCode, year, month, day);
 
   fs.mkdirSync(dayFolder, { recursive: true });
 
   if (fs.existsSync(filePath)) {
-    const historyFolder = getHistoryFolder(year, month, day);
+    const historyFolder = getHistoryFolder(groupCode, year, month, day);
 
     fs.mkdirSync(historyFolder, { recursive: true });
 

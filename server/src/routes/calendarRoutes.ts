@@ -19,22 +19,37 @@ router.get("/health", (_req, res) => {
   CALENDAR DAY CONTENT
   ============================================================
 */
+
+function getGroupCode(req: any) {
+  return String(req.query.groupCode ?? "public");
+}
+
 router.get("/:year/:month/:day", (req, res) => {
-  const { year, month, day } = req.params;
+  try {
+    const { year, month, day } = req.params;
+    const groupCode = getGroupCode(req);
 
-  const content = getCalendarDayContent(
-    year,
-    month,
-    day
-  );
+    const content = getCalendarDayContent(
+      groupCode,
+      year,
+      month,
+      day
+    );
 
-  if (!content) {
-    return res.status(404).json({
-      error: "No content found for this day.",
+    if (!content) {
+      return res.status(404).json({
+        error: "No content found for this day.",
+      });
+    }
+
+    res.json(content);
+  } catch (error) {
+    console.log("Failed to load calendar day content", error);
+
+    res.status(500).json({
+      error: "Failed to load calendar day content.",
     });
   }
-
-  res.json(content);
 });
 
 export default router;

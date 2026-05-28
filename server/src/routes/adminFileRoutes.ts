@@ -9,12 +9,15 @@ function getParam(value: string | string[] | undefined): string {
   return Array.isArray(value) ? value[0] : value ?? "";
 }
 
-
+function getGroupCode(req: any) {
+  return String(req.query.groupCode ?? "public");
+}
 
 const upload = multer({
   storage: multer.diskStorage({
     destination: (req, _file, cb) => {
       
+      const groupCode = getGroupCode(req);
       const year = getParam(req.params.year);
       const month = getParam(req.params.month);
       const day = getParam(req.params.day);
@@ -22,6 +25,8 @@ const upload = multer({
       const folder = path.join(
         process.cwd(),
         "content",
+        "groups",
+        groupCode,
         "files",
         year,
         month,
@@ -43,7 +48,7 @@ const upload = multer({
 
 router.post("/:year/:month/:day/files", upload.single("file"), (req, res) => {
   const { year, month, day } = req.params;
-
+  const groupCode = getGroupCode(req);
   if (!req.file) {
     return res.status(400).json({
       error: "No file uploaded.",
