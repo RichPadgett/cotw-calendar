@@ -2,7 +2,7 @@
 
 import * as DocumentPicker from "expo-document-picker";
 import { useState } from "react";
-import { Pressable, Text, TextInput, View } from "react-native";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 type Props = {
     enochYear: number;
@@ -10,17 +10,39 @@ type Props = {
     day: number;
 };
 
+type AccessLevel = "public" | "members" | "code-required";
+
 type ScriptureRow = {
     label: string;
     reference: string;
     url: string;
 };
 
-type MediaRow = {
+type ContentRow = {
     label: string;
-    type: "external-link" | "internal-link" | "pdf" | "video-link";
+    type: "external-link" | "internal-link" | "pdf" | "video-link" | "note";
     url: string;
-    access: "public" | "members" | "code-required";
+    access: AccessLevel;
+};
+
+const emptyScriptureRow: ScriptureRow = {
+    label: "",
+    reference: "",
+    url: "",
+};
+
+const emptyNoticeRow: ContentRow = {
+    label: "",
+    type: "note",
+    url: "",
+    access: "public",
+};
+
+const emptyMediaRow: ContentRow = {
+    label: "",
+    type: "external-link",
+    url: "",
+    access: "public",
 };
 
 export default function AdminDayContentForm({
@@ -29,23 +51,22 @@ export default function AdminDayContentForm({
     day,
 }: Props) {
     const [activeTab, setActiveTab] = useState<"create" | "preview">("create");
+
     const [notes, setNotes] = useState("");
 
     const [scriptureReadings, setScriptureReadings] = useState<ScriptureRow[]>([
-        { label: "", reference: "", url: "" },
+        emptyScriptureRow,
     ]);
 
-    const [mediaItems, setMediaItems] = useState<MediaRow[]>([
-        {
-            label: "",
-            type: "external-link",
-            url: "",
-            access: "public",
-        },
+    const [noticeItems, setNoticeItems] = useState<ContentRow[]>([
+        emptyNoticeRow,
+    ]);
+
+    const [mediaItems, setMediaItems] = useState<ContentRow[]>([
+        emptyMediaRow,
     ]);
 
     const [isSaving, setIsSaving] = useState(false);
-
     const [saveMessage, setSaveMessage] = useState("");
 
     async function uploadFile() {
@@ -56,7 +77,6 @@ export default function AdminDayContentForm({
         if (result.canceled) return;
 
         const file = result.assets[0];
-
         const formData = new FormData();
 
         if (file.uri.startsWith("blob:")) {
@@ -87,6 +107,11 @@ export default function AdminDayContentForm({
             }
         );
 
+        if (!response.ok) {
+            console.log("Upload failed", response.status);
+            return;
+        }
+
         const data = await response.json();
 
         setMediaItems((rows) => [
@@ -98,11 +123,6 @@ export default function AdminDayContentForm({
                 access: "public",
             },
         ]);
-
-        console.log("Picked file", file);
-
-
-        console.log("Upload response status", response.status);
     }
 
     async function saveContent() {
@@ -114,9 +134,7 @@ export default function AdminDayContentForm({
                 enochYear,
                 month,
                 day,
-
                 title: `Month ${month} Day ${day}`,
-
                 notes,
 
                 scriptureReadings: scriptureReadings.filter(
@@ -125,11 +143,14 @@ export default function AdminDayContentForm({
 
                 sections: [
                     {
+                        title: "Notices",
+                        displayStyle: "notice",
+                        items: noticeItems.filter((row) => row.label || row.url),
+                    },
+                    {
                         title: "Files / Links / Media",
-                            
-                        items: mediaItems.filter(
-                            (row) => row.label || row.url
-                        ),
+                        displayStyle: "default",
+                        items: mediaItems.filter((row) => row.label || row.url),
                     },
                 ],
             };
@@ -138,11 +159,9 @@ export default function AdminDayContentForm({
                 `http://localhost:3001/api/admin/calendar/${enochYear}/${month}/${day}`,
                 {
                     method: "PUT",
-
                     headers: {
                         "Content-Type": "application/json",
                     },
-
                     body: JSON.stringify(body),
                 }
             );
@@ -157,66 +176,82 @@ export default function AdminDayContentForm({
             setTimeout(() => {
                 setSaveMessage("");
             }, 2500);
-
         } catch (error) {
             console.log(error);
-
             setSaveMessage("Unexpected error");
         } finally {
             setIsSaving(false);
         }
     }
 
-    function addScriptureRow() {
-        setScriptureReadings((rows) => [
-            ...rows,
-            { label: "", reference: "", url: "" },
-        ]);
+    function updateScriptureRow(
+        index: number,
+        field: keyof ScriptureRow,
+        value: string
+    ) {
+        setScriptureReadings((rows) => {
+            const next = [...rows];
+            next[index] = { ...next[index], [field]: value };
+            return next;
+        });
     }
 
-    function removeScriptureRow(index: number) {
-        setScriptureReadings((rows) =>
-            rows.filter((_, rowIndex) => rowIndex !== index)
-        );
+    function updateNoticeRow(index: number, field: keyof ContentRow, value: string) {
+        setNoticeItems((rows) => {
+            const next = [...rows];
+            next[index] = { ...next[index], [field]: value };
+            return next;
+        });
     }
 
-    function addMediaRow() {
-        setMediaItems((rows) => [
-            ...rows,
-            {
-                label: "",
-                type: "external-link",
-                url: "",
-                access: "public",
-            },
-        ]);
-    }
-
-    function removeMediaRow(index: number) {
-        setMediaItems((rows) => rows.filter((_, rowIndex) => rowIndex !== index));
+    function updateMediaRow(index: number, field: keyof ContentRow, value: string) {
+        setMediaItems((rows) => {
+            const next = [...rows];
+            next[index] = { ...next[index], [field]: value };
+            return next;
+        });
     }
 
     return (
-        <View style={{ gap: 16 }}>
-            <View style={{ flexDirection: "row", gap: 8 }}>
-                <Pressable onPress={() => setActiveTab("create")}>
-                    <Text style={{ fontWeight: activeTab === "create" ? "800" : "500" }}>
+        <View style={styles.container}>
+            {/* Create / Preview tabs */}
+            <View style={styles.tabRow}>
+                <Pressable
+                    onPress={() => setActiveTab("create")}
+                    style={[styles.tab, activeTab === "create" && styles.activeTab]}
+                >
+                    <Text
+                        style={[
+                            styles.tabText,
+                            activeTab === "create" && styles.activeTabText,
+                        ]}
+                    >
                         Create
                     </Text>
                 </Pressable>
 
-                <Pressable onPress={() => setActiveTab("preview")}>
-                    <Text style={{ fontWeight: activeTab === "preview" ? "800" : "500" }}>
+                <Pressable
+                    onPress={() => setActiveTab("preview")}
+                    style={[styles.tab, activeTab === "preview" && styles.activeTab]}
+                >
+                    <Text
+                        style={[
+                            styles.tabText,
+                            activeTab === "preview" && styles.activeTabText,
+                        ]}
+                    >
                         Preview
                     </Text>
                 </Pressable>
             </View>
 
-            {activeTab === "create" && (
-                <View style={{ gap: 18 }}>
-                    <View style={sectionCardStyle}>
-                        <Text style={{ fontSize: 20, fontWeight: "800", marginBottom: 10 }}>
-                            Notes
+            {activeTab === "create" ? (
+                <View style={styles.formStack}>
+                    {/* Notes */}
+                    <View style={styles.sectionCard}>
+                        <Text style={styles.sectionTitle}>Notes</Text>
+                        <Text style={styles.sectionHelp}>
+                            General notes for this calendar day.
                         </Text>
 
                         <TextInput
@@ -224,203 +259,264 @@ export default function AdminDayContentForm({
                             onChangeText={setNotes}
                             placeholder="Add notes for this day..."
                             multiline
-                            style={{
-                                minHeight: 90,
-                                borderWidth: 1,
-                                borderColor: "#d1d5db",
-                                borderRadius: 12,
-                                padding: 12,
-                                backgroundColor: "#ffffff",
-                                textAlignVertical: "top",
-                            }}
+                            style={[styles.input, styles.textArea]}
                         />
                     </View>
 
-                    <View style={sectionCardStyle}>
-                        <Text style={{ fontSize: 20, fontWeight: "800", marginBottom: 10 }}>
-                            Scripture Readings
+                    {/* Scripture */}
+                    <View style={styles.sectionCard}>
+                        <Text style={styles.sectionTitle}>Scripture Readings</Text>
+                        <Text style={styles.sectionHelp}>
+                            Add passages, readings, or external scripture links.
                         </Text>
 
-
-
                         {scriptureReadings.map((row, index) => (
-                            <View key={index} style={rowCardStyle}>
+                            <View key={`scripture-${index}`} style={styles.rowCard}>
                                 <TextInput
                                     value={row.label}
-                                    onChangeText={(value) => {
-                                        const next = [...scriptureReadings];
-                                        next[index].label = value;
-                                        setScriptureReadings(next);
-                                    }}
-                                    placeholder="Label"
-                                    style={inputStyle}
+                                    onChangeText={(value) =>
+                                        updateScriptureRow(index, "label", value)
+                                    }
+                                    placeholder="Label, e.g. Creation Week"
+                                    style={styles.input}
                                 />
 
                                 <TextInput
                                     value={row.reference}
-                                    onChangeText={(value) => {
-                                        const next = [...scriptureReadings];
-                                        next[index].reference = value;
-                                        setScriptureReadings(next);
-                                    }}
-                                    placeholder="Reference"
-                                    style={inputStyle}
+                                    onChangeText={(value) =>
+                                        updateScriptureRow(index, "reference", value)
+                                    }
+                                    placeholder="Reference, e.g. Genesis 1"
+                                    style={styles.input}
                                 />
 
                                 <TextInput
                                     value={row.url}
-                                    onChangeText={(value) => {
-                                        const next = [...scriptureReadings];
-                                        next[index].url = value;
-                                        setScriptureReadings(next);
-                                    }}
-                                    placeholder="URL"
-                                    style={inputStyle}
+                                    onChangeText={(value) =>
+                                        updateScriptureRow(index, "url", value)
+                                    }
+                                    placeholder="Optional URL"
+                                    style={styles.input}
                                 />
 
-                                <Pressable onPress={() => removeScriptureRow(index)}>
-                                    <Text style={{ color: "#dc2626", fontWeight: "700" }}>
-                                        Remove Scripture Row
-                                    </Text>
+                                <Pressable
+                                    onPress={() =>
+                                        setScriptureReadings((rows) =>
+                                            rows.filter((_, rowIndex) => rowIndex !== index)
+                                        )
+                                    }
+                                >
+                                    <Text style={styles.removeText}>Remove Scripture</Text>
                                 </Pressable>
                             </View>
                         ))}
 
-                        <Pressable onPress={addScriptureRow}>
-                            <Text style={{ color: "#2563eb", fontWeight: "800" }}>
-                                + Add Scripture
-                            </Text>
+                        <Pressable
+                            onPress={() =>
+                                setScriptureReadings((rows) => [...rows, emptyScriptureRow])
+                            }
+                        >
+                            <Text style={styles.addLinkText}>+ Add Scripture</Text>
                         </Pressable>
                     </View>
 
-                    <View style={sectionCardStyle}>
-                        <Text style={{ fontSize: 20, fontWeight: "800", marginBottom: 10 }}>
-                            Files / Links / Media
+                    {/* Notices */}
+                    <View style={[styles.sectionCard, styles.noticeSectionCard]}>
+                        <Text style={styles.sectionTitle}>Notices</Text>
+                        <Text style={styles.sectionHelp}>
+                            Temporary announcements, hosting notes, reminders, or private
+                            logistics.
+                        </Text>
+
+                        {noticeItems.map((row, index) => (
+                            <View key={`notice-${index}`} style={styles.noticeRowCard}>
+                                <TextInput
+                                    value={row.label}
+                                    onChangeText={(value) =>
+                                        updateNoticeRow(index, "label", value)
+                                    }
+                                    placeholder="Notice title"
+                                    style={styles.input}
+                                />
+
+                                <TextInput
+                                    value={row.url}
+                                    onChangeText={(value) => updateNoticeRow(index, "url", value)}
+                                    placeholder="Notice details"
+                                    multiline
+                                    style={[styles.input, styles.textArea]}
+                                />
+
+                                <View style={styles.accessRow}>
+                                    {(["public", "members", "code-required"] as AccessLevel[]).map(
+                                        (access) => (
+                                            <Pressable
+                                                key={access}
+                                                onPress={() => updateNoticeRow(index, "access", access)}
+                                                style={[
+                                                    styles.accessPill,
+                                                    row.access === access && styles.activeAccessPill,
+                                                ]}
+                                            >
+                                                <Text
+                                                    style={[
+                                                        styles.accessPillText,
+                                                        row.access === access &&
+                                                        styles.activeAccessPillText,
+                                                    ]}
+                                                >
+                                                    {access}
+                                                </Text>
+                                            </Pressable>
+                                        )
+                                    )}
+                                </View>
+
+                                <Pressable
+                                    onPress={() =>
+                                        setNoticeItems((rows) =>
+                                            rows.filter((_, rowIndex) => rowIndex !== index)
+                                        )
+                                    }
+                                >
+                                    <Text style={styles.removeText}>Remove Notice</Text>
+                                </Pressable>
+                            </View>
+                        ))}
+
+                        <Pressable
+                            onPress={() =>
+                                setNoticeItems((rows) => [...rows, emptyNoticeRow])
+                            }
+                        >
+                            <Text style={styles.addLinkText}>+ Add Notice</Text>
+                        </Pressable>
+                    </View>
+
+                    {/* Files / Links / Media */}
+                    <View style={styles.sectionCard}>
+                        <Text style={styles.sectionTitle}>Files / Links / Media</Text>
+                        <Text style={styles.sectionHelp}>
+                            Add PDFs, images, videos, uploaded files, or outside study links.
                         </Text>
 
                         {mediaItems.map((row, index) => (
-                            <View key={index} style={rowCardStyle}>
+                            <View key={`media-${index}`} style={styles.rowCard}>
                                 <TextInput
                                     value={row.label}
-                                    onChangeText={(value) => {
-                                        const next = [...mediaItems];
-                                        next[index].label = value;
-                                        setMediaItems(next);
-                                    }}
+                                    onChangeText={(value) => updateMediaRow(index, "label", value)}
                                     placeholder="Label"
-                                    style={inputStyle}
+                                    style={styles.input}
                                 />
 
                                 <TextInput
                                     value={row.url}
-                                    onChangeText={(value) => {
-                                        const next = [...mediaItems];
-                                        next[index].url = value;
-                                        setMediaItems(next);
-                                    }}
-                                    placeholder="URL"
-                                    style={inputStyle}
+                                    onChangeText={(value) => updateMediaRow(index, "url", value)}
+                                    placeholder="URL or uploaded file path"
+                                    style={styles.input}
                                 />
 
-                                <Pressable onPress={() => removeMediaRow(index)}>
-                                    <Text style={{ color: "#dc2626", fontWeight: "700" }}>
-                                        Remove Media Row
-                                    </Text>
+                                <View style={styles.accessRow}>
+                                    {(["public", "members", "code-required"] as AccessLevel[]).map(
+                                        (access) => (
+                                            <Pressable
+                                                key={access}
+                                                onPress={() => updateMediaRow(index, "access", access)}
+                                                style={[
+                                                    styles.accessPill,
+                                                    row.access === access && styles.activeAccessPill,
+                                                ]}
+                                            >
+                                                <Text
+                                                    style={[
+                                                        styles.accessPillText,
+                                                        row.access === access &&
+                                                        styles.activeAccessPillText,
+                                                    ]}
+                                                >
+                                                    {access}
+                                                </Text>
+                                            </Pressable>
+                                        )
+                                    )}
+                                </View>
+
+                                <Pressable
+                                    onPress={() =>
+                                        setMediaItems((rows) =>
+                                            rows.filter((_, rowIndex) => rowIndex !== index)
+                                        )
+                                    }
+                                >
+                                    <Text style={styles.removeText}>Remove Media</Text>
                                 </Pressable>
                             </View>
                         ))}
 
-                        <Pressable onPress={uploadFile}>
-                            <Text style={{ color: "#7c3aed", fontWeight: "800" }}>
-                                Upload File
-                            </Text>
-                        </Pressable>
+                        <View style={styles.mediaActionRow}>
+                            <Pressable onPress={uploadFile}>
+                                <Text style={styles.uploadText}>Upload File</Text>
+                            </Pressable>
 
-                        <Pressable onPress={addMediaRow}>
-                            <Text style={{ color: "#2563eb", fontWeight: "800" }}>
-                                + Add Media
-                            </Text>
-                        </Pressable>
+                            <Pressable
+                                onPress={() => setMediaItems((rows) => [...rows, emptyMediaRow])}
+                            >
+                                <Text style={styles.addLinkText}>+ Add Media</Text>
+                            </Pressable>
+                        </View>
                     </View>
 
-                    <Pressable onPress={() => setActiveTab("preview")}>
-                        <Text style={{ fontSize: 18, fontWeight: "800", color: "#16a34a" }}>
-                            Preview Before Save →
-                        </Text>
+                    <Pressable
+                        onPress={() => setActiveTab("preview")}
+                        style={styles.previewButton}
+                    >
+                        <Text style={styles.previewButtonText}>Preview Before Save →</Text>
                     </Pressable>
                 </View>
-            )}
+            ) : (
+                <View style={styles.previewStack}>
+                    <Text style={styles.previewTitle}>Preview</Text>
 
-            {activeTab === "preview" && (
-                <View style={{ gap: 12 }}>
-                    <Text style={{ fontSize: 20, fontWeight: "800" }}>Preview</Text>
+                    <Text style={styles.previewBody}>{notes || "No notes yet."}</Text>
 
-                    <Text>{notes || "No notes yet."}</Text>
+                    {noticeItems
+                        .filter((row) => row.label || row.url)
+                        .map((row, index) => (
+                            <View key={`preview-notice-${index}`} style={styles.previewNotice}>
+                                <Text style={styles.previewNoticeTitle}>
+                                    {row.label || "Untitled Notice"}
+                                </Text>
+                                {row.url ? <Text>{row.url}</Text> : null}
+                            </View>
+                        ))}
 
-                    {scriptureReadings.map((row, index) => (
-                        <Text key={index}>
-                            {row.label || "Untitled Scripture"} — {row.reference}
-                        </Text>
-                    ))}
-
-                    {mediaItems.map((row, index) => (
-                        <Text key={index}>
-                            {row.label || "Untitled Media"} — {row.access}
-                        </Text>
-                    ))}
-
-                    <View
-                        style={{
-                            borderTopWidth: 1,
-                            borderTopColor: "#e5e7eb",
-
-                            paddingTop: 18,
-                            marginTop: 18,
-
-                            backgroundColor: "#ffffff",
-                        }}
-                    >
-                        {saveMessage ? (
-                            <Text
-                                style={{
-                                    marginBottom: 10,
-                                    color: "#16a34a",
-                                    fontWeight: "700",
-                                    textAlign: "center",
-                                }}
-                            >
-                                {saveMessage}
+                    {scriptureReadings
+                        .filter((row) => row.label || row.reference || row.url)
+                        .map((row, index) => (
+                            <Text key={`preview-scripture-${index}`}>
+                                {`${row.label || "Untitled Scripture"} — ${row.reference}`}
                             </Text>
+                        ))}
+
+                    {mediaItems
+                        .filter((row) => row.label || row.url)
+                        .map((row, index) => (
+                            <Text key={`preview-media-${index}`}>
+                                {`${row.label || "Untitled Media"} — ${row.access}`}
+                            </Text>
+                        ))}
+
+                    <View style={styles.saveArea}>
+                        {saveMessage ? (
+                            <Text style={styles.saveMessage}>{saveMessage}</Text>
                         ) : null}
 
                         <Pressable
                             onPress={saveContent}
-
                             disabled={isSaving}
-
-                            style={{
-                                width: "100%",
-
-                                backgroundColor: "#2563eb",
-
-                                paddingVertical: 18,
-
-                                borderRadius: 14,
-
-                                alignItems: "center",
-
-                                opacity: isSaving ? 0.6 : 1,
-                            }}
+                            style={[styles.saveButton, isSaving && styles.disabledButton]}
                         >
-                            <Text
-                                style={{
-                                    color: "#ffffff",
-
-                                    fontSize: 18,
-
-                                    fontWeight: "800",
-                                }}
-                            >
+                            <Text style={styles.saveButtonText}>
                                 {isSaving ? "Saving..." : "Save Content"}
                             </Text>
                         </Pressable>
@@ -431,26 +527,234 @@ export default function AdminDayContentForm({
     );
 }
 
-const inputStyle = {
-    borderWidth: 1,
-    borderColor: "#d1d5db",
-    borderRadius: 10,
-    padding: 10,
-};
+const styles = StyleSheet.create({
+    container: {
+        gap: 16,
+    },
 
-const sectionCardStyle = {
-    padding: 14,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-    backgroundColor: "#f9fafb",
-};
+    tabRow: {
+        flexDirection: "row",
+        gap: 8,
+    },
 
-const rowCardStyle = {
-    gap: 8,
-    padding: 12,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-    backgroundColor: "#ffffff",
-};
+    tab: {
+        paddingHorizontal: 14,
+        paddingVertical: 8,
+        borderRadius: 999,
+        borderWidth: 1,
+        borderColor: "#e5e7eb",
+        backgroundColor: "#ffffff",
+    },
+
+    activeTab: {
+        backgroundColor: "#111827",
+        borderColor: "#111827",
+    },
+
+    tabText: {
+        fontWeight: "800",
+        color: "#374151",
+    },
+
+    activeTabText: {
+        color: "#ffffff",
+    },
+
+    formStack: {
+        gap: 18,
+    },
+
+    sectionCard: {
+        padding: 16,
+        borderRadius: 18,
+        borderWidth: 1,
+        borderColor: "#e5e7eb",
+        backgroundColor: "#f9fafb",
+        gap: 12,
+    },
+
+    noticeSectionCard: {
+        backgroundColor: "#fffbeb",
+        borderColor: "#fde68a",
+    },
+
+    sectionTitle: {
+        fontSize: 20,
+        fontWeight: "900",
+        color: "#111827",
+    },
+
+    sectionHelp: {
+        fontSize: 13,
+        color: "#6b7280",
+        lineHeight: 18,
+    },
+
+    rowCard: {
+        gap: 10,
+        padding: 12,
+        borderRadius: 14,
+        borderWidth: 1,
+        borderColor: "#e5e7eb",
+        backgroundColor: "#ffffff",
+    },
+
+    noticeRowCard: {
+        gap: 10,
+        padding: 12,
+        borderRadius: 14,
+        borderWidth: 1,
+        borderColor: "#fde68a",
+        backgroundColor: "#ffffff",
+    },
+
+    input: {
+        borderWidth: 1,
+        borderColor: "#d1d5db",
+        borderRadius: 12,
+        padding: 12,
+        backgroundColor: "#ffffff",
+    },
+
+    textArea: {
+        minHeight: 90,
+        textAlignVertical: "top",
+    },
+
+    accessRow: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        gap: 8,
+    },
+
+    accessPill: {
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+        borderRadius: 999,
+        borderWidth: 1,
+        borderColor: "#d1d5db",
+        backgroundColor: "#ffffff",
+    },
+
+    activeAccessPill: {
+        backgroundColor: "#2563eb",
+        borderColor: "#2563eb",
+    },
+
+    accessPillText: {
+        fontSize: 11,
+        fontWeight: "800",
+        color: "#374151",
+    },
+
+    activeAccessPillText: {
+        color: "#ffffff",
+    },
+
+    removeText: {
+        color: "#dc2626",
+        fontWeight: "800",
+    },
+
+    addLinkText: {
+        color: "#2563eb",
+        fontWeight: "900",
+    },
+
+    uploadText: {
+        color: "#7c3aed",
+        fontWeight: "900",
+    },
+
+    mediaActionRow: {
+        flexDirection: "row",
+        gap: 18,
+        flexWrap: "wrap",
+    },
+
+    previewButton: {
+        paddingVertical: 14,
+        borderRadius: 14,
+        backgroundColor: "#16a34a",
+        alignItems: "center",
+    },
+
+    previewButtonText: {
+        color: "#ffffff",
+        fontSize: 16,
+        fontWeight: "900",
+    },
+
+    previewStack: {
+        gap: 12,
+    },
+
+    previewTitle: {
+        fontSize: 20,
+        fontWeight: "900",
+    },
+
+    previewBody: {
+        color: "#374151",
+    },
+
+    previewNotice: {
+        padding: 12,
+        borderRadius: 14,
+        backgroundColor: "#fffbeb",
+        borderWidth: 1,
+        borderColor: "#fde68a",
+    },
+
+    previewNoticeTitle: {
+        fontWeight: "900",
+        color: "#92400e",
+    },
+
+    saveArea: {
+        borderTopWidth: 1,
+        borderTopColor: "#e5e7eb",
+        paddingTop: 18,
+        marginTop: 18,
+        backgroundColor: "#ffffff",
+    },
+
+    saveMessage: {
+        marginBottom: 10,
+        color: "#16a34a",
+        fontWeight: "800",
+        textAlign: "center",
+    },
+
+    saveButton: {
+        width: "100%",
+        backgroundColor: "#2563eb",
+        paddingVertical: 18,
+        borderRadius: 14,
+        alignItems: "center",
+    },
+
+    disabledButton: {
+        opacity: 0.6,
+    },
+
+    saveButtonText: {
+        color: "#ffffff",
+        fontSize: 18,
+        fontWeight: "900",
+    },
+
+    addButtonStyle: {
+        backgroundColor: "#2563eb",
+        paddingVertical: 14,
+        borderRadius: 12,
+        alignItems: "center",
+    },
+
+    removeButtonStyle: {
+        backgroundColor: "#dc2626",
+        paddingVertical: 12,
+        borderRadius: 10,
+        alignItems: "center",
+    },
+});

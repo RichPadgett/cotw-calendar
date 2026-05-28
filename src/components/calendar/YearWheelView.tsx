@@ -196,20 +196,75 @@ export default function YearWheelView({
             const y = OUTER_CENTER + Math.sin(angle) * radius;
 
             return (
-              <Text
-                style={{
-                  position: "absolute",
-                  left: x - 8,
-                  top: y - 10,
-                  fontSize: 20,
-                  fontWeight: "900",
-                  color: "#dc2626",
-                  transform: [{ rotate: `${angle + Math.PI}rad` }],
-                  zIndex: 40,
-                }}
-              >
-                ◀
-              </Text>
+              <View
+  style={{
+    position: "absolute",
+
+    left: x - 14,
+    top: y - 10,
+
+    alignItems: "center",
+
+    zIndex: 40,
+  }}
+>
+  
+  <Text
+    style={{
+      fontSize: 20,
+      fontWeight: "900",
+
+      color: "#dc2626",
+
+      transform: [
+        {
+          rotate: `${angle}rad`,
+        },
+      ],
+    }}
+  >
+    ◀
+  </Text>
+  <Text
+    style={{
+      marginTop: -2,
+      marginRight: 6,
+
+      fontSize: 10,
+
+      fontWeight: "900",
+
+      color: "#991b1b",
+    }}
+  >
+    {todayNode.enoch.day}
+  </Text>
+
+</View>
+
+              // <Text
+              //   style={{
+              //     position: "absolute",
+
+              //     left: x - 8,
+              //     top: y - 10,
+
+              //     fontSize: 20,
+              //     fontWeight: "900",
+
+              //     color: "#dc2626",
+
+              //     transform: [
+              //       {
+              //         rotate: `${angle}rad`,
+              //       },
+              //     ],
+
+              //     zIndex: 40,
+              //   }}
+              // >
+              //   ◀
+              // </Text>
             );
           })()
           : null}
@@ -378,7 +433,7 @@ export default function YearWheelView({
             { label: "Fall", angle: Math.PI },
             { label: "Winter", angle: Math.PI / 2 },
           ].map((season) => {
-            const radius = 74;
+            const radius = 95;
             const x = CENTER + Math.cos(season.angle) * radius;
             const y = CENTER + Math.sin(season.angle) * radius;
 
@@ -407,7 +462,7 @@ export default function YearWheelView({
                     color: "#596a85",
                   }}
                 >
-                  {season.label}
+                  {/* {season.label} */}
                 </Text>
               </View>
             );

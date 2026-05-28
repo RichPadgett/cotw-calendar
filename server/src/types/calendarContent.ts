@@ -14,6 +14,11 @@ export type CalendarContentItem = {
 
 export type CalendarContentSection = {
   title: string;
+  /*
+    Optional visual style for special community notes,
+    hosting info, temporary reminders, announcements, etc.
+  */
+  displayStyle?: "default" | "notice";
   items: CalendarContentItem[];
 };
 
