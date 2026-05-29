@@ -197,74 +197,51 @@ export default function YearWheelView({
 
             return (
               <View
-  style={{
-    position: "absolute",
+                style={{
+                  position: "absolute",
 
-    left: x - 14,
-    top: y - 10,
+                  left: x - 14,
+                  top: y - 10,
 
-    alignItems: "center",
+                  alignItems: "center",
 
-    zIndex: 40,
-  }}
->
-  
-  <Text
-    style={{
-      fontSize: 20,
-      fontWeight: "900",
+                  zIndex: 40,
+                }}
+              >
 
-      color: "#dc2626",
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontWeight: "900",
 
-      transform: [
-        {
-          rotate: `${angle}rad`,
-        },
-      ],
-    }}
-  >
-    ◀
-  </Text>
-  <Text
-    style={{
-      marginTop: -2,
-      marginRight: 6,
+                    color: "#dc2626",
 
-      fontSize: 10,
+                    transform: [
+                      {
+                        rotate: `${angle}rad`,
+                      },
+                    ],
+                  }}
+                >
+                  ◀
+                </Text>
+                <Text
+                  style={{
+                    marginTop: -2,
+                    marginRight: 6,
 
-      fontWeight: "900",
+                    fontSize: 10,
 
-      color: "#991b1b",
-    }}
-  >
-    {todayNode.enoch.day}
-  </Text>
+                    fontWeight: "900",
 
-</View>
+                    color: "#991b1b",
+                  }}
+                >
+                  {todayNode.enoch.day}
+                </Text>
 
-              // <Text
-              //   style={{
-              //     position: "absolute",
+              </View>
 
-              //     left: x - 8,
-              //     top: y - 10,
-
-              //     fontSize: 20,
-              //     fontWeight: "900",
-
-              //     color: "#dc2626",
-
-              //     transform: [
-              //       {
-              //         rotate: `${angle}rad`,
-              //       },
-              //     ],
-
-              //     zIndex: 40,
-              //   }}
-              // >
-              //   ◀
-              // </Text>
             );
           })()
           : null}
@@ -275,7 +252,7 @@ export default function YearWheelView({
             height: SIZE,
             borderRadius: SIZE / 2,
             borderWidth: 2,
-            borderColor: "#111827",
+            borderColor: "#345190",
             position: "relative",
             backgroundColor: "#f9fafb",
             overflow: "hidden",
@@ -300,7 +277,7 @@ export default function YearWheelView({
               left: 0,
               right: 0,
               height: SIZE / 2,
-              backgroundColor: "#dbeafe",
+              backgroundColor: "#bcd3f1",
               opacity: 0.75,
             }}
           />
@@ -377,7 +354,7 @@ export default function YearWheelView({
                   top: startY,
                   width: length,
                   height: 2,
-                  backgroundColor: "#111827",
+                  backgroundColor: "#285a2c",
                   opacity: 0.25,
                   transform: [{ rotate: `${angle}rad` }],
                   transformOrigin: "left center" as any,
@@ -477,7 +454,7 @@ export default function YearWheelView({
               height: 72,
               borderRadius: 36,
               borderWidth: 3,
-              borderColor: "#2563eb",
+              borderColor: "#87a1d9",
               alignItems: "center",
               justifyContent: "center",
               backgroundColor: "#ffffff",
@@ -488,7 +465,7 @@ export default function YearWheelView({
               style={{
                 fontSize: 18,
                 fontWeight: "900",
-                color: "#2563eb",
+                color: "#3157a8",
               }}
             >
               364

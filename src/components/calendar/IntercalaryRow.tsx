@@ -14,13 +14,19 @@ export default function IntercalaryRow({ node }: Props) {
     season === "spring"
       ? "#16a34a"
       : season === "summer"
-      ? "#ca8a04"
-      : season === "fall"
-      ? "#ea580c"
-      : "#2563eb";
+        ? "#ca8a04"
+        : season === "fall"
+          ? "#ea580c"
+          : "#2563eb";
+
+  const [year, month, day] = node.gregorianDate
+    .split("-")
+    .map(Number);
 
   const gregorianLabel = new Date(
-    node.gregorianDate
+    year,
+    month - 1,
+    day
   ).toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",

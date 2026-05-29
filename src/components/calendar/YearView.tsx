@@ -11,6 +11,7 @@ type Props = {
   nodes: CalendarNode[];
   onMonthLayout?: (monthNumber: number, y: number) => void;
   onPressDay?: (node: CalendarNode) => void;
+  notices: any[];
 };
 
 const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sab"];
@@ -49,48 +50,52 @@ function addDays(dateString: string, days: number): string {
   return `${nextYear}-${nextMonth}-${nextDay}`;
 }
 
-export default function YearView({ nodes, onMonthLayout, onPressDay }: Props) {
+export default function YearView({
+  nodes,
+  notices,
+  onMonthLayout,
+  onPressDay,
+}: Props) {
   const monthGroups = groupByEnochMonth(nodes);
 
+const firstNode = nodes[0];
 
-        const firstNode = nodes[0];
+const isSabbathYear =
+  Boolean(firstNode?.enoch?.year) &&
+  ((firstNode?.enoch?.year ?? 0) - 2026 + 1) % 7 === 0;
 
-        const isSabbathYear =
-          firstNode?.enoch?.year &&
-          (firstNode.enoch.year - 2026 + 1) % 7 === 0;
-
-        const sabbathWeekNode: CalendarNode | undefined =
-          isSabbathYear
-            ? {
-              id: `${firstNode.enoch?.year}-sabbath-week`,
-              type: "sabbath-week",
-              gregorianDate: firstNode.gregorianDate,
-              gregorian: firstNode.gregorian,
-              enoch: {
-                year: firstNode.enoch.year,
-                dayOfYear: 0,
-                quarter: 0,
-                isIntercalary: false,
-                isSabbathWeek: true,
-                label: "Sabbath Week",
-                dateRange: {
-                  start: addDays(firstNode.gregorianDate, -7),
-                  end: addDays(firstNode.gregorianDate, -1),
-                },
-                events: [
-                  {
-                    id: "sabbath-week",
-                    englishName: "Sabbath Week",
-                    shortName: "Rest",
-                    type: "high-sabbath",
-                    icon: "sabbath",
-                    color: "#2563eb",
-                    isHighSabbath: true,
-                  },
-                ],
-              },
-            }
-            : undefined;
+  const sabbathWeekNode: CalendarNode | undefined =
+    isSabbathYear
+      ? {
+        id: `${firstNode.enoch?.year}-sabbath-week`,
+        type: "sabbath-week",
+        gregorianDate: firstNode.gregorianDate,
+        gregorian: firstNode.gregorian,
+        enoch: {
+          year: firstNode?.enoch?.year ?? 0,
+          dayOfYear: 0,
+          quarter: 0,
+          isIntercalary: false,
+          isSabbathWeek: true,
+          label: "Sabbath Week",
+          dateRange: {
+            start: addDays(firstNode.gregorianDate, -7),
+            end: addDays(firstNode.gregorianDate, -1),
+          },
+          events: [
+            {
+              id: "sabbath-week",
+              englishName: "Sabbath Week",
+              shortName: "Rest",
+              type: "high-sabbath",
+              icon: "sabbath",
+              color: "#2563eb",
+              isHighSabbath: true,
+            },
+          ],
+        },
+      }
+      : undefined;
 
   return (
     <View>
@@ -113,9 +118,7 @@ export default function YearView({ nodes, onMonthLayout, onPressDay }: Props) {
         );
 
         const leadingOffset =
-          firstSabbathIndex >= 0
-            ? (6 - firstSabbathIndex) % 7
-            : ENOCH_WEEK_OFFSET;
+          ((firstNode.enoch?.dayOfYear ?? 1) - 1 + ENOCH_WEEK_OFFSET) % 7;
 
         const leadingBlanks = Array.from({
           length: leadingOffset,
@@ -212,20 +215,27 @@ export default function YearView({ nodes, onMonthLayout, onPressDay }: Props) {
               ))}
 
               {/* Month day cells */}
-              {monthNodes.map((node) => (
-                <View
-                  key={node.id}
-                  style={{
-                    width: "14.2857%",
-                    padding: 2,
-                  }}
-                >
-                  <DayCell
-                    node={node}
-                    onPressDay={onPressDay}
-                  />
-                </View>
-              ))}
+              {monthNodes.map((node) => {
+                const notice = notices.find(
+                  (item) =>
+                    item.month === node.enoch?.month?.number &&
+                    item.day === node.enoch?.day
+                );
+
+                const hasNotice = Boolean(notice);
+                const hasContent = Boolean(notice?.hasContent);
+
+                return (
+                  <View key={node.id} style={{ width: "14.2857%", padding: 2 }}>
+                    <DayCell
+                      node={node}
+                      hasNotice={hasNotice}
+                      hasContent={hasContent}
+                      onPressDay={onPressDay}
+                    />
+                  </View>
+                );
+              })}
             </View>
 
             {/* Intercalary / gate day after months 3, 6, 9, 12 */}

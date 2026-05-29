@@ -4,6 +4,7 @@ import fs from "fs";
 import path from "path";
 
 import { CalendarDayContent } from "../types/calendarContent";
+import { updateNoticeIndexForDay } from "./calendarNoticeIndex";
 
 const CONTENT_ROOT = path.join(
   process.cwd(),
@@ -70,6 +71,18 @@ export function saveCalendarDayContent(
     JSON.stringify(content, null, 2),
     "utf-8"
   );
+
+  try {
+    updateNoticeIndexForDay(
+      groupCode,
+      year,
+      month,
+      day,
+      content
+    );
+  } catch (error) {
+    console.log("Failed to update notice index", error);
+  }
 
   return content;
 }

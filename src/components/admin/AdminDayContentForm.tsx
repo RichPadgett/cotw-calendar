@@ -215,6 +215,15 @@ export default function AdminDayContentForm({
     return (
         <View style={styles.container}>
             {/* Create / Preview tabs */}
+            <Text
+                style={{
+                    marginBottom: 12,
+                    fontSize: 22,
+                    fontWeight: "800",
+                }}
+            >
+                Admin Content
+            </Text>
             <View style={styles.tabRow}>
                 <Pressable
                     onPress={() => setActiveTab("create")}

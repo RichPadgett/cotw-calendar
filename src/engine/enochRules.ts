@@ -6,9 +6,8 @@ import { getEnochDayEvents } from "./enochFeasts";
 import { ENOCH_MONTHS } from "./enochMonths";
 
 import {
-  ENOCH_DAYS_PER_MONTH,
   ENOCH_DAYS_PER_QUARTER,
-  ENOCH_DAYS_PER_YEAR,
+  ENOCH_DAYS_PER_YEAR
 } from "./enochConstants";
 
 const FIRSTFRUITS_DAY_OF_YEAR = 19;
@@ -190,15 +189,39 @@ const {
     normal days 1–90 divide into three 30-day months.
   */
 
-  const monthInQuarter = Math.ceil(
-    quarterDay / ENOCH_DAYS_PER_MONTH
-  );
+/*
+  Remove gate day from month/day math.
+  Quarter day 91 is already handled above.
+*/
 
-  const monthNumber =
-    (quarter - 1) * 3 + monthInQuarter;
+const normalQuarterDay = quarterDay;
 
-  const day =
-    ((quarterDay - 1) % ENOCH_DAYS_PER_MONTH) + 1;
+/*
+  Month inside quarter:
+    1–30   => month 1
+    31–60  => month 2
+    61–90  => month 3
+*/
+
+const monthInQuarter =
+  Math.floor((normalQuarterDay - 1) / 30) + 1;
+
+/*
+  Absolute month number:
+    Q1 => 1,2,3
+    Q2 => 4,5,6
+*/
+
+const monthNumber =
+  (quarter - 1) * 3 + monthInQuarter;
+
+/*
+  Day inside month:
+    1–30 repeating
+*/
+
+const day =
+  ((normalQuarterDay - 1) % 30) + 1;
 
   /*
     Look up month metadata:

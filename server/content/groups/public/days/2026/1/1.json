@@ -1,0 +1,20 @@
+{
+  "enochYear": 2026,
+  "month": 1,
+  "day": 1,
+  "title": "Month 1 Day 1",
+  "notes": "Test Notes",
+  "scriptureReadings": [],
+  "sections": [
+    {
+      "title": "Notices",
+      "displayStyle": "notice",
+      "items": []
+    },
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": []
+    }
+  ]
+}

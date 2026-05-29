@@ -1,6 +1,6 @@
 // app/index.tsx
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Linking,
   Modal,
@@ -50,6 +50,22 @@ type DayContent = {
   sections?: DayContentSection[];
 };
 
+function getEnochYearStartDate(targetYear: number): string {
+  let currentStartDate = BASE_START_DATE;
+
+  for (let year = BASE_ENOCH_YEAR; year < targetYear; year++) {
+    const completedYearNumber = year - BASE_ENOCH_YEAR + 1;
+    const hasSabbathWeekAfterYear = completedYearNumber % 6 === 0;
+
+    currentStartDate = addDays(
+      currentStartDate,
+      hasSabbathWeekAfterYear ? 371 : 364
+    );
+  }
+
+  return currentStartDate;
+}
+
 function addDays(dateString: string, days: number): string {
   const [year, month, day] = dateString.split("-").map(Number);
 
@@ -69,7 +85,9 @@ export default function HomeScreen() {
 
   const [visibleEnochYear, setVisibleEnochYear] = useState(2026);
   const [activeMonthNumber, setActiveMonthNumber] = useState(1);
+  const [isAdminMode, setIsAdminMode] = useState(false);
 
+  const [yearNotices, setYearNotices] = useState<any[]>([]);
   const [selectedNode, setSelectedNode] =
     useState<CalendarNode | null>(null);
 
@@ -80,11 +98,31 @@ export default function HomeScreen() {
 
   const config = {
     enochYear: visibleEnochYear,
-    startsOnGregorianDate: addDays(
-      BASE_START_DATE,
-      yearOffset * 364
-    ),
+    startsOnGregorianDate: getEnochYearStartDate(visibleEnochYear),
   };
+
+  useEffect(() => {
+    async function loadYearNotices() {
+      try {
+        const response = await fetch(
+          `http://localhost:3001/api/calendar/${config.enochYear}/notices`
+        );
+
+        if (!response.ok) {
+          setYearNotices([]);
+          return;
+        }
+
+        const data = await response.json();
+        setYearNotices(data);
+      } catch (error) {
+        console.log("Failed to load year notices", error);
+        setYearNotices([]);
+      }
+    }
+
+    loadYearNotices();
+  }, [config.enochYear]);
 
   const nodes = buildEnochYear(config);
 
@@ -206,20 +244,19 @@ export default function HomeScreen() {
     `Day ${selectedNode?.enoch?.day ?? ""}`;
 
   const modalDateLabel = selectedNode?.enoch?.month?.number
-    ? `Month ${selectedNode.enoch.month.number} • ${
-        selectedNode.gregorianDate ?? ""
-      }`
+    ? `Month ${selectedNode.enoch.month.number} • ${selectedNode.gregorianDate ?? ""
+    }`
     : selectedNode?.gregorianDate ?? "";
 
-    const todayNode = nodes.find((node) => {
-  const today = new Date();
+  const todayNode = nodes.find((node) => {
+    const today = new Date();
 
-  const todayId = `${today.getFullYear()}-${String(
-    today.getMonth() + 1
-  ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    const todayId = `${today.getFullYear()}-${String(
+      today.getMonth() + 1
+    ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
-  return node.gregorianDate === todayId;
-});
+    return node.gregorianDate === todayId;
+  });
 
   return (
     <>
@@ -247,7 +284,7 @@ export default function HomeScreen() {
           <MonthHeader
             month={currentMonth}
             todayNode={todayNode}
-            gregorianLabel={`Enoch Year ${config.enochYear} · Starts ${config.startsOnGregorianDate}`}
+            gregorianLabel={`${config.enochYear} · Starts ${config.startsOnGregorianDate}`}
             onPreviousMonth={goPreviousYear}
             onNextMonth={goNextYear}
           />
@@ -264,6 +301,7 @@ export default function HomeScreen() {
           nodes={nodes}
           onMonthLayout={handleMonthLayout}
           onPressDay={openDay}
+          notices={yearNotices}
         />
       </ScrollView>
 
@@ -300,6 +338,16 @@ export default function HomeScreen() {
               >
                 <Text style={{ fontSize: 18, fontWeight: "700" }}>
                   Close
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={() => setIsAdminMode((value) => !value)}
+                style={{
+                  alignSelf: "flex-end",
+                  padding: 12,
+                }}>
+                <Text style={{ fontSize: 13, fontWeight: "800", color: "#2563eb" }}>
+                  {isAdminMode ? "Exit Admin" : "Admin Mode"}
                 </Text>
               </Pressable>
 
@@ -343,21 +391,16 @@ export default function HomeScreen() {
                       borderTopColor: "#e5e7eb",
                     }}
                   >
-                    <Text
-                      style={{
-                        marginBottom: 12,
-                        fontSize: 22,
-                        fontWeight: "800",
-                      }}
-                    >
-                      Admin Content
-                    </Text>
 
-                    <AdminDayContentForm
-                      enochYear={selectedNode.enoch.year}
-                      month={selectedNode.enoch.month.number}
-                      day={selectedNode.enoch.day}
-                    />
+                    {isAdminMode &&
+                      selectedNode?.enoch?.month?.number &&
+                      selectedNode?.enoch?.day && (
+                        <AdminDayContentForm
+                          enochYear={selectedNode.enoch.year}
+                          month={selectedNode.enoch.month.number}
+                          day={selectedNode.enoch.day}
+                        />)}
+
                   </View>
                 )}
 
@@ -370,6 +413,7 @@ export default function HomeScreen() {
                     backgroundColor: "#f3f4f6",
                   }}
                 >
+
                   <Text style={{ fontWeight: "800", marginBottom: 6 }}>
                     Notes
                   </Text>
@@ -381,7 +425,7 @@ export default function HomeScreen() {
               ) : null}
 
               {Array.isArray(dayContent?.scriptureReadings) &&
-              dayContent.scriptureReadings.length > 0 ? (
+                dayContent.scriptureReadings.length > 0 ? (
                 <Text
                   style={{
                     marginTop: 24,
@@ -493,8 +537,7 @@ export default function HomeScreen() {
                             }}
                           >
                             {String(
-                              `${item.type ?? "link"} • ${
-                                item.access ?? "public"
+                              `${item.type ?? "link"} • ${item.access ?? "public"
                               }`
                             )}
                           </Text>
