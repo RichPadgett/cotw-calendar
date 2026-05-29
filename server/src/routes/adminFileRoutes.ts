@@ -49,6 +49,7 @@ const upload = multer({
 router.post("/:year/:month/:day/files", upload.single("file"), (req, res) => {
   const { year, month, day } = req.params;
   const groupCode = getGroupCode(req);
+
   if (!req.file) {
     return res.status(400).json({
       error: "No file uploaded.",
@@ -57,7 +58,7 @@ router.post("/:year/:month/:day/files", upload.single("file"), (req, res) => {
 
   res.json({
     filename: req.file.filename,
-    url: `/files/${year}/${month}/${day}/${req.file.filename}`,
+    url: `groups/${groupCode}/files/${year}/${month}/${day}/${req.file.filename}`,
   });
 });
 

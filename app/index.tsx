@@ -18,11 +18,14 @@ import YearWheelView from "../src/components/calendar/YearWheelView";
 import { buildEnochYear } from "../src/engine/buildEnochYear";
 import { CalendarNode } from "../src/models/calendar";
 
+import WelcomeScreen from "../src/components/onboarding/WelcomeScreen";
+
 const BASE_ENOCH_YEAR = 2026;
 const BASE_START_DATE = "2026-03-18";
 
 const STICKY_HEADER_OFFSET = 220;
 const YEAR_VIEW_TOP_OFFSET = 685;
+
 
 
 type ScriptureReading = {
@@ -87,6 +90,9 @@ export default function HomeScreen() {
   const [activeMonthNumber, setActiveMonthNumber] = useState(1);
   const [isAdminMode, setIsAdminMode] = useState(false);
 
+  const [hasEnteredApp, setHasEnteredApp] = useState(false);
+  const [groupCode, setGroupCode] = useState("public");
+
   const [yearNotices, setYearNotices] = useState<any[]>([]);
   const [selectedNode, setSelectedNode] =
     useState<CalendarNode | null>(null);
@@ -105,7 +111,7 @@ export default function HomeScreen() {
     async function loadYearNotices() {
       try {
         const response = await fetch(
-          `http://localhost:3001/api/calendar/${config.enochYear}/notices`
+          `http://localhost:3001/api/calendar/${config.enochYear}/notices?groupCode=${groupCode}`
         );
 
         if (!response.ok) {
@@ -122,13 +128,27 @@ export default function HomeScreen() {
     }
 
     loadYearNotices();
-  }, [config.enochYear]);
+  }, [config.enochYear, groupCode]);
 
   const nodes = buildEnochYear(config);
 
   const currentMonth = nodes.find(
     (node) => node.enoch?.month?.number === activeMonthNumber
   )?.enoch?.month;
+
+  if (!hasEnteredApp) {
+  return (
+    <WelcomeScreen
+      groupCode={groupCode}
+      setGroupCode={(value) =>
+        setGroupCode(
+          value.trim().toLowerCase() || "public"
+        )
+      }
+      onContinue={() => setHasEnteredApp(true)}
+    />
+  );
+}
 
   async function openDay(node: CalendarNode) {
     setSelectedNode(node);
