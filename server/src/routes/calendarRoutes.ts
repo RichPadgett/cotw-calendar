@@ -1,6 +1,10 @@
 import { Router } from "express";
 import { getCalendarDayContent } from "../services/calendarContentStore";
 import { getNoticeIndex } from "../services/calendarNoticeIndex";
+import {
+  getPerpetualMarkers,
+  getPerpetualMarkersChecksum,
+} from "../services/perpetualMarkers";
 
 const router = Router();
 
@@ -25,6 +29,16 @@ router.get("/health", (_req, res) => {
 function getGroupCode(req: any) {
   return String(req.query.groupCode ?? "public");
 }
+
+router.get("/perpetual-markers", (_req, res) => {
+    res.json(getPerpetualMarkers());
+});
+
+router.get("/perpetual-markers/checksum", (_req, res) => {
+    res.json({
+        checksum: getPerpetualMarkersChecksum(),
+    });
+});
 
 router.get("/:year/notices", (req, res) => {
   try {

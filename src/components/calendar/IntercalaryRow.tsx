@@ -1,13 +1,14 @@
 // src/components/calendar/IntercalaryRow.tsx
 
-import { Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { CalendarNode } from "../../models/calendar";
 
 type Props = {
   node: CalendarNode;
+  onPressDay?: (node: CalendarNode) => void;
 };
 
-export default function IntercalaryRow({ node }: Props) {
+export default function IntercalaryRow({ node, onPressDay }: Props) {
   const season = node.enoch?.season ?? "spring";
 
   const color =
@@ -34,57 +35,59 @@ export default function IntercalaryRow({ node }: Props) {
   });
 
   return (
-    <View
-      style={{
-        width: "100%",
-
-        marginTop: 20,
-        marginBottom: 28,
-
-        paddingVertical: 18,
-        paddingHorizontal: 16,
-
-        borderRadius: 20,
-
-        borderWidth: 2,
-        borderColor: color,
-
-        backgroundColor: "#f9fafb",
-
-        alignItems: "center",
-      }}
-    >
-      <Text
+    <Pressable onPress={() => onPressDay?.(node)}>
+      <View
         style={{
-          fontSize: 24,
-          fontWeight: "800",
-          color,
-          textAlign: "center",
+          width: "100%",
+
+          marginTop: 20,
+          marginBottom: 28,
+
+          paddingVertical: 18,
+          paddingHorizontal: 16,
+
+          borderRadius: 20,
+
+          borderWidth: 2,
+          borderColor: color,
+
+          backgroundColor: "#f9fafb",
+
+          alignItems: "center",
         }}
       >
-        {node.enoch?.label}
-      </Text>
+        <Text
+          style={{
+            fontSize: 24,
+            fontWeight: "800",
+            color,
+            textAlign: "center",
+          }}
+        >
+          {node.enoch?.label}
+        </Text>
 
-      <Text
-        style={{
-          marginTop: 8,
-          fontSize: 22,
-          color,
-        }}
-      >
-        ☉
-      </Text>
+        <Text
+          style={{
+            marginTop: 8,
+            fontSize: 22,
+            color,
+          }}
+        >
+          ☉
+        </Text>
 
-      <Text
-        style={{
-          marginTop: 10,
-          fontSize: 13,
-          color: "#6b7280",
-          textAlign: "center",
-        }}
-      >
-        {gregorianLabel}
-      </Text>
-    </View>
+        <Text
+          style={{
+            marginTop: 10,
+            fontSize: 13,
+            color: "#6b7280",
+            textAlign: "center",
+          }}
+        >
+          {gregorianLabel}
+        </Text>
+      </View>
+    </Pressable>
   );
 }

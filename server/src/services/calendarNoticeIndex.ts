@@ -10,20 +10,19 @@ export type CalendarNoticeSummary = {
     month: number;
     day: number;
 
-    title: string;
-
-    access: string;
+    notice: {
+        year: number;
+        month: number;
+        day: number;
+        title: string;
+        access: string;
+    } | null;
 
     hasContent: boolean;
 };
 
 function getNoticeIndexPath(groupCode: string, year: string) {
-    return path.join(
-        CONTENT_ROOT,
-        groupCode,
-        "notices",
-        `${year}.json`
-    );
+    return path.join(CONTENT_ROOT, groupCode, "notices", `${year}.json`);
 }
 
 export function updateNoticeIndexForDay(
@@ -33,32 +32,52 @@ export function updateNoticeIndexForDay(
     day: string,
     content: CalendarDayContent
 ) {
-    const noticeSections =
-        content.sections?.filter(
-            (section) => section.displayStyle === "notice"
-        ) ?? [];
+    const yearNumber = Number(year);
+    const monthNumber = Number(month);
+    const dayNumber = Number(day);
+
+    const noticeItems =
+        content.sections
+            ?.filter((section) => section.displayStyle === "notice")
+            .flatMap((section) => section.items ?? []) ?? [];
 
     const hasContent =
-        Boolean(content.notes) ||
+        Boolean(content.notes?.trim()) ||
         Boolean(content.scriptureReadings?.length) ||
         Boolean(
             content.sections?.some(
                 (section) =>
                     section.displayStyle !== "notice" &&
-                    section.items?.length
+                    Boolean(section.items?.length)
             )
         );
 
-    const notices: CalendarNoticeSummary[] = noticeSections.flatMap((section) =>
-        section.items.map((item) => ({
-            year: Number(year),
-            month: Number(month),
-            day: Number(day),
-            title: item.label,
-            access: item.access,
-            hasContent, 
-        }))
-    );
+    const notices: CalendarNoticeSummary[] =
+        noticeItems.length > 0
+            ? noticeItems.map((item) => ({
+                  year: yearNumber,
+                  month: monthNumber,
+                  day: dayNumber,
+                  notice: {
+                      year: yearNumber,
+                      month: monthNumber,
+                      day: dayNumber,
+                      title: item.label,
+                      access: item.access,
+                  },
+                  hasContent,
+              }))
+            : hasContent
+              ? [
+                    {
+                        year: yearNumber,
+                        month: monthNumber,
+                        day: dayNumber,
+                        notice: null,
+                        hasContent: true,
+                    },
+                ]
+              : [];
 
     const indexPath = getNoticeIndexPath(groupCode, year);
     const indexFolder = path.dirname(indexPath);
@@ -72,11 +91,11 @@ export function updateNoticeIndexForDay(
     }
 
     const withoutCurrentDay = existing.filter(
-        (notice) =>
+        (item) =>
             !(
-                notice.year === Number(year) &&
-                notice.month === Number(month) &&
-                notice.day === Number(day)
+                item.year === yearNumber &&
+                item.month === monthNumber &&
+                item.day === dayNumber
             )
     );
 

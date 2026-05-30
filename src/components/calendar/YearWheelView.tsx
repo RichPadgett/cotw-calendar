@@ -117,6 +117,25 @@ function LegendDot({ color, label }: { color: string; label: string }) {
   );
 }
 
+function LegendRest({ color, label }: { color: string; label: string }) {
+  return (
+    <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+      <Text
+        style={{
+          fontSize: 14,
+          fontWeight: "700",
+          color: color,
+        }}
+      >
+        𐤔
+      </Text>
+      <Text style={{ fontSize: 12, color: "#374151", fontWeight: "600" }}>
+        {label}
+      </Text>
+    </View>
+  );
+}
+
 export default function YearWheelView({
   nodes,
   onPressMonth,
@@ -501,6 +520,10 @@ export default function YearWheelView({
         <LegendDot color="#facc15" label="Summer Gate" />
         <LegendDot color="#fb923c" label="Fall Gate" />
         <LegendDot color="#38bdf8" label="Winter Gate" />
+        <LegendRest color="#ca8a04" label="High Sabbath" />
+        <LegendRest color="#2563eb" label="Sabbath" />
+
+
       </View>
     </View>
   );

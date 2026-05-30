@@ -356,7 +356,7 @@ export default function AdminDayContentForm({
                                     style={[styles.input, styles.textArea]}
                                 />
 
-                                <View style={styles.accessRow}>
+                                {/* <View style={styles.accessRow}>
                                     {(["public", "members", "code-required"] as AccessLevel[]).map(
                                         (access) => (
                                             <Pressable
@@ -379,7 +379,7 @@ export default function AdminDayContentForm({
                                             </Pressable>
                                         )
                                     )}
-                                </View>
+                                </View> */}
 
                                 <Pressable
                                     onPress={() =>
@@ -425,7 +425,7 @@ export default function AdminDayContentForm({
                                     style={styles.input}
                                 />
 
-                                <View style={styles.accessRow}>
+                                {/* <View style={styles.accessRow}>
                                     {(["public", "members", "code-required"] as AccessLevel[]).map(
                                         (access) => (
                                             <Pressable
@@ -448,7 +448,7 @@ export default function AdminDayContentForm({
                                             </Pressable>
                                         )
                                     )}
-                                </View>
+                                </View> */}
 
                                 <Pressable
                                     onPress={() =>

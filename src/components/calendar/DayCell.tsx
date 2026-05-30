@@ -2,15 +2,16 @@
 
 import { Image, Pressable, Text, View } from "react-native";
 
-import { CalendarNode } from "../../models/calendar";
-
 import ScrollIcon from "../../../assets/enoch/icons/scroll.png";
+import { CalendarNode } from "../../models/calendar";
+import { PerpetualMarker } from "../../types/perpetualMarkers";
 
 type Props = {
   node: CalendarNode;
   onPressDay?: (node: CalendarNode) => void;
   hasContent?: boolean;
   hasNotice?: boolean;
+  perpetualMarkers?: PerpetualMarker[];
 };
 
 function getTodayDateId(): string {
@@ -27,6 +28,7 @@ export function DayCell({
   onPressDay,
   hasContent = false,
   hasNotice = false,
+  perpetualMarkers = [],
 }: Props) {
   const DEV_TODAY_ID = getTodayDateId();
 
@@ -48,10 +50,15 @@ export function DayCell({
       (event) => event.type === "weekly-sabbath"
     ) ?? [];
 
-  const displayEvents =
-    nonWeeklyEvents.length > 0
-      ? nonWeeklyEvents
-      : weeklyEvents;
+const displayEvents = [
+  ...(nonWeeklyEvents.length > 0 ? nonWeeklyEvents : weeklyEvents),
+  ...perpetualMarkers.map((marker) => ({
+    id: marker.id,
+    shortName: marker.shortName,
+    englishName: marker.title,
+    color: marker.color,
+  })),
+];
 
   const visibleEvents = displayEvents.slice(0, 2);
 

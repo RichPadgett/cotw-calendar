@@ -1,8 +1,7 @@
-// src/components/calendar/YearView.tsx
-
 import { Text, View } from "react-native";
 
 import { CalendarNode } from "../../models/calendar";
+import { PerpetualMarker } from "../../types/perpetualMarkers";
 import { DayCell } from "./DayCell";
 import IntercalaryRow from "./IntercalaryRow";
 import SabbathWeekRow from "./SabbathWeekRow";
@@ -12,10 +11,10 @@ type Props = {
   onMonthLayout?: (monthNumber: number, y: number) => void;
   onPressDay?: (node: CalendarNode) => void;
   notices: any[];
+  perpetualMarkers: PerpetualMarker[];
 };
 
 const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sab"];
-
 const ENOCH_WEEK_OFFSET = 3;
 
 function groupByEnochMonth(nodes: CalendarNode[]) {
@@ -23,7 +22,6 @@ function groupByEnochMonth(nodes: CalendarNode[]) {
 
   for (const node of nodes) {
     const monthNumber = node.enoch?.month?.number;
-
     if (!monthNumber) continue;
 
     if (!groups[monthNumber]) {
@@ -53,99 +51,83 @@ function addDays(dateString: string, days: number): string {
 export default function YearView({
   nodes,
   notices,
+  perpetualMarkers = [],
   onMonthLayout,
   onPressDay,
 }: Props) {
   const monthGroups = groupByEnochMonth(nodes);
+  const firstNode = nodes[0];
 
-const firstNode = nodes[0];
-
-const isSabbathYear =
-  Boolean(firstNode?.enoch?.year) &&
-  ((firstNode?.enoch?.year ?? 0) - 2026 + 1) % 7 === 0;
+  const isSabbathYear =
+    Boolean(firstNode?.enoch?.year) &&
+    ((firstNode?.enoch?.year ?? 0) - 2026 + 1) % 7 === 0;
 
   const sabbathWeekNode: CalendarNode | undefined =
-    isSabbathYear
+    isSabbathYear && firstNode
       ? {
-        id: `${firstNode.enoch?.year}-sabbath-week`,
-        type: "sabbath-week",
-        gregorianDate: firstNode.gregorianDate,
-        gregorian: firstNode.gregorian,
-        enoch: {
-          year: firstNode?.enoch?.year ?? 0,
-          dayOfYear: 0,
-          quarter: 0,
-          isIntercalary: false,
-          isSabbathWeek: true,
-          label: "Sabbath Week",
-          dateRange: {
-            start: addDays(firstNode.gregorianDate, -7),
-            end: addDays(firstNode.gregorianDate, -1),
-          },
-          events: [
-            {
-              id: "sabbath-week",
-              englishName: "Sabbath Week",
-              shortName: "Rest",
-              type: "high-sabbath",
-              icon: "sabbath",
-              color: "#2563eb",
-              isHighSabbath: true,
+          id: `${firstNode.enoch?.year}-sabbath-week`,
+          type: "sabbath-week",
+          gregorianDate: firstNode.gregorianDate,
+          gregorian: firstNode.gregorian,
+          enoch: {
+            year: firstNode.enoch?.year ?? 0,
+            dayOfYear: 0,
+            quarter: 0,
+            isIntercalary: false,
+            isSabbathWeek: true,
+            label: "Sabbath Week",
+            dateRange: {
+              start: addDays(firstNode.gregorianDate, -7),
+              end: addDays(firstNode.gregorianDate, -1),
             },
-          ],
-        },
-      }
+            events: [
+              {
+                id: "sabbath-week",
+                englishName: "Sabbath Week",
+                shortName: "Rest",
+                type: "high-sabbath",
+                icon: "sabbath",
+                color: "#2563eb",
+                isHighSabbath: true,
+              },
+            ],
+          },
+        }
       : undefined;
 
   return (
     <View>
-      {/* Sabbath Week */}
       {sabbathWeekNode && (
-        <SabbathWeekRow
-          node={sabbathWeekNode}
-          onPressDay={onPressDay}
-        />
+        <SabbathWeekRow node={sabbathWeekNode} onPressDay={onPressDay} />
       )}
+
       {Object.entries(monthGroups).map(([monthNumber, monthNodes]) => {
         const numericMonth = Number(monthNumber);
-        const firstNode = monthNodes[0];
-        const month = firstNode.enoch?.month;
-
-        const firstSabbathIndex = monthNodes.findIndex((node) =>
-          node.enoch?.events?.some(
-            (event) => event.type === "weekly-sabbath"
-          )
-        );
+        const firstMonthNode = monthNodes[0];
+        const month = firstMonthNode.enoch?.month;
 
         const leadingOffset =
-          ((firstNode.enoch?.dayOfYear ?? 1) - 1 + ENOCH_WEEK_OFFSET) % 7;
+          ((firstMonthNode.enoch?.dayOfYear ?? 1) - 1 + ENOCH_WEEK_OFFSET) % 7;
 
-        const leadingBlanks = Array.from({
-          length: leadingOffset,
-        });
+        const leadingBlanks = Array.from({ length: leadingOffset });
 
         const intercalaryNode =
           numericMonth % 3 === 0
             ? nodes.find(
-              (node) =>
-                node.enoch?.isIntercalary &&
-                node.enoch?.quarter === numericMonth / 3
-            )
+                (node) =>
+                  node.enoch?.isIntercalary &&
+                  node.enoch?.quarter === numericMonth / 3
+              )
             : undefined;
 
         return (
           <View
-
             key={monthNumber}
             onLayout={(event) => {
               onMonthLayout?.(numericMonth, event.nativeEvent.layout.y);
             }}
-            style={{
-              marginBottom: 24,
-            }}
+            style={{ marginBottom: 24 }}
           >
-
-            {/* Month section title */}
             <Text
               style={{
                 marginBottom: 8,
@@ -156,7 +138,6 @@ const isSabbathYear =
               Month {month?.number}
             </Text>
 
-            {/* Season label */}
             <Text
               style={{
                 marginBottom: 12,
@@ -168,13 +149,7 @@ const isSabbathYear =
               {month?.season}
             </Text>
 
-            {/* Weekday header row */}
-            <View
-              style={{
-                flexDirection: "row",
-                marginBottom: 6,
-              }}
-            >
+            <View style={{ flexDirection: "row", marginBottom: 6 }}>
               {WEEKDAY_LABELS.map((label) => (
                 <View
                   key={label}
@@ -196,41 +171,55 @@ const isSabbathYear =
               ))}
             </View>
 
-            {/* 7-column day grid */}
-            <View
-              style={{
-                flexDirection: "row",
-                flexWrap: "wrap",
-              }}
-            >
-              {/* Leading blank cells */}
+            <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
               {leadingBlanks.map((_, index) => (
                 <View
                   key={`blank-${monthNumber}-${index}`}
-                  style={{
-                    width: "14.2857%",
-                    padding: 2,
-                  }}
+                  style={{ width: "14.2857%", padding: 2 }}
                 />
               ))}
 
-              {/* Month day cells */}
               {monthNodes.map((node) => {
-                const notice = notices.find(
+                const dayContent = notices.find(
                   (item) =>
                     item.month === node.enoch?.month?.number &&
                     item.day === node.enoch?.day
                 );
 
-                const hasNotice = Boolean(notice);
-                const hasContent = Boolean(notice?.hasContent);
+                const hasNotice = Boolean(dayContent?.notice);
+                const hasContent = Boolean(dayContent?.hasContent);
+
+                const markersForDay = perpetualMarkers.filter((marker) => {
+                  const matchesMonthDay =
+                    marker.month === node.enoch?.month?.number &&
+                    marker.day === node.enoch?.day;
+
+                  const matchesGateDay =
+                    Boolean(marker.gateDay) &&
+                    node.enoch?.isIntercalary &&
+                    marker.gateDay === node.enoch?.quarter;
+
+                  const matchesIntercalaryWeek =
+                    marker.intercalaryWeek === true &&
+                    node.enoch?.isSabbathWeek === true;
+
+                  return (
+                    matchesMonthDay ||
+                    matchesGateDay ||
+                    matchesIntercalaryWeek
+                  );
+                });
 
                 return (
-                  <View key={node.id} style={{ width: "14.2857%", padding: 2 }}>
+                  <View
+                    key={node.id}
+                    style={{ width: "14.2857%", padding: 2 }}
+                  >
                     <DayCell
                       node={node}
                       hasNotice={hasNotice}
                       hasContent={hasContent}
+                      perpetualMarkers={markersForDay}
                       onPressDay={onPressDay}
                     />
                   </View>
@@ -238,10 +227,7 @@ const isSabbathYear =
               })}
             </View>
 
-            {/* Intercalary / gate day after months 3, 6, 9, 12 */}
-            {intercalaryNode && (
-              <IntercalaryRow node={intercalaryNode} />
-            )}
+            {intercalaryNode && <IntercalaryRow node={intercalaryNode} onPressDay={onPressDay} />}
           </View>
         );
       })}

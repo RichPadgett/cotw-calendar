@@ -18,15 +18,19 @@ import YearWheelView from "../src/components/calendar/YearWheelView";
 import { buildEnochYear } from "../src/engine/buildEnochYear";
 import { CalendarNode } from "../src/models/calendar";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import WelcomeScreen from "../src/components/onboarding/WelcomeScreen";
+
+import { PerpetualMarker } from "../src/types/perpetualMarkers";
 
 const BASE_ENOCH_YEAR = 2026;
 const BASE_START_DATE = "2026-03-18";
 
 const STICKY_HEADER_OFFSET = 220;
 const YEAR_VIEW_TOP_OFFSET = 685;
+const GROUP_CODE_STORAGE_KEY = "groupCode";
 
-
+const API_BASE_URL = "http://localhost:3001";
 
 type ScriptureReading = {
   label?: string;
@@ -100,6 +104,10 @@ export default function HomeScreen() {
   const [dayContent, setDayContent] =
     useState<DayContent | null>(null);
 
+  const [perpetualMarkers, setPerpetualMarkers] = useState<PerpetualMarker[]>([]);
+  const [perpetualMarkersChecksum, setPerpetualMarkersChecksum] =
+    useState<string | null>(null);
+
   const yearOffset = visibleEnochYear - BASE_ENOCH_YEAR;
 
   const config = {
@@ -107,11 +115,47 @@ export default function HomeScreen() {
     startsOnGregorianDate: getEnochYearStartDate(visibleEnochYear),
   };
 
+const selectedDayMarkers = selectedNode
+  ? perpetualMarkers.filter((marker) => {
+      const matchesMonthDay =
+        typeof marker.month === "number" &&
+        typeof marker.day === "number" &&
+        marker.month === selectedNode.enoch?.month?.number &&
+        marker.day === selectedNode.enoch?.day;
+
+      const matchesGateDay =
+        typeof marker.gateDay === "number" &&
+        selectedNode.enoch?.isIntercalary === true &&
+        selectedNode.enoch?.isSabbathWeek !== true &&
+        marker.gateDay === selectedNode.enoch?.quarter;
+
+      const matchesIntercalaryWeek =
+        marker.intercalaryWeek === true &&
+        selectedNode.enoch?.isSabbathWeek === true;
+
+      return matchesMonthDay || matchesGateDay || matchesIntercalaryWeek;
+    })
+  : [];
+
+  useEffect(() => {
+    async function loadSavedGroupCode() {
+      const savedGroupCode = await AsyncStorage.getItem(GROUP_CODE_STORAGE_KEY);
+
+      if (savedGroupCode) {
+        setGroupCode(savedGroupCode);
+        setHasEnteredApp(true);
+      }
+    }
+
+    loadSavedGroupCode();
+  }, []);
+
+  // Keep the visible year badges in sync with the selected group.
   useEffect(() => {
     async function loadYearNotices() {
       try {
         const response = await fetch(
-          `http://localhost:3001/api/calendar/${config.enochYear}/notices?groupCode=${groupCode}`
+          `${API_BASE_URL}/api/calendar/${config.enochYear}/notices?groupCode=${encodeURIComponent(groupCode)}`
         );
 
         if (!response.ok) {
@@ -128,7 +172,15 @@ export default function HomeScreen() {
     }
 
     loadYearNotices();
+    loadPerpetualMarkers();
   }, [config.enochYear, groupCode]);
+
+  // Perpetual markers are global calendar overlays; the checksum avoids reloading unchanged data.
+  useEffect(() => {
+    if (!hasEnteredApp) return;
+
+    loadPerpetualMarkers();
+  }, [hasEnteredApp, perpetualMarkersChecksum]);
 
   const nodes = buildEnochYear(config);
 
@@ -136,19 +188,64 @@ export default function HomeScreen() {
     (node) => node.enoch?.month?.number === activeMonthNumber
   )?.enoch?.month;
 
-  if (!hasEnteredApp) {
-  return (
-    <WelcomeScreen
-      groupCode={groupCode}
-      setGroupCode={(value) =>
-        setGroupCode(
-          value.trim().toLowerCase() || "public"
-        )
+  async function loadPerpetualMarkers() {
+    try {
+      const checksumResponse = await fetch(
+        `${API_BASE_URL}/api/calendar/perpetual-markers/checksum`
+      );
+
+      if (!checksumResponse.ok) {
+        throw new Error("Failed to fetch perpetual markers checksum");
       }
-      onContinue={() => setHasEnteredApp(true)}
-    />
-  );
-}
+
+      const checksumData = await checksumResponse.json();
+      const serverChecksum = checksumData.checksum;
+
+      if (serverChecksum === perpetualMarkersChecksum) {
+        return;
+      }
+
+      const markersResponse = await fetch(
+        `${API_BASE_URL}/api/calendar/perpetual-markers`
+      );
+
+      if (!markersResponse.ok) {
+        throw new Error("Failed to fetch perpetual markers");
+      }
+
+      const markers = await markersResponse.json();
+
+      setPerpetualMarkers(markers);
+      setPerpetualMarkersChecksum(serverChecksum);
+    } catch (error) {
+      console.log("Failed to load perpetual markers", error);
+    }
+  }
+
+  if (!hasEnteredApp) {
+    return (
+      <WelcomeScreen
+        groupCode={groupCode}
+        setGroupCode={(value) =>
+          setGroupCode(
+            value.trim().toLowerCase() || "public"
+          )
+        }
+        onContinue={async () => {
+          const normalizedGroupCode =
+            groupCode.trim().toLowerCase() || "public";
+
+          await AsyncStorage.setItem(
+            GROUP_CODE_STORAGE_KEY,
+            normalizedGroupCode
+          );
+
+          setGroupCode(normalizedGroupCode);
+          setHasEnteredApp(true);
+        }}
+      />
+    );
+  }
 
   async function openDay(node: CalendarNode) {
     setSelectedNode(node);
@@ -162,7 +259,7 @@ export default function HomeScreen() {
 
     try {
       const response = await fetch(
-        `http://localhost:3001/api/calendar/${year}/${month}/${day}`
+        `${API_BASE_URL}/api/calendar/${year}/${month}/${day}?groupCode=${encodeURIComponent(groupCode)}`
       );
 
       if (!response.ok) return;
@@ -319,13 +416,15 @@ export default function HomeScreen() {
 
         <YearView
           nodes={nodes}
+          notices={yearNotices}
+          perpetualMarkers={perpetualMarkers}
           onMonthLayout={handleMonthLayout}
           onPressDay={openDay}
-          notices={yearNotices}
         />
       </ScrollView>
 
-      <Modal visible={Boolean(selectedNode)} animationType="slide" transparent>
+      <Modal
+        visible={Boolean(selectedNode)} animationType="slide" transparent>
         <View
           style={{
             flex: 1,
@@ -397,6 +496,26 @@ export default function HomeScreen() {
                 >
                   <Text style={{ color: "white", fontWeight: "800" }}>
                     {event.englishName}
+                  </Text>
+                </View>
+              ))}
+              {selectedDayMarkers.map((marker) => (
+                <View
+                  key={marker.id}
+                  style={{
+                    marginTop: 12,
+                    padding: 10,
+                    borderRadius: 12,
+                    backgroundColor: marker.color,
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: "white",
+                      fontWeight: "800",
+                    }}
+                  >
+                    {marker.title}
                   </Text>
                 </View>
               ))}

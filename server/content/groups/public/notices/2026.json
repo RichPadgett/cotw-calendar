@@ -1,0 +1,35 @@
+[
+  {
+    "year": 2026,
+    "month": 1,
+    "day": 4,
+    "notice": {
+      "year": 2026,
+      "month": 1,
+      "day": 4,
+      "title": "Padgett House",
+      "access": "public"
+    },
+    "hasContent": false
+  },
+  {
+    "year": 2026,
+    "month": 1,
+    "day": 18,
+    "notice": {
+      "year": 2026,
+      "month": 1,
+      "day": 18,
+      "title": "Test",
+      "access": "public"
+    },
+    "hasContent": true
+  },
+  {
+    "year": 2026,
+    "month": 2,
+    "day": 2,
+    "notice": null,
+    "hasContent": true
+  }
+]
