@@ -8,12 +8,13 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useRef, useState } from "react";
 import {
+  Alert,
   Linking,
   Modal,
   Pressable,
   ScrollView,
   Text,
-  View,
+  View
 } from "react-native";
 
 // App components
@@ -122,6 +123,8 @@ export default function HomeScreen() {
   const [hasEnteredApp, setHasEnteredApp] = useState(false);
   const [groupCode, setGroupCode] = useState("public");
 
+  const [hasLoadedGroupCode, setHasLoadedGroupCode] = useState(false);
+
   const [yearNotices, setYearNotices] = useState<any[]>([]);
   const [selectedNode, setSelectedNode] =
     useState<CalendarNode | null>(null);
@@ -148,38 +151,87 @@ export default function HomeScreen() {
 
   const selectedDayMarkers = selectedNode
     ? perpetualMarkers.filter((marker) => {
-        const matchesMonthDay =
-          typeof marker.month === "number" &&
-          typeof marker.day === "number" &&
-          marker.month === selectedNode.enoch?.month?.number &&
-          marker.day === selectedNode.enoch?.day;
+      const matchesMonthDay =
+        typeof marker.month === "number" &&
+        typeof marker.day === "number" &&
+        marker.month === selectedNode.enoch?.month?.number &&
+        marker.day === selectedNode.enoch?.day;
 
-        const matchesGateDay =
-          typeof marker.gateDay === "number" &&
-          selectedNode.enoch?.isIntercalary === true &&
-          selectedNode.enoch?.isSabbathWeek !== true &&
-          marker.gateDay === selectedNode.enoch?.quarter;
+      const matchesGateDay =
+        typeof marker.gateDay === "number" &&
+        selectedNode.enoch?.isIntercalary === true &&
+        selectedNode.enoch?.isSabbathWeek !== true &&
+        marker.gateDay === selectedNode.enoch?.quarter;
 
-        const matchesIntercalaryWeek =
-          marker.intercalaryWeek === true &&
-          selectedNode.enoch?.isSabbathWeek === true;
+      const matchesIntercalaryWeek =
+        marker.intercalaryWeek === true &&
+        selectedNode.enoch?.isSabbathWeek === true;
 
-        return matchesMonthDay || matchesGateDay || matchesIntercalaryWeek;
-      })
+      return matchesMonthDay || matchesGateDay || matchesIntercalaryWeek;
+    })
     : [];
+
+  /**
+  * Removes the last-used group code from device storage.
+  */
+  async function changeGroup() {
+    await AsyncStorage.removeItem(
+      GROUP_CODE_STORAGE_KEY
+    );
+
+    setGroupCode("public");
+    setHasEnteredApp(false);
+  }
+
+  /**
+  * Confirm you would like to change group code
+  * Deletes storage
+  */
+  function confirmChangeGroup() {
+    if (typeof window !== "undefined") {
+      const confirmed = window.confirm(
+        "Change Group?\n\nYou will return to the welcome screen and choose a different group."
+      );
+
+      if (confirmed) {
+        void changeGroup();
+      }
+
+      return;
+    }
+
+    Alert.alert(
+      "Change Group?",
+      "You will return to the welcome screen and choose a different group.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Change Group",
+          style: "destructive",
+          onPress: () => {
+            void changeGroup();
+          },
+        },
+      ]
+    );
+  }
 
   // Initial app entry state
   useEffect(() => {
     /**
-     * Loads the last-used group code from device storage.
-     * This entry helper skips the welcome screen when a saved group is available.
-     */
+ * Loads the last-used group code from device storage.
+ * This entry helper skips the welcome screen when a saved group is available.
+ */
     async function loadSavedGroupCode() {
-      const savedGroupCode = await AsyncStorage.getItem(GROUP_CODE_STORAGE_KEY);
-
-      if (savedGroupCode) {
-        setGroupCode(savedGroupCode);
-        setHasEnteredApp(true);
+      try {
+        const savedGroupCode = await AsyncStorage.getItem(GROUP_CODE_STORAGE_KEY);
+        if (savedGroupCode) {
+          setGroupCode(savedGroupCode);
+          setHasEnteredApp(true);
+          
+        }
+      } finally {
+        setHasLoadedGroupCode(true);
       }
     }
 
@@ -258,6 +310,23 @@ export default function HomeScreen() {
     } catch (error) {
       console.log("Failed to load perpetual markers", error);
     }
+  }
+
+  if (!hasLoadedGroupCode) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: "#ffffff",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Text style={{ fontSize: 18, fontWeight: "800" }}>
+          Loading Calendar...
+        </Text>
+      </View>
+    );
   }
 
   // Onboarding gate
@@ -551,7 +620,23 @@ export default function HomeScreen() {
                   {isAdminMode ? "Exit Admin" : "Admin Mode"}
                 </Text>
               </Pressable>
-
+              <Pressable
+                onPress={confirmChangeGroup}
+                style={{
+                  alignSelf: "flex-end",
+                  padding: 12,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 13,
+                    fontWeight: "800",
+                    color: "#dc2626",
+                  }}
+                >
+                  Change Group
+                </Text>
+              </Pressable>
               <Text style={{ fontSize: 32, fontWeight: "800" }}>
                 {modalTitle}
               </Text>
@@ -620,6 +705,7 @@ export default function HomeScreen() {
                           enochYear={selectedNode.enoch.year}
                           month={selectedNode.enoch.month.number}
                           day={selectedNode.enoch.day}
+                          groupCode={groupCode}
                         />)}
 
                   </View>

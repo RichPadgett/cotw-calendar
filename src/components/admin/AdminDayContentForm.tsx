@@ -11,9 +11,10 @@ import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 // Types
 type Props = {
-    enochYear: number;
-    month: number;
-    day: number;
+  enochYear: number;
+  month: number;
+  day: number;
+  groupCode: string;
 };
 
 type AccessLevel = "public" | "members" | "code-required";
@@ -30,6 +31,8 @@ type ContentRow = {
     url: string;
     access: AccessLevel;
 };
+
+const API_BASE_URL = "http://localhost:3001";
 
 const emptyScriptureRow: ScriptureRow = {
     label: "",
@@ -60,6 +63,7 @@ export default function AdminDayContentForm({
     enochYear,
     month,
     day,
+    groupCode
 }: Props) {
     const [activeTab, setActiveTab] = useState<"create" | "preview">("create");
 
@@ -115,7 +119,7 @@ export default function AdminDayContentForm({
         }
 
         const response = await fetch(
-            `http://localhost:3001/api/admin/calendar/${enochYear}/${month}/${day}/files`,
+            `${API_BASE_URL}/api/admin/calendar/${enochYear}/${month}/${day}/files?groupCode=${encodeURIComponent(groupCode)}`,
             {
                 method: "POST",
                 body: formData,
@@ -175,7 +179,7 @@ export default function AdminDayContentForm({
             };
 
             const response = await fetch(
-                `http://localhost:3001/api/admin/calendar/${enochYear}/${month}/${day}`,
+                `${API_BASE_URL}/api/admin/calendar/${enochYear}/${month}/${day}?groupCode=${encodeURIComponent(groupCode)}`,
                 {
                     method: "PUT",
                     headers: {
