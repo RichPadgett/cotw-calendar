@@ -27,23 +27,14 @@ function formatDateOnly(date: Date): string {
  * Builds the complete set of Enoch calendar nodes for one configured year.
  * This engine function generates day nodes, overlays Enoch metadata, and inserts intercalary gate days.
  */
-export function buildEnochYear(
-  config: EnochYearConfig
-): CalendarNode[] {
-const [year, month, day] =
-  config.startsOnGregorianDate
+export function buildEnochYear(config: EnochYearConfig): CalendarNode[] {
+  const [year, month, day] = config.startsOnGregorianDate
     .split("-")
     .map(Number);
 
-const startDate = new Date(
-  year,
-  month - 1,
-  day
-);
+  const startDate = new Date(year, month - 1, day);
 
-
-
-/*
+  /*
   ============================================================
   BUILD 364 GREGORIAN NODES
   ============================================================
@@ -62,76 +53,65 @@ const startDate = new Date(
 
   const gregorianNodes: CalendarNode[] = [];
 
-for (let index = 0; index < 364; index++) {
-  /*
+  for (let index = 0; index < 364; index++) {
+    /*
     Clone start date safely
   */
-  const currentDate = new Date(startDate);
+    const currentDate = new Date(startDate);
 
-  /*
+    /*
     Normalize to noon
     before date math
   */
-  currentDate.setHours(12, 0, 0, 0);
+    currentDate.setHours(12, 0, 0, 0);
 
-  /*
+    /*
     Advance by N days
   */
-  currentDate.setDate(
-    currentDate.getDate() + index
-  );
+    currentDate.setDate(currentDate.getDate() + index);
 
-  /*
+    /*
     Stable YYYY-MM-DD string
   */
-  const gregorianDate =
-    formatDateOnly(currentDate);
+    const gregorianDate = formatDateOnly(currentDate);
 
-  /*
+    /*
     Gregorian metadata
   */
-  const year =
-    currentDate.getFullYear();
+    const year = currentDate.getFullYear();
 
-  const month =
-    currentDate.getMonth() + 1;
+    const month = currentDate.getMonth() + 1;
 
-  const day =
-    currentDate.getDate();
+    const day = currentDate.getDate();
 
-  /*
+    /*
     Create calendar node
   */
-  gregorianNodes.push({
-    id: gregorianDate,
+    gregorianNodes.push({
+      id: gregorianDate,
 
-    type: "month-day",
+      type: "month-day",
 
-    gregorianDate,
+      gregorianDate,
 
-    gregorian: {
-      year,
-      month,
-      day,
+      gregorian: {
+        year,
+        month,
+        day,
 
-      /*
+        /*
         JS weekday:
           0 = Sunday
           6 = Saturday
       */
-      dayOfWeek:
-        currentDate.getDay(),
-    },
-  });
-}
+        dayOfWeek: currentDate.getDay(),
+      },
+    });
+  }
 
   const firstPassNodes = applyEnochOverlay(gregorianNodes, config);
 
   const computedFeasts = computeEnochFeasts(firstPassNodes);
 
-  return applyEnochOverlay(
-    gregorianNodes,
-    config,
-    computedFeasts
-  );
+  return applyEnochOverlay(gregorianNodes, config, computedFeasts);
 }

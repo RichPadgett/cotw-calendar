@@ -23,14 +23,11 @@ export function getWheelAngle(dayOfYear: number): number {
   return (dayOfYear - 1) * ENOCH_WHEEL_DEGREES_PER_DAY;
 }
 
-
 /**
  * Determines which seasonal gate a day belongs to on the year wheel.
  * This engine helper maps day positions to gate labels and visual regions.
  */
-export function getWheelGate(
-  dayOfYear: number
-): EnochSeason | undefined {
+export function getWheelGate(dayOfYear: number): EnochSeason | undefined {
   switch (dayOfYear) {
     case 364:
     case 1:

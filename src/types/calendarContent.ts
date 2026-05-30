@@ -1,5 +1,10 @@
-// API response shapes consumed by the day detail modal
+/*
+ * File: src/types/calendarContent.ts
+ * Purpose: App-side TypeScript shapes for calendar day content returned by the local calendar API.
+ * Author: rpadgett
+ */
 
+// API response shapes consumed by the day detail modal
 export type ScriptureReading = {
   label?: string;
   reference?: string;

@@ -7,13 +7,7 @@
 // External dependencies
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useRef, useState } from "react";
-import {
-  Alert,
-  Linking,
-  ScrollView,
-  Text,
-  View
-} from "react-native";
+import { Alert, ScrollView, Text, View } from "react-native";
 
 // App components
 import DayDetailModal from "../src/components/calendar/DayDetailModal";
@@ -24,24 +18,18 @@ import WelcomeScreen from "../src/components/onboarding/WelcomeScreen";
 
 // Calendar engine and models
 import { buildEnochYear } from "../src/engine/buildEnochYear";
-import {
-  getEnochYearStartDate
-} from "../src/engine/enochYear";
+import { getEnochYearStartDate } from "../src/engine/enochYear";
 import { CalendarNode } from "../src/models/calendar";
 
 // Shared app types
-import type {
-  DayContent
-} from "../src/types/calendarContent.ts";
+import type { DayContent } from "../src/types/calendarContent";
 import type { PerpetualMarker } from "../src/types/perpetualMarkers";
-
 
 const STICKY_HEADER_OFFSET = 220;
 const YEAR_VIEW_TOP_OFFSET = 685;
 const GROUP_CODE_STORAGE_KEY = "groupCode";
 
 const API_BASE_URL = "http://localhost:3001";
-
 
 /**
  * Creates the main calendar UX screen.
@@ -56,7 +44,6 @@ export default function HomeScreen() {
   const [visibleEnochYear, setVisibleEnochYear] = useState(2026);
   const [activeMonthNumber, setActiveMonthNumber] = useState(1);
 
-
   // Group entry and group-specific content state
   const [hasEnteredApp, setHasEnteredApp] = useState(false);
   const [groupCode, setGroupCode] = useState("public");
@@ -64,16 +51,17 @@ export default function HomeScreen() {
   const [hasLoadedGroupCode, setHasLoadedGroupCode] = useState(false);
 
   const [yearNotices, setYearNotices] = useState<any[]>([]);
-  const [selectedNode, setSelectedNode] =
-    useState<CalendarNode | null>(null);
+  const [selectedNode, setSelectedNode] = useState<CalendarNode | null>(null);
 
-  const [dayContent, setDayContent] =
-    useState<DayContent | null>(null);
+  const [dayContent, setDayContent] = useState<DayContent | null>(null);
 
   // Global marker state
-  const [perpetualMarkers, setPerpetualMarkers] = useState<PerpetualMarker[]>([]);
-  const [perpetualMarkersChecksum, setPerpetualMarkersChecksum] =
-    useState<string | null>(null);
+  const [perpetualMarkers, setPerpetualMarkers] = useState<PerpetualMarker[]>(
+    []
+  );
+  const [perpetualMarkersChecksum, setPerpetualMarkersChecksum] = useState<
+    string | null
+  >(null);
 
   const [isAdminMode, setIsAdminMode] = useState(false);
 
@@ -91,42 +79,41 @@ export default function HomeScreen() {
 
   const selectedDayMarkers = selectedNode
     ? perpetualMarkers.filter((marker) => {
-      const matchesMonthDay =
-        typeof marker.month === "number" &&
-        typeof marker.day === "number" &&
-        marker.month === selectedNode.enoch?.month?.number &&
-        marker.day === selectedNode.enoch?.day;
+        const matchesMonthDay =
+          typeof marker.month === "number" &&
+          typeof marker.day === "number" &&
+          marker.month === selectedNode.enoch?.month?.number &&
+          marker.day === selectedNode.enoch?.day;
 
-      const matchesGateDay =
-        typeof marker.gateDay === "number" &&
-        selectedNode.enoch?.isIntercalary === true &&
-        selectedNode.enoch?.isSabbathWeek !== true &&
-        marker.gateDay === selectedNode.enoch?.quarter;
+        const matchesGateDay =
+          typeof marker.gateDay === "number" &&
+          selectedNode.enoch?.isIntercalary === true &&
+          selectedNode.enoch?.isSabbathWeek !== true &&
+          marker.gateDay === selectedNode.enoch?.quarter;
 
-      const matchesIntercalaryWeek =
-        marker.intercalaryWeek === true &&
-        selectedNode.enoch?.isSabbathWeek === true;
+        const matchesIntercalaryWeek =
+          marker.intercalaryWeek === true &&
+          selectedNode.enoch?.isSabbathWeek === true;
 
-      return matchesMonthDay || matchesGateDay || matchesIntercalaryWeek;
-    })
+        return matchesMonthDay || matchesGateDay || matchesIntercalaryWeek;
+      })
     : [];
 
   /**
-  * Removes the last-used group code from device storage.
-  */
+   * Removes the last-used group code from device storage.
+   * This account/session helper returns the app to the welcome flow without clearing calendar content.
+   */
   async function changeGroup() {
-    await AsyncStorage.removeItem(
-      GROUP_CODE_STORAGE_KEY
-    );
+    await AsyncStorage.removeItem(GROUP_CODE_STORAGE_KEY);
 
     setGroupCode("public");
     setHasEnteredApp(false);
   }
 
   /**
-  * Confirm you would like to change group code
-  * Deletes storage
-  */
+   * Confirms that the user wants to choose a different group code.
+   * This interaction helper uses browser confirmation on web and native alerts on device targets.
+   */
   function confirmChangeGroup() {
     if (typeof window !== "undefined") {
       const confirmed = window.confirm(
@@ -159,16 +146,17 @@ export default function HomeScreen() {
   // Initial app entry state
   useEffect(() => {
     /**
- * Loads the last-used group code from device storage.
- * This entry helper skips the welcome screen when a saved group is available.
- */
+     * Loads the last-used group code from device storage.
+     * This entry helper skips the welcome screen when a saved group is available.
+     */
     async function loadSavedGroupCode() {
       try {
-        const savedGroupCode = await AsyncStorage.getItem(GROUP_CODE_STORAGE_KEY);
+        const savedGroupCode = await AsyncStorage.getItem(
+          GROUP_CODE_STORAGE_KEY
+        );
         if (savedGroupCode) {
           setGroupCode(savedGroupCode);
           setHasEnteredApp(true);
-
         }
       } finally {
         setHasLoadedGroupCode(true);
@@ -275,9 +263,7 @@ export default function HomeScreen() {
       <WelcomeScreen
         groupCode={groupCode}
         setGroupCode={(value) =>
-          setGroupCode(
-            value.trim().toLowerCase() || "public"
-          )
+          setGroupCode(value.trim().toLowerCase() || "public")
         }
         onContinue={async () => {
           const normalizedGroupCode =
@@ -367,10 +353,7 @@ export default function HomeScreen() {
     if (typeof y !== "number") return;
 
     scrollViewRef.current?.scrollTo({
-      y: Math.max(
-        0,
-        y + YEAR_VIEW_TOP_OFFSET - STICKY_HEADER_OFFSET
-      ),
+      y: Math.max(0, y + YEAR_VIEW_TOP_OFFSET - STICKY_HEADER_OFFSET),
       animated: true,
     });
 
@@ -406,9 +389,7 @@ export default function HomeScreen() {
   function goToPreviousDay() {
     if (!selectedNode) return;
 
-    const currentIndex = nodes.findIndex(
-      (node) => node.id === selectedNode.id
-    );
+    const currentIndex = nodes.findIndex((node) => node.id === selectedNode.id);
 
     const previousNode = nodes[currentIndex - 1];
 
@@ -424,9 +405,7 @@ export default function HomeScreen() {
   function goToNextDay() {
     if (!selectedNode) return;
 
-    const currentIndex = nodes.findIndex(
-      (node) => node.id === selectedNode.id
-    );
+    const currentIndex = nodes.findIndex((node) => node.id === selectedNode.id);
 
     const nextNode = nodes[currentIndex + 1];
 
@@ -434,26 +413,6 @@ export default function HomeScreen() {
       openDay(nextNode);
     }
   }
-
-  /**
-   * Opens an external URL from scripture readings or section items.
-   * This link helper delegates to React Native Linking for platform-specific handling.
-   */
-  function openUrl(url?: string) {
-    if (!url) return;
-    Linking.openURL(url);
-  }
-
-  // Modal display labels
-  const modalTitle =
-    dayContent?.title ??
-    selectedNode?.enoch?.label ??
-    `Day ${selectedNode?.enoch?.day ?? ""}`;
-
-  const modalDateLabel = selectedNode?.enoch?.month?.number
-    ? `Month ${selectedNode.enoch.month.number} • ${selectedNode.gregorianDate ?? ""
-    }`
-    : selectedNode?.gregorianDate ?? "";
 
   const todayNode = nodes.find((node) => {
     const today = new Date();
@@ -496,7 +455,6 @@ export default function HomeScreen() {
             onPreviousMonth={goPreviousYear}
             onNextMonth={goNextYear}
           />
-
         </View>
 
         <YearWheelView
@@ -526,8 +484,6 @@ export default function HomeScreen() {
         onPreviousDay={goToPreviousDay}
         onNextDay={goToNextDay}
       />
-
-
     </>
   );
 }

@@ -4,30 +4,30 @@
  * Author: rpadgett
  */
 
-import { SafeAreaView, StyleSheet } from 'react-native'
+import { SafeAreaView, StyleSheet } from "react-native";
 
-import MonthView from '../components/calendar/MonthView'
+import MonthView from "../components/calendar/MonthView";
 
-import { buildMonth } from '../engine/calendar/buildMonth'
+import { buildMonth } from "../engine/calendar/buildMonth";
 
 /**
  * Creates the legacy month-screen experiment.
  * This screen component renders a simple month view and is separate from the current Expo Router home screen.
  */
 export default function HomeScreen() {
-  const nodes = buildMonth()
+  const nodes = buildMonth();
 
   return (
     <SafeAreaView style={styles.container}>
       <MonthView nodes={nodes} />
     </SafeAreaView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#111827',
+    backgroundColor: "#111827",
     paddingTop: 24,
   },
-})
+});

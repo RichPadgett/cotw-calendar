@@ -18,7 +18,7 @@ const router = Router();
  * This helper keeps file paths and group-code values stable for upload handling.
  */
 function getParam(value: string | string[] | undefined): string {
-  return Array.isArray(value) ? value[0] : value ?? "";
+  return Array.isArray(value) ? value[0] : (value ?? "");
 }
 
 /**
@@ -32,7 +32,6 @@ function getGroupCode(req: any) {
 const upload = multer({
   storage: multer.diskStorage({
     destination: (req, _file, cb) => {
-      
       const groupCode = getGroupCode(req);
       const year = getParam(req.params.year);
       const month = getParam(req.params.month);

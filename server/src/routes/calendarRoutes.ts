@@ -51,7 +51,7 @@ function getGroupCode(req: any) {
  * Used by the app to render recurring overlays that are not tied to one saved day-content file.
  */
 router.get("/perpetual-markers", (_req, res) => {
-    res.json(getPerpetualMarkers());
+  res.json(getPerpetualMarkers());
 });
 
 /**
@@ -59,9 +59,9 @@ router.get("/perpetual-markers", (_req, res) => {
  * Used by the app to decide whether marker data needs to be fetched again.
  */
 router.get("/perpetual-markers/checksum", (_req, res) => {
-    res.json({
-        checksum: getPerpetualMarkersChecksum(),
-    });
+  res.json({
+    checksum: getPerpetualMarkersChecksum(),
+  });
 });
 
 /**
@@ -94,12 +94,7 @@ router.get("/:year/:month/:day", (req, res) => {
     const { year, month, day } = req.params;
     const groupCode = getGroupCode(req);
 
-    const content = getCalendarDayContent(
-      groupCode,
-      year,
-      month,
-      day
-    );
+    const content = getCalendarDayContent(groupCode, year, month, day);
 
     if (!content) {
       return res.status(404).json({

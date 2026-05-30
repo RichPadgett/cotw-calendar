@@ -4,12 +4,7 @@
  * Author: rpadgett
  */
 
-import {
-  Image,
-  Pressable,
-  Text,
-  View,
-} from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 
 import { CalendarNode, EnochMonth } from "../../models/calendar";
 
@@ -80,7 +75,6 @@ export default function MonthHeader({
         >
           YHWH Perpetual Calendar
         </Text>
-        
 
         {/* Navigation יהוה Buttons */}
 
@@ -132,7 +126,6 @@ export default function MonthHeader({
               justifyContent: "center",
             }}
           >
-
             <Text
               style={{
                 fontSize: 18,
@@ -230,16 +223,14 @@ export default function MonthHeader({
 
                   borderRadius: 999,
 
-                  backgroundColor:
-                    todayNode.enoch?.events?.[0]
-                      ? "#eff6ff"
-                      : "#ffffff",
+                  backgroundColor: todayNode.enoch?.events?.[0]
+                    ? "#eff6ff"
+                    : "#ffffff",
 
                   borderWidth: 1,
-                  borderColor:
-                    todayNode.enoch?.events?.[0]
-                      ? "#bfdbfe"
-                      : "#e5e7eb",
+                  borderColor: todayNode.enoch?.events?.[0]
+                    ? "#bfdbfe"
+                    : "#e5e7eb",
 
                   alignSelf: "flex-start",
                 }}
@@ -251,8 +242,9 @@ export default function MonthHeader({
                     color: "#374151",
                   }}
                 >
-                  {`Today • M${todayNode.enoch?.month?.number ?? ""} D${todayNode.enoch?.day ?? ""
-                    }`}
+                  {`Today • M${todayNode.enoch?.month?.number ?? ""} D${
+                    todayNode.enoch?.day ?? ""
+                  }`}
                 </Text>
 
                 {todayNode.enoch?.events?.[0] ? (
@@ -263,9 +255,7 @@ export default function MonthHeader({
                       fontSize: 10,
                       fontWeight: "700",
 
-                      color:
-                        todayNode.enoch.events[0].color ??
-                        "#2563eb",
+                      color: todayNode.enoch.events[0].color ?? "#2563eb",
                     }}
                   >
                     {todayNode.enoch.events[0].englishName}
@@ -282,10 +272,7 @@ export default function MonthHeader({
             <Text>{month.hebrew}</Text>
             <Text>{month.paleoHebrew}</Text>
             */}
-
-
           </View>
-
         </View>
       )}
     </View>

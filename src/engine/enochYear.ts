@@ -1,3 +1,9 @@
+/*
+ * File: src/engine/enochYear.ts
+ * Purpose: Shared Enoch year date helpers for calculating the Gregorian start date of a visible calendar year.
+ * Author: rpadgett
+ */
+
 // Calendar baseline and app configuration
 const BASE_ENOCH_YEAR = 2026;
 const BASE_START_DATE = "2026-03-18";

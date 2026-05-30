@@ -39,14 +39,14 @@ describe("Enoch year cycle with Sabbath-week reset", () => {
       startsOnGregorianDate: "2032-03-17",
     });
 
-const monthOneDays1 = year
-  .filter((node) => node.enoch?.month?.number === 1)
-  .map((node) => ({
-    gregorianDate: node.gregorianDate,
-    day: node.enoch?.day,
-  }));
+    const monthOneDays1 = year
+      .filter((node) => node.enoch?.month?.number === 1)
+      .map((node) => ({
+        gregorianDate: node.gregorianDate,
+        day: node.enoch?.day,
+      }));
 
-console.log(monthOneDays1);
+    console.log(monthOneDays1);
 
     const monthOneDays = year
       .filter((node) => node.enoch?.month?.number === 1)

@@ -49,10 +49,7 @@ export type EnochDayEvent = {
   isHighSabbath?: boolean;
 };
 
-export type CalendarNodeType =
-  | "month-day"
-  | "intercalary"
-  | "sabbath-week";
+export type CalendarNodeType = "month-day" | "intercalary" | "sabbath-week";
 
 export type CalendarNode = {
   id: string;

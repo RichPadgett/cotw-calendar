@@ -25,7 +25,6 @@ app.use("/api/admin/calendar", adminCalendarRoutes);
 app.use("/api/admin/calendar", adminFileRoutes);
 app.use("/files", express.static("content/files"));
 
-
 /*
   ============================================================
   ROUTES
@@ -37,7 +36,5 @@ app.use("/api/calendar", calendarRoutes);
 const PORT = 3001;
 
 app.listen(PORT, () => {
-  console.log(
-    `Calendar API running on http://localhost:${PORT}`
-  );
+  console.log(`Calendar API running on http://localhost:${PORT}`);
 });

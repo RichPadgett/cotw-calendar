@@ -30,19 +30,13 @@ router.put("/:year/:month/:day", (req, res) => {
     const content = req.body;
     const groupCode = getGroupCode(req);
 
-    const savedContent = saveCalendarDayContent(
-      groupCode,
-      year,
-      month,
-      day,
-      {
-        ...content,
+    const savedContent = saveCalendarDayContent(groupCode, year, month, day, {
+      ...content,
 
-        enochYear: Number(year),
-        month: Number(month),
-        day: Number(day),
-      }
-    );
+      enochYear: Number(year),
+      month: Number(month),
+      day: Number(day),
+    });
 
     res.json(savedContent);
   } catch (error) {

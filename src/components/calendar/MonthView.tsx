@@ -33,12 +33,7 @@ export default function MonthView({ nodes }: Props) {
     >
       {nodes.map((item) => {
         if (item.type === "intercalary") {
-          return (
-            <IntercalaryRow
-              key={item.gregorianDate}
-              node={item}
-            />
-          );
+          return <IntercalaryRow key={item.gregorianDate} node={item} />;
         }
 
         return (

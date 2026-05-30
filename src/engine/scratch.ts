@@ -13,4 +13,3 @@ const next = new Date(start);
 next.setDate(next.getDate() + 364);
 
 console.log(next.toISOString());
-

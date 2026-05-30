@@ -1,0 +1,14 @@
+node_modules
+server/node_modules
+.expo
+.git
+
+server/content
+out.txt
+
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.svg

@@ -10,10 +10,7 @@ import { CalendarDayContent } from "../types/calendarContent";
  * Seed lookup table for calendar day content keyed by date-like identifiers.
  * This data export supports early server responses and static content experiments.
  */
-export const dayContent: Record<
-  string,
-  CalendarDayContent
-> = {
+export const dayContent: Record<string, CalendarDayContent> = {
   "2026-1-1": {
     enochYear: 2026,
 
@@ -24,8 +21,7 @@ export const dayContent: Record<
 
     title: "Beginning of the Year",
 
-    notes:
-      "Welcome to the beginning of the Enoch year.",
+    notes: "Welcome to the beginning of the Enoch year.",
 
     scriptureReadings: [
       {

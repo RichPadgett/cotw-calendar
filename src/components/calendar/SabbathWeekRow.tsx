@@ -17,10 +17,7 @@ type Props = {
  * Creates the full-width sabbath-week row shown before sabbath years.
  * This UX component lets the rest week appear as a selectable calendar period.
  */
-export default function SabbathWeekRow({
-  node,
-  onPressDay,
-}: Props) {
+export default function SabbathWeekRow({ node, onPressDay }: Props) {
   const dateRange = node.enoch?.dateRange;
 
   return (

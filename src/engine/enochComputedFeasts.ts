@@ -16,13 +16,9 @@ export type ComputedFeasts = {
  * Computes derived feast dates for an Enoch year.
  * This engine function turns base calendar rules into year-specific feast metadata.
  */
-export function computeEnochFeasts(
-  nodes: CalendarNode[]
-): ComputedFeasts {
+export function computeEnochFeasts(nodes: CalendarNode[]): ComputedFeasts {
   const lambSelectionNode = nodes.find(
-    (node) =>
-      node.enoch?.month?.number === 1 &&
-      node.enoch?.day === 10
+    (node) => node.enoch?.month?.number === 1 && node.enoch?.day === 10
   );
 
   if (!lambSelectionNode?.enoch) {
@@ -31,11 +27,8 @@ export function computeEnochFeasts(
 
   const firstSabbathAfterLambSelection = nodes.find(
     (node) =>
-      (node.enoch?.dayOfYear ?? 0) >
-        lambSelectionNode.enoch!.dayOfYear &&
-      node.enoch?.events?.some(
-        (event) => event.type === "weekly-sabbath"
-      )
+      (node.enoch?.dayOfYear ?? 0) > lambSelectionNode.enoch!.dayOfYear &&
+      node.enoch?.events?.some((event) => event.type === "weekly-sabbath")
   );
 
   if (!firstSabbathAfterLambSelection?.enoch) {
@@ -48,11 +41,8 @@ export function computeEnochFeasts(
   const omerSabbathDaysOfYear = nodes
     .filter(
       (node) =>
-        (node.enoch?.dayOfYear ?? 0) >
-          firstfruitsDayOfYear &&
-        node.enoch?.events?.some(
-          (event) => event.type === "weekly-sabbath"
-        )
+        (node.enoch?.dayOfYear ?? 0) > firstfruitsDayOfYear &&
+        node.enoch?.events?.some((event) => event.type === "weekly-sabbath")
     )
     .slice(0, 7)
     .map((node) => node.enoch!.dayOfYear);
@@ -61,8 +51,7 @@ export function computeEnochFeasts(
     throw new Error("Could not find seven Omer Sabbaths.");
   }
 
-  const shavuotDayOfYear =
-    omerSabbathDaysOfYear[6] + 1;
+  const shavuotDayOfYear = omerSabbathDaysOfYear[6] + 1;
 
   return {
     firstfruitsDayOfYear,

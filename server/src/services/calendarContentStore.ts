@@ -12,11 +12,7 @@ import { CalendarDayContent } from "../types/calendarContent";
 import { updateNoticeIndexForDay } from "./calendarNoticeIndex";
 
 // Constants
-const CONTENT_ROOT = path.join(
-  process.cwd(),
-  "content",
-  "groups"
-);
+const CONTENT_ROOT = path.join(process.cwd(), "content", "groups");
 
 // Helpers
 /**
@@ -31,7 +27,12 @@ function getDayFolder(groupCode: string, year: string, month: string) {
  * Builds the JSON file path for one saved Enoch day.
  * This filesystem helper is used by both read and write operations.
  */
-function getDayFilePath(groupCode: string, year: string, month: string, day: string) {
+function getDayFilePath(
+  groupCode: string,
+  year: string,
+  month: string,
+  day: string
+) {
   return path.join(getDayFolder(groupCode, year, month), `${day}.json`);
 }
 
@@ -39,7 +40,12 @@ function getDayFilePath(groupCode: string, year: string, month: string, day: str
  * Builds the history folder path for previous versions of one day-content file.
  * This filesystem helper supports simple backup snapshots before overwrites.
  */
-function getHistoryFolder(groupCode: string, year: string, month: string, day: string) {
+function getHistoryFolder(
+  groupCode: string,
+  year: string,
+  month: string,
+  day: string
+) {
   return path.join(CONTENT_ROOT, groupCode, "history", year, month, day);
 }
 
@@ -84,30 +90,15 @@ export function saveCalendarDayContent(
 
     fs.mkdirSync(historyFolder, { recursive: true });
 
-    const timestamp = new Date()
-      .toISOString()
-      .replace(/[:.]/g, "-");
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
 
-    fs.copyFileSync(
-      filePath,
-      path.join(historyFolder, `${timestamp}.json`)
-    );
+    fs.copyFileSync(filePath, path.join(historyFolder, `${timestamp}.json`));
   }
 
-  fs.writeFileSync(
-    filePath,
-    JSON.stringify(content, null, 2),
-    "utf-8"
-  );
+  fs.writeFileSync(filePath, JSON.stringify(content, null, 2), "utf-8");
 
   try {
-    updateNoticeIndexForDay(
-      groupCode,
-      year,
-      month,
-      day,
-      content
-    );
+    updateNoticeIndexForDay(groupCode, year, month, day, content);
   } catch (error) {
     console.log("Failed to update notice index", error);
   }

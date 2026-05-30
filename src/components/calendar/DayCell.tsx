@@ -57,33 +57,27 @@ export function DayCell({
   const enoch = node.enoch;
 
   const nonWeeklyEvents =
-    enoch?.events?.filter(
-      (event) => event.type !== "weekly-sabbath"
-    ) ?? [];
+    enoch?.events?.filter((event) => event.type !== "weekly-sabbath") ?? [];
 
   const weeklyEvents =
-    enoch?.events?.filter(
-      (event) => event.type === "weekly-sabbath"
-    ) ?? [];
+    enoch?.events?.filter((event) => event.type === "weekly-sabbath") ?? [];
 
-const displayEvents = [
-  ...(nonWeeklyEvents.length > 0 ? nonWeeklyEvents : weeklyEvents),
-  ...perpetualMarkers.map((marker) => ({
-    id: marker.id,
-    shortName: marker.shortName,
-    englishName: marker.title,
-    color: marker.color,
-  })),
-];
+  const displayEvents = [
+    ...(nonWeeklyEvents.length > 0 ? nonWeeklyEvents : weeklyEvents),
+    ...perpetualMarkers.map((marker) => ({
+      id: marker.id,
+      shortName: marker.shortName,
+      englishName: marker.title,
+      color: marker.color,
+    })),
+  ];
 
   const visibleEvents = displayEvents.slice(0, 2);
 
   const showScrollIcon = hasContent;
 
   const sabbathEvent = enoch?.events?.find(
-    (event) =>
-      event.type === "weekly-sabbath" ||
-      event.type === "high-sabbath"
+    (event) => event.type === "weekly-sabbath" || event.type === "high-sabbath"
   );
 
   const isHighSabbath = sabbathEvent?.type === "high-sabbath";
@@ -94,32 +88,17 @@ const displayEvents = [
     Parse safely as local calendar date
     to avoid timezone rollback.
   */
-  const [gYear, gMonth, gDay] =
-    node.gregorianDate
-      .split("-")
-      .map(Number);
+  const [gYear, gMonth, gDay] = node.gregorianDate.split("-").map(Number);
 
-  const gregorianDate = new Date(
-    gYear,
-    gMonth - 1,
-    gDay
-  );
+  const gregorianDate = new Date(gYear, gMonth - 1, gDay);
 
-  const gregorianDay =
-    gregorianDate.toLocaleDateString(
-      "en-US",
-      {
-        day: "numeric",
-      }
-    );
+  const gregorianDay = gregorianDate.toLocaleDateString("en-US", {
+    day: "numeric",
+  });
 
-  const gregorianMonth =
-    gregorianDate.toLocaleDateString(
-      "en-US",
-      {
-        month: "short",
-      }
-    );
+  const gregorianMonth = gregorianDate.toLocaleDateString("en-US", {
+    month: "short",
+  });
 
   return (
     <Pressable onPress={() => onPressDay?.(node)}>
@@ -139,24 +118,25 @@ const displayEvents = [
             paddingHorizontal: 6,
             paddingVertical: 6,
           }}
-        >{hasNotice && (
-          <View
-            style={{
-              position: "absolute",
-              bottom: 6,
-              left: 6,
+        >
+          {hasNotice && (
+            <View
+              style={{
+                position: "absolute",
+                bottom: 6,
+                left: 6,
 
-              width: 8,
-              height: 8,
+                width: 8,
+                height: 8,
 
-              borderRadius: 4,
+                borderRadius: 4,
 
-              backgroundColor: "#06b6d4",
+                backgroundColor: "#06b6d4",
 
-              zIndex: 30,
-            }}
-          />
-        )}
+                zIndex: 30,
+              }}
+            />
+          )}
           {showScrollIcon && (
             <Image
               source={ScrollIcon}

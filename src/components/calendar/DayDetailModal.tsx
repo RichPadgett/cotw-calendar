@@ -1,17 +1,28 @@
+/*
+ * File: src/components/calendar/DayDetailModal.tsx
+ * Purpose: Calendar day detail modal for viewing events, perpetual markers, saved day content, and admin editing controls.
+ * Author: rpadgett
+ */
+
+// Dependencies
 import {
-    Linking,
-    Modal,
-    Pressable,
-    ScrollView,
-    Text,
-    View,
+  Linking,
+  Modal,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
 } from "react-native";
 
+// Models and shared app types
 import { CalendarNode } from "../../models/calendar";
 import type { DayContent } from "../../types/calendarContent";
 import type { PerpetualMarker } from "../../types/perpetualMarkers";
+
+// App components
 import AdminDayContentForm from "../admin/AdminDayContentForm";
 
+// Types
 type Props = {
   visible: boolean;
   selectedNode: CalendarNode | null;
@@ -27,6 +38,11 @@ type Props = {
   onNextDay: () => void;
 };
 
+// Component
+/**
+ * Creates the slide-up day detail modal for one selected calendar node.
+ * This UX component displays Enoch events, perpetual markers, day notes, scripture readings, section content, and admin editing controls.
+ */
 export default function DayDetailModal({
   visible,
   selectedNode,
@@ -49,8 +65,12 @@ export default function DayDetailModal({
     ? `Month ${selectedNode.enoch.month.number} • ${
         selectedNode.gregorianDate ?? ""
       }`
-    : selectedNode?.gregorianDate ?? "";
+    : (selectedNode?.gregorianDate ?? "");
 
+  /**
+   * Opens a linked scripture, media item, or external content URL.
+   * This link helper delegates to React Native Linking so native and web targets can handle URLs consistently.
+   */
   function openUrl(url?: string) {
     if (!url) return;
 
@@ -89,9 +109,7 @@ export default function DayDetailModal({
                 padding: 12,
               }}
             >
-              <Text style={{ fontSize: 18, fontWeight: "700" }}>
-                Close
-              </Text>
+              <Text style={{ fontSize: 18, fontWeight: "700" }}>Close</Text>
             </Pressable>
 
             <Pressable
@@ -181,26 +199,25 @@ export default function DayDetailModal({
               </View>
             ))}
 
-            {selectedNode?.enoch?.month?.number &&
-              selectedNode?.enoch?.day && (
-                <View
-                  style={{
-                    marginTop: 24,
-                    paddingTop: 20,
-                    borderTopWidth: 1,
-                    borderTopColor: "#e5e7eb",
-                  }}
-                >
-                  {isAdminMode && (
-                    <AdminDayContentForm
-                      enochYear={selectedNode.enoch.year}
-                      month={selectedNode.enoch.month.number}
-                      day={selectedNode.enoch.day}
-                      groupCode={groupCode}
-                    />
-                  )}
-                </View>
-              )}
+            {selectedNode?.enoch?.month?.number && selectedNode?.enoch?.day && (
+              <View
+                style={{
+                  marginTop: 24,
+                  paddingTop: 20,
+                  borderTopWidth: 1,
+                  borderTopColor: "#e5e7eb",
+                }}
+              >
+                {isAdminMode && (
+                  <AdminDayContentForm
+                    enochYear={selectedNode.enoch.year}
+                    month={selectedNode.enoch.month.number}
+                    day={selectedNode.enoch.day}
+                    groupCode={groupCode}
+                  />
+                )}
+              </View>
+            )}
 
             {dayContent?.notes ? (
               <View
@@ -305,23 +322,18 @@ export default function DayDetailModal({
 
                   {Array.isArray(section.items) &&
                     section.items.map((item, itemIndex) => {
-                      const isNotice =
-                        section.displayStyle === "notice";
+                      const isNotice = section.displayStyle === "notice";
 
                       return (
                         <View
                           key={`item-${sectionIndex}-${itemIndex}`}
                           style={{
-                            backgroundColor: isNotice
-                              ? "#fffbeb"
-                              : "#f9fafb",
+                            backgroundColor: isNotice ? "#fffbeb" : "#f9fafb",
                             borderRadius: 12,
                             padding: 12,
                             marginBottom: 10,
                             borderWidth: 1,
-                            borderColor: isNotice
-                              ? "#f59e0b"
-                              : "#e5e7eb",
+                            borderColor: isNotice ? "#f59e0b" : "#e5e7eb",
                           }}
                         >
                           {isNotice ? (

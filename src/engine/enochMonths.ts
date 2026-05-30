@@ -26,7 +26,7 @@ export const ENOCH_MONTHS: EnochMonth[] = [
 
     symbolImage: require("../../assets/enoch/months/abib.png"),
 
-    themeColor: "#a1d050" // Abib
+    themeColor: "#a1d050", // Abib
   },
 
   {
@@ -42,7 +42,7 @@ export const ENOCH_MONTHS: EnochMonth[] = [
 
     symbolImage: require("../../assets/enoch/months/ziv.png"),
 
-    themeColor: "#78ba14" // Ziv
+    themeColor: "#78ba14", // Ziv
   },
 
   {
@@ -58,7 +58,7 @@ export const ENOCH_MONTHS: EnochMonth[] = [
 
     symbolImage: require("../../assets/enoch/months/sivan.png"),
 
-    themeColor: "#4d7c0f" // Sivan
+    themeColor: "#4d7c0f", // Sivan
   },
 
   {
@@ -74,7 +74,7 @@ export const ENOCH_MONTHS: EnochMonth[] = [
 
     symbolImage: require("../../assets/enoch/months/tammuz.png"),
 
-    themeColor: "#fde047" // Tammuz
+    themeColor: "#fde047", // Tammuz
   },
 
   {
@@ -90,7 +90,7 @@ export const ENOCH_MONTHS: EnochMonth[] = [
 
     symbolImage: require("../../assets/enoch/months/av.png"),
 
-    themeColor: "#facc15" // Av
+    themeColor: "#facc15", // Av
   },
 
   {
@@ -106,7 +106,7 @@ export const ENOCH_MONTHS: EnochMonth[] = [
 
     symbolImage: require("../../assets/enoch/months/elul.png"),
 
-    themeColor: "#ca8a04" // Elul
+    themeColor: "#ca8a04", // Elul
   },
 
   {
@@ -124,7 +124,7 @@ export const ENOCH_MONTHS: EnochMonth[] = [
 
     symbolImage: require("../../assets/enoch/months/ethanim.png"),
 
-    themeColor: "#fdba74" // Tishri/Ethanim
+    themeColor: "#fdba74", // Tishri/Ethanim
   },
 
   {
@@ -140,7 +140,7 @@ export const ENOCH_MONTHS: EnochMonth[] = [
 
     symbolImage: require("../../assets/enoch/months/bul.png"),
 
-    themeColor: "#f97316" // Bul
+    themeColor: "#f97316", // Bul
   },
 
   {
@@ -156,7 +156,7 @@ export const ENOCH_MONTHS: EnochMonth[] = [
 
     symbolImage: require("../../assets/enoch/months/kislev.png"),
 
-    themeColor: "#c2410c" // Kislev
+    themeColor: "#c2410c", // Kislev
   },
 
   {
@@ -172,7 +172,7 @@ export const ENOCH_MONTHS: EnochMonth[] = [
 
     symbolImage: require("../../assets/enoch/months/tevet.png"),
 
-    themeColor: "#7dd3fc" // Tevet
+    themeColor: "#7dd3fc", // Tevet
   },
 
   {
@@ -188,7 +188,7 @@ export const ENOCH_MONTHS: EnochMonth[] = [
 
     symbolImage: require("../../assets/enoch/months/shevat.png"),
 
-    themeColor: "#2da8dd" // Shevat
+    themeColor: "#2da8dd", // Shevat
   },
 
   {
@@ -204,6 +204,6 @@ export const ENOCH_MONTHS: EnochMonth[] = [
 
     symbolImage: require("../../assets/enoch/months/adar.png"),
 
-    themeColor: "#0369a1" // Adar
+    themeColor: "#0369a1", // Adar
   },
 ];

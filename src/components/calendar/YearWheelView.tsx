@@ -173,10 +173,7 @@ function LegendRest({ color, label }: { color: string; label: string }) {
  * Creates the circular Enoch year wheel view.
  * This UX component renders months, day markers, seasonal gates, sabbath markers, and month/day press targets.
  */
-export default function YearWheelView({
-  nodes,
-  onPressMonth,
-}: Props) {
+export default function YearWheelView({ nodes, onPressMonth }: Props) {
   const months = Array.from({ length: 12 }, (_, index) => index + 1);
 
   const todayNode = nodes.find((node) => {
@@ -190,10 +187,13 @@ export default function YearWheelView({
   });
 
   return (
-    <View style={{
-      alignItems: "center", marginTop: 0,
-      marginBottom: 24
-    }}>
+    <View
+      style={{
+        alignItems: "center",
+        marginTop: 0,
+        marginBottom: 24,
+      }}
+    >
       <Text
         style={{
           marginBottom: 16,
@@ -245,61 +245,58 @@ export default function YearWheelView({
 
         {todayNode?.enoch?.dayOfYear
           ? (() => {
-            const angle = getAngleForDay(todayNode.enoch.dayOfYear);
-            const radius = OUTER_RING_SIZE / 2 + 4;
+              const angle = getAngleForDay(todayNode.enoch.dayOfYear);
+              const radius = OUTER_RING_SIZE / 2 + 4;
 
-            const x = OUTER_CENTER + Math.cos(angle) * radius;
-            const y = OUTER_CENTER + Math.sin(angle) * radius;
+              const x = OUTER_CENTER + Math.cos(angle) * radius;
+              const y = OUTER_CENTER + Math.sin(angle) * radius;
 
-            return (
-              <View
-                style={{
-                  position: "absolute",
-
-                  left: x - 14,
-                  top: y - 10,
-
-                  alignItems: "center",
-
-                  zIndex: 40,
-                }}
-              >
-
-                <Text
+              return (
+                <View
                   style={{
-                    fontSize: 20,
-                    fontWeight: "900",
+                    position: "absolute",
 
-                    color: "#dc2626",
+                    left: x - 14,
+                    top: y - 10,
 
-                    transform: [
-                      {
-                        rotate: `${angle}rad`,
-                      },
-                    ],
+                    alignItems: "center",
+
+                    zIndex: 40,
                   }}
                 >
-                  ◀
-                </Text>
-                <Text
-                  style={{
-                    marginTop: -2,
-                    marginRight: 6,
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      fontWeight: "900",
 
-                    fontSize: 10,
+                      color: "#dc2626",
 
-                    fontWeight: "900",
+                      transform: [
+                        {
+                          rotate: `${angle}rad`,
+                        },
+                      ],
+                    }}
+                  >
+                    ◀
+                  </Text>
+                  <Text
+                    style={{
+                      marginTop: -2,
+                      marginRight: 6,
 
-                    color: "#991b1b",
-                  }}
-                >
-                  {todayNode.enoch.day}
-                </Text>
+                      fontSize: 10,
 
-              </View>
+                      fontWeight: "900",
 
-            );
-          })()
+                      color: "#991b1b",
+                    }}
+                  >
+                    {todayNode.enoch.day}
+                  </Text>
+                </View>
+              );
+            })()
           : null}
 
         <View
@@ -393,11 +390,9 @@ export default function YearWheelView({
           {months.map((_, index) => {
             const angle = -(index / 12) * Math.PI * 2;
 
-            const startX =
-              CENTER + Math.cos(angle) * MONTH_RING_INNER_RADIUS;
+            const startX = CENTER + Math.cos(angle) * MONTH_RING_INNER_RADIUS;
 
-            const startY =
-              CENTER + Math.sin(angle) * MONTH_RING_INNER_RADIUS;
+            const startY = CENTER + Math.sin(angle) * MONTH_RING_INNER_RADIUS;
 
             const length = SIZE / 2 - MONTH_RING_INNER_RADIUS;
 
@@ -559,8 +554,6 @@ export default function YearWheelView({
         <LegendDot color="#38bdf8" label="Winter Gate" />
         <LegendRest color="#ca8a04" label="High Sabbath" />
         <LegendRest color="#2563eb" label="Sabbath" />
-
-
       </View>
     </View>
   );

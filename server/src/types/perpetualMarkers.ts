@@ -5,18 +5,18 @@
  */
 
 export type PerpetualMarker = {
-    id: string;
+  id: string;
 
-    title: string;
-    shortName: string;
-    color: string;
+  title: string;
+  shortName: string;
+  color: string;
 
-    description?: string;
+  description?: string;
 
-    month?: number;
-    day?: number;
+  month?: number;
+  day?: number;
 
-    gateDay?: number;
+  gateDay?: number;
 
-    intercalaryWeek?: boolean;
+  intercalaryWeek?: boolean;
 };

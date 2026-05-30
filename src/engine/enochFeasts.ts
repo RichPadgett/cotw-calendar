@@ -18,13 +18,8 @@ export function getEnochDayEvents(params: {
   isWeeklySabbath: boolean;
   computedFeasts?: ComputedFeasts;
 }): EnochDayEvent[] {
-  const {
-    monthNumber,
-    day,
-    dayOfYear,
-    isWeeklySabbath,
-    computedFeasts,
-  } = params;
+  const { monthNumber, day, dayOfYear, isWeeklySabbath, computedFeasts } =
+    params;
 
   const events: EnochDayEvent[] = [];
 
@@ -53,46 +48,46 @@ export function getEnochDayEvents(params: {
   }
 
   if (computedFeasts?.firstfruitsDayOfYear === dayOfYear) {
-  events.push({
-    id: "firstfruits",
-    englishName: "Firstfruits",
-    hebrewName: "Bikkurim",
-    shortName: "Omer",
-    type: "feast",
-    icon: "firstfruits",
-    color: "#65a30d",
-  });
-}
+    events.push({
+      id: "firstfruits",
+      englishName: "Firstfruits",
+      hebrewName: "Bikkurim",
+      shortName: "Omer",
+      type: "feast",
+      icon: "firstfruits",
+      color: "#65a30d",
+    });
+  }
 
-const omerIndex =
-  computedFeasts?.omerSabbathDaysOfYear.indexOf(dayOfYear) ?? -1;
+  const omerIndex =
+    computedFeasts?.omerSabbathDaysOfYear.indexOf(dayOfYear) ?? -1;
 
-if (omerIndex >= 0) {
-  const omerNumber = omerIndex + 1;
+  if (omerIndex >= 0) {
+    const omerNumber = omerIndex + 1;
 
-  events.push({
-    id: `omer-sabbath-${omerNumber}`,
-    englishName: `Omer Sabbath ${omerNumber}`,
-    hebrewName: "Counting of the Omer",
-    shortName: `Omer ${omerNumber}`,
-    type: "counting-day",
-    icon: "omer",
-    color: "#84cc16",
-  });
-}
+    events.push({
+      id: `omer-sabbath-${omerNumber}`,
+      englishName: `Omer Sabbath ${omerNumber}`,
+      hebrewName: "Counting of the Omer",
+      shortName: `Omer ${omerNumber}`,
+      type: "counting-day",
+      icon: "omer",
+      color: "#84cc16",
+    });
+  }
 
-if (computedFeasts?.shavuotDayOfYear === dayOfYear) {
-  events.push({
-    id: "shavuot",
-    englishName: "Shavuot",
-    hebrewName: "Shavuot",
-    shortName: "Shav",
-    type: "high-sabbath",
-    icon: "wheat",
-    color: "#eab308",
-    isHighSabbath: true,
-  });
-}
+  if (computedFeasts?.shavuotDayOfYear === dayOfYear) {
+    events.push({
+      id: "shavuot",
+      englishName: "Shavuot",
+      hebrewName: "Shavuot",
+      shortName: "Shav",
+      type: "high-sabbath",
+      icon: "wheat",
+      color: "#eab308",
+      isHighSabbath: true,
+    });
+  }
 
   if (monthNumber === 1 && day === 14) {
     events.push({

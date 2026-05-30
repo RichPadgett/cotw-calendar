@@ -126,11 +126,7 @@ describe("applyEnochOverlay", () => {
     const year = buildEnochYear(config);
 
     const node = year.find(
-      (node) =>
-        node.enoch?.month?.number === 1 &&
-        node.enoch?.day === 12
-
-        
+      (node) => node.enoch?.month?.number === 1 && node.enoch?.day === 12
     );
 
     expect(node?.enoch?.events).toEqual(
@@ -142,23 +138,19 @@ describe("applyEnochOverlay", () => {
     );
 
     console.log({
-  gregorianDate: node?.gregorianDate,
-  dayOfYear: node?.enoch?.dayOfYear,
-  month: node?.enoch?.month?.number,
-  day: node?.enoch?.day,
-  events: node?.enoch?.events,
-});
+      gregorianDate: node?.gregorianDate,
+      dayOfYear: node?.enoch?.dayOfYear,
+      month: node?.enoch?.month?.number,
+      day: node?.enoch?.day,
+      events: node?.enoch?.events,
+    });
   });
-
-  
 
   it("adds Shavuot on month 3 day 1 by Sabbath count", () => {
     const year = buildEnochYear(config);
 
     const node = year.find(
-      (node) =>
-        node.enoch?.month?.number === 3 &&
-        node.enoch?.day === 1
+      (node) => node.enoch?.month?.number === 3 && node.enoch?.day === 1
     );
 
     expect(node?.enoch?.events).toEqual(
@@ -224,9 +216,9 @@ describe("applyEnochOverlay", () => {
   });
 
   it("throws when date is before the configured Enoch year", () => {
-    expect(() =>
-      applyEnochOverlay([makeNode("2026-03-17")], config)
-    ).toThrow("Invalid Enoch dayOfYear");
+    expect(() => applyEnochOverlay([makeNode("2026-03-17")], config)).toThrow(
+      "Invalid Enoch dayOfYear"
+    );
   });
 });
 

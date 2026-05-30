@@ -30,7 +30,7 @@ export function buildMonth(year: number, month: number): CalendarNode[] {
         year,
         month,
         day,
-        dayOfWeek: date.getDay()
+        dayOfWeek: date.getDay(),
       },
     });
   }

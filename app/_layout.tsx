@@ -4,7 +4,7 @@
  * Author: rpadgett
  */
 
-import { Stack } from 'expo-router'
+import { Stack } from "expo-router";
 
 /**
  * Creates the root Expo Router layout component that renders the active route slot.
@@ -15,8 +15,8 @@ export default function RootLayout() {
     <Stack
       screenOptions={{
         headerShown: false,
-        contentStyle: { backgroundColor: '#111827' },
+        contentStyle: { backgroundColor: "#111827" },
       }}
     />
-  )
+  );
 }

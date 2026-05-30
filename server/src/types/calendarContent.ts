@@ -68,7 +68,4 @@ export type CalendarDayContent = {
   notes?: string;
 };
 
-export type CalendarAccess =
-  | "public"
-  | "members"
-  | "code-required";
+export type CalendarAccess = "public" | "members" | "code-required";

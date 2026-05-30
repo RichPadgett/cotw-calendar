@@ -227,17 +227,12 @@ export default function YearView({
                     node.enoch?.isSabbathWeek === true;
 
                   return (
-                    matchesMonthDay ||
-                    matchesGateDay ||
-                    matchesIntercalaryWeek
+                    matchesMonthDay || matchesGateDay || matchesIntercalaryWeek
                   );
                 });
 
                 return (
-                  <View
-                    key={node.id}
-                    style={{ width: "14.2857%", padding: 2 }}
-                  >
+                  <View key={node.id} style={{ width: "14.2857%", padding: 2 }}>
                     <DayCell
                       node={node}
                       hasNotice={hasNotice}
@@ -250,7 +245,9 @@ export default function YearView({
               })}
             </View>
 
-            {intercalaryNode && <IntercalaryRow node={intercalaryNode} onPressDay={onPressDay} />}
+            {intercalaryNode && (
+              <IntercalaryRow node={intercalaryNode} onPressDay={onPressDay} />
+            )}
           </View>
         );
       })}

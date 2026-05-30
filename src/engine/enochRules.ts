@@ -10,21 +10,16 @@ import { ComputedFeasts } from "./enochComputedFeasts";
 import { getEnochDayEvents } from "./enochFeasts";
 import { ENOCH_MONTHS } from "./enochMonths";
 
-import {
-  ENOCH_DAYS_PER_QUARTER,
-  ENOCH_DAYS_PER_YEAR
-} from "./enochConstants";
+import { ENOCH_DAYS_PER_QUARTER, ENOCH_DAYS_PER_YEAR } from "./enochConstants";
 
 // Constants
 const FIRSTFRUITS_DAY_OF_YEAR = 19;
 
 const FIRST_OMER_SABBATH_DAY_OF_YEAR = 21;
 
-const SEVENTH_OMER_SABBATH_DAY_OF_YEAR =
-  FIRST_OMER_SABBATH_DAY_OF_YEAR + 6 * 7;
+const SEVENTH_OMER_SABBATH_DAY_OF_YEAR = FIRST_OMER_SABBATH_DAY_OF_YEAR + 6 * 7;
 
-const SHAVUOT_DAY_OF_YEAR =
-  SEVENTH_OMER_SABBATH_DAY_OF_YEAR + 1;
+const SHAVUOT_DAY_OF_YEAR = SEVENTH_OMER_SABBATH_DAY_OF_YEAR + 1;
 
 /*
   Applies the Enoch overlay to Gregorian-backed CalendarNodes.
@@ -58,12 +53,12 @@ export function applyEnochOverlay(
     return {
       ...node,
 
-enoch: getEnochDay({
-  enochYear: config.enochYear,
-  dayOfYear,
-  gregorianDayOfWeek: node.gregorian.dayOfWeek,
-  computedFeasts,
-}),
+      enoch: getEnochDay({
+        enochYear: config.enochYear,
+        dayOfYear,
+        gregorianDayOfWeek: node.gregorian.dayOfWeek,
+        computedFeasts,
+      }),
     };
   });
 }
@@ -118,24 +113,14 @@ function getEnochDay(params: {
   gregorianDayOfWeek: number;
   computedFeasts?: ComputedFeasts;
 }) {
-const {
-  enochYear,
-  dayOfYear,
-  gregorianDayOfWeek,
-  computedFeasts,
-} = params;
+  const { enochYear, dayOfYear, gregorianDayOfWeek, computedFeasts } = params;
 
   /*
     Validate Enoch year bounds.
   */
 
-  if (
-    dayOfYear < 1 ||
-    dayOfYear > ENOCH_DAYS_PER_YEAR
-  ) {
-    throw new Error(
-      `Invalid Enoch dayOfYear: ${dayOfYear}`
-    );
+  if (dayOfYear < 1 || dayOfYear > ENOCH_DAYS_PER_YEAR) {
+    throw new Error(`Invalid Enoch dayOfYear: ${dayOfYear}`);
   }
 
   /*
@@ -150,15 +135,11 @@ const {
     Total = 91 days
   */
 
-  const quarter = Math.ceil(
-    dayOfYear / ENOCH_DAYS_PER_QUARTER
-  );
+  const quarter = Math.ceil(dayOfYear / ENOCH_DAYS_PER_QUARTER);
 
-  const quarterDay =
-    ((dayOfYear - 1) % ENOCH_DAYS_PER_QUARTER) + 1;
+  const quarterDay = ((dayOfYear - 1) % ENOCH_DAYS_PER_QUARTER) + 1;
 
-  const isIntercalary =
-    quarterDay === ENOCH_DAYS_PER_QUARTER;
+  const isIntercalary = quarterDay === ENOCH_DAYS_PER_QUARTER;
 
   /*
     Weekly Sabbath detection.
@@ -170,8 +151,7 @@ const {
     if you decide the app should not depend on Gregorian weekdays.
   */
 
-  const isWeeklySabbath =
-    gregorianDayOfWeek === 6;
+  const isWeeklySabbath = gregorianDayOfWeek === 6;
 
   /*
     Intercalary / Gate Day
@@ -210,39 +190,36 @@ const {
     normal days 1–90 divide into three 30-day months.
   */
 
-/*
+  /*
   Remove gate day from month/day math.
   Quarter day 91 is already handled above.
 */
 
-const normalQuarterDay = quarterDay;
+  const normalQuarterDay = quarterDay;
 
-/*
+  /*
   Month inside quarter:
     1–30   => month 1
     31–60  => month 2
     61–90  => month 3
 */
 
-const monthInQuarter =
-  Math.floor((normalQuarterDay - 1) / 30) + 1;
+  const monthInQuarter = Math.floor((normalQuarterDay - 1) / 30) + 1;
 
-/*
+  /*
   Absolute month number:
     Q1 => 1,2,3
     Q2 => 4,5,6
 */
 
-const monthNumber =
-  (quarter - 1) * 3 + monthInQuarter;
+  const monthNumber = (quarter - 1) * 3 + monthInQuarter;
 
-/*
+  /*
   Day inside month:
     1–30 repeating
 */
 
-const day =
-  ((normalQuarterDay - 1) % 30) + 1;
+  const day = ((normalQuarterDay - 1) % 30) + 1;
 
   /*
     Look up month metadata:
@@ -258,22 +235,20 @@ const day =
   );
 
   if (!monthDefinition) {
-    throw new Error(
-      `Missing Enoch month definition: ${monthNumber}`
-    );
+    throw new Error(`Missing Enoch month definition: ${monthNumber}`);
   }
 
   /*
     Attach feast / Sabbath / appointed-day metadata.
   */
 
-const events = getEnochDayEvents({
-  monthNumber: monthDefinition.number,
-  day,
-  dayOfYear,
-  isWeeklySabbath,
-  computedFeasts,
-});
+  const events = getEnochDayEvents({
+    monthNumber: monthDefinition.number,
+    day,
+    dayOfYear,
+    isWeeklySabbath,
+    computedFeasts,
+  });
 
   return {
     year: enochYear,
@@ -305,9 +280,7 @@ const events = getEnochDayEvents({
  * Maps an Enoch quarter number to its season name.
  * This labeling helper supports month headers, cell styling, and seasonal UI text.
  */
-function getSeasonForQuarter(
-  quarter: number
-): EnochSeason {
+function getSeasonForQuarter(quarter: number): EnochSeason {
   switch (quarter) {
     case 1:
       return "summer";
@@ -322,9 +295,7 @@ function getSeasonForQuarter(
       return "spring";
 
     default:
-      throw new Error(
-        `Invalid Enoch quarter: ${quarter}`
-      );
+      throw new Error(`Invalid Enoch quarter: ${quarter}`);
   }
 }
 
@@ -337,10 +308,7 @@ function getSeasonForQuarter(
  * This formatting helper keeps generated labels readable in the UI.
  */
 function capitalize(value: string): string {
-  return (
-    value.charAt(0).toUpperCase() +
-    value.slice(1)
-  );
+  return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
 /*
@@ -355,8 +323,7 @@ function capitalize(value: string): string {
  * This date helper avoids timezone rollback when comparing calendar-only values.
  */
 function parseDateOnly(value: string): Date {
-  const [year, month, day] =
-    value.split("-").map(Number);
+  const [year, month, day] = value.split("-").map(Number);
 
   return new Date(year, month - 1, day);
 }

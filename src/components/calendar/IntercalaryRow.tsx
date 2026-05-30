@@ -28,19 +28,16 @@ export default function IntercalaryRow({ node, onPressDay }: Props) {
           ? "#ea580c"
           : "#2563eb";
 
-  const [year, month, day] = node.gregorianDate
-    .split("-")
-    .map(Number);
+  const [year, month, day] = node.gregorianDate.split("-").map(Number);
 
-  const gregorianLabel = new Date(
-    year,
-    month - 1,
-    day
-  ).toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
+  const gregorianLabel = new Date(year, month - 1, day).toLocaleDateString(
+    "en-US",
+    {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    }
+  );
 
   return (
     <Pressable onPress={() => onPressDay?.(node)}>

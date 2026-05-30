@@ -40,12 +40,7 @@ export const ENOCH_DAYS_PER_QUARTER = 91;
  * Day-of-year positions for quarter-ending intercalary gate days.
  * This engine constant identifies special days outside the standard month grid.
  */
-export const ENOCH_INTERCALARY_DAYS = [
-  91,
-  182,
-  273,
-  364,
-] as const;
+export const ENOCH_INTERCALARY_DAYS = [91, 182, 273, 364] as const;
 
 /**
  * Full degree span of the circular year wheel.
