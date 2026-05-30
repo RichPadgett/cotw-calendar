@@ -10,15 +10,13 @@ import { useEffect, useRef, useState } from "react";
 import {
   Alert,
   Linking,
-  Modal,
-  Pressable,
   ScrollView,
   Text,
   View
 } from "react-native";
 
 // App components
-import AdminDayContentForm from "../src/components/admin/AdminDayContentForm";
+import DayDetailModal from "../src/components/calendar/DayDetailModal";
 import MonthHeader from "../src/components/calendar/MonthHeader";
 import YearView from "../src/components/calendar/YearView";
 import YearWheelView from "../src/components/calendar/YearWheelView";
@@ -26,14 +24,17 @@ import WelcomeScreen from "../src/components/onboarding/WelcomeScreen";
 
 // Calendar engine and models
 import { buildEnochYear } from "../src/engine/buildEnochYear";
+import {
+  getEnochYearStartDate
+} from "../src/engine/enochYear";
 import { CalendarNode } from "../src/models/calendar";
 
 // Shared app types
+import type {
+  DayContent
+} from "../src/types/calendarContent.ts";
 import type { PerpetualMarker } from "../src/types/perpetualMarkers";
 
-// Calendar baseline and app configuration
-const BASE_ENOCH_YEAR = 2026;
-const BASE_START_DATE = "2026-03-18";
 
 const STICKY_HEADER_OFFSET = 220;
 const YEAR_VIEW_TOP_OFFSET = 685;
@@ -41,69 +42,6 @@ const GROUP_CODE_STORAGE_KEY = "groupCode";
 
 const API_BASE_URL = "http://localhost:3001";
 
-// API response shapes consumed by the day detail modal
-type ScriptureReading = {
-  label?: string;
-  reference?: string;
-  url?: string;
-};
-
-type DayContentItem = {
-  label?: string;
-  type?: string;
-  url?: string;
-  access?: string;
-};
-
-type DayContentSection = {
-  title?: string;
-  items?: DayContentItem[];
-};
-
-type DayContent = {
-  title?: string;
-  notes?: string;
-  scriptureReadings?: ScriptureReading[];
-  sections?: DayContentSection[];
-};
-
-// Date helpers
-/**
- * Calculates the Gregorian start date for a requested Enoch year.
- * This date helper advances from the configured base year and accounts for sabbath-week year offsets.
- */
-function getEnochYearStartDate(targetYear: number): string {
-  let currentStartDate = BASE_START_DATE;
-
-  for (let year = BASE_ENOCH_YEAR; year < targetYear; year++) {
-    const completedYearNumber = year - BASE_ENOCH_YEAR + 1;
-    const hasSabbathWeekAfterYear = completedYearNumber % 6 === 0;
-
-    currentStartDate = addDays(
-      currentStartDate,
-      hasSabbathWeekAfterYear ? 371 : 364
-    );
-  }
-
-  return currentStartDate;
-}
-
-/**
- * Adds calendar days to a YYYY-MM-DD string using UTC date math.
- * This keeps year-start calculations stable across local timezone boundaries.
- */
-function addDays(dateString: string, days: number): string {
-  const [year, month, day] = dateString.split("-").map(Number);
-
-  const date = new Date(Date.UTC(year, month - 1, day));
-  date.setUTCDate(date.getUTCDate() + days);
-
-  const nextYear = date.getUTCFullYear();
-  const nextMonth = String(date.getUTCMonth() + 1).padStart(2, "0");
-  const nextDay = String(date.getUTCDate()).padStart(2, "0");
-
-  return `${nextYear}-${nextMonth}-${nextDay}`;
-}
 
 /**
  * Creates the main calendar UX screen.
@@ -117,7 +55,7 @@ export default function HomeScreen() {
   // Calendar view state
   const [visibleEnochYear, setVisibleEnochYear] = useState(2026);
   const [activeMonthNumber, setActiveMonthNumber] = useState(1);
-  const [isAdminMode, setIsAdminMode] = useState(false);
+
 
   // Group entry and group-specific content state
   const [hasEnteredApp, setHasEnteredApp] = useState(false);
@@ -136,6 +74,8 @@ export default function HomeScreen() {
   const [perpetualMarkers, setPerpetualMarkers] = useState<PerpetualMarker[]>([]);
   const [perpetualMarkersChecksum, setPerpetualMarkersChecksum] =
     useState<string | null>(null);
+
+  const [isAdminMode, setIsAdminMode] = useState(false);
 
   // Derived calendar data
   const config = {
@@ -228,7 +168,7 @@ export default function HomeScreen() {
         if (savedGroupCode) {
           setGroupCode(savedGroupCode);
           setHasEnteredApp(true);
-          
+
         }
       } finally {
         setHasLoadedGroupCode(true);
@@ -573,342 +513,21 @@ export default function HomeScreen() {
           onPressDay={openDay}
         />
       </ScrollView>
+      <DayDetailModal
+        visible={Boolean(selectedNode)}
+        selectedNode={selectedNode}
+        dayContent={dayContent}
+        selectedDayMarkers={selectedDayMarkers}
+        isAdminMode={isAdminMode}
+        groupCode={groupCode}
+        onClose={closeDay}
+        onToggleAdminMode={() => setIsAdminMode((value) => !value)}
+        onChangeGroup={confirmChangeGroup}
+        onPreviousDay={goToPreviousDay}
+        onNextDay={goToNextDay}
+      />
 
-      <Modal
-        visible={Boolean(selectedNode)} animationType="slide" transparent>
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: "rgba(0,0,0,0.35)",
-            justifyContent: "flex-end",
-          }}
-        >
-          <View
-            style={{
-              backgroundColor: "#ffffff",
-              borderTopLeftRadius: 24,
-              borderTopRightRadius: 24,
-              height: "85%",
-              overflow: "hidden",
-            }}
-          >
-            <ScrollView
-              style={{ flex: 1 }}
-              contentContainerStyle={{
-                padding: 24,
-                paddingBottom: 24,
-              }}
-            >
-              <Pressable
-                onPress={closeDay}
-                style={{
-                  alignSelf: "flex-end",
-                  padding: 12,
-                }}
-              >
-                <Text style={{ fontSize: 18, fontWeight: "700" }}>
-                  Close
-                </Text>
-              </Pressable>
-              <Pressable
-                onPress={() => setIsAdminMode((value) => !value)}
-                style={{
-                  alignSelf: "flex-end",
-                  padding: 12,
-                }}>
-                <Text style={{ fontSize: 13, fontWeight: "800", color: "#2563eb" }}>
-                  {isAdminMode ? "Exit Admin" : "Admin Mode"}
-                </Text>
-              </Pressable>
-              <Pressable
-                onPress={confirmChangeGroup}
-                style={{
-                  alignSelf: "flex-end",
-                  padding: 12,
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 13,
-                    fontWeight: "800",
-                    color: "#dc2626",
-                  }}
-                >
-                  Change Group
-                </Text>
-              </Pressable>
-              <Text style={{ fontSize: 32, fontWeight: "800" }}>
-                {modalTitle}
-              </Text>
 
-              <Text
-                style={{
-                  marginTop: 8,
-                  fontSize: 18,
-                  color: "#6b7280",
-                }}
-              >
-                {modalDateLabel}
-              </Text>
-
-              {selectedNode?.enoch?.events?.map((event) => (
-                <View
-                  key={event.id}
-                  style={{
-                    marginTop: 12,
-                    padding: 10,
-                    borderRadius: 12,
-                    backgroundColor: event.color ?? "#2563eb",
-                  }}
-                >
-                  <Text style={{ color: "white", fontWeight: "800" }}>
-                    {event.englishName}
-                  </Text>
-                </View>
-              ))}
-              {selectedDayMarkers.map((marker) => (
-                <View
-                  key={marker.id}
-                  style={{
-                    marginTop: 12,
-                    padding: 10,
-                    borderRadius: 12,
-                    backgroundColor: marker.color,
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: "white",
-                      fontWeight: "800",
-                    }}
-                  >
-                    {marker.title}
-                  </Text>
-                </View>
-              ))}
-
-              {selectedNode?.enoch?.month?.number &&
-                selectedNode?.enoch?.day && (
-                  <View
-                    style={{
-                      marginTop: 24,
-                      paddingTop: 20,
-                      borderTopWidth: 1,
-                      borderTopColor: "#e5e7eb",
-                    }}
-                  >
-
-                    {isAdminMode &&
-                      selectedNode?.enoch?.month?.number &&
-                      selectedNode?.enoch?.day && (
-                        <AdminDayContentForm
-                          enochYear={selectedNode.enoch.year}
-                          month={selectedNode.enoch.month.number}
-                          day={selectedNode.enoch.day}
-                          groupCode={groupCode}
-                        />)}
-
-                  </View>
-                )}
-
-              {dayContent?.notes ? (
-                <View
-                  style={{
-                    marginTop: 24,
-                    padding: 14,
-                    borderRadius: 14,
-                    backgroundColor: "#f3f4f6",
-                  }}
-                >
-
-                  <Text style={{ fontWeight: "800", marginBottom: 6 }}>
-                    Notes
-                  </Text>
-
-                  <Text style={{ fontSize: 14, color: "#374151" }}>
-                    {String(dayContent.notes)}
-                  </Text>
-                </View>
-              ) : null}
-
-              {Array.isArray(dayContent?.scriptureReadings) &&
-                dayContent.scriptureReadings.length > 0 ? (
-                <Text
-                  style={{
-                    marginTop: 24,
-                    marginBottom: 10,
-                    fontSize: 20,
-                    fontWeight: "800",
-                  }}
-                >
-                  Scripture Readings
-                </Text>
-              ) : null}
-
-              {Array.isArray(dayContent?.scriptureReadings) &&
-                dayContent.scriptureReadings.map((reading, index) => (
-                  <View
-                    key={`reading-${index}`}
-                    style={{
-                      backgroundColor: "white",
-                      borderRadius: 12,
-                      padding: 12,
-                      marginBottom: 10,
-                      borderLeftWidth: 4,
-                      borderLeftColor: "#2563eb",
-                      borderWidth: 1,
-                      borderColor: "#e5e7eb",
-                    }}
-                  >
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        fontWeight: "700",
-                        color: "#111827",
-                      }}
-                    >
-                      {String(reading.label ?? "Scripture")}
-                    </Text>
-
-                    <Text
-                      style={{
-                        marginTop: 2,
-                        fontSize: 13,
-                        color: "#6b7280",
-                      }}
-                    >
-                      {String(reading.reference ?? "")}
-                    </Text>
-
-                    {reading.url ? (
-                      <Pressable
-                        onPress={() => openUrl(reading.url)}
-                        style={{ marginTop: 8 }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: 12,
-                            fontWeight: "700",
-                            color: "#2563eb",
-                          }}
-                        >
-                          Open Scripture
-                        </Text>
-                      </Pressable>
-                    ) : null}
-                  </View>
-                ))}
-
-              {Array.isArray(dayContent?.sections) &&
-                dayContent.sections.map((section, sectionIndex) => (
-                  <View key={`section-${sectionIndex}`}>
-                    <Text
-                      style={{
-                        marginTop: 24,
-                        marginBottom: 10,
-                        fontSize: 20,
-                        fontWeight: "800",
-                      }}
-                    >
-                      {String(section.title ?? "Section")}
-                    </Text>
-
-                    {Array.isArray(section.items) &&
-                      section.items.map((item, itemIndex) => (
-                        <View
-                          key={`item-${sectionIndex}-${itemIndex}`}
-                          style={{
-                            backgroundColor: "#f9fafb",
-                            borderRadius: 12,
-                            padding: 12,
-                            marginBottom: 10,
-                            borderWidth: 1,
-                            borderColor: "#e5e7eb",
-                          }}
-                        >
-                          <Text
-                            style={{
-                              fontSize: 15,
-                              fontWeight: "800",
-                            }}
-                          >
-                            {String(item.label ?? "Untitled")}
-                          </Text>
-
-                          <Text
-                            style={{
-                              marginTop: 4,
-                              fontSize: 12,
-                              color: "#6b7280",
-                              textTransform: "uppercase",
-                            }}
-                          >
-                            {String(
-                              `${item.type ?? "link"} • ${item.access ?? "public"
-                              }`
-                            )}
-                          </Text>
-
-                          {item.url ? (
-                            <Pressable
-                              onPress={() => openUrl(item.url)}
-                              style={{ marginTop: 10 }}
-                            >
-                              <Text
-                                style={{
-                                  fontSize: 12,
-                                  fontWeight: "700",
-                                  color: "#2563eb",
-                                }}
-                              >
-                                Open
-                              </Text>
-                            </Pressable>
-                          ) : null}
-                        </View>
-                      ))}
-                  </View>
-                ))}
-            </ScrollView>
-
-            <View
-              style={{
-                paddingVertical: 14,
-                paddingHorizontal: 24,
-                borderTopWidth: 1,
-                borderTopColor: "#e5e7eb",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                backgroundColor: "#ffffff",
-              }}
-            >
-              <Pressable onPress={goToPreviousDay}>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: "700",
-                    color: "#2563eb",
-                  }}
-                >
-                  Previous
-                </Text>
-              </Pressable>
-
-              <Pressable onPress={goToNextDay}>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: "700",
-                    color: "#2563eb",
-                  }}
-                >
-                  Next
-                </Text>
-              </Pressable>
-            </View>
-          </View>
-        </View>
-      </Modal>
     </>
   );
 }
