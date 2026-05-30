@@ -1,11 +1,17 @@
-// src/components/calendar/DayCell.tsx
+/*
+ * File: src/components/calendar/DayCell.tsx
+ * Purpose: Calendar UI component for rendering DayCell behavior and presentation.
+ * Author: rpadgett
+ */
 
+// Dependencies
 import { Image, Pressable, Text, View } from "react-native";
 
 import ScrollIcon from "../../../assets/enoch/icons/scroll.png";
 import { CalendarNode } from "../../models/calendar";
 import { PerpetualMarker } from "../../types/perpetualMarkers";
 
+// Types
 type Props = {
   node: CalendarNode;
   onPressDay?: (node: CalendarNode) => void;
@@ -14,6 +20,11 @@ type Props = {
   perpetualMarkers?: PerpetualMarker[];
 };
 
+// Helpers
+/**
+ * Formats the current local date as YYYY-MM-DD.
+ * This date helper is used to highlight today's calendar cell during development and runtime.
+ */
 function getTodayDateId(): string {
   const date = new Date();
   const year = date.getFullYear();
@@ -23,6 +34,11 @@ function getTodayDateId(): string {
   return `${year}-${month}-${day}`;
 }
 
+// Public API
+/**
+ * Creates one tappable day cell in the calendar grid.
+ * This UX component renders Enoch day numbers, Gregorian labels, event markers, notice/content badges, and today highlighting.
+ */
 export function DayCell({
   node,
   onPressDay,

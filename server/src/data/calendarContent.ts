@@ -1,7 +1,15 @@
-// server/src/data/calendarContent.ts
+/*
+ * File: server/src/data/calendarContent.ts
+ * Purpose: Seed data module for calendar day content used by the local server.
+ * Author: rpadgett
+ */
 
 import { CalendarDayContent } from "../types/calendarContent";
 
+/**
+ * Seed list of full calendar day-content records.
+ * This data export supports server-side fixtures or migration from static content into saved files.
+ */
 export const calendarContent: CalendarDayContent[] = [
  {
   enochYear: 2026,

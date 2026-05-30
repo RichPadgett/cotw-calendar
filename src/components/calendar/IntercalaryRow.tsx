@@ -1,4 +1,8 @@
-// src/components/calendar/IntercalaryRow.tsx
+/*
+ * File: src/components/calendar/IntercalaryRow.tsx
+ * Purpose: Calendar UI component for rendering IntercalaryRow behavior and presentation.
+ * Author: rpadgett
+ */
 
 import { Pressable, Text, View } from "react-native";
 import { CalendarNode } from "../../models/calendar";
@@ -8,6 +12,10 @@ type Props = {
   onPressDay?: (node: CalendarNode) => void;
 };
 
+/**
+ * Creates the row used for intercalary gate days after each quarter.
+ * This UX component gives special calendar days their own full-width presentation.
+ */
 export default function IntercalaryRow({ node, onPressDay }: Props) {
   const season = node.enoch?.season ?? "spring";
 

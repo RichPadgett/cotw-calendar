@@ -1,3 +1,9 @@
+/*
+ * File: server/src/types/calendarContent.ts
+ * Purpose: Shared app-side TypeScript type definitions.
+ * Author: rpadgett
+ */
+
 export type CalendarContentItem = {
   label: string;
   type:

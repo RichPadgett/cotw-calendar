@@ -1,6 +1,13 @@
-// src/models/calendar.ts
+/*
+ * File: src/models/calendar.ts
+ * Purpose: Shared TypeScript model definitions for calendar nodes and calendar metadata.
+ * Author: rpadgett
+ */
+
+// Dependencies
 import { ImageSourcePropType } from "react-native";
 
+// Types
 export type EnochSeason = "spring" | "summer" | "fall" | "winter";
 
 export type EnochMonth = {

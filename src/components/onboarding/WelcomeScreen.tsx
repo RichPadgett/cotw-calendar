@@ -1,3 +1,9 @@
+/*
+ * File: src/components/onboarding/WelcomeScreen.tsx
+ * Purpose: Onboarding UI for entering the calendar group code before loading the main app.
+ * Author: rpadgett
+ */
+
 import { Pressable, Text, TextInput, View } from "react-native";
 
 console.log("WelcomeScreen loaded");
@@ -7,6 +13,10 @@ type Props = {
   onContinue: () => void;
 };
 
+/**
+ * Creates the group-code welcome screen shown before the calendar loads.
+ * This UX component collects the group code and hands control back to the main app entry flow.
+ */
 export default function WelcomeScreen({
   groupCode,
   setGroupCode,

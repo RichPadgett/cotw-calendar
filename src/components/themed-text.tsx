@@ -1,3 +1,9 @@
+/*
+ * File: src/components/themed-text.tsx
+ * Purpose: Reusable interface component used by the React Native app.
+ * Author: rpadgett
+ */
+
 import { Platform, StyleSheet, Text, type TextProps } from 'react-native';
 
 import { Fonts, ThemeColor } from '@/constants/theme';
@@ -8,6 +14,10 @@ export type ThemedTextProps = TextProps & {
   themeColor?: ThemeColor;
 };
 
+/**
+ * Creates themed text using app typography and color tokens.
+ * This style component maps text variants and theme colors onto React Native Text props.
+ */
 export function ThemedText({ style, type = 'default', themeColor, ...rest }: ThemedTextProps) {
   const theme = useTheme();
 

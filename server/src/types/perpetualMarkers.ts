@@ -1,3 +1,9 @@
+/*
+ * File: server/src/types/perpetualMarkers.ts
+ * Purpose: Shared app-side TypeScript type definitions.
+ * Author: rpadgett
+ */
+
 export type PerpetualMarker = {
     id: string;
 

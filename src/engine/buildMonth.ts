@@ -1,7 +1,15 @@
-// src/engine/buildMonth.ts
+/*
+ * File: src/engine/buildMonth.ts
+ * Purpose: Calendar calculation engine module for building Enoch calendar dates, months, years, and feast metadata.
+ * Author: rpadgett
+ */
 
 import { CalendarNode } from "../models/calendar";
 
+/**
+ * Builds placeholder calendar nodes for one Gregorian month.
+ * This engine helper supports legacy month-view experiments and tests.
+ */
 export function buildMonth(year: number, month: number): CalendarNode[] {
   const daysInMonth = new Date(year, month, 0).getDate();
 

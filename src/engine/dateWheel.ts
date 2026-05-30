@@ -1,3 +1,9 @@
+/*
+ * File: src/engine/dateWheel.ts
+ * Purpose: Calendar calculation engine module for building Enoch calendar dates, months, years, and feast metadata.
+ * Author: rpadgett
+ */
+
 import { EnochSeason } from "../models/calendar";
 import {
   ENOCH_DAYS_PER_YEAR,
@@ -5,6 +11,10 @@ import {
   ENOCH_WHEEL_DEGREES_PER_DAY,
 } from "./enochConstants";
 
+/**
+ * Converts a day-of-year into a circular wheel angle.
+ * This geometry helper supports visual placement in year-wheel interfaces.
+ */
 export function getWheelAngle(dayOfYear: number): number {
   if (dayOfYear < 1 || dayOfYear > ENOCH_DAYS_PER_YEAR) {
     throw new Error(`Invalid wheel dayOfYear: ${dayOfYear}`);
@@ -14,6 +24,10 @@ export function getWheelAngle(dayOfYear: number): number {
 }
 
 
+/**
+ * Determines which seasonal gate a day belongs to on the year wheel.
+ * This engine helper maps day positions to gate labels and visual regions.
+ */
 export function getWheelGate(
   dayOfYear: number
 ): EnochSeason | undefined {

@@ -1,3 +1,9 @@
+/*
+ * File: src/components/calendar/MonthView.tsx
+ * Purpose: Calendar UI component for rendering MonthView behavior and presentation.
+ * Author: rpadgett
+ */
+
 import { View } from "react-native";
 import { Dimensions } from "react-native";
 import { DayCell } from "./DayCell";
@@ -13,6 +19,10 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 
 const CELL_WIDTH = (SCREEN_WIDTH - 32 - 12) / 7;
 
+/**
+ * Creates a compact month grid from calendar nodes.
+ * This legacy or focused UX component renders day cells in a seven-column layout.
+ */
 export default function MonthView({ nodes }: Props) {
   return (
     <View

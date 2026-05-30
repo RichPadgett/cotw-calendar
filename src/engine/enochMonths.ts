@@ -1,7 +1,15 @@
-// src/engine/enochMonths.ts
+/*
+ * File: src/engine/enochMonths.ts
+ * Purpose: Calendar calculation engine module for building Enoch calendar dates, months, years, and feast metadata.
+ * Author: rpadgett
+ */
 
 import { EnochMonth } from "../models/calendar";
 
+/**
+ * Defines the ordered Enoch month metadata used by the engine and UI.
+ * Each entry supplies names, seasons, theme colors, and symbol assets for month rendering.
+ */
 export const ENOCH_MONTHS: EnochMonth[] = [
   {
     number: 1,

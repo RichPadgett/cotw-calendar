@@ -1,3 +1,9 @@
+/*
+ * File: src/components/app-tabs.web.tsx
+ * Purpose: Reusable interface component used by the React Native app.
+ * Author: rpadgett
+ */
+
 import {
   Tabs,
   TabList,
@@ -15,6 +21,10 @@ import { ThemedView } from './themed-view';
 
 import { Colors, MaxContentWidth, Spacing } from '@/constants/theme';
 
+/**
+ * Creates the web tab shell for the starter app routes.
+ * This navigation component wires Expo Router tab slots and triggers for browser rendering.
+ */
 export default function AppTabs() {
   return (
     <Tabs>
@@ -33,6 +43,10 @@ export default function AppTabs() {
   );
 }
 
+/**
+ * Creates a styled tab button for the web tab list.
+ * This UX component changes visual state based on the focused route.
+ */
 export function TabButton({ children, isFocused, ...props }: TabTriggerSlotProps) {
   return (
     <Pressable {...props} style={({ pressed }) => pressed && styles.pressed}>
@@ -47,6 +61,10 @@ export function TabButton({ children, isFocused, ...props }: TabTriggerSlotProps
   );
 }
 
+/**
+ * Creates the web tab-list container and supporting links.
+ * This layout component wraps route triggers in the themed web navigation bar.
+ */
 export function CustomTabList(props: TabListProps) {
   const scheme = useColorScheme();
   const colors = Colors[scheme === 'unspecified' ? 'light' : scheme];

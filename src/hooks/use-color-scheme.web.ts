@@ -1,3 +1,9 @@
+/*
+ * File: src/hooks/use-color-scheme.web.ts
+ * Purpose: React hook for platform-aware theme or color-scheme behavior.
+ * Author: rpadgett
+ */
+
 import { useEffect, useState } from 'react';
 import { useColorScheme as useRNColorScheme } from 'react-native';
 

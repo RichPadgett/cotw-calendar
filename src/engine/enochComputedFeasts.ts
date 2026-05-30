@@ -1,3 +1,9 @@
+/*
+ * File: src/engine/enochComputedFeasts.ts
+ * Purpose: Calendar calculation engine module for building Enoch calendar dates, months, years, and feast metadata.
+ * Author: rpadgett
+ */
+
 import { CalendarNode } from "../models/calendar";
 
 export type ComputedFeasts = {
@@ -6,6 +12,10 @@ export type ComputedFeasts = {
   shavuotDayOfYear: number;
 };
 
+/**
+ * Computes derived feast dates for an Enoch year.
+ * This engine function turns base calendar rules into year-specific feast metadata.
+ */
 export function computeEnochFeasts(
   nodes: CalendarNode[]
 ): ComputedFeasts {

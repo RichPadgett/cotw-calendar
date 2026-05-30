@@ -1,3 +1,9 @@
+/*
+ * File: src/components/animated-icon.tsx
+ * Purpose: Reusable interface component used by the React Native app.
+ * Author: rpadgett
+ */
+
 import { Image } from 'expo-image';
 import { useState } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
@@ -7,6 +13,10 @@ import { scheduleOnRN } from 'react-native-worklets';
 const INITIAL_SCALE_FACTOR = Dimensions.get('screen').height / 90;
 const DURATION = 600;
 
+/**
+ * Creates the native animated splash overlay.
+ * This UX component drives the launch-scale animation before revealing app content.
+ */
 export function AnimatedSplashOverlay() {
   const [visible, setVisible] = useState(true);
 
@@ -80,6 +90,10 @@ const glowKeyframe = new Keyframe({
   },
 });
 
+/**
+ * Creates the animated icon used inside the native splash overlay.
+ * This visual component renders the icon asset with animated transforms.
+ */
 export function AnimatedIcon() {
   return (
     <View style={styles.iconContainer}>

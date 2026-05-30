@@ -1,8 +1,16 @@
-// src/engine/enochFeasts.ts
+/*
+ * File: src/engine/enochFeasts.ts
+ * Purpose: Calendar calculation engine module for building Enoch calendar dates, months, years, and feast metadata.
+ * Author: rpadgett
+ */
 
 import { EnochDayEvent } from "../models/calendar";
 import { ComputedFeasts } from "./enochComputedFeasts";
 
+/**
+ * Returns feast and appointed-time events for a specific Enoch day.
+ * This engine function supplies event badges and labels used by calendar UI components.
+ */
 export function getEnochDayEvents(params: {
   monthNumber?: number;
   day?: number;

@@ -1,3 +1,9 @@
+/*
+ * File: src/types/perpetualMarkers.ts
+ * Purpose: Source file for the COTW calendar application.
+ * Author: rpadgett
+ */
+
 export type PerpetualMarker = {
   id: string;
 

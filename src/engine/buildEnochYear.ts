@@ -1,9 +1,19 @@
-// src/engine/buildEnochYear.ts
+/*
+ * File: src/engine/buildEnochYear.ts
+ * Purpose: Calendar calculation engine module for building Enoch calendar dates, months, years, and feast metadata.
+ * Author: rpadgett
+ */
 
+// Dependencies
 import { CalendarNode } from "../models/calendar";
 import { computeEnochFeasts } from "./enochComputedFeasts";
 import { applyEnochOverlay, EnochYearConfig } from "./enochRules";
 
+// Helpers
+/**
+ * Formats a Date object as a YYYY-MM-DD string.
+ * This engine helper serializes generated Gregorian dates without time data.
+ */
 function formatDateOnly(date: Date): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -12,6 +22,11 @@ function formatDateOnly(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
+// Public API
+/**
+ * Builds the complete set of Enoch calendar nodes for one configured year.
+ * This engine function generates day nodes, overlays Enoch metadata, and inserts intercalary gate days.
+ */
 export function buildEnochYear(
   config: EnochYearConfig
 ): CalendarNode[] {

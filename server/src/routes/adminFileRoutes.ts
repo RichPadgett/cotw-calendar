@@ -1,3 +1,10 @@
+/*
+ * File: server/src/routes/adminFileRoutes.ts
+ * Purpose: Express route module for calendar and admin API endpoints.
+ * Author: rpadgett
+ */
+
+// Dependencies
 import { Router } from "express";
 import fs from "fs";
 import multer from "multer";
@@ -5,10 +12,19 @@ import path from "path";
 
 const router = Router();
 
+// Helpers
+/**
+ * Normalizes route/query params that may arrive as strings or arrays.
+ * This helper keeps file paths and group-code values stable for upload handling.
+ */
 function getParam(value: string | string[] | undefined): string {
   return Array.isArray(value) ? value[0] : value ?? "";
 }
 
+/**
+ * Reads the active group code from the admin upload request.
+ * This route helper ensures uploaded files are stored under the correct group folder.
+ */
 function getGroupCode(req: any) {
   return String(req.query.groupCode ?? "public");
 }
@@ -46,6 +62,10 @@ const upload = multer({
   }),
 });
 
+/**
+ * API endpoint: accepts a single uploaded file for one Enoch day.
+ * This upload endpoint stores the file and returns a group-scoped content URL for the admin form.
+ */
 router.post("/:year/:month/:day/files", upload.single("file"), (req, res) => {
   const { year, month, day } = req.params;
   const groupCode = getGroupCode(req);

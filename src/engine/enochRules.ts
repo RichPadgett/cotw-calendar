@@ -1,5 +1,10 @@
-// src/engine/enochRules.ts
+/*
+ * File: src/engine/enochRules.ts
+ * Purpose: Calendar calculation engine module for building Enoch calendar dates, months, years, and feast metadata.
+ * Author: rpadgett
+ */
 
+// Dependencies
 import { CalendarNode, EnochSeason } from "../models/calendar";
 import { ComputedFeasts } from "./enochComputedFeasts";
 import { getEnochDayEvents } from "./enochFeasts";
@@ -10,6 +15,7 @@ import {
   ENOCH_DAYS_PER_YEAR
 } from "./enochConstants";
 
+// Constants
 const FIRSTFRUITS_DAY_OF_YEAR = 19;
 
 const FIRST_OMER_SABBATH_DAY_OF_YEAR = 21;
@@ -27,11 +33,17 @@ const SHAVUOT_DAY_OF_YEAR =
   The Enoch date is projected from the configured Enoch year start date.
 */
 
+// Types
 export type EnochYearConfig = {
   enochYear: number;
   startsOnGregorianDate: string; // YYYY-MM-DD
 };
 
+// Public API
+/**
+ * Applies Enoch calendar metadata onto a Gregorian calendar node.
+ * This engine function calculates month, day, quarter, sabbath, feast, and seasonal labels.
+ */
 export function applyEnochOverlay(
   nodes: CalendarNode[],
   config: EnochYearConfig,
@@ -67,6 +79,11 @@ enoch: getEnochDay({
   2026-03-19 => dayOfYear 2
 */
 
+// Helpers
+/**
+ * Calculates the one-based Enoch day-of-year for a Gregorian date.
+ * This engine helper compares the node date against the configured year start date.
+ */
 function getEnochDayOfYear(
   gregorianDate: string,
   startsOnGregorianDate: string
@@ -91,6 +108,10 @@ function getEnochDayOfYear(
   - weekly Sabbath metadata
 */
 
+/**
+ * Converts a day-of-year into Enoch month/day/quarter metadata.
+ * This engine helper handles regular days and quarter-ending intercalary gate days.
+ */
 function getEnochDay(params: {
   enochYear: number;
   dayOfYear: number;
@@ -280,6 +301,10 @@ const events = getEnochDayEvents({
   - Day 273 = Winter gate
 */
 
+/**
+ * Maps an Enoch quarter number to its season name.
+ * This labeling helper supports month headers, cell styling, and seasonal UI text.
+ */
 function getSeasonForQuarter(
   quarter: number
 ): EnochSeason {
@@ -307,6 +332,10 @@ function getSeasonForQuarter(
   Small display helper for labels.
 */
 
+/**
+ * Capitalizes the first letter of a display string.
+ * This formatting helper keeps generated labels readable in the UI.
+ */
 function capitalize(value: string): string {
   return (
     value.charAt(0).toUpperCase() +
@@ -321,6 +350,10 @@ function capitalize(value: string): string {
   can accidentally become the previous/next day.
 */
 
+/**
+ * Parses a YYYY-MM-DD string as a local midday Date.
+ * This date helper avoids timezone rollback when comparing calendar-only values.
+ */
 function parseDateOnly(value: string): Date {
   const [year, month, day] =
     value.split("-").map(Number);

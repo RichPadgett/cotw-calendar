@@ -1,9 +1,19 @@
+/*
+ * File: src/components/external-link.tsx
+ * Purpose: Reusable interface component used by the React Native app.
+ * Author: rpadgett
+ */
+
 import { Href, Link } from 'expo-router';
 import { openBrowserAsync, WebBrowserPresentationStyle } from 'expo-web-browser';
 import { type ComponentProps } from 'react';
 
 type Props = Omit<ComponentProps<typeof Link>, 'href'> & { href: Href & string };
 
+/**
+ * Creates an Expo Router link configured for external URLs.
+ * This link component opens outside destinations while preserving platform navigation behavior.
+ */
 export function ExternalLink({ href, ...rest }: Props) {
   return (
     <Link

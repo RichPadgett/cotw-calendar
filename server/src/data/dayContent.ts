@@ -1,7 +1,15 @@
-// server/src/data/dayContent.ts
+/*
+ * File: server/src/data/dayContent.ts
+ * Purpose: Seed data module for calendar day content used by the local server.
+ * Author: rpadgett
+ */
 
 import { CalendarDayContent } from "../types/calendarContent";
 
+/**
+ * Seed lookup table for calendar day content keyed by date-like identifiers.
+ * This data export supports early server responses and static content experiments.
+ */
 export const dayContent: Record<
   string,
   CalendarDayContent

@@ -1,5 +1,11 @@
-// app/index.tsx
+/*
+ * File: app/index.tsx
+ * Purpose: Main Expo Router screen for the Enoch calendar experience, including group entry, year navigation, day details, and admin access.
+ * Author: rpadgett
+ */
 
+// External dependencies
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useRef, useState } from "react";
 import {
   Linking,
@@ -10,19 +16,21 @@ import {
   View,
 } from "react-native";
 
+// App components
 import AdminDayContentForm from "../src/components/admin/AdminDayContentForm";
 import MonthHeader from "../src/components/calendar/MonthHeader";
 import YearView from "../src/components/calendar/YearView";
 import YearWheelView from "../src/components/calendar/YearWheelView";
+import WelcomeScreen from "../src/components/onboarding/WelcomeScreen";
 
+// Calendar engine and models
 import { buildEnochYear } from "../src/engine/buildEnochYear";
 import { CalendarNode } from "../src/models/calendar";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import WelcomeScreen from "../src/components/onboarding/WelcomeScreen";
+// Shared app types
+import type { PerpetualMarker } from "../src/types/perpetualMarkers";
 
-import { PerpetualMarker } from "../src/types/perpetualMarkers";
-
+// Calendar baseline and app configuration
 const BASE_ENOCH_YEAR = 2026;
 const BASE_START_DATE = "2026-03-18";
 
@@ -32,6 +40,7 @@ const GROUP_CODE_STORAGE_KEY = "groupCode";
 
 const API_BASE_URL = "http://localhost:3001";
 
+// API response shapes consumed by the day detail modal
 type ScriptureReading = {
   label?: string;
   reference?: string;
@@ -57,6 +66,11 @@ type DayContent = {
   sections?: DayContentSection[];
 };
 
+// Date helpers
+/**
+ * Calculates the Gregorian start date for a requested Enoch year.
+ * This date helper advances from the configured base year and accounts for sabbath-week year offsets.
+ */
 function getEnochYearStartDate(targetYear: number): string {
   let currentStartDate = BASE_START_DATE;
 
@@ -73,6 +87,10 @@ function getEnochYearStartDate(targetYear: number): string {
   return currentStartDate;
 }
 
+/**
+ * Adds calendar days to a YYYY-MM-DD string using UTC date math.
+ * This keeps year-start calculations stable across local timezone boundaries.
+ */
 function addDays(dateString: string, days: number): string {
   const [year, month, day] = dateString.split("-").map(Number);
 
@@ -86,14 +104,21 @@ function addDays(dateString: string, days: number): string {
   return `${nextYear}-${nextMonth}-${nextDay}`;
 }
 
+/**
+ * Creates the main calendar UX screen.
+ * It coordinates group-code entry, year navigation, calendar rendering, day detail modals, and admin editing access.
+ */
 export default function HomeScreen() {
+  // Scroll refs and layout measurements
   const scrollViewRef = useRef<ScrollView>(null);
   const monthOffsetsRef = useRef<Record<number, number>>({});
 
+  // Calendar view state
   const [visibleEnochYear, setVisibleEnochYear] = useState(2026);
   const [activeMonthNumber, setActiveMonthNumber] = useState(1);
   const [isAdminMode, setIsAdminMode] = useState(false);
 
+  // Group entry and group-specific content state
   const [hasEnteredApp, setHasEnteredApp] = useState(false);
   const [groupCode, setGroupCode] = useState("public");
 
@@ -104,40 +129,51 @@ export default function HomeScreen() {
   const [dayContent, setDayContent] =
     useState<DayContent | null>(null);
 
+  // Global marker state
   const [perpetualMarkers, setPerpetualMarkers] = useState<PerpetualMarker[]>([]);
   const [perpetualMarkersChecksum, setPerpetualMarkersChecksum] =
     useState<string | null>(null);
 
-  const yearOffset = visibleEnochYear - BASE_ENOCH_YEAR;
-
+  // Derived calendar data
   const config = {
     enochYear: visibleEnochYear,
     startsOnGregorianDate: getEnochYearStartDate(visibleEnochYear),
   };
 
-const selectedDayMarkers = selectedNode
-  ? perpetualMarkers.filter((marker) => {
-      const matchesMonthDay =
-        typeof marker.month === "number" &&
-        typeof marker.day === "number" &&
-        marker.month === selectedNode.enoch?.month?.number &&
-        marker.day === selectedNode.enoch?.day;
+  const nodes = buildEnochYear(config);
 
-      const matchesGateDay =
-        typeof marker.gateDay === "number" &&
-        selectedNode.enoch?.isIntercalary === true &&
-        selectedNode.enoch?.isSabbathWeek !== true &&
-        marker.gateDay === selectedNode.enoch?.quarter;
+  const currentMonth = nodes.find(
+    (node) => node.enoch?.month?.number === activeMonthNumber
+  )?.enoch?.month;
 
-      const matchesIntercalaryWeek =
-        marker.intercalaryWeek === true &&
-        selectedNode.enoch?.isSabbathWeek === true;
+  const selectedDayMarkers = selectedNode
+    ? perpetualMarkers.filter((marker) => {
+        const matchesMonthDay =
+          typeof marker.month === "number" &&
+          typeof marker.day === "number" &&
+          marker.month === selectedNode.enoch?.month?.number &&
+          marker.day === selectedNode.enoch?.day;
 
-      return matchesMonthDay || matchesGateDay || matchesIntercalaryWeek;
-    })
-  : [];
+        const matchesGateDay =
+          typeof marker.gateDay === "number" &&
+          selectedNode.enoch?.isIntercalary === true &&
+          selectedNode.enoch?.isSabbathWeek !== true &&
+          marker.gateDay === selectedNode.enoch?.quarter;
 
+        const matchesIntercalaryWeek =
+          marker.intercalaryWeek === true &&
+          selectedNode.enoch?.isSabbathWeek === true;
+
+        return matchesMonthDay || matchesGateDay || matchesIntercalaryWeek;
+      })
+    : [];
+
+  // Initial app entry state
   useEffect(() => {
+    /**
+     * Loads the last-used group code from device storage.
+     * This entry helper skips the welcome screen when a saved group is available.
+     */
     async function loadSavedGroupCode() {
       const savedGroupCode = await AsyncStorage.getItem(GROUP_CODE_STORAGE_KEY);
 
@@ -150,8 +186,12 @@ const selectedDayMarkers = selectedNode
     loadSavedGroupCode();
   }, []);
 
-  // Keep the visible year badges in sync with the selected group.
+  // Keep year badges in sync with the selected group.
   useEffect(() => {
+    /**
+     * Fetches the notice/content summary for the visible Enoch year.
+     * This API loader powers day badges in the year grid for the active group.
+     */
     async function loadYearNotices() {
       try {
         const response = await fetch(
@@ -172,7 +212,6 @@ const selectedDayMarkers = selectedNode
     }
 
     loadYearNotices();
-    loadPerpetualMarkers();
   }, [config.enochYear, groupCode]);
 
   // Perpetual markers are global calendar overlays; the checksum avoids reloading unchanged data.
@@ -182,12 +221,11 @@ const selectedDayMarkers = selectedNode
     loadPerpetualMarkers();
   }, [hasEnteredApp, perpetualMarkersChecksum]);
 
-  const nodes = buildEnochYear(config);
-
-  const currentMonth = nodes.find(
-    (node) => node.enoch?.month?.number === activeMonthNumber
-  )?.enoch?.month;
-
+  // Data loaders
+  /**
+   * Fetches global perpetual markers from the API when their checksum changes.
+   * This data loader supports recurring marker overlays without repeatedly downloading unchanged data.
+   */
   async function loadPerpetualMarkers() {
     try {
       const checksumResponse = await fetch(
@@ -222,6 +260,7 @@ const selectedDayMarkers = selectedNode
     }
   }
 
+  // Onboarding gate
   if (!hasEnteredApp) {
     return (
       <WelcomeScreen
@@ -247,6 +286,11 @@ const selectedDayMarkers = selectedNode
     );
   }
 
+  // Day modal handlers
+  /**
+   * Opens the day detail modal and loads group-specific content for the selected calendar node.
+   * This interaction handler connects calendar cell presses to the detail UX.
+   */
   async function openDay(node: CalendarNode) {
     setSelectedNode(node);
     setDayContent(null);
@@ -271,15 +315,27 @@ const selectedDayMarkers = selectedNode
     }
   }
 
+  /**
+   * Closes the day detail modal and clears its loaded content.
+   * This interaction handler resets modal state after a user exits a day.
+   */
   function closeDay() {
     setSelectedNode(null);
     setDayContent(null);
   }
 
+  /**
+   * Stores each rendered month's vertical offset inside the scroll view.
+   * These layout measurements let wheel/month navigation scroll to the correct section.
+   */
   function handleMonthLayout(monthNumber: number, y: number) {
     monthOffsetsRef.current[monthNumber] = y;
   }
 
+  /**
+   * Tracks scroll position and derives the currently active month.
+   * This scroll handler keeps the sticky header aligned with the month in view.
+   */
   function handleScroll(event: any) {
     const scrollY = event.nativeEvent.contentOffset.y;
 
@@ -292,6 +348,10 @@ const selectedDayMarkers = selectedNode
     }
   }
 
+  /**
+   * Scrolls the year view to a selected Enoch month.
+   * This navigation helper is used by the wheel view to jump into the linear calendar.
+   */
   function scrollToMonth(monthNumber: number) {
     const y = monthOffsetsRef.current[monthNumber];
 
@@ -308,6 +368,10 @@ const selectedDayMarkers = selectedNode
     setActiveMonthNumber(monthNumber);
   }
 
+  /**
+   * Moves the calendar to the previous Enoch year and resets scroll/modal state.
+   * This year navigation handler is triggered from the month header controls.
+   */
   function goPreviousYear() {
     setVisibleEnochYear((year) => year - 1);
     setActiveMonthNumber(1);
@@ -315,6 +379,10 @@ const selectedDayMarkers = selectedNode
     scrollViewRef.current?.scrollTo({ y: 0, animated: true });
   }
 
+  /**
+   * Moves the calendar to the next Enoch year and resets scroll/modal state.
+   * This year navigation handler is triggered from the month header controls.
+   */
   function goNextYear() {
     setVisibleEnochYear((year) => year + 1);
     setActiveMonthNumber(1);
@@ -322,6 +390,10 @@ const selectedDayMarkers = selectedNode
     scrollViewRef.current?.scrollTo({ y: 0, animated: true });
   }
 
+  /**
+   * Opens the previous day while staying inside the day detail modal.
+   * This modal navigation handler walks backward through the generated year nodes.
+   */
   function goToPreviousDay() {
     if (!selectedNode) return;
 
@@ -336,6 +408,10 @@ const selectedDayMarkers = selectedNode
     }
   }
 
+  /**
+   * Opens the next day while staying inside the day detail modal.
+   * This modal navigation handler walks forward through the generated year nodes.
+   */
   function goToNextDay() {
     if (!selectedNode) return;
 
@@ -350,11 +426,16 @@ const selectedDayMarkers = selectedNode
     }
   }
 
+  /**
+   * Opens an external URL from scripture readings or section items.
+   * This link helper delegates to React Native Linking for platform-specific handling.
+   */
   function openUrl(url?: string) {
     if (!url) return;
     Linking.openURL(url);
   }
 
+  // Modal display labels
   const modalTitle =
     dayContent?.title ??
     selectedNode?.enoch?.label ??
@@ -375,6 +456,7 @@ const selectedDayMarkers = selectedNode
     return node.gregorianDate === todayId;
   });
 
+  // Main calendar and day detail modal
   return (
     <>
       <ScrollView

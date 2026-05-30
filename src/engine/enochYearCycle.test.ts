@@ -1,5 +1,15 @@
+/*
+ * File: src/engine/enochYearCycle.test.ts
+ * Purpose: Test coverage for the Enoch calendar calculation engine.
+ * Author: rpadgett
+ */
+
 import { buildEnochYear } from "./buildEnochYear";
 
+/**
+ * Formats Date fixtures as YYYY-MM-DD during year-cycle tests.
+ * This test helper removes time data from generated dates.
+ */
 function formatDateOnly(date: Date): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -8,6 +18,10 @@ function formatDateOnly(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
+/**
+ * Adds days to a YYYY-MM-DD fixture for year-cycle expectations.
+ * This test helper constructs expected Gregorian dates around sabbath-year transitions.
+ */
 function addDays(dateString: string, days: number): string {
   const [year, month, day] = dateString.split("-").map(Number);
 

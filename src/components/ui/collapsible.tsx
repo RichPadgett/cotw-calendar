@@ -1,3 +1,9 @@
+/*
+ * File: src/components/ui/collapsible.tsx
+ * Purpose: Reusable UI primitive used by the app interface.
+ * Author: rpadgett
+ */
+
 import { SymbolView } from 'expo-symbols';
 import { PropsWithChildren, useState } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
@@ -8,6 +14,10 @@ import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
+/**
+ * Creates a collapsible disclosure section.
+ * This UX component manages expanded state and reveals child content behind a titled row.
+ */
 export function Collapsible({ children, title }: PropsWithChildren & { title: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const theme = useTheme();

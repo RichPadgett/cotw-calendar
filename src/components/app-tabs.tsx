@@ -1,8 +1,18 @@
+/*
+ * File: src/components/app-tabs.tsx
+ * Purpose: Reusable interface component used by the React Native app.
+ * Author: rpadgett
+ */
+
 import { NativeTabs } from 'expo-router/unstable-native-tabs';
 import { useColorScheme } from 'react-native';
 
 import { Colors } from '@/constants/theme';
 
+/**
+ * Creates the native tab shell for the starter app routes.
+ * This navigation component maps tab buttons to Expo Router route entries.
+ */
 export default function AppTabs() {
   const scheme = useColorScheme();
   const colors = Colors[scheme === 'unspecified' ? 'light' : scheme];

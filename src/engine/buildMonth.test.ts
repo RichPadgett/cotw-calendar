@@ -1,4 +1,8 @@
-// src/engine/buildMonth.test.ts
+/*
+ * File: src/engine/buildMonth.test.ts
+ * Purpose: Test coverage for the Enoch calendar calculation engine.
+ * Author: rpadgett
+ */
 
 import { buildMonth } from "./buildMonth";
 

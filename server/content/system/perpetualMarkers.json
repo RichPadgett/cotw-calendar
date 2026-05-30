@@ -1,40 +1,28 @@
-[
-  {
-    "id": "yeshua-baptism",
-    "month": 1,
-    "day": 1,
-    "title": "Yeshua Baptized",
-    "shortName": "YB",
-    "color": "#2563eb"
-  },
-    {
-    "id": "john-baptism",
-    "month": 1,
-    "day": 1,
-    "title": "John Baptized",
-    "shortName": "JB",
-    "color": "#25611b"
-  },
-     {
-    "id": "peter-baptism",
-    "month": 1,
-    "day": 1,
-    "title": "Peter Baptized",
-    "shortName": "PB",
-    "color": "#95611b"
-  },
-  {
-    "id": "quarter-day",
-    "gateDay": 1,
-    "title": "Quarter Day",
-    "shortName": "QD",
-    "color": "#16a34a"
-  },
-  {
-    "id": "land-rest",
-    "intercalaryWeek": true,
-    "title": "Land Rest",
-    "shortName": "LR",
-    "color": "#9333ea"
-  }
-]
+//  Example Perpetual Labels 
+//[
+//          Day Label
+//   { 
+//     "id": "yeshua-baptism",
+//     "month": 1,
+//     "day": 1,
+//     "title": "Yeshua Baptized",
+//     "shortName": "YB",
+//     "color": "#2563eb"
+//   },
+//          Gate Label
+//   {
+//     "id": "quarter-day",
+//     "gateDay": 1,
+//     "title": "Quarter Day",
+//     "shortName": "QD",
+//     "color": "#16a34a"
+//   },
+//         Sabbath Week Label
+//   {
+//     "id": "land-rest",
+//     "intercalaryWeek": true,
+//     "title": "Land Rest",
+//     "shortName": "LR",
+//     "color": "#9333ea"
+//   }
+// ]

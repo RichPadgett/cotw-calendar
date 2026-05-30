@@ -1,3 +1,9 @@
+/*
+ * File: src/components/animated-icon.web.tsx
+ * Purpose: Reusable interface component used by the React Native app.
+ * Author: rpadgett
+ */
+
 import { Image } from 'expo-image';
 import { StyleSheet, View } from 'react-native';
 import Animated, { Keyframe, Easing } from 'react-native-reanimated';
@@ -5,6 +11,10 @@ import Animated, { Keyframe, Easing } from 'react-native-reanimated';
 import classes from './animated-icon.module.css';
 const DURATION = 300;
 
+/**
+ * Creates the web animated splash overlay.
+ * This UX component provides a browser-safe launch animation around the app icon.
+ */
 export function AnimatedSplashOverlay() {
   return null;
 }
@@ -54,6 +64,10 @@ const glowKeyframe = new Keyframe({
   },
 });
 
+/**
+ * Creates the animated web icon for the splash experience.
+ * This visual component renders the icon asset with CSS-backed animation timing.
+ */
 export function AnimatedIcon() {
   return (
     <View style={styles.iconContainer}>

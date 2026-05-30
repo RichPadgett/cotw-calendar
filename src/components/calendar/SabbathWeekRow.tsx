@@ -1,4 +1,8 @@
-// src/components/calendar/SabbathWeekRow.tsx
+/*
+ * File: src/components/calendar/SabbathWeekRow.tsx
+ * Purpose: Calendar UI component for rendering SabbathWeekRow behavior and presentation.
+ * Author: rpadgett
+ */
 
 import { Pressable, Text, View } from "react-native";
 
@@ -9,6 +13,10 @@ type Props = {
   onPressDay?: (node: CalendarNode) => void;
 };
 
+/**
+ * Creates the full-width sabbath-week row shown before sabbath years.
+ * This UX component lets the rest week appear as a selectable calendar period.
+ */
 export default function SabbathWeekRow({
   node,
   onPressDay,

@@ -1,4 +1,8 @@
-// src/components/calendar/MonthHeader.tsx
+/*
+ * File: src/components/calendar/MonthHeader.tsx
+ * Purpose: Calendar UI component for rendering MonthHeader behavior and presentation.
+ * Author: rpadgett
+ */
 
 import {
   Image,
@@ -24,6 +28,10 @@ type Props = {
   onNextMonth?: () => void;
 };
 
+/**
+ * Creates the sticky month/year header above the calendar.
+ * This UX component shows the active month context, today reference, and previous/next year controls.
+ */
 export default function MonthHeader({
   month,
   gregorianLabel,

@@ -1,14 +1,21 @@
-// src/components/calendar/YearWheelView.tsx
+/*
+ * File: src/components/calendar/YearWheelView.tsx
+ * Purpose: Calendar UI component for rendering YearWheelView behavior and presentation.
+ * Author: rpadgett
+ */
 
+// Dependencies
 import { Pressable, Text, View } from "react-native";
 import { CalendarNode } from "../../models/calendar";
 
+// Types
 type Props = {
   nodes: CalendarNode[];
   onPressMonth?: (monthNumber: number) => void;
   onPressDay?: (node: CalendarNode) => void;
 };
 
+// Constants
 const SIZE = 320;
 const CENTER = SIZE / 2;
 
@@ -33,10 +40,19 @@ const GATE_DOTS = [
   { label: "Winter Gate", angle: Math.PI / 2, color: "#38bdf8" },
 ];
 
+// Helpers
+/**
+ * Converts an Enoch day-of-year into a wheel rotation angle.
+ * This geometry helper positions day and gate markers around the circular year view.
+ */
 function getAngleForDay(dayOfYear: number) {
   return -((dayOfYear - 1) / 364) * Math.PI * 2;
 }
 
+/**
+ * Classifies a calendar node for wheel marker styling.
+ * This style helper decides whether a day appears as a feast, sabbath, intercalary, or normal marker.
+ */
 function getMarkerType(node: CalendarNode) {
   const events = node.enoch?.events ?? [];
 
@@ -63,6 +79,10 @@ function getMarkerType(node: CalendarNode) {
   return null;
 }
 
+/**
+ * Returns the visual length for a wheel marker type.
+ * This style helper gives feasts, sabbaths, and ordinary days distinct radial emphasis.
+ */
 function getMarkerLength(markerType: string) {
   switch (markerType) {
     case "sabbath":
@@ -80,6 +100,10 @@ function getMarkerLength(markerType: string) {
   }
 }
 
+/**
+ * Creates a legend row for a filled wheel marker color.
+ * This small UX component explains feast and marker color meanings.
+ */
 function LegendItem({ color, label }: { color: string; label: string }) {
   return (
     <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
@@ -98,6 +122,10 @@ function LegendItem({ color, label }: { color: string; label: string }) {
   );
 }
 
+/**
+ * Creates a legend row for a small seasonal gate dot.
+ * This small UX component explains gate marker colors in the wheel legend.
+ */
 function LegendDot({ color, label }: { color: string; label: string }) {
   return (
     <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
@@ -117,6 +145,10 @@ function LegendDot({ color, label }: { color: string; label: string }) {
   );
 }
 
+/**
+ * Creates a legend row for sabbath rest symbols.
+ * This small UX component explains weekly and high-sabbath markers in the wheel legend.
+ */
 function LegendRest({ color, label }: { color: string; label: string }) {
   return (
     <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
@@ -136,6 +168,11 @@ function LegendRest({ color, label }: { color: string; label: string }) {
   );
 }
 
+// Component
+/**
+ * Creates the circular Enoch year wheel view.
+ * This UX component renders months, day markers, seasonal gates, sabbath markers, and month/day press targets.
+ */
 export default function YearWheelView({
   nodes,
   onPressMonth,

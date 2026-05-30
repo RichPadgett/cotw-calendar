@@ -1,3 +1,9 @@
+/*
+ * File: src/components/web-badge.tsx
+ * Purpose: Reusable interface component used by the React Native app.
+ * Author: rpadgett
+ */
+
 import { version } from 'expo/package.json';
 import { Image } from 'expo-image';
 import { useColorScheme, StyleSheet } from 'react-native';
@@ -7,6 +13,10 @@ import { ThemedView } from './themed-view';
 
 import { Spacing } from '@/constants/theme';
 
+/**
+ * Creates a small web platform badge.
+ * This UX component labels browser-specific starter surfaces.
+ */
 export function WebBadge() {
   const scheme = useColorScheme();
 

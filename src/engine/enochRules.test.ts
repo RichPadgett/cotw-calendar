@@ -1,7 +1,17 @@
+/*
+ * File: src/engine/enochRules.test.ts
+ * Purpose: Test coverage for the Enoch calendar calculation engine.
+ * Author: rpadgett
+ */
+
 import { CalendarNode } from "../models/calendar";
 import { buildEnochYear } from "./buildEnochYear";
 import { applyEnochOverlay } from "./enochRules";
 
+/**
+ * Creates a minimal calendar node fixture for Enoch rule tests.
+ * This test helper supplies only the fields needed by overlay calculations.
+ */
 function makeNode(date: string): CalendarNode {
   const [year, month, day] = date.split("-").map(Number);
 
@@ -18,6 +28,10 @@ function makeNode(date: string): CalendarNode {
   };
 }
 
+/**
+ * Formats a Date fixture as YYYY-MM-DD for test expectations.
+ * This test helper keeps date assertions stable and readable.
+ */
 function formatDateOnly(date: Date): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");

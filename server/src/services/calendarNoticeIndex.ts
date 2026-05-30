@@ -1,10 +1,19 @@
+/*
+ * File: server/src/services/calendarNoticeIndex.ts
+ * Purpose: Server-side service module for reading, writing, indexing, or checksumming calendar content.
+ * Author: rpadgett
+ */
+
+// Dependencies
 import fs from "fs";
 import path from "path";
 
 import { CalendarDayContent } from "../types/calendarContent";
 
+// Constants
 const CONTENT_ROOT = path.join(process.cwd(), "content", "groups");
 
+// Types
 export type CalendarNoticeSummary = {
     year: number;
     month: number;
@@ -21,10 +30,20 @@ export type CalendarNoticeSummary = {
     hasContent: boolean;
 };
 
+// Helpers
+/**
+ * Builds the yearly notice-index file path for one group.
+ * This filesystem helper stores lightweight badge data separately from full day content.
+ */
 function getNoticeIndexPath(groupCode: string, year: string) {
     return path.join(CONTENT_ROOT, groupCode, "notices", `${year}.json`);
 }
 
+// Public API
+/**
+ * Rebuilds the notice-index entries for one saved day.
+ * This indexing service records notice badges and content-only badges used by calendar views.
+ */
 export function updateNoticeIndexForDay(
     groupCode: string,
     year: string,
@@ -104,6 +123,10 @@ export function updateNoticeIndexForDay(
     fs.writeFileSync(indexPath, JSON.stringify(next, null, 2), "utf-8");
 }
 
+/**
+ * Reads the yearly notice index for one group.
+ * This service function returns an empty list when the group/year has no indexed notices yet.
+ */
 export function getNoticeIndex(
     groupCode: string,
     year: string

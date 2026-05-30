@@ -1,3 +1,10 @@
+/*
+ * File: src/components/calendar/YearView.tsx
+ * Purpose: Calendar UI component for rendering YearView behavior and presentation.
+ * Author: rpadgett
+ */
+
+// Dependencies
 import { Text, View } from "react-native";
 
 import { CalendarNode } from "../../models/calendar";
@@ -6,6 +13,7 @@ import { DayCell } from "./DayCell";
 import IntercalaryRow from "./IntercalaryRow";
 import SabbathWeekRow from "./SabbathWeekRow";
 
+// Types
 type Props = {
   nodes: CalendarNode[];
   onMonthLayout?: (monthNumber: number, y: number) => void;
@@ -14,9 +22,15 @@ type Props = {
   perpetualMarkers: PerpetualMarker[];
 };
 
+// Constants
 const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sab"];
 const ENOCH_WEEK_OFFSET = 3;
 
+// Helpers
+/**
+ * Groups generated calendar nodes by Enoch month number.
+ * This data-shaping helper prepares the year grid for month-by-month rendering.
+ */
 function groupByEnochMonth(nodes: CalendarNode[]) {
   const groups: Record<number, CalendarNode[]> = {};
 
@@ -34,6 +48,10 @@ function groupByEnochMonth(nodes: CalendarNode[]) {
   return groups;
 }
 
+/**
+ * Adds local calendar days to a YYYY-MM-DD string.
+ * This date helper builds the displayed sabbath-week date range.
+ */
 function addDays(dateString: string, days: number): string {
   const [year, month, day] = dateString.split("-").map(Number);
 
@@ -48,6 +66,11 @@ function addDays(dateString: string, days: number): string {
   return `${nextYear}-${nextMonth}-${nextDay}`;
 }
 
+// Component
+/**
+ * Creates the full year grid view grouped by Enoch month.
+ * This UX component combines day cells, month headers, notices, content badges, perpetual markers, and intercalary rows.
+ */
 export default function YearView({
   nodes,
   notices,

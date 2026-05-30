@@ -1,3 +1,9 @@
+/*
+ * File: server/src/index.ts
+ * Purpose: Local Express server entry point for calendar APIs, admin routes, file uploads, and static content.
+ * Author: rpadgett
+ */
+
 import cors from "cors";
 import express from "express";
 

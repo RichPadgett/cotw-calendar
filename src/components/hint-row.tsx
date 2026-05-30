@@ -1,3 +1,9 @@
+/*
+ * File: src/components/hint-row.tsx
+ * Purpose: Reusable interface component used by the React Native app.
+ * Author: rpadgett
+ */
+
 import type { ReactNode } from 'react';
 import { View, StyleSheet } from 'react-native';
 
@@ -11,6 +17,10 @@ type HintRowProps = {
   hint?: ReactNode;
 };
 
+/**
+ * Creates a small instructional hint row.
+ * This UX component displays a label and supporting file/path hint in starter UI surfaces.
+ */
 export function HintRow({ title = 'Try editing', hint = 'app/index.tsx' }: HintRowProps) {
   return (
     <View style={styles.stepRow}>

@@ -1,9 +1,15 @@
-// src/components/admin/AdminDayContentForm.tsx
+/*
+ * File: src/components/admin/AdminDayContentForm.tsx
+ * Purpose: Admin editor UI for creating and saving calendar day content.
+ * Author: rpadgett
+ */
 
+// Dependencies
 import * as DocumentPicker from "expo-document-picker";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
+// Types
 type Props = {
     enochYear: number;
     month: number;
@@ -45,6 +51,11 @@ const emptyMediaRow: ContentRow = {
     access: "public",
 };
 
+// Component
+/**
+ * Creates the admin content editor component for one Enoch calendar day.
+ * This UX component manages form state for notes, scripture readings, notices, media links, uploads, preview, and save actions.
+ */
 export default function AdminDayContentForm({
     enochYear,
     month,
@@ -69,6 +80,10 @@ export default function AdminDayContentForm({
     const [isSaving, setIsSaving] = useState(false);
     const [saveMessage, setSaveMessage] = useState("");
 
+    /**
+     * Opens the document picker and uploads a selected file to the admin file endpoint.
+     * This action helper appends the uploaded file as a media row for the current day.
+     */
     async function uploadFile() {
         const result = await DocumentPicker.getDocumentAsync({
             copyToCacheDirectory: true,
@@ -125,6 +140,10 @@ export default function AdminDayContentForm({
         ]);
     }
 
+    /**
+     * Builds the day-content payload and saves it through the admin calendar API.
+     * This API action persists notes, readings, notices, and media items for the selected day.
+     */
     async function saveContent() {
         try {
             setIsSaving(true);
@@ -184,6 +203,10 @@ export default function AdminDayContentForm({
         }
     }
 
+    /**
+     * Updates one scripture-reading row in form state.
+     * This form-state helper keeps scripture labels, references, and links editable independently.
+     */
     function updateScriptureRow(
         index: number,
         field: keyof ScriptureRow,
@@ -196,6 +219,10 @@ export default function AdminDayContentForm({
         });
     }
 
+    /**
+     * Updates one notice row in form state.
+     * This form-state helper supports editing notice titles, details, type, and access data.
+     */
     function updateNoticeRow(index: number, field: keyof ContentRow, value: string) {
         setNoticeItems((rows) => {
             const next = [...rows];
@@ -204,6 +231,10 @@ export default function AdminDayContentForm({
         });
     }
 
+    /**
+     * Updates one media row in form state.
+     * This form-state helper supports editing uploaded files, external links, and related access data.
+     */
     function updateMediaRow(index: number, field: keyof ContentRow, value: string) {
         setMediaItems((rows) => {
             const next = [...rows];
@@ -536,6 +567,7 @@ export default function AdminDayContentForm({
     );
 }
 
+// Styles
 const styles = StyleSheet.create({
     container: {
         gap: 16,
