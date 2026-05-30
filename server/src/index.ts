@@ -10,6 +10,7 @@ import express from "express";
 import adminCalendarRoutes from "./routes/adminCalendarRoutes";
 import adminFileRoutes from "./routes/adminFileRoutes";
 import calendarRoutes from "./routes/calendarRoutes";
+import groupRoutes from "./routes/groupRoutes";
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use("/api/calendar", calendarRoutes);
 app.use("/api/admin/calendar", adminCalendarRoutes);
 app.use("/api/admin/calendar", adminFileRoutes);
 app.use("/files", express.static("content/files"));
+app.use("/api/groups", groupRoutes);
 
 /*
   ============================================================

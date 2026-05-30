@@ -28,6 +28,7 @@ import type { PerpetualMarker } from "../src/types/perpetualMarkers";
 const STICKY_HEADER_OFFSET = 220;
 const YEAR_VIEW_TOP_OFFSET = 685;
 const GROUP_CODE_STORAGE_KEY = "groupCode";
+const ROLE_STORAGE_KEY = "userRole";
 
 const API_BASE_URL = "http://localhost:3001";
 
@@ -47,6 +48,7 @@ export default function HomeScreen() {
   // Group entry and group-specific content state
   const [hasEnteredApp, setHasEnteredApp] = useState(false);
   const [groupCode, setGroupCode] = useState("public");
+  const [userRole, setUserRole] = useState<"member" | "admin">("member");
 
   const [hasLoadedGroupCode, setHasLoadedGroupCode] = useState(false);
 
@@ -64,6 +66,8 @@ export default function HomeScreen() {
   >(null);
 
   const [isAdminMode, setIsAdminMode] = useState(false);
+
+  const [adminCode, setAdminCode] = useState("");
 
   // Derived calendar data
   const config = {
@@ -154,9 +158,18 @@ export default function HomeScreen() {
         const savedGroupCode = await AsyncStorage.getItem(
           GROUP_CODE_STORAGE_KEY
         );
+
+        const savedRole = await AsyncStorage.getItem(ROLE_STORAGE_KEY);
+
         if (savedGroupCode) {
           setGroupCode(savedGroupCode);
           setHasEnteredApp(true);
+          console.log("Loaded group:", savedGroupCode);
+          console.log("Loaded role:", savedRole);
+        }
+
+        if (savedRole === "admin") {
+          setUserRole("admin");
         }
       } finally {
         setHasLoadedGroupCode(true);
@@ -262,19 +275,32 @@ export default function HomeScreen() {
     return (
       <WelcomeScreen
         groupCode={groupCode}
-        setGroupCode={(value) =>
-          setGroupCode(value.trim().toLowerCase() || "public")
-        }
+        setGroupCode={setGroupCode}
+        adminCode={adminCode}
+        setAdminCode={setAdminCode}
         onContinue={async () => {
           const normalizedGroupCode =
             groupCode.trim().toLowerCase() || "public";
 
-          await AsyncStorage.setItem(
-            GROUP_CODE_STORAGE_KEY,
-            normalizedGroupCode
-          );
+          const response = await fetch(`${API_BASE_URL}/api/groups/join`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              groupCode: normalizedGroupCode,
+              adminCode: adminCode.trim(),
+            }),
+          });
 
-          setGroupCode(normalizedGroupCode);
+          const data = await response.json();
+          console.log("Join group response:", data);
+          await AsyncStorage.setItem(GROUP_CODE_STORAGE_KEY, data.groupCode);
+
+          await AsyncStorage.setItem(ROLE_STORAGE_KEY, data.role);
+
+          setGroupCode(data.groupCode);
+          setUserRole(data.role);
           setHasEnteredApp(true);
         }}
       />
@@ -478,6 +504,7 @@ export default function HomeScreen() {
         selectedDayMarkers={selectedDayMarkers}
         isAdminMode={isAdminMode}
         groupCode={groupCode}
+        userRole={userRole}
         onClose={closeDay}
         onToggleAdminMode={() => setIsAdminMode((value) => !value)}
         onChangeGroup={confirmChangeGroup}

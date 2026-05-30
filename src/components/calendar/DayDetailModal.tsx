@@ -30,7 +30,7 @@ type Props = {
   selectedDayMarkers: PerpetualMarker[];
   isAdminMode: boolean;
   groupCode: string;
-
+  userRole: "member" | "admin";
   onClose: () => void;
   onToggleAdminMode: () => void;
   onChangeGroup: () => void;
@@ -50,6 +50,7 @@ export default function DayDetailModal({
   selectedDayMarkers,
   isAdminMode,
   groupCode,
+  userRole,
   onClose,
   onToggleAdminMode,
   onChangeGroup,
@@ -112,23 +113,25 @@ export default function DayDetailModal({
               <Text style={{ fontSize: 18, fontWeight: "700" }}>Close</Text>
             </Pressable>
 
-            <Pressable
-              onPress={onToggleAdminMode}
-              style={{
-                alignSelf: "flex-end",
-                padding: 12,
-              }}
-            >
-              <Text
+            {userRole === "admin" && (
+              <Pressable
+                onPress={onToggleAdminMode}
                 style={{
-                  fontSize: 13,
-                  fontWeight: "800",
-                  color: "#2563eb",
+                  alignSelf: "flex-end",
+                  padding: 12,
                 }}
               >
-                {isAdminMode ? "Exit Admin" : "Admin Mode"}
-              </Text>
-            </Pressable>
+                <Text
+                  style={{
+                    fontSize: 13,
+                    fontWeight: "800",
+                    color: "#2563eb",
+                  }}
+                >
+                  <Text>{isAdminMode ? "Exit Admin" : "Admin Mode"}</Text>
+                </Text>
+              </Pressable>
+            )}
 
             <Pressable
               onPress={onChangeGroup}
@@ -208,7 +211,7 @@ export default function DayDetailModal({
                   borderTopColor: "#e5e7eb",
                 }}
               >
-                {isAdminMode && (
+                {userRole === "admin" && isAdminMode && (
                   <AdminDayContentForm
                     enochYear={selectedNode.enoch.year}
                     month={selectedNode.enoch.month.number}

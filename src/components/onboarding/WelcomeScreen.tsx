@@ -10,6 +10,8 @@ console.log("WelcomeScreen loaded");
 type Props = {
   groupCode: string;
   setGroupCode: (value: string) => void;
+  adminCode: string;
+  setAdminCode: (value: string) => void;
   onContinue: () => void;
 };
 
@@ -20,6 +22,8 @@ type Props = {
 export default function WelcomeScreen({
   groupCode,
   setGroupCode,
+  adminCode,
+  setAdminCode,
   onContinue,
 }: Props) {
   return (
@@ -42,7 +46,21 @@ export default function WelcomeScreen({
       <TextInput
         value={groupCode === "public" ? "" : groupCode}
         onChangeText={setGroupCode}
-        placeholder="Group code optional"
+        placeholder="Group code (optional)"
+        autoCapitalize="none"
+        style={{
+          marginTop: 28,
+          borderWidth: 1,
+          borderColor: "#d1d5db",
+          borderRadius: 14,
+          padding: 14,
+          fontSize: 16,
+        }}
+      />
+      <TextInput
+        value={adminCode}
+        onChangeText={setAdminCode}
+        placeholder="Admin code (optional)"
         autoCapitalize="none"
         style={{
           marginTop: 28,
