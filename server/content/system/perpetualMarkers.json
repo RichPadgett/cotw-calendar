@@ -1,28 +1,24 @@
-//  Example Perpetual Labels 
-//[
-//          Day Label
-//   { 
-//     "id": "yeshua-baptism",
-//     "month": 1,
-//     "day": 1,
-//     "title": "Yeshua Baptized",
-//     "shortName": "YB",
-//     "color": "#2563eb"
-//   },
-//          Gate Label
-//   {
-//     "id": "quarter-day",
-//     "gateDay": 1,
-//     "title": "Quarter Day",
-//     "shortName": "QD",
-//     "color": "#16a34a"
-//   },
-//         Sabbath Week Label
-//   {
-//     "id": "land-rest",
-//     "intercalaryWeek": true,
-//     "title": "Land Rest",
-//     "shortName": "LR",
-//     "color": "#9333ea"
-//   }
-// ]
+[
+  { 
+    "id": "yeshua-baptism",
+    "month": 1,
+    "day": 1,
+    "title": "Yeshua Baptized",
+    "shortName": "YB",
+    "color": "#2563eb"
+  },
+  {
+    "id": "quarter-day",
+    "gateDay": 1,
+    "title": "Quarter Day",
+    "shortName": "QD",
+    "color": "#16a34a"
+  },
+  {
+    "id": "land-rest",
+    "intercalaryWeek": true,
+    "title": "Land Rest",
+    "shortName": "LR",
+    "color": "#9333ea"
+  }
+]

@@ -4,7 +4,8 @@
  * Author: rpadgett
  */
 
-import { Pressable, Text, TextInput, View } from "react-native";
+import { useState } from "react";
+import { Image, Pressable, Text, TextInput, View } from "react-native";
 
 console.log("WelcomeScreen loaded");
 type Props = {
@@ -26,22 +27,83 @@ export default function WelcomeScreen({
   setAdminCode,
   onContinue,
 }: Props) {
+  const [showIntro, setShowIntro] = useState(true);
+
+  if (showIntro) {
+    return (
+      <Pressable
+        onPress={() => setShowIntro(false)}
+        style={{
+          flex: 1,
+          backgroundColor: "#F8F5ef",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 24,
+        }}
+      >
+        <Image
+          source={require("../../../assets/welcome/welcome-logo.png")}
+          style={{
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+          }}
+          resizeMode="cover"
+        />
+
+        <View
+          style={{
+            position: "absolute",
+            bottom: 5,
+            left: 0,
+            right: 0,
+            alignItems: "center",
+          }}
+        >
+          <Text
+            style={{
+              paddingHorizontal: 18,
+              paddingVertical: 8,
+              borderRadius: 999,
+              backgroundColor: "rgba(255,255,255,0.72)",
+              color: "#0b2345",
+              fontSize: 14,
+              fontWeight: "900",
+            }}
+          >
+            Tap to continue
+          </Text>
+        </View>
+      </Pressable>
+    );
+  }
+
   return (
     <View
       style={{
         flex: 1,
         padding: 24,
         justifyContent: "center",
-        backgroundColor: "#ffffff",
+        backgroundColor: "#f8f5ef",
       }}
     >
-      <Text style={{ fontSize: 34, fontWeight: "900" }}>
+      {/* <Text style={{ fontSize: 34, fontWeight: "900" }}>
         YHWH Perpetual Calendar
-      </Text>
+      </Text> */}
 
-      <Text style={{ marginTop: 12, fontSize: 16, color: "#6b7280" }}>
+      <Image
+        source={require("../../../assets/welcome/login-logo.png")}
+        style={{
+          width: "100%",
+          height: 140,
+          marginBottom: 24,
+        }}
+        resizeMode="contain"
+      />
+
+      {/* <Text style={{ marginTop: 12, fontSize: 16, color: "#6b7280" }}>
         Follow the appointed times, seasons, sabbaths, and community notices.
-      </Text>
+      </Text> */}
 
       <TextInput
         value={groupCode === "public" ? "" : groupCode}
@@ -60,7 +122,7 @@ export default function WelcomeScreen({
       <TextInput
         value={adminCode}
         onChangeText={setAdminCode}
-        placeholder="Admin code (optional)"
+        placeholder="Admin code (only required for group admins)"
         autoCapitalize="none"
         style={{
           marginTop: 28,
@@ -73,7 +135,7 @@ export default function WelcomeScreen({
       />
 
       <Text style={{ marginTop: 8, fontSize: 12, color: "#6b7280" }}>
-        Leave blank to use the public calendar.
+        Public calendar available without a group code.
       </Text>
 
       <Pressable
