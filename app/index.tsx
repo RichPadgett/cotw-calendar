@@ -10,8 +10,8 @@ import { useEffect, useRef, useState } from "react";
 import { Alert, ScrollView, Text, View } from "react-native";
 
 // App components
+import AppHeader from "../src/components/calendar/AppHeader";
 import DayDetailModal from "../src/components/calendar/DayDetailModal";
-import MonthHeader from "../src/components/calendar/MonthHeader";
 import YearView from "../src/components/calendar/YearView";
 import YearWheelView from "../src/components/calendar/YearWheelView";
 import WelcomeScreen from "../src/components/onboarding/WelcomeScreen";
@@ -69,6 +69,8 @@ export default function HomeScreen() {
 
   const [adminCode, setAdminCode] = useState("");
 
+  const [welcomeError, setWelcomeError] = useState("");
+
   // Derived calendar data
   const config = {
     enochYear: visibleEnochYear,
@@ -111,6 +113,7 @@ export default function HomeScreen() {
     await AsyncStorage.removeItem(GROUP_CODE_STORAGE_KEY);
 
     setGroupCode("public");
+    setAdminCode("");
     setHasEnteredApp(false);
   }
 
@@ -278,6 +281,7 @@ export default function HomeScreen() {
         setGroupCode={setGroupCode}
         adminCode={adminCode}
         setAdminCode={setAdminCode}
+        welcomeError={welcomeError}
         onContinue={async () => {
           const normalizedGroupCode =
             groupCode.trim().toLowerCase() || "public";
@@ -295,12 +299,19 @@ export default function HomeScreen() {
 
           const data = await response.json();
           console.log("Join group response:", data);
+
+          if (!response.ok) {
+            setWelcomeError(data.error ?? "Unable to join group.");
+            return;
+          }
+
           await AsyncStorage.setItem(GROUP_CODE_STORAGE_KEY, data.groupCode);
 
           await AsyncStorage.setItem(ROLE_STORAGE_KEY, data.role);
 
           setGroupCode(data.groupCode);
           setUserRole(data.role);
+          setWelcomeError("");
           setHasEnteredApp(true);
         }}
       />
@@ -474,12 +485,13 @@ export default function HomeScreen() {
             paddingBottom: 12,
           }}
         >
-          <MonthHeader
+          <AppHeader
             month={currentMonth}
             todayNode={todayNode}
             gregorianLabel={`${config.enochYear} · Starts ${config.startsOnGregorianDate}`}
             onPreviousMonth={goPreviousYear}
             onNextMonth={goNextYear}
+            onChangeGroup={confirmChangeGroup}
           />
         </View>
 
@@ -507,7 +519,6 @@ export default function HomeScreen() {
         userRole={userRole}
         onClose={closeDay}
         onToggleAdminMode={() => setIsAdminMode((value) => !value)}
-        onChangeGroup={confirmChangeGroup}
         onPreviousDay={goToPreviousDay}
         onNextDay={goToNextDay}
       />

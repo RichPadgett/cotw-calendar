@@ -1,11 +1,12 @@
 /*
- * File: src/components/calendar/MonthHeader.tsx
- * Purpose: Calendar UI component for rendering MonthHeader behavior and presentation.
+ * File: src/components/calendar/AppHeader.tsx
+ * Purpose: Calendar UI component for rendering AppHeader behavior and presentation.
  * Author: rpadgett
  */
 
 import { Image, Pressable, Text, View } from "react-native";
 
+import { MaterialIcons } from "@expo/vector-icons";
 import { CalendarNode, EnochMonth } from "../../models/calendar";
 
 type Props = {
@@ -17,6 +18,7 @@ type Props = {
   // Example:
   // "Enoch Year 2026"
   gregorianLabel: string;
+  onChangeGroup: () => void;
 
   // Optional navigation actions
   onPreviousMonth?: () => void;
@@ -24,12 +26,13 @@ type Props = {
 };
 
 /**
- * Creates the sticky month/year header above the calendar.
+ * Creates the sticky app header above the calendar.
  * This UX component shows the active month context, today reference, and previous/next year controls.
  */
-export default function MonthHeader({
+export default function AppHeader({
   month,
   gregorianLabel,
+  onChangeGroup,
   onPreviousMonth,
   onNextMonth,
   todayNode,
@@ -67,14 +70,37 @@ export default function MonthHeader({
       >
         {/* Calendar Title */}
 
-        <Text
-          style={{
-            fontSize: 28,
-            fontWeight: "800",
-          }}
-        >
-          YHWH Perpetual Calendar
-        </Text>
+        <View style={{ flex: 1 }}>
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.72}
+            style={{
+              fontSize: 34,
+              fontWeight: "900",
+              color: "#081a33",
+              letterSpacing: 4.5,
+            }}
+          >
+            YHWH
+          </Text>
+
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.75}
+            style={{
+              marginTop: -2,
+              fontSize: 18,
+              fontWeight: "800",
+              color: "#081a33",
+              letterSpacing: 2.5,
+              textTransform: "uppercase",
+            }}
+          >
+            Perpetual Calendar
+          </Text>
+        </View>
 
         {/* Navigation יהוה Buttons */}
 
@@ -82,6 +108,7 @@ export default function MonthHeader({
           style={{
             flexDirection: "row",
             gap: 8,
+            flexShrink: 0,
           }}
         >
           {/* Previous Month */}
@@ -100,14 +127,7 @@ export default function MonthHeader({
               justifyContent: "center",
             }}
           >
-            <Text
-              style={{
-                fontSize: 18,
-                fontWeight: "700",
-              }}
-            >
-              ‹
-            </Text>
+            <MaterialIcons name="chevron-left" size={28} />
           </Pressable>
 
           {/* Next Month */}
@@ -126,14 +146,7 @@ export default function MonthHeader({
               justifyContent: "center",
             }}
           >
-            <Text
-              style={{
-                fontSize: 18,
-                fontWeight: "700",
-              }}
-            >
-              ›
-            </Text>
+            <MaterialIcons name="chevron-right" size={28} />
           </Pressable>
         </View>
       </View>
@@ -273,6 +286,23 @@ export default function MonthHeader({
             <Text>{month.paleoHebrew}</Text>
             */}
           </View>
+          <Pressable
+            onPress={onChangeGroup}
+            style={{
+              position: "absolute",
+              right: 24,
+              bottom: 24,
+
+              width: 42,
+              height: 42,
+              borderRadius: 21,
+
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <MaterialIcons name="logout" size={28} color="#6b7280" />
+          </Pressable>
         </View>
       )}
     </View>

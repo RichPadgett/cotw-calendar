@@ -13,6 +13,7 @@ type Props = {
   setGroupCode: (value: string) => void;
   adminCode: string;
   setAdminCode: (value: string) => void;
+  welcomeError: string;
   onContinue: () => void;
 };
 
@@ -25,6 +26,7 @@ export default function WelcomeScreen({
   setGroupCode,
   adminCode,
   setAdminCode,
+  welcomeError,
   onContinue,
 }: Props) {
   const [showIntro, setShowIntro] = useState(true);
@@ -137,6 +139,19 @@ export default function WelcomeScreen({
       <Text style={{ marginTop: 8, fontSize: 12, color: "#6b7280" }}>
         Public calendar available without a group code.
       </Text>
+
+      {welcomeError ? (
+        <Text
+          style={{
+            marginTop: 8,
+            color: "#dc2626",
+            fontSize: 14,
+            fontWeight: "600",
+          }}
+        >
+          {welcomeError}
+        </Text>
+      ) : null}
 
       <Pressable
         onPress={onContinue}

@@ -63,12 +63,18 @@ export function joinOrCreateGroup(params: {
   const existingGroup = getGroup(groupCode);
 
   if (!existingGroup) {
+    // if (groupCode === "public") {
+    //   return {
+    //     groupCode,
+    //     role: "member",
+    //     createdGroup: false,
+    //   };
+    // }
+
     if (!adminCode) {
-      return {
-        groupCode,
-        role: "member",
-        createdGroup: false,
-      };
+      throw new Error(
+        "This group does not exist. Ask your group admin for the correct group code, or enter an admin code to create it."
+      );
     }
 
     const groupFolder = getGroupFolder(groupCode);
@@ -94,18 +100,10 @@ export function joinOrCreateGroup(params: {
     };
   }
 
-  if (!adminCode) {
-    return {
-      groupCode,
-      role: "member",
-      createdGroup: false,
-    };
-  }
-
   const adminCodeMatches =
     hashAdminCode(adminCode) === existingGroup.adminCodeHash;
 
-  if (!adminCodeMatches) {
+  if ("" != adminCode && !adminCodeMatches) {
     throw new Error("Invalid admin code.");
   }
 
