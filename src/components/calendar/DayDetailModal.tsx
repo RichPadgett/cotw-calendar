@@ -443,11 +443,8 @@ export default function DayDetailModal({
                   Boolean(marker.sourceUrl);
 
                 return (
-                  <Pressable
+                  <View
                     key={marker.id}
-                    onPress={() =>
-                      hasDetails ? setSelectedMarker(marker) : undefined
-                    }
                     style={{
                       marginTop: 12,
                       padding: 10,
@@ -460,17 +457,24 @@ export default function DayDetailModal({
                     </Text>
 
                     {hasDetails ? (
-                      <Text
+                      <Pressable
+                        onPress={() => setSelectedMarker(marker)}
                         style={{
+                          alignSelf: "flex-start",
                           marginTop: 4,
-                          color: "white",
-                          fontSize: 11,
-                          fontWeight: "700",
-                          opacity: 0.9,
                         }}
                       >
-                        Tap for notes
-                      </Text>
+                        <Text
+                          style={{
+                            color: "white",
+                            fontSize: 11,
+                            fontWeight: "700",
+                            opacity: 0.9,
+                          }}
+                        >
+                          Tap for notes
+                        </Text>
+                      </Pressable>
                     ) : null}
 
                     {canEditPerpetualMarkers ? (
@@ -497,7 +501,7 @@ export default function DayDetailModal({
                         </Text>
                       </Pressable>
                     ) : null}
-                  </Pressable>
+                  </View>
                 );
               })}
 
