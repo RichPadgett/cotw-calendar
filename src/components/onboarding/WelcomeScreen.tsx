@@ -5,7 +5,7 @@
  */
 
 import { useState } from "react";
-import { Image, Pressable, Text, TextInput, View } from "react-native";
+import { ImageBackground, Image, Pressable, Text, TextInput, View } from "react-native";
 
 console.log("WelcomeScreen loaded");
 type Props = {
@@ -33,23 +33,14 @@ export default function WelcomeScreen({
 
   if (showIntro) {
     return (
+
       <Pressable
         onPress={() => setShowIntro(false)}
-        style={{
-          flex: 1,
-          backgroundColor: "#F8F5ef",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: 24,
-        }}
+        style={{ flex: 1 }}
       >
-        <Image
+        <ImageBackground
           source={require("../../../assets/welcome/welcome-logo.png")}
-          style={{
-            position: "absolute",
-            width: "100%",
-            height: "100%",
-          }}
+          style={{ flex: 1 }}
           resizeMode="cover"
         />
 
@@ -86,7 +77,7 @@ export default function WelcomeScreen({
         flex: 1,
         padding: 24,
         justifyContent: "center",
-        backgroundColor: "#f8f5ef",
+        backgroundColor: "#f9f2e9",
       }}
     >
       {/* <Text style={{ fontSize: 34, fontWeight: "900" }}>
