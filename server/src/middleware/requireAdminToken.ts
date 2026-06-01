@@ -1,17 +1,21 @@
 import { NextFunction, Request, Response } from "express";
 import { verifyAdminToken } from "../services/groupStore";
 
+function getBearerToken(req: Request) {
+  const authHeader = req.headers.authorization ?? "";
+
+  return authHeader.startsWith("Bearer ")
+    ? authHeader.slice("Bearer ".length)
+    : "";
+}
+
 export function requireAdminToken(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
   const groupCode = String(req.query.groupCode ?? "public");
-
-  const authHeader = req.headers.authorization ?? "";
-  const token = authHeader.startsWith("Bearer ")
-    ? authHeader.slice("Bearer ".length)
-    : "";
+  const token = getBearerToken(req);
 
   const isAllowed = verifyAdminToken({
     groupCode,
@@ -25,4 +29,27 @@ export function requireAdminToken(
   }
 
   next();
+}
+
+export function requireAdminTokenForGroup(requiredGroupCode: string) {
+  return function requireFixedGroupAdminToken(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    const token = getBearerToken(req);
+
+    const isAllowed = verifyAdminToken({
+      groupCode: requiredGroupCode,
+      token,
+    });
+
+    if (!isAllowed) {
+      return res.status(403).json({
+        error: "Admin access required.",
+      });
+    }
+
+    next();
+  };
 }

@@ -21,11 +21,8 @@ import type { DayContent } from "../src/types/calendarContent";
 import type { PerpetualMarker } from "../src/types/perpetualMarkers";
 import { API_BASE_URL } from "../src/config/api";
 
-
 const STICKY_HEADER_OFFSET = 220;
 const YEAR_VIEW_TOP_OFFSET = 685;
-
-
 
 export default function HomeScreen() {
   const scrollViewRef = useRef<ScrollView>(null);
@@ -93,6 +90,33 @@ export default function HomeScreen() {
         return matchesMonthDay || matchesGateDay || matchesIntercalaryWeek;
       })
     : [];
+
+  /**
+   * Saves the complete perpetual marker collection through the protected admin API.
+   * The server endpoint overwrites the marker file, so callers must send the full next array.
+   */
+  async function savePerpetualMarkers(nextMarkers: PerpetualMarker[]) {
+    const response = await fetch(
+      `${API_BASE_URL}/api/calendar/perpetual-markers`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${adminToken}`,
+        },
+        body: JSON.stringify(nextMarkers),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to save perpetual markers.");
+    }
+
+    const savedMarkers: PerpetualMarker[] = await response.json();
+
+    setPerpetualMarkers(savedMarkers);
+    setPerpetualMarkersChecksum(null);
+  }
 
   function confirmChangeGroup() {
     if (typeof window !== "undefined") {
@@ -378,6 +402,7 @@ export default function HomeScreen() {
         visible={Boolean(selectedNode)}
         selectedNode={selectedNode}
         dayContent={dayContent}
+        perpetualMarkers={perpetualMarkers}
         selectedDayMarkers={selectedDayMarkers}
         isAdminMode={isAdminMode}
         groupCode={groupCode}
@@ -386,6 +411,7 @@ export default function HomeScreen() {
         onToggleAdminMode={() => setIsAdminMode((value) => !value)}
         onPreviousDay={goToPreviousDay}
         onNextDay={goToNextDay}
+        onSavePerpetualMarkers={savePerpetualMarkers}
         adminToken={adminToken}
       />
     </>

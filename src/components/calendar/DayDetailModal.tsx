@@ -11,6 +11,7 @@ import {
   Pressable,
   ScrollView,
   Text,
+  TextInput,
   View,
 } from "react-native";
 
@@ -24,6 +25,7 @@ type Props = {
   visible: boolean;
   selectedNode: CalendarNode | null;
   dayContent: DayContent | null;
+  perpetualMarkers: PerpetualMarker[];
   selectedDayMarkers: PerpetualMarker[];
   isAdminMode: boolean;
   groupCode: string;
@@ -34,6 +36,7 @@ type Props = {
   onToggleAdminMode: () => void;
   onPreviousDay: () => void;
   onNextDay: () => void;
+  onSavePerpetualMarkers: (markers: PerpetualMarker[]) => Promise<void>;
 };
 
 /**
@@ -44,6 +47,7 @@ export default function DayDetailModal({
   visible,
   selectedNode,
   dayContent,
+  perpetualMarkers,
   selectedDayMarkers,
   isAdminMode,
   groupCode,
@@ -53,10 +57,19 @@ export default function DayDetailModal({
   onToggleAdminMode,
   onPreviousDay,
   onNextDay,
+  onSavePerpetualMarkers,
 }: Props) {
   const [selectedMarker, setSelectedMarker] = useState<PerpetualMarker | null>(
     null
   );
+  const [markerTitle, setMarkerTitle] = useState("");
+  const [markerShortName, setMarkerShortName] = useState("");
+  const [markerColor, setMarkerColor] = useState("#2563eb");
+  const [markerNotes, setMarkerNotes] = useState("");
+  const [markerSourceLabel, setMarkerSourceLabel] = useState("");
+  const [markerSourceUrl, setMarkerSourceUrl] = useState("");
+  const [markerSaveMessage, setMarkerSaveMessage] = useState("");
+  const [isSavingMarker, setIsSavingMarker] = useState(false);
 
   const modalTitle =
     dayContent?.title ??
@@ -68,6 +81,9 @@ export default function DayDetailModal({
         selectedNode.gregorianDate ?? ""
       }`
     : (selectedNode?.gregorianDate ?? "");
+
+  const canEditPerpetualMarkers =
+    userRole === "admin" && groupCode === "church-of-the-word" && isAdminMode;
 
   /**
    * Opens a linked scripture, source note, media item, or external content URL.
@@ -85,6 +101,109 @@ export default function DayDetailModal({
   function closeModal() {
     setSelectedMarker(null);
     onClose();
+  }
+
+  function resetMarkerForm() {
+    setMarkerTitle("");
+    setMarkerShortName("");
+    setMarkerColor("#2563eb");
+    setMarkerNotes("");
+    setMarkerSourceLabel("");
+    setMarkerSourceUrl("");
+  }
+
+  function createMarkerId(title: string) {
+    const slug = title
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+
+    return `${slug || "marker"}-${Date.now()}`;
+  }
+
+  /**
+   * Builds a new perpetual marker for the selected day placement.
+   * Month days, gate days, and intercalary weeks use different fields in the marker file.
+   */
+  function buildMarkerForSelectedDay(): PerpetualMarker | null {
+    const enoch = selectedNode?.enoch;
+
+    if (!enoch) return null;
+
+    const title = markerTitle.trim();
+    const shortName = markerShortName.trim();
+
+    if (!title || !shortName) return null;
+
+    const marker: PerpetualMarker = {
+      id: createMarkerId(title),
+      title,
+      shortName,
+      color: markerColor.trim() || "#2563eb",
+    };
+
+    if (markerNotes.trim()) marker.notes = markerNotes.trim();
+    if (markerSourceLabel.trim()) marker.sourceLabel = markerSourceLabel.trim();
+    if (markerSourceUrl.trim()) marker.sourceUrl = markerSourceUrl.trim();
+
+    if (enoch.isSabbathWeek) {
+      marker.intercalaryWeek = true;
+    } else if (enoch.isIntercalary) {
+      marker.gateDay = enoch.quarter;
+    } else if (enoch.month?.number && enoch.day) {
+      marker.month = enoch.month.number;
+      marker.day = enoch.day;
+    } else {
+      return null;
+    }
+
+    return marker;
+  }
+
+  async function addPerpetualMarker() {
+    const marker = buildMarkerForSelectedDay();
+
+    if (!marker) {
+      setMarkerSaveMessage("Title and short name are required.");
+      return;
+    }
+
+    try {
+      setIsSavingMarker(true);
+      setMarkerSaveMessage("");
+
+      await onSavePerpetualMarkers([...perpetualMarkers, marker]);
+      resetMarkerForm();
+      setMarkerSaveMessage("Perpetual marker saved.");
+    } catch (error) {
+      console.log("Failed to save perpetual marker", error);
+      setMarkerSaveMessage("Unable to save marker.");
+    } finally {
+      setIsSavingMarker(false);
+    }
+  }
+
+  async function deletePerpetualMarker(markerId: string) {
+    try {
+      setIsSavingMarker(true);
+      setMarkerSaveMessage("");
+
+      await onSavePerpetualMarkers(
+        perpetualMarkers.filter((marker) => marker.id !== markerId)
+      );
+
+      if (selectedMarker?.id === markerId) {
+        setSelectedMarker(null);
+      }
+
+      setMarkerSaveMessage("Perpetual marker deleted.");
+    } catch (error) {
+      console.log("Failed to delete perpetual marker", error);
+      setMarkerSaveMessage("Unable to delete marker.");
+    } finally {
+      setIsSavingMarker(false);
+    }
   }
 
   return (
@@ -135,6 +254,152 @@ export default function DayDetailModal({
                     {isAdminMode ? "Exit Admin" : "Admin Mode"}
                   </Text>
                 </Pressable>
+              )}
+
+              {canEditPerpetualMarkers && (
+                <View
+                  style={{
+                    marginTop: 8,
+                    padding: 14,
+                    borderRadius: 12,
+                    borderWidth: 1,
+                    borderColor: "#bfdbfe",
+                    backgroundColor: "#eff6ff",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: "900",
+                      color: "#111827",
+                    }}
+                  >
+                    Perpetual Marker
+                  </Text>
+
+                  <TextInput
+                    value={markerTitle}
+                    onChangeText={setMarkerTitle}
+                    placeholder="Title"
+                    style={{
+                      marginTop: 10,
+                      borderWidth: 1,
+                      borderColor: "#d1d5db",
+                      borderRadius: 10,
+                      padding: 10,
+                      backgroundColor: "#ffffff",
+                    }}
+                  />
+
+                  <TextInput
+                    value={markerShortName}
+                    onChangeText={setMarkerShortName}
+                    placeholder="Short name"
+                    style={{
+                      marginTop: 8,
+                      borderWidth: 1,
+                      borderColor: "#d1d5db",
+                      borderRadius: 10,
+                      padding: 10,
+                      backgroundColor: "#ffffff",
+                    }}
+                  />
+
+                  <TextInput
+                    value={markerColor}
+                    onChangeText={setMarkerColor}
+                    placeholder="#2563eb"
+                    autoCapitalize="none"
+                    style={{
+                      marginTop: 8,
+                      borderWidth: 1,
+                      borderColor: "#d1d5db",
+                      borderRadius: 10,
+                      padding: 10,
+                      backgroundColor: "#ffffff",
+                    }}
+                  />
+
+                  <TextInput
+                    value={markerNotes}
+                    onChangeText={setMarkerNotes}
+                    placeholder="Notes"
+                    multiline
+                    style={{
+                      marginTop: 8,
+                      minHeight: 72,
+                      borderWidth: 1,
+                      borderColor: "#d1d5db",
+                      borderRadius: 10,
+                      padding: 10,
+                      backgroundColor: "#ffffff",
+                      textAlignVertical: "top",
+                    }}
+                  />
+
+                  <TextInput
+                    value={markerSourceLabel}
+                    onChangeText={setMarkerSourceLabel}
+                    placeholder="Source label"
+                    style={{
+                      marginTop: 8,
+                      borderWidth: 1,
+                      borderColor: "#d1d5db",
+                      borderRadius: 10,
+                      padding: 10,
+                      backgroundColor: "#ffffff",
+                    }}
+                  />
+
+                  <TextInput
+                    value={markerSourceUrl}
+                    onChangeText={setMarkerSourceUrl}
+                    placeholder="Source URL"
+                    autoCapitalize="none"
+                    style={{
+                      marginTop: 8,
+                      borderWidth: 1,
+                      borderColor: "#d1d5db",
+                      borderRadius: 10,
+                      padding: 10,
+                      backgroundColor: "#ffffff",
+                    }}
+                  />
+
+                  <Pressable
+                    onPress={addPerpetualMarker}
+                    disabled={isSavingMarker}
+                    style={{
+                      marginTop: 12,
+                      paddingVertical: 12,
+                      borderRadius: 10,
+                      alignItems: "center",
+                      backgroundColor: isSavingMarker ? "#93c5fd" : "#2563eb",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: "#ffffff",
+                        fontWeight: "900",
+                      }}
+                    >
+                      {isSavingMarker ? "Saving..." : "Add Marker"}
+                    </Text>
+                  </Pressable>
+
+                  {markerSaveMessage ? (
+                    <Text
+                      style={{
+                        marginTop: 8,
+                        fontSize: 12,
+                        fontWeight: "700",
+                        color: "#1f2937",
+                      }}
+                    >
+                      {markerSaveMessage}
+                    </Text>
+                  ) : null}
+                </View>
               )}
 
               <Text style={{ fontSize: 32, fontWeight: "800" }}>
@@ -206,6 +471,31 @@ export default function DayDetailModal({
                       >
                         Tap for notes
                       </Text>
+                    ) : null}
+
+                    {canEditPerpetualMarkers ? (
+                      <Pressable
+                        onPress={() => deletePerpetualMarker(marker.id)}
+                        disabled={isSavingMarker}
+                        style={{
+                          marginTop: 8,
+                          alignSelf: "flex-start",
+                          paddingVertical: 6,
+                          paddingHorizontal: 10,
+                          borderRadius: 8,
+                          backgroundColor: "rgba(255,255,255,0.22)",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            color: "white",
+                            fontSize: 11,
+                            fontWeight: "900",
+                          }}
+                        >
+                          Delete
+                        </Text>
+                      </Pressable>
                     ) : null}
                   </Pressable>
                 );

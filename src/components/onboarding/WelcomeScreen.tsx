@@ -5,9 +5,15 @@
  */
 
 import { useState } from "react";
-import { ImageBackground, Image, Pressable, Text, TextInput, View } from "react-native";
+import {
+  Image,
+  Pressable,
+  Text,
+  TextInput,
+  useWindowDimensions,
+  View,
+} from "react-native";
 
-console.log("WelcomeScreen loaded");
 type Props = {
   groupCode: string;
   setGroupCode: (value: string) => void;
@@ -30,24 +36,41 @@ export default function WelcomeScreen({
   onContinue,
 }: Props) {
   const [showIntro, setShowIntro] = useState(true);
+  const { height, width } = useWindowDimensions();
+
+  const welcomeLogoWidth = Math.min(width * 0.92, 520);
+  const welcomeLogoHeight = Math.min(
+    welcomeLogoWidth * (1448 / 1086),
+    height * 0.86
+  );
 
   if (showIntro) {
     return (
-
       <Pressable
         onPress={() => setShowIntro(false)}
-        style={{ flex: 1 }}
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "#f9f2e9",
+          overflow: "hidden",
+        }}
       >
-        <ImageBackground
+        <Image
           source={require("../../../assets/welcome/welcome-logo.png")}
-          style={{ flex: 1 }}
-          resizeMode="cover"
+          style={{
+            width: welcomeLogoWidth,
+            height: welcomeLogoHeight,
+            borderRadius: 28,
+            maxHeight: "86%",
+          }}
+          resizeMode="contain"
         />
 
         <View
           style={{
             position: "absolute",
-            bottom: 5,
+            bottom: 24,
             left: 0,
             right: 0,
             alignItems: "center",
