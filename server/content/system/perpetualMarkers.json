@@ -1,23 +1,23 @@
 [
   { 
-    "id": "yeshua-baptism",
+    "id": "example-day-marker",
     "month": 1,
     "day": 1,
-    "title": "Yeshua Baptized",
-    "shortName": "YB",
+    "title": "Example Day Marker",
+    "shortName": "Day",
     "color": "#2563eb"
   },
   {
-    "id": "quarter-day",
+    "id": "example-quarter-day",
     "gateDay": 1,
-    "title": "Quarter Day",
+    "title": "Example Quarter Day",
     "shortName": "QD",
     "color": "#16a34a"
   },
   {
-    "id": "land-rest",
+    "id": "example-land-rest",
     "intercalaryWeek": true,
-    "title": "Land Rest",
+    "title": "Land Rest Sabbath Week",
     "shortName": "LR",
     "color": "#9333ea"
   }

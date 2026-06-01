@@ -5,11 +5,12 @@ const router = Router();
 
 router.post("/join", (req, res) => {
   try {
-    const { groupCode, adminCode } = req.body;
+    const { groupCode, adminCode, deviceName } = req.body;
 
     const result = joinOrCreateGroup({
       groupCode,
       adminCode,
+      deviceName,
     });
 
     res.json(result);

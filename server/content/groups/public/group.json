@@ -1,5 +1,15 @@
 {
   "groupCode": "public",
-  "adminCodeHash": "3d106836e0b147763bea85a618f93f6596f72d520d0f5ae22c8da2c406151031",
-  "createdAt": "2026-05-31T15:35:06.197Z"
+  "adminCodeHash": "93908ec32b75fda7670128a17b3848f2845ae979e7fddda38e83e3d27b2f5b11",
+  "createdAt": "2026-05-31T18:16:55.077Z",
+  "adminSessions": [
+    {
+      "tokenHash": "2d3d0c6c9983881996184c761158e78c0e367cfa37750d423d2cf903a934882c",
+      "createdAt": "2026-06-01T02:05:44.761Z"
+    },
+    {
+      "tokenHash": "f9fe5cacce999329bc21e86accb71b6eb45dfcf0d95ea7b9f7da68b6f8deae37",
+      "createdAt": "2026-06-01T02:06:04.162Z"
+    }
+  ]
 }

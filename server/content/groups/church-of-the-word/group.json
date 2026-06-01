@@ -1,5 +1,16 @@
 {
   "groupCode": "church-of-the-word",
   "adminCodeHash": "f75ff28336085e1cb361b8c3355c26946460869a92973089071c93f5ef729059",
-  "createdAt": "2026-05-31T15:49:00.672Z"
+  "createdAt": "2026-05-31T15:49:00.672Z",
+  "adminSessions": [
+    {
+      "tokenHash": "49a814754160bcb7994203e957c15b646df1ce180fb28d3e07ef61dcb6a9e5e6",
+      "createdAt": "2026-06-01T02:02:56.979Z"
+    },
+    {
+      "tokenHash": "fdd85afe749aa032b2fab27707338494a5be67a670bfa769e1e6a9cfce725bf9",
+      "createdAt": "2026-06-01T03:33:39.947Z",
+      "deviceName": "Web Browser"
+    }
+  ]
 }

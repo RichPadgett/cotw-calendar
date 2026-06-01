@@ -1,63 +1,41 @@
 /*
  * File: app/index.tsx
- * Purpose: Main Expo Router screen for the Enoch calendar experience, including group entry, year navigation, day details, and admin access.
- * Author: rpadgett
+ * Purpose: Main Expo Router screen for the Enoch calendar experience.
  */
 
-// External dependencies
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useRef, useState } from "react";
 import { Alert, ScrollView, Text, View } from "react-native";
 
-// App components
 import AppHeader from "../src/components/calendar/AppHeader";
 import DayDetailModal from "../src/components/calendar/DayDetailModal";
 import YearView from "../src/components/calendar/YearView";
 import YearWheelView from "../src/components/calendar/YearWheelView";
 import WelcomeScreen from "../src/components/onboarding/WelcomeScreen";
 
-// Calendar engine and models
 import { buildEnochYear } from "../src/engine/buildEnochYear";
 import { getEnochYearStartDate } from "../src/engine/enochYear";
+import { useGroupSession } from "../src/hooks/useGroupSession";
 import { CalendarNode } from "../src/models/calendar";
 
-// Shared app types
 import type { DayContent } from "../src/types/calendarContent";
 import type { PerpetualMarker } from "../src/types/perpetualMarkers";
 
 const STICKY_HEADER_OFFSET = 220;
 const YEAR_VIEW_TOP_OFFSET = 685;
-const GROUP_CODE_STORAGE_KEY = "groupCode";
-const ROLE_STORAGE_KEY = "userRole";
 
 const API_BASE_URL = "http://localhost:3001";
 
-/**
- * Creates the main calendar UX screen.
- * It coordinates group-code entry, year navigation, calendar rendering, day detail modals, and admin editing access.
- */
 export default function HomeScreen() {
-  // Scroll refs and layout measurements
   const scrollViewRef = useRef<ScrollView>(null);
   const monthOffsetsRef = useRef<Record<number, number>>({});
 
-  // Calendar view state
   const [visibleEnochYear, setVisibleEnochYear] = useState(2026);
   const [activeMonthNumber, setActiveMonthNumber] = useState(1);
 
-  // Group entry and group-specific content state
-  const [hasEnteredApp, setHasEnteredApp] = useState(false);
-  const [groupCode, setGroupCode] = useState("public");
-  const [userRole, setUserRole] = useState<"member" | "admin">("member");
-
-  const [hasLoadedGroupCode, setHasLoadedGroupCode] = useState(false);
-
   const [yearNotices, setYearNotices] = useState<any[]>([]);
   const [selectedNode, setSelectedNode] = useState<CalendarNode | null>(null);
-
   const [dayContent, setDayContent] = useState<DayContent | null>(null);
 
-  // Global marker state
   const [perpetualMarkers, setPerpetualMarkers] = useState<PerpetualMarker[]>(
     []
   );
@@ -67,11 +45,20 @@ export default function HomeScreen() {
 
   const [isAdminMode, setIsAdminMode] = useState(false);
 
-  const [adminCode, setAdminCode] = useState("");
+  const {
+    groupCode,
+    setGroupCode,
+    adminCode,
+    setAdminCode,
+    userRole,
+    hasEnteredApp,
+    hasLoadedGroupCode,
+    welcomeError,
+    joinGroup,
+    changeGroup,
+    adminToken,
+  } = useGroupSession();
 
-  const [welcomeError, setWelcomeError] = useState("");
-
-  // Derived calendar data
   const config = {
     enochYear: visibleEnochYear,
     startsOnGregorianDate: getEnochYearStartDate(visibleEnochYear),
@@ -105,22 +92,6 @@ export default function HomeScreen() {
       })
     : [];
 
-  /**
-   * Removes the last-used group code from device storage.
-   * This account/session helper returns the app to the welcome flow without clearing calendar content.
-   */
-  async function changeGroup() {
-    await AsyncStorage.removeItem(GROUP_CODE_STORAGE_KEY);
-
-    setGroupCode("public");
-    setAdminCode("");
-    setHasEnteredApp(false);
-  }
-
-  /**
-   * Confirms that the user wants to choose a different group code.
-   * This interaction helper uses browser confirmation on web and native alerts on device targets.
-   */
   function confirmChangeGroup() {
     if (typeof window !== "undefined") {
       const confirmed = window.confirm(
@@ -150,48 +121,13 @@ export default function HomeScreen() {
     );
   }
 
-  // Initial app entry state
   useEffect(() => {
-    /**
-     * Loads the last-used group code from device storage.
-     * This entry helper skips the welcome screen when a saved group is available.
-     */
-    async function loadSavedGroupCode() {
-      try {
-        const savedGroupCode = await AsyncStorage.getItem(
-          GROUP_CODE_STORAGE_KEY
-        );
-
-        const savedRole = await AsyncStorage.getItem(ROLE_STORAGE_KEY);
-
-        if (savedGroupCode) {
-          setGroupCode(savedGroupCode);
-          setHasEnteredApp(true);
-          console.log("Loaded group:", savedGroupCode);
-          console.log("Loaded role:", savedRole);
-        }
-
-        if (savedRole === "admin") {
-          setUserRole("admin");
-        }
-      } finally {
-        setHasLoadedGroupCode(true);
-      }
-    }
-
-    loadSavedGroupCode();
-  }, []);
-
-  // Keep year badges in sync with the selected group.
-  useEffect(() => {
-    /**
-     * Fetches the notice/content summary for the visible Enoch year.
-     * This API loader powers day badges in the year grid for the active group.
-     */
     async function loadYearNotices() {
       try {
         const response = await fetch(
-          `${API_BASE_URL}/api/calendar/${config.enochYear}/notices?groupCode=${encodeURIComponent(groupCode)}`
+          `${API_BASE_URL}/api/calendar/${
+            config.enochYear
+          }/notices?groupCode=${encodeURIComponent(groupCode)}`
         );
 
         if (!response.ok) {
@@ -207,21 +143,17 @@ export default function HomeScreen() {
       }
     }
 
-    loadYearNotices();
-  }, [config.enochYear, groupCode]);
+    if (hasEnteredApp) {
+      loadYearNotices();
+    }
+  }, [config.enochYear, groupCode, hasEnteredApp]);
 
-  // Perpetual markers are global calendar overlays; the checksum avoids reloading unchanged data.
   useEffect(() => {
     if (!hasEnteredApp) return;
 
     loadPerpetualMarkers();
   }, [hasEnteredApp, perpetualMarkersChecksum]);
 
-  // Data loaders
-  /**
-   * Fetches global perpetual markers from the API when their checksum changes.
-   * This data loader supports recurring marker overlays without repeatedly downloading unchanged data.
-   */
   async function loadPerpetualMarkers() {
     try {
       const checksumResponse = await fetch(
@@ -273,7 +205,6 @@ export default function HomeScreen() {
     );
   }
 
-  // Onboarding gate
   if (!hasEnteredApp) {
     return (
       <WelcomeScreen
@@ -282,47 +213,11 @@ export default function HomeScreen() {
         adminCode={adminCode}
         setAdminCode={setAdminCode}
         welcomeError={welcomeError}
-        onContinue={async () => {
-          const normalizedGroupCode =
-            groupCode.trim().toLowerCase() || "public";
-
-          const response = await fetch(`${API_BASE_URL}/api/groups/join`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              groupCode: normalizedGroupCode,
-              adminCode: adminCode.trim(),
-            }),
-          });
-
-          const data = await response.json();
-          console.log("Join group response:", data);
-
-          if (!response.ok) {
-            setWelcomeError(data.error ?? "Unable to join group.");
-            return;
-          }
-
-          await AsyncStorage.setItem(GROUP_CODE_STORAGE_KEY, data.groupCode);
-
-          await AsyncStorage.setItem(ROLE_STORAGE_KEY, data.role);
-
-          setGroupCode(data.groupCode);
-          setUserRole(data.role);
-          setWelcomeError("");
-          setHasEnteredApp(true);
-        }}
+        onContinue={joinGroup}
       />
     );
   }
 
-  // Day modal handlers
-  /**
-   * Opens the day detail modal and loads group-specific content for the selected calendar node.
-   * This interaction handler connects calendar cell presses to the detail UX.
-   */
   async function openDay(node: CalendarNode) {
     setSelectedNode(node);
     setDayContent(null);
@@ -335,7 +230,9 @@ export default function HomeScreen() {
 
     try {
       const response = await fetch(
-        `${API_BASE_URL}/api/calendar/${year}/${month}/${day}?groupCode=${encodeURIComponent(groupCode)}`
+        `${API_BASE_URL}/api/calendar/${year}/${month}/${day}?groupCode=${encodeURIComponent(
+          groupCode
+        )}`
       );
 
       if (!response.ok) return;
@@ -347,27 +244,15 @@ export default function HomeScreen() {
     }
   }
 
-  /**
-   * Closes the day detail modal and clears its loaded content.
-   * This interaction handler resets modal state after a user exits a day.
-   */
   function closeDay() {
     setSelectedNode(null);
     setDayContent(null);
   }
 
-  /**
-   * Stores each rendered month's vertical offset inside the scroll view.
-   * These layout measurements let wheel/month navigation scroll to the correct section.
-   */
   function handleMonthLayout(monthNumber: number, y: number) {
     monthOffsetsRef.current[monthNumber] = y;
   }
 
-  /**
-   * Tracks scroll position and derives the currently active month.
-   * This scroll handler keeps the sticky header aligned with the month in view.
-   */
   function handleScroll(event: any) {
     const scrollY = event.nativeEvent.contentOffset.y;
 
@@ -380,10 +265,6 @@ export default function HomeScreen() {
     }
   }
 
-  /**
-   * Scrolls the year view to a selected Enoch month.
-   * This navigation helper is used by the wheel view to jump into the linear calendar.
-   */
   function scrollToMonth(monthNumber: number) {
     const y = monthOffsetsRef.current[monthNumber];
 
@@ -397,10 +278,6 @@ export default function HomeScreen() {
     setActiveMonthNumber(monthNumber);
   }
 
-  /**
-   * Moves the calendar to the previous Enoch year and resets scroll/modal state.
-   * This year navigation handler is triggered from the month header controls.
-   */
   function goPreviousYear() {
     setVisibleEnochYear((year) => year - 1);
     setActiveMonthNumber(1);
@@ -408,10 +285,6 @@ export default function HomeScreen() {
     scrollViewRef.current?.scrollTo({ y: 0, animated: true });
   }
 
-  /**
-   * Moves the calendar to the next Enoch year and resets scroll/modal state.
-   * This year navigation handler is triggered from the month header controls.
-   */
   function goNextYear() {
     setVisibleEnochYear((year) => year + 1);
     setActiveMonthNumber(1);
@@ -419,15 +292,10 @@ export default function HomeScreen() {
     scrollViewRef.current?.scrollTo({ y: 0, animated: true });
   }
 
-  /**
-   * Opens the previous day while staying inside the day detail modal.
-   * This modal navigation handler walks backward through the generated year nodes.
-   */
   function goToPreviousDay() {
     if (!selectedNode) return;
 
     const currentIndex = nodes.findIndex((node) => node.id === selectedNode.id);
-
     const previousNode = nodes[currentIndex - 1];
 
     if (previousNode) {
@@ -435,15 +303,10 @@ export default function HomeScreen() {
     }
   }
 
-  /**
-   * Opens the next day while staying inside the day detail modal.
-   * This modal navigation handler walks forward through the generated year nodes.
-   */
   function goToNextDay() {
     if (!selectedNode) return;
 
     const currentIndex = nodes.findIndex((node) => node.id === selectedNode.id);
-
     const nextNode = nodes[currentIndex + 1];
 
     if (nextNode) {
@@ -461,7 +324,6 @@ export default function HomeScreen() {
     return node.gregorianDate === todayId;
   });
 
-  // Main calendar and day detail modal
   return (
     <>
       <ScrollView
@@ -509,6 +371,7 @@ export default function HomeScreen() {
           onPressDay={openDay}
         />
       </ScrollView>
+
       <DayDetailModal
         visible={Boolean(selectedNode)}
         selectedNode={selectedNode}
@@ -521,6 +384,7 @@ export default function HomeScreen() {
         onToggleAdminMode={() => setIsAdminMode((value) => !value)}
         onPreviousDay={goToPreviousDay}
         onNextDay={goToNextDay}
+        adminToken={adminToken}
       />
     </>
   );

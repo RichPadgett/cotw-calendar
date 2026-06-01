@@ -33,7 +33,7 @@ type Props = {
   userRole: "member" | "admin";
   onClose: () => void;
   onToggleAdminMode: () => void;
-  onChangeGroup: () => void;
+  adminToken: string;
   onPreviousDay: () => void;
   onNextDay: () => void;
 };
@@ -53,9 +53,9 @@ export default function DayDetailModal({
   userRole,
   onClose,
   onToggleAdminMode,
-  onChangeGroup,
   onPreviousDay,
   onNextDay,
+  adminToken,
 }: Props) {
   const modalTitle =
     dayContent?.title ??
@@ -133,24 +133,6 @@ export default function DayDetailModal({
               </Pressable>
             )}
 
-            <Pressable
-              onPress={onChangeGroup}
-              style={{
-                alignSelf: "flex-end",
-                padding: 12,
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 13,
-                  fontWeight: "800",
-                  color: "#dc2626",
-                }}
-              >
-                Change Group
-              </Text>
-            </Pressable>
-
             <Text style={{ fontSize: 32, fontWeight: "800" }}>
               {modalTitle}
             </Text>
@@ -217,6 +199,7 @@ export default function DayDetailModal({
                     month={selectedNode.enoch.month.number}
                     day={selectedNode.enoch.day}
                     groupCode={groupCode}
+                    adminToken={adminToken}
                   />
                 )}
               </View>

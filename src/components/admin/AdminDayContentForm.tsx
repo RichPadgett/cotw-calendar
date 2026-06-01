@@ -15,6 +15,7 @@ type Props = {
   month: number;
   day: number;
   groupCode: string;
+  adminToken: string;
 };
 
 type AccessLevel = "public" | "members" | "code-required";
@@ -64,6 +65,7 @@ export default function AdminDayContentForm({
   month,
   day,
   groupCode,
+  adminToken,
 }: Props) {
   const [activeTab, setActiveTab] = useState<"create" | "preview">("create");
 
@@ -179,6 +181,7 @@ export default function AdminDayContentForm({
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${adminToken}`,
           },
           body: JSON.stringify(body),
         }
