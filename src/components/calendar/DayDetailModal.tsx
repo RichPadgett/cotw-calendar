@@ -464,9 +464,11 @@ export default function DayDetailModal({
                         }
                         style={{
                           alignSelf: "flex-start",
-                          marginTop: 4,
+                          marginTop: 8,
                           paddingVertical: 6,
-                          paddingRight: 12,
+                          paddingHorizontal: 10,
+                          borderRadius: 8,
+                          backgroundColor: "rgba(255,255,255,0.22)",
                         }}
                       >
                         <Text
