@@ -4,7 +4,7 @@
  */
 
 import { useEffect, useRef, useState } from "react";
-import { Alert, ScrollView, Text, View } from "react-native";
+import { Alert, Platform, ScrollView, Text, View } from "react-native";
 
 import AppHeader from "../src/components/calendar/AppHeader";
 import DayDetailModal from "../src/components/calendar/DayDetailModal";
@@ -119,7 +119,7 @@ export default function HomeScreen() {
   }
 
   function confirmChangeGroup() {
-    if (typeof window !== "undefined") {
+    if (Platform.OS === "web" && typeof window.confirm === "function") {
       const confirmed = window.confirm(
         "Change Group?\n\nYou will return to the welcome screen and choose a different group."
       );
