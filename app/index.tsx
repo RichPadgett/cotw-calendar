@@ -19,11 +19,13 @@ import { CalendarNode } from "../src/models/calendar";
 
 import type { DayContent } from "../src/types/calendarContent";
 import type { PerpetualMarker } from "../src/types/perpetualMarkers";
+import { API_BASE_URL } from "../src/config/api";
+
 
 const STICKY_HEADER_OFFSET = 220;
 const YEAR_VIEW_TOP_OFFSET = 685;
 
-const API_BASE_URL = "http://localhost:3001";
+
 
 export default function HomeScreen() {
   const scrollViewRef = useRef<ScrollView>(null);
