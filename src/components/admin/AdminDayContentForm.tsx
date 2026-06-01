@@ -8,6 +8,7 @@
 import * as DocumentPicker from "expo-document-picker";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { API_BASE_URL } from "../../../src/config/api";
 
 // Types
 type Props = {
@@ -32,8 +33,6 @@ type ContentRow = {
   url: string;
   access: AccessLevel;
 };
-
-const API_BASE_URL = "http://localhost:3001";
 
 const emptyScriptureRow: ScriptureRow = {
   label: "",

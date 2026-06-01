@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 
-const API_BASE_URL = "http://localhost:3001";
+import { API_BASE_URL } from "../src/config/api";
 
 const GROUP_CODE_STORAGE_KEY = "groupCode";
 const ROLE_STORAGE_KEY = "userRole";
