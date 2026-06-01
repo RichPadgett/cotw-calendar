@@ -1,0 +1,135 @@
+
+YHWH PERPETUAL CALENDAR - PROJECT STATUS REPORT
+===============================================
+
+PROJECT OVERVIEW
+----------------
+A React Native / Expo application implementing a perpetual Enoch-style calendar with:
+- 364-day calendar engine
+- Feast day calculations
+- Community notices
+- Scripture content
+- Group support
+- Admin content management
+- Perpetual markers
+- Study resources
+
+CORE CALENDAR ENGINE
+--------------------
+Completed:
+- 364-day year mapping
+- 12 months
+- 4 gate days
+- Day-to-day Gregorian mapping
+- Year rollover support
+- Configurable start date per Enoch year
+
+Feasts Implemented:
+- Passover
+- Unleavened Bread
+- First Fruits
+- Shavuot
+- Trumpets
+- Day of Atonement
+- Tabernacles
+- Eighth Day
+
+CALENDAR UI
+-----------
+- Month grid
+- Day detail modal
+- Enoch wheel
+- Event chips
+- Notices
+- Scripture readings
+- Admin editing controls
+
+WELCOME EXPERIENCE
+------------------
+- Intro splash
+- Branded welcome screen
+- Public calendar access
+- Group code entry
+- Admin code entry
+
+GROUP SYSTEM
+------------
+Filesystem-based group architecture.
+
+Storage:
+content/groups/<groupCode>/
+
+Each group contains:
+- group.json
+- content
+- notices
+- uploads
+
+AUTHENTICATION
+--------------
+- SHA256 hashed admin codes
+- Admin tokens
+- Multiple sessions
+- Multiple devices
+- Device tracking
+
+AUTHORIZATION
+-------------
+- Bearer admin tokens
+- verifyAdminToken()
+- requireAdminToken middleware
+
+NOTICES SYSTEM
+--------------
+- Public notices
+- Scripture-only days
+- Notices + scripture
+- Group-specific notices
+
+DAY CONTENT SYSTEM
+------------------
+- Notes
+- Scripture readings
+- Multiple sections
+- External links
+- Access levels
+- Admin editing
+
+PERPETUAL MARKERS
+-----------------
+- Day markers
+- Gate markers
+- Intercalary week markers
+- Study notes
+- Source labels
+- Source URLs
+
+ADMIN TOOLS
+-----------
+- Admin mode
+- Group creation
+- Group management foundation
+- Protected content editing
+
+NEXT PRIORITIES
+---------------
+1. Protect upload APIs with admin token
+2. Protect perpetual marker admin APIs
+3. Session cleanup
+4. Perpetual Marker Editor UI
+5. Admin Session Viewer
+6. Group Settings Page
+
+PROJECT ASSESSMENT
+------------------
+Calendar Engine:     95%
+UI:                  85%
+Content System:      90%
+Group System:        90%
+Authentication:      85%
+Authorization:       75%
+Admin Tools:         70%
+App Store Readiness: 75%
+
+Overall:
+Approximately 85% of the foundation is complete.

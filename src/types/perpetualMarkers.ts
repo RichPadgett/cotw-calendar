@@ -1,6 +1,6 @@
 /*
  * File: src/types/perpetualMarkers.ts
- * Purpose: Source file for the COTW calendar application.
+ * Purpose: App-side type definitions for recurring perpetual calendar markers.
  * Author: rpadgett
  */
 
@@ -19,4 +19,7 @@ export type PerpetualMarker = {
   gateDay?: number;
 
   intercalaryWeek?: boolean;
+  notes?: string;
+  sourceLabel?: string;
+  sourceUrl?: string;
 };
