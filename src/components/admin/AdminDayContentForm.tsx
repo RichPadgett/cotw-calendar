@@ -115,10 +115,17 @@ export default function AdminDayContentForm({
       } as any);
     }
 
+    /*
+      Uploads use FormData, so only the bearer token is set manually.
+      The browser/native fetch implementation supplies the multipart boundary.
+    */
     const response = await fetch(
       `${API_BASE_URL}/api/admin/calendar/${enochYear}/${month}/${day}/files?groupCode=${encodeURIComponent(groupCode)}`,
       {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${adminToken}`,
+        },
         body: formData,
       }
     );

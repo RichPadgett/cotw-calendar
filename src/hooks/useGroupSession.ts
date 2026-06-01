@@ -52,8 +52,7 @@ export function useGroupSession() {
         }
 
         console.log("saved session group", savedGroupCode);
-        console.log("saved sessin role", savedRole);
-        console.log("Admin token:", savedAdminToken);
+        console.log("saved session role", savedRole);
       } finally {
         setHasLoadedGroupCode(true);
       }
@@ -91,6 +90,10 @@ export function useGroupSession() {
 
     await AsyncStorage.setItem(ROLE_STORAGE_KEY, data.role);
 
+    /*
+      Admin tokens are returned only after the server validates the admin code.
+      Store the token locally so protected admin requests can reuse it later.
+    */
     if (data.adminToken) {
       await AsyncStorage.setItem(ADMIN_TOKEN_STORAGE_KEY, data.adminToken);
 
@@ -103,15 +106,14 @@ export function useGroupSession() {
 
     setGroupCode(data.groupCode);
     setUserRole(data.role);
-    setAdminCode(data.adminCode);
+    setAdminCode("");
     setHasEnteredApp(true);
-    console.log("Admin token:", data.adminToken);
     console.log("join group", data.groupCode);
-    console.log("join admin", data.adminCode);
     console.log("join role", data.role);
   }
 
   async function changeGroup() {
+    // Clear the saved token when changing groups so admin access cannot leak between sessions.
     await AsyncStorage.removeItem(GROUP_CODE_STORAGE_KEY);
     await AsyncStorage.removeItem(ROLE_STORAGE_KEY);
     await AsyncStorage.removeItem(ADMIN_TOKEN_STORAGE_KEY);

@@ -5,20 +5,29 @@
     "day": 1,
     "title": "Example Day Marker",
     "shortName": "Day",
-    "color": "#2563eb"
+    "color": "#2563eb",
+    "notes": "This date is derived from...",
+    "sourceLabel": "Calendar Study Notes",
+    "sourceUrl": "https://..."
   },
   {
     "id": "example-quarter-day",
     "gateDay": 1,
     "title": "Example Quarter Day",
     "shortName": "QD",
-    "color": "#16a34a"
+    "color": "#16a34a",
+    "notes": "This date is derived from...",
+    "sourceLabel": "Calendar Study Notes",
+    "sourceUrl": "https://..."
   },
   {
     "id": "example-land-rest",
     "intercalaryWeek": true,
     "title": "Land Rest Sabbath Week",
     "shortName": "LR",
-    "color": "#9333ea"
+    "color": "#9333ea",
+    "notes": "This date is derived from...",
+    "sourceLabel": "Calendar Study Notes",
+    "sourceUrl": "https://..."
   }
 ]

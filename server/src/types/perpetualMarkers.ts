@@ -19,4 +19,5 @@ export type PerpetualMarker = {
   gateDay?: number;
 
   intercalaryWeek?: boolean;
+  notes?: string;
 };

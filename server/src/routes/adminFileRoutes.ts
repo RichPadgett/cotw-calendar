@@ -9,6 +9,7 @@ import { Router } from "express";
 import fs from "fs";
 import multer from "multer";
 import path from "path";
+import { requireAdminToken } from "../middleware/requireAdminToken";
 
 const router = Router();
 
@@ -63,22 +64,27 @@ const upload = multer({
 
 /**
  * API endpoint: accepts a single uploaded file for one Enoch day.
- * This upload endpoint stores the file and returns a group-scoped content URL for the admin form.
+ * This protected upload endpoint requires a valid admin bearer token before storing files.
  */
-router.post("/:year/:month/:day/files", upload.single("file"), (req, res) => {
-  const { year, month, day } = req.params;
-  const groupCode = getGroupCode(req);
+router.post(
+  "/:year/:month/:day/files",
+  requireAdminToken,
+  upload.single("file"),
+  (req, res) => {
+    const { year, month, day } = req.params;
+    const groupCode = getGroupCode(req);
 
-  if (!req.file) {
-    return res.status(400).json({
-      error: "No file uploaded.",
+    if (!req.file) {
+      return res.status(400).json({
+        error: "No file uploaded.",
+      });
+    }
+
+    res.json({
+      filename: req.file.filename,
+      url: `groups/${groupCode}/files/${year}/${month}/${day}/${req.file.filename}`,
     });
   }
-
-  res.json({
-    filename: req.file.filename,
-    url: `groups/${groupCode}/files/${year}/${month}/${day}/${req.file.filename}`,
-  });
-});
+);
 
 export default router;
