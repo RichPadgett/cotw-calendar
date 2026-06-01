@@ -441,6 +441,7 @@ export default function DayDetailModal({
                   Boolean(marker.notes) ||
                   Boolean(marker.sourceLabel) ||
                   Boolean(marker.sourceUrl);
+                const isShowingDetails = selectedMarker?.id === marker.id;
 
                 return (
                   <View
@@ -458,10 +459,14 @@ export default function DayDetailModal({
 
                     {hasDetails ? (
                       <Pressable
-                        onPress={() => setSelectedMarker(marker)}
+                        onPress={() =>
+                          setSelectedMarker(isShowingDetails ? null : marker)
+                        }
                         style={{
                           alignSelf: "flex-start",
                           marginTop: 4,
+                          paddingVertical: 6,
+                          paddingRight: 12,
                         }}
                       >
                         <Text
@@ -472,9 +477,68 @@ export default function DayDetailModal({
                             opacity: 0.9,
                           }}
                         >
-                          Tap for notes
+                          {isShowingDetails ? "Hide notes" : "Tap for notes"}
                         </Text>
                       </Pressable>
+                    ) : null}
+
+                    {isShowingDetails ? (
+                      <View
+                        style={{
+                          marginTop: 10,
+                          padding: 12,
+                          borderRadius: 10,
+                          backgroundColor: "rgba(255,255,255,0.92)",
+                        }}
+                      >
+                        {marker.notes ? (
+                          <Text
+                            style={{
+                              fontSize: 14,
+                              lineHeight: 20,
+                              color: "#374151",
+                            }}
+                          >
+                            {marker.notes}
+                          </Text>
+                        ) : null}
+
+                        {marker.sourceLabel ? (
+                          <Text
+                            style={{
+                              marginTop: 10,
+                              fontSize: 12,
+                              fontWeight: "900",
+                              color: "#6b7280",
+                              textTransform: "uppercase",
+                            }}
+                          >
+                            {marker.sourceLabel}
+                          </Text>
+                        ) : null}
+
+                        {marker.sourceUrl ? (
+                          <Pressable
+                            onPress={() => openUrl(marker.sourceUrl)}
+                            style={{
+                              alignSelf: "flex-start",
+                              marginTop: 8,
+                              paddingVertical: 6,
+                              paddingRight: 12,
+                            }}
+                          >
+                            <Text
+                              style={{
+                                color: "#2563eb",
+                                fontSize: 13,
+                                fontWeight: "900",
+                              }}
+                            >
+                              Open Source
+                            </Text>
+                          </Pressable>
+                        ) : null}
+                      </View>
                     ) : null}
 
                     {canEditPerpetualMarkers ? (
@@ -736,107 +800,6 @@ export default function DayDetailModal({
               </Pressable>
             </View>
           </View>
-
-          {selectedMarker ? (
-            <View
-              style={{
-                position: "absolute",
-                top: 0,
-                right: 0,
-                bottom: 0,
-                left: 0,
-                backgroundColor: "rgba(0,0,0,0.45)",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: 24,
-              }}
-            >
-              <View
-                style={{
-                  width: "100%",
-                  maxWidth: 440,
-                  borderRadius: 24,
-                  backgroundColor: "#ffffff",
-                  padding: 20,
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 24,
-                    fontWeight: "900",
-                    color: "#111827",
-                  }}
-                >
-                  {selectedMarker.title}
-                </Text>
-
-                {selectedMarker.notes ? (
-                  <Text
-                    style={{
-                      marginTop: 12,
-                      fontSize: 15,
-                      lineHeight: 22,
-                      color: "#374151",
-                    }}
-                  >
-                    {selectedMarker.notes}
-                  </Text>
-                ) : null}
-
-                {selectedMarker.sourceLabel ? (
-                  <Text
-                    style={{
-                      marginTop: 16,
-                      fontSize: 13,
-                      fontWeight: "900",
-                      color: "#6b7280",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    {selectedMarker.sourceLabel}
-                  </Text>
-                ) : null}
-
-                {selectedMarker.sourceUrl ? (
-                  <Pressable
-                    onPress={() => openUrl(selectedMarker.sourceUrl)}
-                    style={{ marginTop: 10 }}
-                  >
-                    <Text
-                      style={{
-                        color: "#2563eb",
-                        fontSize: 14,
-                        fontWeight: "800",
-                      }}
-                    >
-                      Open Source
-                    </Text>
-                  </Pressable>
-                ) : null}
-
-                <Pressable
-                  onPress={() => setSelectedMarker(null)}
-                  style={{
-                    marginTop: 24,
-                    paddingVertical: 14,
-                    borderRadius: 14,
-                    backgroundColor: "#111827",
-                    alignItems: "center",
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: "#ffffff",
-                      fontSize: 15,
-                      fontWeight: "900",
-                    }}
-                  >
-                    Close
-                  </Text>
-                </Pressable>
-              </View>
-            </View>
-          ) : null}
         </View>
       </Modal>
     </>
