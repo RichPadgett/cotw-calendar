@@ -49,6 +49,7 @@
     "dev": "dotenv -e .env.dev -- npx expo start --clear",
     "dev1": "dotenv -e .env.dev1 -- npx expo start --clear",
     "prod:web": "dotenv -e .env.prod -- npx expo export --platform web",
+    "testflight": "dotenv -e .env.testflight -- eas build --platform ios",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "jest"
