@@ -270,6 +270,66 @@ export default function HomeScreen() {
     }
   }
 
+  function getSelectedDayParts() {
+    const year = selectedNode?.enoch?.year;
+    const month = selectedNode?.enoch?.month?.number;
+    const day = selectedNode?.enoch?.day;
+
+    if (!year || !month || !day) return null;
+
+    return { year, month, day };
+  }
+
+  async function deleteDayNotes() {
+    const selectedDay = getSelectedDayParts();
+
+    if (!selectedDay) return;
+
+    const response = await fetch(
+      `${API_BASE_URL}/api/admin/calendar/${selectedDay.year}/${selectedDay.month}/${selectedDay.day}/notes?groupCode=${encodeURIComponent(
+        groupCode
+      )}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${adminToken}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to delete day notes.");
+    }
+
+    const savedContent: DayContent = await response.json();
+    setDayContent(savedContent);
+  }
+
+  async function deleteScriptureReading(index: number) {
+    const selectedDay = getSelectedDayParts();
+
+    if (!selectedDay) return;
+
+    const response = await fetch(
+      `${API_BASE_URL}/api/admin/calendar/${selectedDay.year}/${selectedDay.month}/${selectedDay.day}/scripture-readings/${index}?groupCode=${encodeURIComponent(
+        groupCode
+      )}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${adminToken}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to delete scripture reading.");
+    }
+
+    const savedContent: DayContent = await response.json();
+    setDayContent(savedContent);
+  }
+
   function closeDay() {
     setSelectedNode(null);
     setDayContent(null);
@@ -411,6 +471,8 @@ export default function HomeScreen() {
         onToggleAdminMode={() => setIsAdminMode((value) => !value)}
         onPreviousDay={goToPreviousDay}
         onNextDay={goToNextDay}
+        onDeleteDayNotes={deleteDayNotes}
+        onDeleteScriptureReading={deleteScriptureReading}
         onSavePerpetualMarkers={savePerpetualMarkers}
         adminToken={adminToken}
       />

@@ -36,6 +36,8 @@ type Props = {
   onToggleAdminMode: () => void;
   onPreviousDay: () => void;
   onNextDay: () => void;
+  onDeleteDayNotes: () => Promise<void>;
+  onDeleteScriptureReading: (index: number) => Promise<void>;
   onSavePerpetualMarkers: (markers: PerpetualMarker[]) => Promise<void>;
 };
 
@@ -57,6 +59,8 @@ export default function DayDetailModal({
   onToggleAdminMode,
   onPreviousDay,
   onNextDay,
+  onDeleteDayNotes,
+  onDeleteScriptureReading,
   onSavePerpetualMarkers,
 }: Props) {
   const [selectedMarker, setSelectedMarker] = useState<PerpetualMarker | null>(
@@ -70,6 +74,8 @@ export default function DayDetailModal({
   const [markerSourceUrl, setMarkerSourceUrl] = useState("");
   const [markerSaveMessage, setMarkerSaveMessage] = useState("");
   const [isSavingMarker, setIsSavingMarker] = useState(false);
+  const [contentDeleteMessage, setContentDeleteMessage] = useState("");
+  const [isDeletingContent, setIsDeletingContent] = useState(false);
 
   const modalTitle =
     dayContent?.title ??
@@ -84,6 +90,7 @@ export default function DayDetailModal({
 
   const canEditPerpetualMarkers =
     userRole === "admin" && groupCode === "church-of-the-word" && isAdminMode;
+  const canEditDayContent = userRole === "admin" && isAdminMode;
 
   /**
    * Opens a linked scripture, source note, media item, or external content URL.
@@ -203,6 +210,36 @@ export default function DayDetailModal({
       setMarkerSaveMessage("Unable to delete marker.");
     } finally {
       setIsSavingMarker(false);
+    }
+  }
+
+  async function deleteDayNotes() {
+    try {
+      setIsDeletingContent(true);
+      setContentDeleteMessage("");
+
+      await onDeleteDayNotes();
+      setContentDeleteMessage("Notes deleted.");
+    } catch (error) {
+      console.log("Failed to delete day notes", error);
+      setContentDeleteMessage("Unable to delete notes.");
+    } finally {
+      setIsDeletingContent(false);
+    }
+  }
+
+  async function deleteScriptureReading(index: number) {
+    try {
+      setIsDeletingContent(true);
+      setContentDeleteMessage("");
+
+      await onDeleteScriptureReading(index);
+      setContentDeleteMessage("Scripture reading deleted.");
+    } catch (error) {
+      console.log("Failed to delete scripture reading", error);
+      setContentDeleteMessage("Unable to delete scripture reading.");
+    } finally {
+      setIsDeletingContent(false);
     }
   }
 
@@ -609,7 +646,45 @@ export default function DayDetailModal({
                   <Text style={{ fontSize: 14, color: "#374151" }}>
                     {String(dayContent.notes)}
                   </Text>
+
+                  {canEditDayContent ? (
+                    <Pressable
+                      onPress={deleteDayNotes}
+                      disabled={isDeletingContent}
+                      style={{
+                        alignSelf: "flex-start",
+                        marginTop: 10,
+                        paddingVertical: 7,
+                        paddingHorizontal: 11,
+                        borderRadius: 8,
+                        backgroundColor: "#fee2e2",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: "#991b1b",
+                          fontSize: 12,
+                          fontWeight: "900",
+                        }}
+                      >
+                        Delete Notes
+                      </Text>
+                    </Pressable>
+                  ) : null}
                 </View>
+              ) : null}
+
+              {contentDeleteMessage ? (
+                <Text
+                  style={{
+                    marginTop: 10,
+                    fontSize: 12,
+                    fontWeight: "700",
+                    color: "#374151",
+                  }}
+                >
+                  {contentDeleteMessage}
+                </Text>
               ) : null}
 
               {Array.isArray(dayContent?.scriptureReadings) &&
@@ -674,6 +749,31 @@ export default function DayDetailModal({
                           }}
                         >
                           Open Scripture
+                        </Text>
+                      </Pressable>
+                    ) : null}
+
+                    {canEditDayContent ? (
+                      <Pressable
+                        onPress={() => deleteScriptureReading(index)}
+                        disabled={isDeletingContent}
+                        style={{
+                          alignSelf: "flex-start",
+                          marginTop: 10,
+                          paddingVertical: 7,
+                          paddingHorizontal: 11,
+                          borderRadius: 8,
+                          backgroundColor: "#fee2e2",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            color: "#991b1b",
+                            fontSize: 12,
+                            fontWeight: "900",
+                          }}
+                        >
+                          Delete Reading
                         </Text>
                       </Pressable>
                     ) : null}
