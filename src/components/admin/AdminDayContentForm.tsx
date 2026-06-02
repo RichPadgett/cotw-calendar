@@ -167,6 +167,10 @@ function getMediaPayload(row: ContentRow) {
   };
 }
 
+function isEmptyMediaRow(row: ContentRow): boolean {
+  return !row.label.trim() && !row.url.trim();
+}
+
 // Component
 /**
  * Creates the admin content editor component for one Enoch calendar day.
@@ -194,6 +198,7 @@ export default function AdminDayContentForm({
 
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
+  const [uploadMessage, setUploadMessage] = useState("");
 
   /**
    * Rehydrates the editor with the selected day's saved content.
@@ -225,6 +230,7 @@ export default function AdminDayContentForm({
     setNoticeItems(getEditableRows(notices, emptyNoticeRow));
     setMediaItems(getEditableRows(media, emptyMediaRow));
     setSaveMessage("");
+    setUploadMessage("");
   }, [currentContent, day, enochYear, month]);
 
   /**
@@ -232,63 +238,87 @@ export default function AdminDayContentForm({
    * This action helper appends the uploaded file as a media row for the current day.
    */
   async function uploadFile() {
-    const result = await DocumentPicker.getDocumentAsync({
-      copyToCacheDirectory: true,
-    });
+    try {
+      setUploadMessage("");
 
-    if (result.canceled) return;
+      const result = await DocumentPicker.getDocumentAsync({
+        copyToCacheDirectory: true,
+      });
 
-    const file = result.assets[0];
-    const formData = new FormData();
+      if (result.canceled) return;
 
-    if (file.uri.startsWith("blob:")) {
-      const blob = await fetch(file.uri).then((res) => res.blob());
+      const file = result.assets[0];
+      const formData = new FormData();
 
-      formData.append(
-        "file",
-        new File([blob], file.name, {
-          type: file.mimeType ?? blob.type ?? "application/octet-stream",
-        })
-      );
-    } else {
-      formData.append("file", {
-        uri: file.uri,
-        name: file.name,
-        type: file.mimeType ?? "application/octet-stream",
-      } as any);
-    }
+      if (file.uri.startsWith("blob:")) {
+        const blob = await fetch(file.uri).then((res) => res.blob());
 
-    /*
-      Uploads use FormData, so only the bearer token is set manually.
-      The browser/native fetch implementation supplies the multipart boundary.
-    */
-    const response = await fetch(
-      `${API_BASE_URL}/api/admin/calendar/${enochYear}/${month}/${day}/files?groupCode=${encodeURIComponent(groupCode)}`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${adminToken}`,
-        },
-        body: formData,
+        formData.append(
+          "file",
+          new File([blob], file.name, {
+            type: file.mimeType ?? blob.type ?? "application/octet-stream",
+          })
+        );
+      } else {
+        formData.append("file", {
+          uri: file.uri,
+          name: file.name,
+          type: file.mimeType ?? "application/octet-stream",
+        } as any);
       }
-    );
 
-    if (!response.ok) {
-      console.log("Upload failed", response.status);
-      return;
-    }
+      /*
+        Uploads use FormData, so only the bearer token is set manually.
+        The browser/native fetch implementation supplies the multipart boundary.
+      */
+      const response = await fetch(
+        `${API_BASE_URL}/api/admin/calendar/${enochYear}/${month}/${day}/files?groupCode=${encodeURIComponent(groupCode)}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${adminToken}`,
+          },
+          body: formData,
+        }
+      );
 
-    const data = await response.json();
+      if (!response.ok) {
+        console.log("Upload failed", response.status);
+        setUploadMessage("Upload failed.");
+        return;
+      }
 
-    setMediaItems((rows) => [
-      ...rows,
-      {
+      const data = await response.json();
+      const uploadedRow: ContentRow = {
         label: file.name,
         type: "pdf",
-        url: data.url,
+        details: "",
+        url: data.url ?? "",
         access: "public",
-      },
-    ]);
+      };
+
+      if (!uploadedRow.url) {
+        setUploadMessage("Upload completed, but no file URL was returned.");
+        return;
+      }
+
+      setMediaItems((rows) => {
+        const firstEmptyIndex = rows.findIndex(isEmptyMediaRow);
+
+        if (firstEmptyIndex === -1) {
+          return [...rows, uploadedRow];
+        }
+
+        const next = [...rows];
+        next[firstEmptyIndex] = uploadedRow;
+
+        return next;
+      });
+      setUploadMessage("File uploaded. Use Open File to preview it.");
+    } catch (error) {
+      console.log("Upload failed", error);
+      setUploadMessage("Upload failed.");
+    }
   }
 
   /**
@@ -529,7 +559,10 @@ export default function AdminDayContentForm({
               />
 
               {isOpenableUrl(row.url) ? (
-                <Pressable onPress={() => Linking.openURL(getOpenUrl(row.url))}>
+                <Pressable
+                  onPress={() => Linking.openURL(getOpenUrl(row.url))}
+                  style={styles.linkActionButton}
+                >
                   <Text style={styles.openLinkText}>Open Notice Link</Text>
                 </Pressable>
               ) : null}
@@ -577,7 +610,10 @@ export default function AdminDayContentForm({
               />
 
               {isOpenableUrl(row.url) ? (
-                <Pressable onPress={() => Linking.openURL(getOpenUrl(row.url))}>
+                <Pressable
+                  onPress={() => Linking.openURL(getOpenUrl(row.url))}
+                  style={styles.linkActionButton}
+                >
                   <Text style={styles.openLinkText}>
                     {row.type === "pdf" ? "Open File" : "Open Link"}
                   </Text>
@@ -597,7 +633,7 @@ export default function AdminDayContentForm({
           ))}
 
           <View style={styles.mediaActionRow}>
-            <Pressable onPress={uploadFile}>
+            <Pressable onPress={uploadFile} style={styles.secondaryButton}>
               <Text style={styles.uploadText}>Upload File</Text>
             </Pressable>
 
@@ -607,6 +643,10 @@ export default function AdminDayContentForm({
               <Text style={styles.addLinkText}>+ Add Media</Text>
             </Pressable>
           </View>
+
+          {uploadMessage ? (
+            <Text style={styles.uploadMessage}>{uploadMessage}</Text>
+          ) : null}
         </View>
 
         <View style={styles.saveArea}>
@@ -714,6 +754,28 @@ const styles = StyleSheet.create({
   openLinkText: {
     color: "#2563eb",
     fontWeight: "900",
+  },
+
+  secondaryButton: {
+    alignSelf: "flex-start",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
+    backgroundColor: "#f3e8ff",
+  },
+
+  linkActionButton: {
+    alignSelf: "flex-start",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
+    backgroundColor: "#eff6ff",
+  },
+
+  uploadMessage: {
+    color: "#374151",
+    fontSize: 12,
+    fontWeight: "800",
   },
 
   mediaActionRow: {
