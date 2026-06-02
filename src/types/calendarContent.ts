@@ -14,6 +14,7 @@ export type ScriptureReading = {
 export type DayContentItem = {
   label?: string;
   type?: string;
+  details?: string;
   url?: string;
   access?: string;
 };

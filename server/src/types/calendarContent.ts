@@ -15,6 +15,7 @@ export type CalendarContentItem = {
     | "note";
 
   url?: string;
+  details?: string;
   access: "public" | "members" | "code-required";
 };
 

@@ -82,7 +82,7 @@ router.post(
 
     res.json({
       filename: req.file.filename,
-      url: `groups/${groupCode}/files/${year}/${month}/${day}/${req.file.filename}`,
+      url: `/api/files/groups/${groupCode}/files/${year}/${month}/${day}/${req.file.filename}`,
     });
   }
 );

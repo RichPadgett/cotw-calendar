@@ -6,9 +6,10 @@
 
 // Dependencies
 import * as DocumentPicker from "expo-document-picker";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { API_BASE_URL } from "../../config/api";
+import type { DayContent, DayContentItem } from "../../types/calendarContent";
 
 // Types
 type Props = {
@@ -17,6 +18,7 @@ type Props = {
   day: number;
   groupCode: string;
   adminToken: string;
+  currentContent: DayContent | null;
 };
 
 type AccessLevel = "public" | "members" | "code-required";
@@ -30,6 +32,7 @@ type ScriptureRow = {
 type ContentRow = {
   label: string;
   type: "external-link" | "internal-link" | "pdf" | "video-link" | "note";
+  details: string;
   url: string;
   access: AccessLevel;
 };
@@ -43,6 +46,7 @@ const emptyScriptureRow: ScriptureRow = {
 const emptyNoticeRow: ContentRow = {
   label: "",
   type: "note",
+  details: "",
   url: "",
   access: "public",
 };
@@ -50,9 +54,93 @@ const emptyNoticeRow: ContentRow = {
 const emptyMediaRow: ContentRow = {
   label: "",
   type: "external-link",
+  details: "",
   url: "",
   access: "public",
 };
+
+function getEditableRows<T>(rows: T[], emptyRow: T): T[] {
+  return rows.length > 0 ? rows : [emptyRow];
+}
+
+function getContentType(type?: string): ContentRow["type"] {
+  const allowedTypes: ContentRow["type"][] = [
+    "external-link",
+    "internal-link",
+    "pdf",
+    "video-link",
+    "note",
+  ];
+
+  return allowedTypes.includes(type as ContentRow["type"])
+    ? (type as ContentRow["type"])
+    : "external-link";
+}
+
+function getAccessLevel(access?: string): AccessLevel {
+  const allowedAccess: AccessLevel[] = ["public", "members", "code-required"];
+
+  return allowedAccess.includes(access as AccessLevel)
+    ? (access as AccessLevel)
+    : "public";
+}
+
+function isOpenableUrl(value?: string): boolean {
+  const trimmedValue = value?.trim() ?? "";
+
+  return (
+    /^https?:\/\//i.test(trimmedValue) ||
+    trimmedValue.startsWith("/api/") ||
+    trimmedValue.startsWith("groups/")
+  );
+}
+
+function getContentRow(item: DayContentItem): ContentRow {
+  return {
+    label: item.label ?? "",
+    type: getContentType(item.type),
+    details: item.details ?? "",
+    url: item.url ?? "",
+    access: getAccessLevel(item.access),
+  };
+}
+
+function getNoticeRow(item: DayContentItem): ContentRow {
+  const row = getContentRow(item);
+  const legacyDetails = row.url && !isOpenableUrl(row.url) ? row.url : "";
+
+  return {
+    ...row,
+    type: "note",
+    details: row.details || legacyDetails,
+    url: legacyDetails ? "" : row.url,
+  };
+}
+
+function getNoticePayload(row: ContentRow) {
+  const details = row.details.trim();
+  const url = row.url.trim();
+
+  return {
+    label: row.label.trim(),
+    type: "note",
+    access: row.access,
+    ...(details ? { details } : {}),
+    ...(url ? { url } : {}),
+  };
+}
+
+function getMediaPayload(row: ContentRow) {
+  const label = row.label.trim();
+  const url = row.url.trim();
+
+  return {
+    label,
+    type: row.type,
+    access: row.access,
+    ...(url ? { url } : {}),
+  };
+}
 
 // Component
 /**
@@ -65,6 +153,7 @@ export default function AdminDayContentForm({
   day,
   groupCode,
   adminToken,
+  currentContent,
 }: Props) {
   const [notes, setNotes] = useState("");
 
@@ -80,6 +169,38 @@ export default function AdminDayContentForm({
 
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
+
+  /**
+   * Rehydrates the editor with the selected day's saved content.
+   * This prevents a partial notice, note, reading, or media edit from overwriting existing day content with blanks.
+   */
+  useEffect(() => {
+    const currentSections = currentContent?.sections ?? [];
+    const notices = currentSections
+      .filter((section) => section.displayStyle === "notice")
+      .flatMap((section) => section.items ?? [])
+      .map(getNoticeRow);
+
+    const media = currentSections
+      .filter((section) => section.displayStyle !== "notice")
+      .flatMap((section) => section.items ?? [])
+      .map(getContentRow);
+
+    setNotes(currentContent?.notes ?? "");
+    setScriptureReadings(
+      getEditableRows(
+        (currentContent?.scriptureReadings ?? []).map((reading) => ({
+          label: reading.label ?? "",
+          reference: reading.reference ?? "",
+          url: reading.url ?? "",
+        })),
+        emptyScriptureRow
+      )
+    );
+    setNoticeItems(getEditableRows(notices, emptyNoticeRow));
+    setMediaItems(getEditableRows(media, emptyMediaRow));
+    setSaveMessage("");
+  }, [currentContent, day, enochYear, month]);
 
   /**
    * Opens the document picker and uploads a selected file to the admin file endpoint.
@@ -158,7 +279,7 @@ export default function AdminDayContentForm({
         enochYear,
         month,
         day,
-        title: `Month ${month} Day ${day}`,
+        title: currentContent?.title ?? `Month ${month} Day ${day}`,
         notes,
 
         scriptureReadings: scriptureReadings.filter(
@@ -169,12 +290,16 @@ export default function AdminDayContentForm({
           {
             title: "Notices",
             displayStyle: "notice",
-            items: noticeItems.filter((row) => row.label || row.url),
+            items: noticeItems
+              .filter((row) => row.label || row.details || row.url)
+              .map(getNoticePayload),
           },
           {
             title: "Files / Links / Media",
             displayStyle: "default",
-            items: mediaItems.filter((row) => row.label || row.url),
+            items: mediaItems
+              .filter((row) => row.label || row.url)
+              .map(getMediaPayload),
           },
         ],
       };
@@ -361,11 +486,21 @@ export default function AdminDayContentForm({
               />
 
               <TextInput
-                value={row.url}
-                onChangeText={(value) => updateNoticeRow(index, "url", value)}
+                value={row.details}
+                onChangeText={(value) =>
+                  updateNoticeRow(index, "details", value)
+                }
                 placeholder="Notice details"
                 multiline
                 style={[styles.input, styles.textArea]}
+              />
+
+              <TextInput
+                value={row.url}
+                onChangeText={(value) => updateNoticeRow(index, "url", value)}
+                placeholder="Optional link URL"
+                autoCapitalize="none"
+                style={styles.input}
               />
 
               <Pressable

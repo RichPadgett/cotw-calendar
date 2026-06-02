@@ -25,6 +25,7 @@ app.get("/", (_req, res) => {
 app.use("/api/calendar", calendarRoutes);
 app.use("/api/admin/calendar", adminCalendarRoutes);
 app.use("/api/admin/calendar", adminFileRoutes);
+app.use("/api/files", express.static("content"));
 app.use("/files", express.static("content/files"));
 app.use("/api/groups", groupRoutes);
 app.use("/api/calendar/perpetual-markers", perpetualMarkerRoutes);

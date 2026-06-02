@@ -18,8 +18,9 @@ import {
 
 import AdminDayContentForm from "../admin/AdminDayContentForm";
 
+import { API_BASE_URL } from "../../config/api";
 import { CalendarNode } from "../../models/calendar";
-import type { DayContent } from "../../types/calendarContent";
+import type { DayContent, DayContentItem } from "../../types/calendarContent";
 import type { PerpetualMarker } from "../../types/perpetualMarkers";
 
 const DEFAULT_MARKER_COLOR = "#2563eb";
@@ -114,7 +115,51 @@ export default function DayDetailModal({
    */
   function openUrl(url?: string) {
     if (!url) return;
-    Linking.openURL(url);
+    Linking.openURL(getOpenUrl(url));
+  }
+
+  function isUrl(value?: string): boolean {
+    return /^https?:\/\//i.test(value?.trim() ?? "");
+  }
+
+  function isOpenableUrl(value?: string): boolean {
+    const trimmedValue = value?.trim() ?? "";
+
+    return (
+      isUrl(trimmedValue) ||
+      trimmedValue.startsWith("/api/") ||
+      trimmedValue.startsWith("groups/")
+    );
+  }
+
+  function getOpenUrl(url: string): string {
+    const trimmedUrl = url.trim();
+
+    if (isUrl(trimmedUrl)) {
+      return trimmedUrl;
+    }
+
+    if (trimmedUrl.startsWith("/api/")) {
+      return `${API_BASE_URL}${trimmedUrl}`;
+    }
+
+    if (trimmedUrl.startsWith("groups/")) {
+      return `${API_BASE_URL}/api/files/${trimmedUrl}`;
+    }
+
+    return trimmedUrl;
+  }
+
+  function getNoticeDetails(item: DayContentItem): string {
+    if (item.details?.trim()) {
+      return item.details.trim();
+    }
+
+    return isOpenableUrl(item.url) ? "" : (item.url?.trim() ?? "");
+  }
+
+  function getNoticeUrl(item: DayContentItem): string | undefined {
+    return isOpenableUrl(item.url) ? item.url : undefined;
   }
 
   /**
@@ -495,6 +540,7 @@ export default function DayDetailModal({
                       day={selectedNode.enoch.day}
                       groupCode={groupCode}
                       adminToken={adminToken}
+                      currentContent={dayContent}
                     />
                   </View>
                 )}
@@ -517,15 +563,15 @@ export default function DayDetailModal({
                         {String(item.label ?? "Untitled")}
                       </Text>
 
-                      <Text style={[styles.metaText, styles.noticeMetaText]}>
-                        {String(
-                          `${item.type ?? "link"} • ${item.access ?? "public"}`
-                        )}
-                      </Text>
+                      {getNoticeDetails(item) ? (
+                        <Text style={styles.noticeDetailsText}>
+                          {getNoticeDetails(item)}
+                        </Text>
+                      ) : null}
 
-                      {item.url ? (
+                      {getNoticeUrl(item) ? (
                         <Pressable
-                          onPress={() => openUrl(item.url)}
+                          onPress={() => openUrl(getNoticeUrl(item))}
                           style={styles.linkButton}
                         >
                           <Text style={styles.linkButtonText}>Open</Text>
@@ -880,6 +926,13 @@ const styles = StyleSheet.create({
 
   noticeMetaText: {
     color: "#92400e",
+  },
+
+  noticeDetailsText: {
+    marginTop: 8,
+    fontSize: 14,
+    lineHeight: 20,
+    color: "#374151",
   },
 
   statusMessage: {
