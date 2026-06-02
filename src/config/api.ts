@@ -2,7 +2,13 @@
  * File: src/config/api.ts
  * Purpose: Central API configuration for all frontend requests.
  *
- * When running behind Nginx:
+ * EXPO_PUBLIC_API_URL should be an origin only, not an /api path.
+ *
+ * Local example:
+ *   EXPO_PUBLIC_API_URL=http://localhost:3001
+ *
+ * Production behind Nginx:
+ *   EXPO_PUBLIC_API_URL=
  *   Browser -> /api/*
  *   Nginx   -> localhost:3001/api/*
  *
@@ -12,8 +18,9 @@
  * - Future domain/HTTPS deployments
  */
 
-export const API_BASE_URL =
-  process.env.EXPO_PUBLIC_API_URL ?? "/api";
+const API_ORIGIN = process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
+
+export const API_BASE_URL = API_ORIGIN;
 
 /**
  * Builds a full API URL from a relative path.
@@ -24,5 +31,5 @@ export const API_BASE_URL =
  */
 
 export function apiUrl(path: string): string {
-  return `${API_BASE_URL}${path.startsWith("/") ? path : `/${path}`}`;
+  return `${API_BASE_URL}/api${path.startsWith("/") ? path : `/${path}`}`;
 }

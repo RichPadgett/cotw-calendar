@@ -8,7 +8,7 @@
 import * as DocumentPicker from "expo-document-picker";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-import { API_BASE_URL } from "../../../src/config/api";
+import { API_BASE_URL } from "../../config/api";
 
 // Types
 type Props = {
