@@ -147,28 +147,32 @@ export default function HomeScreen() {
     );
   }
 
-  useEffect(() => {
-    async function loadYearNotices() {
-      try {
-        const response = await fetch(
-          `${API_BASE_URL}/api/calendar/${
-            config.enochYear
-          }/notices?groupCode=${encodeURIComponent(groupCode)}`
-        );
+  /**
+   * Loads the year-level notice index used by calendar badges.
+   * This API helper keeps the grid badges in sync when day notices change.
+   */
+  async function loadYearNotices() {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/calendar/${
+          config.enochYear
+        }/notices?groupCode=${encodeURIComponent(groupCode)}`
+      );
 
-        if (!response.ok) {
-          setYearNotices([]);
-          return;
-        }
-
-        const data = await response.json();
-        setYearNotices(data);
-      } catch (error) {
-        console.log("Failed to load year notices", error);
+      if (!response.ok) {
         setYearNotices([]);
+        return;
       }
-    }
 
+      const data = await response.json();
+      setYearNotices(data);
+    } catch (error) {
+      console.log("Failed to load year notices", error);
+      setYearNotices([]);
+    }
+  }
+
+  useEffect(() => {
     if (hasEnteredApp) {
       loadYearNotices();
     }
@@ -303,6 +307,36 @@ export default function HomeScreen() {
 
     const savedContent: DayContent = await response.json();
     setDayContent(savedContent);
+  }
+
+  /**
+   * Deletes one notice item from the selected day through the protected admin API.
+   * Notice deletes are independent from notes and scripture readings, then the year badge index is reloaded.
+   */
+  async function deleteNotice(index: number) {
+    const selectedDay = getSelectedDayParts();
+
+    if (!selectedDay) return;
+
+    const response = await fetch(
+      `${API_BASE_URL}/api/admin/calendar/${selectedDay.year}/${selectedDay.month}/${selectedDay.day}/notices/${index}?groupCode=${encodeURIComponent(
+        groupCode
+      )}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${adminToken}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to delete notice.");
+    }
+
+    const savedContent: DayContent = await response.json();
+    setDayContent(savedContent);
+    await loadYearNotices();
   }
 
   async function deleteScriptureReading(index: number) {
@@ -472,6 +506,7 @@ export default function HomeScreen() {
         onPreviousDay={goToPreviousDay}
         onNextDay={goToNextDay}
         onDeleteDayNotes={deleteDayNotes}
+        onDeleteNotice={deleteNotice}
         onDeleteScriptureReading={deleteScriptureReading}
         onSavePerpetualMarkers={savePerpetualMarkers}
         adminToken={adminToken}

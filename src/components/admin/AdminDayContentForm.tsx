@@ -57,7 +57,7 @@ const emptyMediaRow: ContentRow = {
 // Component
 /**
  * Creates the admin content editor component for one Enoch calendar day.
- * This UX component manages form state for notes, scripture readings, notices, media links, uploads, preview, and save actions.
+ * This UX component manages form state for notes, scripture readings, notices, media links, uploads, and save actions.
  */
 export default function AdminDayContentForm({
   enochYear,
@@ -66,8 +66,6 @@ export default function AdminDayContentForm({
   groupCode,
   adminToken,
 }: Props) {
-  const [activeTab, setActiveTab] = useState<"create" | "preview">("create");
-
   const [notes, setNotes] = useState("");
 
   const [scriptureReadings, setScriptureReadings] = useState<ScriptureRow[]>([
@@ -261,7 +259,6 @@ export default function AdminDayContentForm({
 
   return (
     <View style={styles.container}>
-      {/* Create / Preview tabs */}
       <Text
         style={{
           marginBottom: 12,
@@ -271,321 +268,189 @@ export default function AdminDayContentForm({
       >
         Admin Content
       </Text>
-      <View style={styles.tabRow}>
-        <Pressable
-          onPress={() => setActiveTab("create")}
-          style={[styles.tab, activeTab === "create" && styles.activeTab]}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === "create" && styles.activeTabText,
-            ]}
-          >
-            Create
+
+      <View style={styles.formStack}>
+        {/* Notes */}
+        <View style={styles.sectionCard}>
+          <Text style={styles.sectionTitle}>Notes</Text>
+          <Text style={styles.sectionHelp}>
+            General notes for this calendar day.
           </Text>
-        </Pressable>
 
-        <Pressable
-          onPress={() => setActiveTab("preview")}
-          style={[styles.tab, activeTab === "preview" && styles.activeTab]}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === "preview" && styles.activeTabText,
-            ]}
-          >
-            Preview
+          <TextInput
+            value={notes}
+            onChangeText={setNotes}
+            placeholder="Add notes for this day..."
+            multiline
+            style={[styles.input, styles.textArea]}
+          />
+        </View>
+
+        {/* Scripture */}
+        <View style={styles.sectionCard}>
+          <Text style={styles.sectionTitle}>Scripture Readings</Text>
+          <Text style={styles.sectionHelp}>
+            Add passages, readings, or external scripture links.
           </Text>
-        </Pressable>
-      </View>
 
-      {activeTab === "create" ? (
-        <View style={styles.formStack}>
-          {/* Notes */}
-          <View style={styles.sectionCard}>
-            <Text style={styles.sectionTitle}>Notes</Text>
-            <Text style={styles.sectionHelp}>
-              General notes for this calendar day.
-            </Text>
+          {scriptureReadings.map((row, index) => (
+            <View key={`scripture-${index}`} style={styles.rowCard}>
+              <TextInput
+                value={row.label}
+                onChangeText={(value) =>
+                  updateScriptureRow(index, "label", value)
+                }
+                placeholder="Label, e.g. Creation Week"
+                style={styles.input}
+              />
 
-            <TextInput
-              value={notes}
-              onChangeText={setNotes}
-              placeholder="Add notes for this day..."
-              multiline
-              style={[styles.input, styles.textArea]}
-            />
-          </View>
+              <TextInput
+                value={row.reference}
+                onChangeText={(value) =>
+                  updateScriptureRow(index, "reference", value)
+                }
+                placeholder="Reference, e.g. Genesis 1"
+                style={styles.input}
+              />
 
-          {/* Scripture */}
-          <View style={styles.sectionCard}>
-            <Text style={styles.sectionTitle}>Scripture Readings</Text>
-            <Text style={styles.sectionHelp}>
-              Add passages, readings, or external scripture links.
-            </Text>
-
-            {scriptureReadings.map((row, index) => (
-              <View key={`scripture-${index}`} style={styles.rowCard}>
-                <TextInput
-                  value={row.label}
-                  onChangeText={(value) =>
-                    updateScriptureRow(index, "label", value)
-                  }
-                  placeholder="Label, e.g. Creation Week"
-                  style={styles.input}
-                />
-
-                <TextInput
-                  value={row.reference}
-                  onChangeText={(value) =>
-                    updateScriptureRow(index, "reference", value)
-                  }
-                  placeholder="Reference, e.g. Genesis 1"
-                  style={styles.input}
-                />
-
-                <TextInput
-                  value={row.url}
-                  onChangeText={(value) =>
-                    updateScriptureRow(index, "url", value)
-                  }
-                  placeholder="Optional URL"
-                  style={styles.input}
-                />
-
-                <Pressable
-                  onPress={() =>
-                    setScriptureReadings((rows) =>
-                      rows.filter((_, rowIndex) => rowIndex !== index)
-                    )
-                  }
-                >
-                  <Text style={styles.removeText}>Remove Scripture</Text>
-                </Pressable>
-              </View>
-            ))}
-
-            <Pressable
-              onPress={() =>
-                setScriptureReadings((rows) => [...rows, emptyScriptureRow])
-              }
-            >
-              <Text style={styles.addLinkText}>+ Add Scripture</Text>
-            </Pressable>
-          </View>
-
-          {/* Notices */}
-          <View style={[styles.sectionCard, styles.noticeSectionCard]}>
-            <Text style={styles.sectionTitle}>Notices</Text>
-            <Text style={styles.sectionHelp}>
-              Temporary announcements, hosting notes, reminders, or private
-              logistics.
-            </Text>
-
-            {noticeItems.map((row, index) => (
-              <View key={`notice-${index}`} style={styles.noticeRowCard}>
-                <TextInput
-                  value={row.label}
-                  onChangeText={(value) =>
-                    updateNoticeRow(index, "label", value)
-                  }
-                  placeholder="Notice title"
-                  style={styles.input}
-                />
-
-                <TextInput
-                  value={row.url}
-                  onChangeText={(value) => updateNoticeRow(index, "url", value)}
-                  placeholder="Notice details"
-                  multiline
-                  style={[styles.input, styles.textArea]}
-                />
-
-                {/* <View style={styles.accessRow}>
-                                    {(["public", "members", "code-required"] as AccessLevel[]).map(
-                                        (access) => (
-                                            <Pressable
-                                                key={access}
-                                                onPress={() => updateNoticeRow(index, "access", access)}
-                                                style={[
-                                                    styles.accessPill,
-                                                    row.access === access && styles.activeAccessPill,
-                                                ]}
-                                            >
-                                                <Text
-                                                    style={[
-                                                        styles.accessPillText,
-                                                        row.access === access &&
-                                                        styles.activeAccessPillText,
-                                                    ]}
-                                                >
-                                                    {access}
-                                                </Text>
-                                            </Pressable>
-                                        )
-                                    )}
-                                </View> */}
-
-                <Pressable
-                  onPress={() =>
-                    setNoticeItems((rows) =>
-                      rows.filter((_, rowIndex) => rowIndex !== index)
-                    )
-                  }
-                >
-                  <Text style={styles.removeText}>Remove Notice</Text>
-                </Pressable>
-              </View>
-            ))}
-
-            <Pressable
-              onPress={() =>
-                setNoticeItems((rows) => [...rows, emptyNoticeRow])
-              }
-            >
-              <Text style={styles.addLinkText}>+ Add Notice</Text>
-            </Pressable>
-          </View>
-
-          {/* Files / Links / Media */}
-          <View style={styles.sectionCard}>
-            <Text style={styles.sectionTitle}>Files / Links / Media</Text>
-            <Text style={styles.sectionHelp}>
-              Add PDFs, images, videos, uploaded files, or outside study links.
-            </Text>
-
-            {mediaItems.map((row, index) => (
-              <View key={`media-${index}`} style={styles.rowCard}>
-                <TextInput
-                  value={row.label}
-                  onChangeText={(value) =>
-                    updateMediaRow(index, "label", value)
-                  }
-                  placeholder="Label"
-                  style={styles.input}
-                />
-
-                <TextInput
-                  value={row.url}
-                  onChangeText={(value) => updateMediaRow(index, "url", value)}
-                  placeholder="URL or uploaded file path"
-                  style={styles.input}
-                />
-
-                {/* <View style={styles.accessRow}>
-                                    {(["public", "members", "code-required"] as AccessLevel[]).map(
-                                        (access) => (
-                                            <Pressable
-                                                key={access}
-                                                onPress={() => updateMediaRow(index, "access", access)}
-                                                style={[
-                                                    styles.accessPill,
-                                                    row.access === access && styles.activeAccessPill,
-                                                ]}
-                                            >
-                                                <Text
-                                                    style={[
-                                                        styles.accessPillText,
-                                                        row.access === access &&
-                                                        styles.activeAccessPillText,
-                                                    ]}
-                                                >
-                                                    {access}
-                                                </Text>
-                                            </Pressable>
-                                        )
-                                    )}
-                                </View> */}
-
-                <Pressable
-                  onPress={() =>
-                    setMediaItems((rows) =>
-                      rows.filter((_, rowIndex) => rowIndex !== index)
-                    )
-                  }
-                >
-                  <Text style={styles.removeText}>Remove Media</Text>
-                </Pressable>
-              </View>
-            ))}
-
-            <View style={styles.mediaActionRow}>
-              <Pressable onPress={uploadFile}>
-                <Text style={styles.uploadText}>Upload File</Text>
-              </Pressable>
+              <TextInput
+                value={row.url}
+                onChangeText={(value) =>
+                  updateScriptureRow(index, "url", value)
+                }
+                placeholder="Optional URL"
+                style={styles.input}
+              />
 
               <Pressable
                 onPress={() =>
-                  setMediaItems((rows) => [...rows, emptyMediaRow])
+                  setScriptureReadings((rows) =>
+                    rows.filter((_, rowIndex) => rowIndex !== index)
+                  )
                 }
               >
-                <Text style={styles.addLinkText}>+ Add Media</Text>
+                <Text style={styles.removeText}>Remove Scripture</Text>
               </Pressable>
             </View>
-          </View>
+          ))}
 
           <Pressable
-            onPress={() => setActiveTab("preview")}
-            style={styles.previewButton}
+            onPress={() =>
+              setScriptureReadings((rows) => [...rows, emptyScriptureRow])
+            }
           >
-            <Text style={styles.previewButtonText}>Preview Before Save →</Text>
+            <Text style={styles.addLinkText}>+ Add Scripture</Text>
           </Pressable>
         </View>
-      ) : (
-        <View style={styles.previewStack}>
-          <Text style={styles.previewTitle}>Preview</Text>
 
-          <Text style={styles.previewBody}>{notes || "No notes yet."}</Text>
+        {/* Notices */}
+        <View style={[styles.sectionCard, styles.noticeSectionCard]}>
+          <Text style={styles.sectionTitle}>Notices</Text>
+          <Text style={styles.sectionHelp}>
+            Temporary announcements, hosting notes, reminders, or private
+            logistics.
+          </Text>
 
-          {noticeItems
-            .filter((row) => row.label || row.url)
-            .map((row, index) => (
-              <View
-                key={`preview-notice-${index}`}
-                style={styles.previewNotice}
+          {noticeItems.map((row, index) => (
+            <View key={`notice-${index}`} style={styles.noticeRowCard}>
+              <TextInput
+                value={row.label}
+                onChangeText={(value) => updateNoticeRow(index, "label", value)}
+                placeholder="Notice title"
+                style={styles.input}
+              />
+
+              <TextInput
+                value={row.url}
+                onChangeText={(value) => updateNoticeRow(index, "url", value)}
+                placeholder="Notice details"
+                multiline
+                style={[styles.input, styles.textArea]}
+              />
+
+              <Pressable
+                onPress={() =>
+                  setNoticeItems((rows) =>
+                    rows.filter((_, rowIndex) => rowIndex !== index)
+                  )
+                }
               >
-                <Text style={styles.previewNoticeTitle}>
-                  {row.label || "Untitled Notice"}
-                </Text>
-                {row.url ? <Text>{row.url}</Text> : null}
-              </View>
-            ))}
+                <Text style={styles.removeText}>Remove Notice</Text>
+              </Pressable>
+            </View>
+          ))}
 
-          {scriptureReadings
-            .filter((row) => row.label || row.reference || row.url)
-            .map((row, index) => (
-              <Text key={`preview-scripture-${index}`}>
-                {`${row.label || "Untitled Scripture"} — ${row.reference}`}
-              </Text>
-            ))}
+          <Pressable
+            onPress={() => setNoticeItems((rows) => [...rows, emptyNoticeRow])}
+          >
+            <Text style={styles.addLinkText}>+ Add Notice</Text>
+          </Pressable>
+        </View>
 
-          {mediaItems
-            .filter((row) => row.label || row.url)
-            .map((row, index) => (
-              <Text key={`preview-media-${index}`}>
-                {`${row.label || "Untitled Media"} — ${row.access}`}
-              </Text>
-            ))}
+        {/* Files / Links / Media */}
+        <View style={styles.sectionCard}>
+          <Text style={styles.sectionTitle}>Files / Links / Media</Text>
+          <Text style={styles.sectionHelp}>
+            Add PDFs, images, videos, uploaded files, or outside study links.
+          </Text>
 
-          <View style={styles.saveArea}>
-            {saveMessage ? (
-              <Text style={styles.saveMessage}>{saveMessage}</Text>
-            ) : null}
+          {mediaItems.map((row, index) => (
+            <View key={`media-${index}`} style={styles.rowCard}>
+              <TextInput
+                value={row.label}
+                onChangeText={(value) => updateMediaRow(index, "label", value)}
+                placeholder="Label"
+                style={styles.input}
+              />
+
+              <TextInput
+                value={row.url}
+                onChangeText={(value) => updateMediaRow(index, "url", value)}
+                placeholder="URL or uploaded file path"
+                style={styles.input}
+              />
+
+              <Pressable
+                onPress={() =>
+                  setMediaItems((rows) =>
+                    rows.filter((_, rowIndex) => rowIndex !== index)
+                  )
+                }
+              >
+                <Text style={styles.removeText}>Remove Media</Text>
+              </Pressable>
+            </View>
+          ))}
+
+          <View style={styles.mediaActionRow}>
+            <Pressable onPress={uploadFile}>
+              <Text style={styles.uploadText}>Upload File</Text>
+            </Pressable>
 
             <Pressable
-              onPress={saveContent}
-              disabled={isSaving}
-              style={[styles.saveButton, isSaving && styles.disabledButton]}
+              onPress={() => setMediaItems((rows) => [...rows, emptyMediaRow])}
             >
-              <Text style={styles.saveButtonText}>
-                {isSaving ? "Saving..." : "Save Content"}
-              </Text>
+              <Text style={styles.addLinkText}>+ Add Media</Text>
             </Pressable>
           </View>
         </View>
-      )}
+
+        <View style={styles.saveArea}>
+          {saveMessage ? (
+            <Text style={styles.saveMessage}>{saveMessage}</Text>
+          ) : null}
+
+          <Pressable
+            onPress={saveContent}
+            disabled={isSaving}
+            style={[styles.saveButton, isSaving && styles.disabledButton]}
+          >
+            <Text style={styles.saveButtonText}>
+              {isSaving ? "Saving..." : "Save Content"}
+            </Text>
+          </Pressable>
+        </View>
+      </View>
     </View>
   );
 }
@@ -594,34 +459,6 @@ export default function AdminDayContentForm({
 const styles = StyleSheet.create({
   container: {
     gap: 16,
-  },
-
-  tabRow: {
-    flexDirection: "row",
-    gap: 8,
-  },
-
-  tab: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-    backgroundColor: "#ffffff",
-  },
-
-  activeTab: {
-    backgroundColor: "#111827",
-    borderColor: "#111827",
-  },
-
-  tabText: {
-    fontWeight: "800",
-    color: "#374151",
-  },
-
-  activeTabText: {
-    color: "#ffffff",
   },
 
   formStack: {
@@ -685,36 +522,6 @@ const styles = StyleSheet.create({
     textAlignVertical: "top",
   },
 
-  accessRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-
-  accessPill: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: "#d1d5db",
-    backgroundColor: "#ffffff",
-  },
-
-  activeAccessPill: {
-    backgroundColor: "#2563eb",
-    borderColor: "#2563eb",
-  },
-
-  accessPillText: {
-    fontSize: 11,
-    fontWeight: "800",
-    color: "#374151",
-  },
-
-  activeAccessPillText: {
-    color: "#ffffff",
-  },
-
   removeText: {
     color: "#dc2626",
     fontWeight: "800",
@@ -734,45 +541,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 18,
     flexWrap: "wrap",
-  },
-
-  previewButton: {
-    paddingVertical: 14,
-    borderRadius: 14,
-    backgroundColor: "#16a34a",
-    alignItems: "center",
-  },
-
-  previewButtonText: {
-    color: "#ffffff",
-    fontSize: 16,
-    fontWeight: "900",
-  },
-
-  previewStack: {
-    gap: 12,
-  },
-
-  previewTitle: {
-    fontSize: 20,
-    fontWeight: "900",
-  },
-
-  previewBody: {
-    color: "#374151",
-  },
-
-  previewNotice: {
-    padding: 12,
-    borderRadius: 14,
-    backgroundColor: "#fffbeb",
-    borderWidth: 1,
-    borderColor: "#fde68a",
-  },
-
-  previewNoticeTitle: {
-    fontWeight: "900",
-    color: "#92400e",
   },
 
   saveArea: {
@@ -806,19 +574,5 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontSize: 18,
     fontWeight: "900",
-  },
-
-  addButtonStyle: {
-    backgroundColor: "#2563eb",
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-
-  removeButtonStyle: {
-    backgroundColor: "#dc2626",
-    paddingVertical: 12,
-    borderRadius: 10,
-    alignItems: "center",
   },
 });

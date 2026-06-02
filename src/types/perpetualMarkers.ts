@@ -9,7 +9,7 @@ export type PerpetualMarker = {
 
   title: string;
   shortName: string;
-  color: string;
+  color?: string;
 
   description?: string;
 

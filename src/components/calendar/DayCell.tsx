@@ -11,6 +11,8 @@ import ScrollIcon from "../../../assets/enoch/icons/scroll.png";
 import { CalendarNode } from "../../models/calendar";
 import { PerpetualMarker } from "../../types/perpetualMarkers";
 
+const DEFAULT_MARKER_COLOR = "#2563eb";
+
 // Types
 type Props = {
   node: CalendarNode;
@@ -32,6 +34,17 @@ function getTodayDateId(): string {
   const day = String(date.getDate()).padStart(2, "0");
 
   return `${year}-${month}-${day}`;
+}
+
+/**
+ * Returns a usable marker label color.
+ * This render helper protects the calendar from missing or malformed admin-entered hex values.
+ */
+function getMarkerColor(color?: string): string {
+  const trimmedColor = color?.trim() ?? "";
+  const isHexColor = /^#(?:[0-9a-fA-F]{3}){1,2}$/.test(trimmedColor);
+
+  return isHexColor ? trimmedColor : DEFAULT_MARKER_COLOR;
 }
 
 // Public API
@@ -68,7 +81,7 @@ export function DayCell({
       id: marker.id,
       shortName: marker.shortName,
       englishName: marker.title,
-      color: marker.color,
+      color: getMarkerColor(marker.color),
     })),
   ];
 

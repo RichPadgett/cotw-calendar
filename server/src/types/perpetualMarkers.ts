@@ -8,7 +8,7 @@ export type PerpetualMarker = {
   id: string;
   title: string;
   shortName: string;
-  color: string;
+  color?: string;
   description?: string;
   month?: number;
   day?: number;

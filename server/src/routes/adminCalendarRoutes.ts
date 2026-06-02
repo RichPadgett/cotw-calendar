@@ -87,6 +87,86 @@ router.delete<{
   }
 });
 
+/**
+ * API endpoint: deletes one notice item from a selected calendar day.
+ * Notice items live inside notice-style sections, so this keeps notes and scripture readings independent.
+ */
+router.delete<{
+  year: string;
+  month: string;
+  day: string;
+  index: string;
+}>("/:year/:month/:day/notices/:index", requireAdminToken, (req, res) => {
+  try {
+    const { year, month, day, index } = req.params;
+    const groupCode = getGroupCode(req);
+    const currentContent = getCalendarDayContent(groupCode, year, month, day);
+    const noticeIndex = Number(index);
+
+    if (!currentContent) {
+      return res.status(404).json({
+        error: "Calendar day content not found.",
+      });
+    }
+
+    const sections = currentContent.sections ?? [];
+    const noticeSections = sections.filter(
+      (section) => section.displayStyle === "notice"
+    );
+    const noticeItemCount = noticeSections.reduce(
+      (count, section) => count + section.items.length,
+      0
+    );
+
+    if (
+      !Number.isInteger(noticeIndex) ||
+      noticeIndex < 0 ||
+      noticeIndex >= noticeItemCount
+    ) {
+      return res.status(400).json({
+        error: "Invalid notice index.",
+      });
+    }
+
+    let currentNoticeIndex = 0;
+    const sectionsWithoutNotice = sections
+      .map((section) => {
+        if (section.displayStyle !== "notice") {
+          return section;
+        }
+
+        const nextItems = section.items.filter(() => {
+          const shouldKeep = currentNoticeIndex !== noticeIndex;
+          currentNoticeIndex += 1;
+
+          return shouldKeep;
+        });
+
+        return {
+          ...section,
+          items: nextItems,
+        };
+      })
+      .filter(
+        (section) =>
+          section.displayStyle !== "notice" || section.items.length > 0
+      );
+
+    const savedContent = saveCalendarDayContent(groupCode, year, month, day, {
+      ...currentContent,
+      sections: sectionsWithoutNotice,
+    });
+
+    res.json(savedContent);
+  } catch (error) {
+    console.log("Failed to delete calendar day notice", error);
+
+    res.status(500).json({
+      error: "Failed to delete calendar day notice.",
+    });
+  }
+});
+
 router.delete<{
   year: string;
   month: string;
