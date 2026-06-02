@@ -7,6 +7,7 @@
 import cors from "cors";
 import express from "express";
 
+import { logApiRequest } from "./middleware/logApiRequest";
 import adminCalendarRoutes from "./routes/adminCalendarRoutes";
 import adminFileRoutes from "./routes/adminFileRoutes";
 import calendarRoutes from "./routes/calendarRoutes";
@@ -17,6 +18,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use("/api", logApiRequest);
 
 app.get("/", (_req, res) => {
   res.send("Calendar API is running");
@@ -29,14 +31,6 @@ app.use("/api/files", express.static("content"));
 app.use("/files", express.static("content/files"));
 app.use("/api/groups", groupRoutes);
 app.use("/api/calendar/perpetual-markers", perpetualMarkerRoutes);
-
-/*
-  ============================================================
-  ROUTES
-  ============================================================
-*/
-
-app.use("/api/calendar", calendarRoutes);
 
 const PORT = 3001;
 

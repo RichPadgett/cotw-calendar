@@ -75,14 +75,41 @@ router.post(
     const groupCode = getGroupCode(req);
 
     if (!req.file) {
+      console.log(
+        [
+          "[UPLOAD]",
+          "no file received",
+          `group=${groupCode}`,
+          `year=${year}`,
+          `month=${month}`,
+          `day=${day}`,
+        ].join(" ")
+      );
+
       return res.status(400).json({
         error: "No file uploaded.",
       });
     }
 
+    const uploadedUrl = `/api/files/groups/${groupCode}/files/${year}/${month}/${day}/${req.file.filename}`;
+
+    console.log(
+      [
+        "[UPLOAD]",
+        "stored file",
+        `group=${groupCode}`,
+        `year=${year}`,
+        `month=${month}`,
+        `day=${day}`,
+        `filename=${req.file.filename}`,
+        `size=${req.file.size}`,
+        `url=${uploadedUrl}`,
+      ].join(" ")
+    );
+
     res.json({
       filename: req.file.filename,
-      url: `/api/files/groups/${groupCode}/files/${year}/${month}/${day}/${req.file.filename}`,
+      url: uploadedUrl,
     });
   }
 );

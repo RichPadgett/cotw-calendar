@@ -23,6 +23,17 @@ export function requireAdminToken(
   });
 
   if (!isAllowed) {
+    console.log(
+      [
+        "[AUTH]",
+        "admin denied",
+        `method=${req.method}`,
+        `path=${req.originalUrl}`,
+        `group=${groupCode}`,
+        `auth=${token ? "present" : "missing"}`,
+      ].join(" ")
+    );
+
     return res.status(403).json({
       error: "Admin access required.",
     });
@@ -45,6 +56,17 @@ export function requireAdminTokenForGroup(requiredGroupCode: string) {
     });
 
     if (!isAllowed) {
+      console.log(
+        [
+          "[AUTH]",
+          "fixed-group admin denied",
+          `method=${req.method}`,
+          `path=${req.originalUrl}`,
+          `group=${requiredGroupCode}`,
+          `auth=${token ? "present" : "missing"}`,
+        ].join(" ")
+      );
+
       return res.status(403).json({
         error: "Admin access required.",
       });
