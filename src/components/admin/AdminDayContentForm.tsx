@@ -249,8 +249,13 @@ export default function AdminDayContentForm({
 
       const file = result.assets[0];
       const formData = new FormData();
+      const uploadUrl = `${API_BASE_URL}/api/admin/calendar/${enochYear}/${month}/${day}/files?groupCode=${encodeURIComponent(groupCode)}`;
 
-      if (file.uri.startsWith("blob:")) {
+      setUploadMessage(`Selected ${file.name}. Uploading...`);
+
+      if (typeof File !== "undefined" && file.file instanceof File) {
+        formData.append("file", file.file, file.name);
+      } else if (file.uri.startsWith("blob:")) {
         const blob = await fetch(file.uri).then((res) => res.blob());
 
         formData.append(
@@ -271,20 +276,17 @@ export default function AdminDayContentForm({
         Uploads use FormData, so only the bearer token is set manually.
         The browser/native fetch implementation supplies the multipart boundary.
       */
-      const response = await fetch(
-        `${API_BASE_URL}/api/admin/calendar/${enochYear}/${month}/${day}/files?groupCode=${encodeURIComponent(groupCode)}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${adminToken}`,
-          },
-          body: formData,
-        }
-      );
+      const response = await fetch(uploadUrl, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${adminToken}`,
+        },
+        body: formData,
+      });
 
       if (!response.ok) {
         console.log("Upload failed", response.status);
-        setUploadMessage("Upload failed.");
+        setUploadMessage(`Upload failed: ${response.status}.`);
         return;
       }
 
@@ -317,7 +319,11 @@ export default function AdminDayContentForm({
       setUploadMessage("File uploaded. Use Open File to preview it.");
     } catch (error) {
       console.log("Upload failed", error);
-      setUploadMessage("Upload failed.");
+      setUploadMessage(
+        error instanceof Error
+          ? `Upload failed: ${error.message}`
+          : "Upload failed."
+      );
     }
   }
 
