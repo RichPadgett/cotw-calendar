@@ -7,7 +7,14 @@
 // Dependencies
 import * as DocumentPicker from "expo-document-picker";
 import { useEffect, useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Linking,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import { API_BASE_URL } from "../../config/api";
 import type { DayContent, DayContentItem } from "../../types/calendarContent";
 
@@ -93,6 +100,24 @@ function isOpenableUrl(value?: string): boolean {
     trimmedValue.startsWith("/api/") ||
     trimmedValue.startsWith("groups/")
   );
+}
+
+function getOpenUrl(url: string): string {
+  const trimmedUrl = url.trim();
+
+  if (/^https?:\/\//i.test(trimmedUrl)) {
+    return trimmedUrl;
+  }
+
+  if (trimmedUrl.startsWith("/api/")) {
+    return `${API_BASE_URL}${trimmedUrl}`;
+  }
+
+  if (trimmedUrl.startsWith("groups/")) {
+    return `${API_BASE_URL}/api/files/${trimmedUrl}`;
+  }
+
+  return trimmedUrl;
 }
 
 function getContentRow(item: DayContentItem): ContentRow {
@@ -503,6 +528,12 @@ export default function AdminDayContentForm({
                 style={styles.input}
               />
 
+              {isOpenableUrl(row.url) ? (
+                <Pressable onPress={() => Linking.openURL(getOpenUrl(row.url))}>
+                  <Text style={styles.openLinkText}>Open Notice Link</Text>
+                </Pressable>
+              ) : null}
+
               <Pressable
                 onPress={() =>
                   setNoticeItems((rows) =>
@@ -544,6 +575,14 @@ export default function AdminDayContentForm({
                 placeholder="URL or uploaded file path"
                 style={styles.input}
               />
+
+              {isOpenableUrl(row.url) ? (
+                <Pressable onPress={() => Linking.openURL(getOpenUrl(row.url))}>
+                  <Text style={styles.openLinkText}>
+                    {row.type === "pdf" ? "Open File" : "Open Link"}
+                  </Text>
+                </Pressable>
+              ) : null}
 
               <Pressable
                 onPress={() =>
@@ -669,6 +708,11 @@ const styles = StyleSheet.create({
 
   uploadText: {
     color: "#7c3aed",
+    fontWeight: "900",
+  },
+
+  openLinkText: {
+    color: "#2563eb",
     fontWeight: "900",
   },
 
