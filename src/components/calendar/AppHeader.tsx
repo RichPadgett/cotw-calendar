@@ -21,6 +21,7 @@ type Props = {
   onChangeGroup: () => void;
 
   // Optional navigation actions
+  onPressToday?: () => void;
   onPreviousMonth?: () => void;
   onNextMonth?: () => void;
 };
@@ -33,6 +34,7 @@ export default function AppHeader({
   month,
   gregorianLabel,
   onChangeGroup,
+  onPressToday,
   onPreviousMonth,
   onNextMonth,
   todayNode,
@@ -227,7 +229,8 @@ export default function AppHeader({
             </Text>
 
             {todayNode ? (
-              <View
+              <Pressable
+                onPress={onPressToday}
                 style={{
                   marginTop: 8,
 
@@ -274,7 +277,7 @@ export default function AppHeader({
                     {todayNode.enoch.events[0].englishName}
                   </Text>
                 ) : null}
-              </View>
+              </Pressable>
             ) : null}
 
             {/* Future Optional Metadata

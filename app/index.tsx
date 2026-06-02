@@ -474,6 +474,11 @@ export default function HomeScreen() {
             onPreviousMonth={goPreviousYear}
             onNextMonth={goNextYear}
             onChangeGroup={confirmChangeGroup}
+            onPressToday={() => {
+              if (todayNode) {
+                openDay(todayNode);
+              }
+            }}
           />
         </View>
 
