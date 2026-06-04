@@ -11,22 +11,39 @@ const BASE_START_DATE = "2026-03-18";
 // Date helpers
 /**
  * Calculates the Gregorian start date for a requested Enoch year.
- * This date helper advances from the configured base year and accounts for sabbath-week year offsets.
+ * This date helper walks from the configured base year and accounts for sabbath-week year offsets.
  */
 export function getEnochYearStartDate(targetYear: number): string {
   let currentStartDate = BASE_START_DATE;
 
   for (let year = BASE_ENOCH_YEAR; year < targetYear; year++) {
-    const completedYearNumber = year - BASE_ENOCH_YEAR + 1;
-    const hasSabbathWeekAfterYear = completedYearNumber % 6 === 0;
+    currentStartDate = addDays(currentStartDate, getEnochYearLength(year));
+  }
 
-    currentStartDate = addDays(
-      currentStartDate,
-      hasSabbathWeekAfterYear ? 371 : 364
-    );
+  for (let year = BASE_ENOCH_YEAR - 1; year >= targetYear; year--) {
+    currentStartDate = addDays(currentStartDate, -getEnochYearLength(year));
   }
 
   return currentStartDate;
+}
+
+/**
+ * Determines whether the requested Enoch year begins after the seven-day sabbath-week reset.
+ * This helper keeps sabbath-week display logic aligned for both forward and backward year navigation.
+ */
+export function hasSabbathWeekBeforeEnochYear(targetYear: number): boolean {
+  return getEnochYearLength(targetYear - 1) === 371;
+}
+
+/**
+ * Returns the day length for one Enoch year.
+ * This calendar helper includes the extra sabbath-week reset after every sixth completed year.
+ */
+function getEnochYearLength(year: number): number {
+  const completedYearNumber = year - BASE_ENOCH_YEAR + 1;
+  const hasSabbathWeekAfterYear = completedYearNumber % 6 === 0;
+
+  return hasSabbathWeekAfterYear ? 371 : 364;
 }
 
 /**

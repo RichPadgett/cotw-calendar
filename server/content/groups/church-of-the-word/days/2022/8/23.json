@@ -1,0 +1,27 @@
+{
+  "enochYear": 2022,
+  "month": 8,
+  "day": 23,
+  "title": "Month 8 Day 23",
+  "notes": "1 Kings - Elijah & Baal:\nChurch of the Word · Episode\n\nAttention to Wisdom, Listen to His Words:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "1 Kings - Elijah & Baal Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/0IY33xFqD7y1TXqom2k0Kq",
+          "access": "public"
+        },
+        {
+          "label": "Attention to Wisdom, Listen to His Words Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/2P6guHTRkAWEeD2zdssOyD",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

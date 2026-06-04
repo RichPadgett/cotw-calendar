@@ -1,0 +1,27 @@
+{
+  "enochYear": 2023,
+  "month": 2,
+  "day": 3,
+  "title": "Month 2 Day 3",
+  "notes": "Yeshua's Death & Resurrection:\nChurch of the Word · Episode\n\nThe Great Shéma:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Yeshua's Death & Resurrection Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/17NP1nBkVLHfbij6AcR0nz",
+          "access": "public"
+        },
+        {
+          "label": "The Great Shéma Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/3RaekpeorVrR9bFBBZABGR",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

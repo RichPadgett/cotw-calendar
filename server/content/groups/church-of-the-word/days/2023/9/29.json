@@ -1,0 +1,27 @@
+{
+  "enochYear": 2023,
+  "month": 9,
+  "day": 29,
+  "title": "Month 9 Day 29",
+  "notes": "Yeshua, Our Gift Offering:\nChurch of the Word · Episode\n\nThe Genealogy of Yeshua: Revealed:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Yeshua, Our Gift Offering Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/0hFImwbGpgLd83di3oo0p3",
+          "access": "public"
+        },
+        {
+          "label": "The Genealogy of Yeshua: Revealed Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/36d2MDlusneT5vyPj7ICpT",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

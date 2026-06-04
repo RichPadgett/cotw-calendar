@@ -1,0 +1,27 @@
+{
+  "enochYear": 2024,
+  "month": 11,
+  "day": 16,
+  "title": "Month 11 Day 16",
+  "notes": "The Door to the Father:\nChurch of the Word · Episode\n\nChosen Friend of Yah:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "The Door to the Father Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/1govxFS3cwmLFL8uVLQkgh",
+          "access": "public"
+        },
+        {
+          "label": "Chosen Friend of Yah Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/7xhLXc1vOneabZOnw7MsJK",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "enochYear": 2025,
+  "month": 10,
+  "day": 11,
+  "title": "Month 10 Day 11",
+  "notes": "Vengeance on Midian: Rooting Out the Doctrine of Balaam:\nChurch of the Word · Episode\n\nTo the Jew First: Paul, Barnabas, and the Open Door to the Nations:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Vengeance on Midian: Rooting Out the Doctrine of Balaam Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/5oOybeMSQsdWWiomKUrZC4",
+          "access": "public"
+        },
+        {
+          "label": "To the Jew First: Paul, Barnabas, and the Open Door to the Nations Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/7BfKXOyWRJbLrFbMTAO6mG",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "enochYear": 2022,
+  "month": 10,
+  "day": 20,
+  "title": "Month 10 Day 20",
+  "notes": "Keys of the Kingdom (1/2):\nChurch of the Word · Episode\n\nKeys of the Kingdom (2/2):\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Keys of the Kingdom (1/2) Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/0V2iJ2rUlbPSSv7rPBFlSR",
+          "access": "public"
+        },
+        {
+          "label": "Keys of the Kingdom (2/2) Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/2tkMIbGcPJmEnzYCTCRyoY",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

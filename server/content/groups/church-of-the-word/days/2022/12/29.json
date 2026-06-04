@@ -1,0 +1,33 @@
+{
+  "enochYear": 2022,
+  "month": 12,
+  "day": 29,
+  "title": "Month 12 Day 29",
+  "notes": "The Scriptures Spoke of Me - Crucifixion (2/2):\nChurch of the Word · Episode\n\nThe Scriptures Spoke of Me (1/2):\nChurch of the Word · Episode\n\nProphecy: Return of Yeshua & The Delusion:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "The Scriptures Spoke of Me - Crucifixion (2/2) Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/07PXIfCXNVSpP62JhiaYB9",
+          "access": "public"
+        },
+        {
+          "label": "The Scriptures Spoke of Me (1/2) Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/1PegMrjbg3wLY71s36HUvd",
+          "access": "public"
+        },
+        {
+          "label": "Prophecy: Return of Yeshua & The Delusion Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/6ThYwWO3IIFQfaUy8dGig0",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

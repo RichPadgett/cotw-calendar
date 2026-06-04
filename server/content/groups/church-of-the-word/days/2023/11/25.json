@@ -1,0 +1,27 @@
+{
+  "enochYear": 2023,
+  "month": 11,
+  "day": 25,
+  "title": "Month 11 Day 25",
+  "notes": "Spiritual Operations:\nChurch of the Word · Episode\n\nPhysically & Spiritually Clean:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Spiritual Operations Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/3Pb5YTvkQ7sCxPzUsz3SbE",
+          "access": "public"
+        },
+        {
+          "label": "Physically & Spiritually Clean Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/5SVOgHYcKbU3M8ZUCmVubj",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "enochYear": 2022,
+  "month": 5,
+  "day": 26,
+  "title": "Month 5 Day 26",
+  "notes": "Joseph: A Type of Messiah (1/2):\nChurch of the Word · Episode\n\nJoseph: A Type of Messiah (2/2):\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Joseph: A Type of Messiah (1/2) Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/0RnzuM5P6iTNSN40ZxMknW",
+          "access": "public"
+        },
+        {
+          "label": "Joseph: A Type of Messiah (2/2) Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/5doMd9TNLm58HvAY63o8O4",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

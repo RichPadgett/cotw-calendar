@@ -1,0 +1,21 @@
+{
+  "enochYear": 2022,
+  "month": 1,
+  "day": 28,
+  "title": "Month 1 Day 28",
+  "notes": "Church of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Abraham: The Will of Yahweh Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/4uR78E61XGN85q1jU7lWXV",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

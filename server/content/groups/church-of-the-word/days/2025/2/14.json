@@ -1,0 +1,21 @@
+{
+  "enochYear": 2025,
+  "month": 2,
+  "day": 14,
+  "title": "Month 2 Day 14",
+  "notes": "Church of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Roles in the Assembly Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/7rkMSTxiWG45yQv4zZusvm",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

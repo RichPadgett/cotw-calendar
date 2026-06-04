@@ -1,0 +1,21 @@
+{
+  "enochYear": 2022,
+  "month": 6,
+  "day": 15,
+  "title": "Month 6 Day 15",
+  "notes": "Church of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "The Mystery of Ephrayim Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/7zuAjQc0BMmPXtFYOn40tm",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "enochYear": 2023,
+  "month": 7,
+  "day": 18,
+  "title": "Month 7 Day 18",
+  "notes": "Theory: The Current Millennial Reign (2/2):\nChurch of the Word · Episode\n\nTheory: The Current Millennial Reign:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Theory: The Current Millennial Reign (2/2) Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/35ZCWzFnk2LJ9qKabaYOGz",
+          "access": "public"
+        },
+        {
+          "label": "Theory: The Current Millennial Reign Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/3tSlBBXbKUMjwV2zqGdvAQ",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "enochYear": 2024,
+  "month": 1,
+  "day": 5,
+  "title": "Month 1 Day 5",
+  "notes": "Church of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Gospel Accounts: Yeshua, Our Temple of Healing Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/7iVlFq5XN9Z1sSuz7MMnpx",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

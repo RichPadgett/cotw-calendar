@@ -1,0 +1,21 @@
+{
+  "enochYear": 2025,
+  "month": 3,
+  "day": 28,
+  "title": "Month 3 Day 28",
+  "notes": "Church of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Bold Witnesses: Proclaiming Yeshua, The Cornerstone Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/111203oFOrg7pTs3AlBnmh",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

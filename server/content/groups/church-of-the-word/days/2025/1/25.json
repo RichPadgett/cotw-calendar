@@ -1,0 +1,21 @@
+{
+  "enochYear": 2025,
+  "month": 1,
+  "day": 25,
+  "title": "Month 1 Day 25",
+  "notes": "Church of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Out of Egypt Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/0fHzA0b8NCIj7HjOkYGk1u",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

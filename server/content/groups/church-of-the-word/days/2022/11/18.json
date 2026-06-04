@@ -1,0 +1,33 @@
+{
+  "enochYear": 2022,
+  "month": 11,
+  "day": 18,
+  "title": "Month 11 Day 18",
+  "notes": "Laodicea - The Lukewarm Church:\nChurch of the Word · Episode\n\nLaodicea - The Lukewarm Church:\nChurch of the Word · Episode\n\nLaodicea - The Lukewarm Church:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Laodicea - The Lukewarm Church Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/46wy8YhVli2exk5E1xH7zy",
+          "access": "public"
+        },
+        {
+          "label": "Laodicea - The Lukewarm Church Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/6BzF8TauceQ5vwjcxF2ZnV",
+          "access": "public"
+        },
+        {
+          "label": "Laodicea - The Lukewarm Church Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/7nGhHK1RhE5s5tF8bMbFwN",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "enochYear": 2022,
+  "month": 11,
+  "day": 24,
+  "title": "Month 11 Day 24",
+  "notes": "Preserved - Church of the End Times:\nChurch of the Word · Episode\n\nPriests & Elders - Prophecy and Pattern:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Preserved - Church of the End Times Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/06QfcddaMmM2jaGigU8zNs",
+          "access": "public"
+        },
+        {
+          "label": "Priests & Elders - Prophecy and Pattern Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/54t0ePHSLe1IjFjPa9rYY9",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

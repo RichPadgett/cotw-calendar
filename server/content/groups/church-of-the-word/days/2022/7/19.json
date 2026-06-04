@@ -1,0 +1,27 @@
+{
+  "enochYear": 2022,
+  "month": 7,
+  "day": 19,
+  "title": "Month 7 Day 19",
+  "notes": "Letter to the Philippians:\nChurch of the Word · Episode\n\nSmyrna - The Persecuted Church:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Letter to the Philippians Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/27aRcrugCgUP9jtZ7B7RW9",
+          "access": "public"
+        },
+        {
+          "label": "Smyrna - The Persecuted Church Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/6C46kexV5z3T8Su5s8UYTO",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

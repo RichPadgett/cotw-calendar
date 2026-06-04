@@ -1,0 +1,27 @@
+{
+  "enochYear": 2024,
+  "month": 3,
+  "day": 8,
+  "title": "Month 3 Day 8",
+  "notes": "Being Tested by YHWH (2/2):\nChurch of the Word · Episode\n\nBeing Tested by YHWH (1/2):\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Being Tested by YHWH (2/2) Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/4B6jxmU32DuNRzW4Gl8Uhj",
+          "access": "public"
+        },
+        {
+          "label": "Being Tested by YHWH (1/2) Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/79HjvlYR5Maf1bCWDzU75o",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

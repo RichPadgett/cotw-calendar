@@ -1,0 +1,27 @@
+{
+  "enochYear": 2023,
+  "month": 1,
+  "day": 5,
+  "title": "Month 1 Day 5",
+  "notes": "The Scriptures Spoke of Me - Obedience & Deliverance:\nChurch of the Word · Episode\n\nThe Scriptures Spoke of Me - Passover & His Return:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "The Scriptures Spoke of Me - Obedience & Deliverance Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/4vezK8boJp3ojRjrEdChYX",
+          "access": "public"
+        },
+        {
+          "label": "The Scriptures Spoke of Me - Passover & His Return Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/5JYJSzxJbpM1xmbKs6ame6",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

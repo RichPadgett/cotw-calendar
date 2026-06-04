@@ -1,0 +1,27 @@
+{
+  "enochYear": 2024,
+  "month": 9,
+  "day": 15,
+  "title": "Month 9 Day 15",
+  "notes": "Hoshiana - Lifted High Unto Glory:\nChurch of the Word · Episode\n\nRecognizing the Salvation:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Hoshiana - Lifted High Unto Glory Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/2ovn609TOjM3k4HvRJGrw6",
+          "access": "public"
+        },
+        {
+          "label": "Recognizing the Salvation Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/5ZNh1RMBO59Uv3JO5M6UtD",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

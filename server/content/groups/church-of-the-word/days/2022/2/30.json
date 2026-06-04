@@ -1,0 +1,27 @@
+{
+  "enochYear": 2022,
+  "month": 2,
+  "day": 30,
+  "title": "Month 2 Day 30",
+  "notes": "Father to His Bride - The Marriage:\nChurch of the Word · Episode\n\nSpreading of Scripture:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Father to His Bride - The Marriage Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/2WQPOrHam8YmdCKBPdVPJE",
+          "access": "public"
+        },
+        {
+          "label": "Spreading of Scripture Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/2xVamFanCnKBodZC6BD6J5",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

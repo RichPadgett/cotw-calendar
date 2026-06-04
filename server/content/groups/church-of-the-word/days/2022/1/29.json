@@ -1,0 +1,21 @@
+{
+  "enochYear": 2022,
+  "month": 1,
+  "day": 29,
+  "title": "Month 1 Day 29",
+  "notes": "Church of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Passover (2022) Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/67SrVPHh0XqxkXzusAl77X",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "enochYear": 2023,
+  "month": 8,
+  "day": 24,
+  "title": "Month 8 Day 24",
+  "notes": "Revelation 22: Come, Master Yeshua Messiah!:\nChurch of the Word · Episode\n\nRevelation 21: New Heaven & New Earth:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Revelation 22: Come, Master Yeshua Messiah! Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/111WAwgiOFMOwsUQuxZHG1",
+          "access": "public"
+        },
+        {
+          "label": "Revelation 21: New Heaven & New Earth Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/1R4aofyT4jiT86ol3LIZeh",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

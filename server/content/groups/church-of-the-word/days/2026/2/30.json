@@ -1,0 +1,61 @@
+{
+  "enochYear": 2026,
+  "month": 2,
+  "day": 30,
+  "title": "Month 2 Day 30",
+  "notes": "This teaching connects Matthew 24’s signs of the end with their fulfillment in the early church, particularly through Paul’s missionary work and the rapid spread of the gospel. It recaps key sections from 1 Corinthians 11 on head coverings and the Lord’s Supper before moving into 1 Corinthians 12, emphasizing that spiritual gifts are given for the common good and the building up of the body of Messiah. The study highlights the outpouring of the Holy Spirit at Pentecost (Acts 2), the balance between speaking gifts and service gifts, and how both are essential for healthy growth in the congregation. It stresses that true spiritual power is shown through obedience and love, not just manifestation.\n\nSpiritual Gifts for the Common Good: From Pentecost to Building the Body:\nChurch of the Word · Episode\n\nCircumcise Your Heart: What Yahweh Really Requires:\nChurch of the Word · Episode\n\nSpiritual Gifts for the Common Good: From Pentecost to Building the Body:\nChurch of the Word · Episode\n\nCircumcise Your Heart: What Yahweh Really Requires:\nChurch of the Word · Episode",
+  "scriptureReadings": [
+    {
+      "label": "Yeshua & the Signs of His Coming",
+      "reference": "Matthew 24",
+      "url": "https://www.blueletterbible.org/kjv/mat/24/1/s_953001"
+    },
+    {
+      "label": "Half of Paul’s Ministry in Corinth",
+      "reference": "Acts 18",
+      "url": "https://www.blueletterbible.org/kjv/act/18/1/s_1036001"
+    },
+    {
+      "label": "Recap of the Lords Supper (Until He comes)",
+      "reference": "1 Corinthians 11",
+      "url": "https://www.blueletterbible.org/kjv/1co/11/1/s_1073001"
+    },
+    {
+      "label": "Proclamation with Obedience",
+      "reference": "Matthew 7",
+      "url": "https://www.blueletterbible.org/kjv/mat/7/1/s_936001"
+    }
+  ],
+  "sections": [
+    {
+      "title": "Notices",
+      "displayStyle": "notice",
+      "items": [
+        {
+          "label": "Wendys House",
+          "type": "note",
+          "url": "Text for Details",
+          "access": "public"
+        }
+      ]
+    },
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Spiritual Gifts for the Common Good: From Pentecost to Building the Body Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/1fMZtp2MplCZSz3plM3K1Y",
+          "access": "public"
+        },
+        {
+          "label": "Circumcise Your Heart: What Yahweh Really Requires Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/5yCSWozXaNXxPG7yGapwcG",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

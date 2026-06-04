@@ -1,0 +1,27 @@
+{
+  "enochYear": 2023,
+  "month": 5,
+  "day": 25,
+  "title": "Month 5 Day 25",
+  "notes": "Lamp Stand: A Light Unto the World (2/2):\nChurch of the Word · Episode\n\nMystery of The Golden Lamp Stand (1/2):\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Lamp Stand: A Light Unto the World (2/2) Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/32WlQi6deLNNt004zJrlly",
+          "access": "public"
+        },
+        {
+          "label": "Mystery of The Golden Lamp Stand (1/2) Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/5tG5UO1F7fSk6oJaqwd3n9",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

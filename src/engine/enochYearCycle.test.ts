@@ -5,6 +5,10 @@
  */
 
 import { buildEnochYear } from "./buildEnochYear";
+import {
+  getEnochYearStartDate,
+  hasSabbathWeekBeforeEnochYear,
+} from "./enochYear";
 
 /**
  * Formats Date fixtures as YYYY-MM-DD during year-cycle tests.
@@ -105,5 +109,20 @@ describe("Enoch year cycle with Sabbath-week reset", () => {
       enochYear: 2038,
       abib1GregorianDate: "2038-03-17",
     });
+  });
+
+  it("calculates year starts before the configured base year", () => {
+    expect(getEnochYearStartDate(2026)).toBe("2026-03-18");
+    expect(getEnochYearStartDate(2025)).toBe("2025-03-12");
+    expect(getEnochYearStartDate(2024)).toBe("2024-03-13");
+    expect(getEnochYearStartDate(2023)).toBe("2023-03-15");
+    expect(getEnochYearStartDate(2022)).toBe("2022-03-16");
+  });
+
+  it("places sabbath-week runoff before the following Enoch year", () => {
+    expect(hasSabbathWeekBeforeEnochYear(2025)).toBe(false);
+    expect(hasSabbathWeekBeforeEnochYear(2026)).toBe(true);
+    expect(hasSabbathWeekBeforeEnochYear(2027)).toBe(false);
+    expect(hasSabbathWeekBeforeEnochYear(2032)).toBe(true);
   });
 });

@@ -1,0 +1,27 @@
+{
+  "enochYear": 2026,
+  "month": 1,
+  "day": 11,
+  "title": "Month 1 Day 11",
+  "notes": "Spirit of Wisdom & the Mind of Messiah: Building on Yeshua’s Foundation:\nChurch of the Word · Episode\n\nFrom First Fruits to Corinth: Paul’s Second Journey, the Message of the Cross, and Unity in Messiah:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Spirit of Wisdom & the Mind of Messiah: Building on Yeshua’s Foundation Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/15gtiIAbf4WJaalGIN0UPh",
+          "access": "public"
+        },
+        {
+          "label": "From First Fruits to Corinth: Paul’s Second Journey, the Message of the Cross, and Unity in Messiah Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/2Z24NuGVK4hBVTZ8cS6M0b",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

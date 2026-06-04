@@ -7,6 +7,7 @@
 // Dependencies
 import { Text, View } from "react-native";
 
+import { hasSabbathWeekBeforeEnochYear } from "../../engine/enochYear";
 import { CalendarNode } from "../../models/calendar";
 import { PerpetualMarker } from "../../types/perpetualMarkers";
 import { DayCell } from "./DayCell";
@@ -18,8 +19,16 @@ type Props = {
   nodes: CalendarNode[];
   onMonthLayout?: (monthNumber: number, y: number) => void;
   onPressDay?: (node: CalendarNode) => void;
-  notices: any[];
+  notices: CalendarDaySummary[];
   perpetualMarkers: PerpetualMarker[];
+};
+
+type CalendarDaySummary = {
+  year: number;
+  month: number;
+  day: number;
+  notice: unknown | null;
+  hasContent: boolean;
 };
 
 // Constants
@@ -80,10 +89,11 @@ export default function YearView({
 }: Props) {
   const monthGroups = groupByEnochMonth(nodes);
   const firstNode = nodes[0];
+  const visibleEnochYear = firstNode?.enoch?.year;
 
   const isSabbathYear =
-    Boolean(firstNode?.enoch?.year) &&
-    ((firstNode?.enoch?.year ?? 0) - 2026 + 1) % 7 === 0;
+    typeof visibleEnochYear === "number" &&
+    hasSabbathWeekBeforeEnochYear(visibleEnochYear);
 
   const sabbathWeekNode: CalendarNode | undefined =
     isSabbathYear && firstNode
@@ -205,6 +215,7 @@ export default function YearView({
               {monthNodes.map((node) => {
                 const dayContent = notices.find(
                   (item) =>
+                    item.year === node.enoch?.year &&
                     item.month === node.enoch?.month?.number &&
                     item.day === node.enoch?.day
                 );

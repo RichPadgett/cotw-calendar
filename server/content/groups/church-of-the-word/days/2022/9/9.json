@@ -1,0 +1,21 @@
+{
+  "enochYear": 2022,
+  "month": 9,
+  "day": 9,
+  "title": "Month 9 Day 9",
+  "notes": "Church of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Sardis - The Dead Church Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/7g71m5697lk28EFPrNStps",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

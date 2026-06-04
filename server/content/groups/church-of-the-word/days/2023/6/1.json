@@ -1,0 +1,27 @@
+{
+  "enochYear": 2023,
+  "month": 6,
+  "day": 1,
+  "title": "Month 6 Day 1",
+  "notes": "Written of Me (2/2) - Tabernacle of Yeshua:\nChurch of the Word · Episode\n\nWritten of Me (1/2) - Messiah & The Camp:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Written of Me (2/2) - Tabernacle of Yeshua Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/4S9NSol0uBcilqZ0kyNWAg",
+          "access": "public"
+        },
+        {
+          "label": "Written of Me (1/2) - Messiah & The Camp Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/7FSkerIjREqmfEs4ZNZLZl",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "enochYear": 2022,
+  "month": 6,
+  "day": 22,
+  "title": "Month 6 Day 22",
+  "notes": "Fullness of Revelation 1 (1/2):\nChurch of the Word · Episode\n\nFullness of Revelation 1 (2/2):\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Fullness of Revelation 1 (1/2) Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/2kM0fauvaysqGwli0cgKuS",
+          "access": "public"
+        },
+        {
+          "label": "Fullness of Revelation 1 (2/2) Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/67Gbp8L7GDw2CfpGAtlIsr",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

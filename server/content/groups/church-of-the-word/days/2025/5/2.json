@@ -1,0 +1,27 @@
+{
+  "enochYear": 2025,
+  "month": 5,
+  "day": 2,
+  "title": "Month 5 Day 2",
+  "notes": "Korah’s Rebellion: Choosing Obedience Over Pride:\nChurch of the Word · Episode\n\nDivine Power and Human Opposition: The Early Church's Mission and Trials:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Korah’s Rebellion: Choosing Obedience Over Pride Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/1CMV0p0M59ST6IQqbsbN62",
+          "access": "public"
+        },
+        {
+          "label": "Divine Power and Human Opposition: The Early Church's Mission and Trials Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/1TxYmJWPJQvlzskht4k9CA",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

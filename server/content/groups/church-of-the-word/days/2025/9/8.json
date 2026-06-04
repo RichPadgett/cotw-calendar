@@ -1,0 +1,27 @@
+{
+  "enochYear": 2025,
+  "month": 9,
+  "day": 8,
+  "title": "Month 9 Day 8",
+  "notes": "Peter’s Deliverance: Famine, Faith, and the Spread of the Gospel:\nChurch of the Word · Episode\n\nThe Divine Calendar: Offerings, Creation, and Yeshua’s Timeline:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Peter’s Deliverance: Famine, Faith, and the Spread of the Gospel Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/1Kd5f5hTNkDtlYyjnMlBU6",
+          "access": "public"
+        },
+        {
+          "label": "The Divine Calendar: Offerings, Creation, and Yeshua’s Timeline Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/4rZmQDl2tLVqWjuS7uiG0x",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

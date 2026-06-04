@@ -1,0 +1,21 @@
+{
+  "enochYear": 2024,
+  "month": 1,
+  "day": 12,
+  "title": "Month 1 Day 12",
+  "notes": "Church of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Gospel Accounts: Ministry of Multiplication Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/1At3egMlwC2tj25xRXvEcd",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

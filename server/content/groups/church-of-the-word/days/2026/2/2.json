@@ -1,0 +1,27 @@
+{
+  "enochYear": 2026,
+  "month": 2,
+  "day": 2,
+  "title": "Month 2 Day 2",
+  "notes": "Grafted In or Devoted to Destruction: Marriage, Offspring & Covenant Faithfulness:\nChurch of the Word · Episode\n\nPurge the Leaven: Marriage Principles, Sexual Immorality, & the Impending Crisis in 1 Corinthians 5–7:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Grafted In or Devoted to Destruction: Marriage, Offspring & Covenant Faithfulness Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/4qUkIfzw03OYSQ3uhmO6zU",
+          "access": "public"
+        },
+        {
+          "label": "Purge the Leaven: Marriage Principles, Sexual Immorality, & the Impending Crisis in 1 Corinthians 5–7 Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/7iaFthn3doV3TsNSgr9uqy",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}
