@@ -5,7 +5,13 @@
  */
 
 // Dependencies
-import { Image, Pressable, Text, View } from "react-native";
+import {
+  Image,
+  Pressable,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
 
 import ScrollIcon from "../../../assets/enoch/icons/scroll.png";
 import { CalendarNode } from "../../models/calendar";
@@ -59,6 +65,8 @@ export function DayCell({
   hasNotice = false,
   perpetualMarkers = [],
 }: Props) {
+  const { width: viewportWidth } = useWindowDimensions();
+
   const DEV_TODAY_ID = getTodayDateId();
 
   const todayId = __DEV__
@@ -88,6 +96,7 @@ export function DayCell({
   const visibleEvents = displayEvents.slice(0, 2);
 
   const showScrollIcon = hasContent;
+  const scrollIconSize = viewportWidth >= 900 ? 24 : 18;
 
   const sabbathEvent = enoch?.events?.find(
     (event) => event.type === "weekly-sabbath" || event.type === "high-sabbath"
@@ -159,8 +168,8 @@ export function DayCell({
                 bottom: 0,
                 right: 0,
 
-                width: 18,
-                height: 18,
+                width: scrollIconSize,
+                height: scrollIconSize,
 
                 opacity: 0.95,
 
