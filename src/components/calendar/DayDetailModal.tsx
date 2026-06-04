@@ -150,6 +150,20 @@ export default function DayDetailModal({
     return trimmedUrl;
   }
 
+  function getLinkVariant(url?: string): "spotify" | "maps" | "default" {
+    const normalizedUrl = url?.toLowerCase() ?? "";
+
+    if (normalizedUrl.includes("spotify")) {
+      return "spotify";
+    }
+
+    if (normalizedUrl.includes("https://www.google.com/maps/")) {
+      return "maps";
+    }
+
+    return "default";
+  }
+
   function getNoticeDetails(item: DayContentItem): string {
     if (item.details?.trim()) {
       return item.details.trim();
@@ -160,6 +174,46 @@ export default function DayDetailModal({
 
   function getNoticeUrl(item: DayContentItem): string | undefined {
     return isOpenableUrl(item.url) ? item.url : undefined;
+  }
+
+  function renderOpenLinkButton(url: string, label = "Open") {
+    const linkVariant = getLinkVariant(url);
+    const isBrandedLink = linkVariant !== "default";
+
+    return (
+      <Pressable
+        onPress={() => openUrl(url)}
+        style={[
+          styles.linkButton,
+          linkVariant === "spotify" && styles.spotifyLinkButton,
+          linkVariant === "maps" && styles.mapsLinkButton,
+        ]}
+      >
+        <View style={styles.linkButtonContent}>
+          {isBrandedLink ? (
+            <View
+              style={[
+                styles.linkButtonDot,
+                linkVariant === "maps" && styles.mapsDot,
+              ]}
+            />
+          ) : null}
+
+          <Text
+            style={[
+              styles.linkButtonText,
+              isBrandedLink && styles.brandedLinkButtonText,
+            ]}
+          >
+            {linkVariant === "spotify"
+              ? "Spotify"
+              : linkVariant === "maps"
+                ? "Google Maps"
+                : label}
+          </Text>
+        </View>
+      </Pressable>
+    );
   }
 
   /**
@@ -569,14 +623,9 @@ export default function DayDetailModal({
                         </Text>
                       ) : null}
 
-                      {getNoticeUrl(item) ? (
-                        <Pressable
-                          onPress={() => openUrl(getNoticeUrl(item))}
-                          style={styles.linkButton}
-                        >
-                          <Text style={styles.linkButtonText}>Open</Text>
-                        </Pressable>
-                      ) : null}
+                      {getNoticeUrl(item)
+                        ? renderOpenLinkButton(getNoticeUrl(item)!)
+                        : null}
 
                       {canEditDayContent ? (
                         <Pressable
@@ -689,14 +738,7 @@ export default function DayDetailModal({
                             )}
                           </Text>
 
-                          {item.url ? (
-                            <Pressable
-                              onPress={() => openUrl(item.url)}
-                              style={styles.linkButton}
-                            >
-                              <Text style={styles.linkButtonText}>Open</Text>
-                            </Pressable>
-                          ) : null}
+                          {item.url ? renderOpenLinkButton(item.url) : null}
                         </View>
                       );
                     })}
@@ -1000,10 +1042,45 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
 
+  linkButtonContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+
   linkButtonText: {
     fontSize: 12,
     fontWeight: "900",
     color: "#2563eb",
+  },
+
+  spotifyLinkButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: "#1db954",
+  },
+
+  mapsLinkButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: "#2563eb",
+  },
+
+  brandedLinkButtonText: {
+    color: "#ffffff",
+  },
+
+  linkButtonDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: "#ffffff",
+  },
+
+  mapsDot: {
+    backgroundColor: "#fbbf24",
   },
 
   inversePillButton: {

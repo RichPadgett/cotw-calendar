@@ -66,13 +66,7 @@
     "year": 2026,
     "month": 2,
     "day": 30,
-    "notice": {
-      "year": 2026,
-      "month": 2,
-      "day": 30,
-      "title": "Wendys House",
-      "access": "public"
-    },
+    "notice": null,
     "hasContent": true
   },
   {
@@ -81,122 +75,5 @@
     "day": 1,
     "notice": null,
     "hasContent": true
-  },
-  {
-    "year": 2026,
-    "month": 3,
-    "day": 21,
-    "notice": {
-      "year": 2026,
-      "month": 3,
-      "day": 21,
-      "title": "Sabbat at Apa's",
-      "access": "public"
-    },
-    "hasContent": false
-  },
-  {
-    "year": 2026,
-    "month": 3,
-    "day": 14,
-    "notice": {
-      "year": 2026,
-      "month": 3,
-      "day": 14,
-      "title": "Shabbat at Nate and Jordyn's",
-      "access": "public"
-    },
-    "hasContent": false
-  },
-  {
-    "year": 2026,
-    "month": 4,
-    "day": 25,
-    "notice": {
-      "year": 2026,
-      "month": 4,
-      "day": 25,
-      "title": "Shabbat at Nate & Jordyn's",
-      "access": "public"
-    },
-    "hasContent": false
-  },
-  {
-    "year": 2026,
-    "month": 3,
-    "day": 28,
-    "notice": {
-      "year": 2026,
-      "month": 3,
-      "day": 28,
-      "title": "Shabbat at Tommy and Wendy's",
-      "access": "public"
-    },
-    "hasContent": false
-  },
-  {
-    "year": 2026,
-    "month": 5,
-    "day": 9,
-    "notice": {
-      "year": 2026,
-      "month": 5,
-      "day": 9,
-      "title": "Shabbat at Tommy & Wendy's",
-      "access": "public"
-    },
-    "hasContent": false
-  },
-  {
-    "year": 2026,
-    "month": 5,
-    "day": 2,
-    "notice": {
-      "year": 2026,
-      "month": 5,
-      "day": 2,
-      "title": "Shabbat at The Apa's",
-      "access": "public"
-    },
-    "hasContent": false
-  },
-  {
-    "year": 2026,
-    "month": 4,
-    "day": 11,
-    "notice": {
-      "year": 2026,
-      "month": 4,
-      "day": 11,
-      "title": "Shabbat at Mary OG",
-      "access": "public"
-    },
-    "hasContent": false
-  },
-  {
-    "year": 2026,
-    "month": 4,
-    "day": 4,
-    "notice": {
-      "year": 2026,
-      "month": 4,
-      "day": 4,
-      "title": "Shabbat at Micah & Heather's",
-      "access": "public"
-    },
-    "hasContent": false
-  },
-  {
-    "year": 2026,
-    "month": 4,
-    "day": 18,
-    "notice": {
-      "year": 2026,
-      "month": 4,
-      "day": 18,
-      "title": "Shabbat at Micah and Heather's",
-      "access": "public"
-    },
-    "hasContent": false
   }
 ]

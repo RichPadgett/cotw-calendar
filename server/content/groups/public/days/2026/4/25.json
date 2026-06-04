@@ -7,19 +7,6 @@
   "scriptureReadings": [],
   "sections": [
     {
-      "title": "Notices",
-      "displayStyle": "notice",
-      "items": [
-        {
-          "label": "Shabbat at Nate & Jordyn's",
-          "type": "note",
-          "access": "public",
-          "details": "Link below for Address",
-          "url": "https://www.google.com/maps/place/936+Hugh+Hunter+Rd,+Oak+Grove,+KY+42262/@36.6507398,-87.4040293,17z/data=!3m1!4b1!4m6!3m5!1s0x886528c0afbed8e9:0xe27dac2937080107!8m2!3d36.6507355!4d-87.401449!16s%2Fg%2F11jzwq3t_f?entry=ttu&g_ep=EgoyMDI2MDYwMS4wIKXMDSoASAFQAw%3D%3D"
-        }
-      ]
-    },
-    {
       "title": "Files / Links / Media",
       "displayStyle": "default",
       "items": []

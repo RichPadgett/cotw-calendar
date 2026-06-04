@@ -10,6 +10,11 @@
     {
       "tokenHash": "f9fe5cacce999329bc21e86accb71b6eb45dfcf0d95ea7b9f7da68b6f8deae37",
       "createdAt": "2026-06-01T02:06:04.162Z"
+    },
+    {
+      "tokenHash": "2626bab2296f3366ac59df58fca10a739c6df43161ec813efc8a4e1354c9c4b8",
+      "createdAt": "2026-06-04T18:45:07.857Z",
+      "deviceName": "Web Browser"
     }
   ]
 }

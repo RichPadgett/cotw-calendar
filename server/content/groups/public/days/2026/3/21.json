@@ -7,19 +7,6 @@
   "scriptureReadings": [],
   "sections": [
     {
-      "title": "Notices",
-      "displayStyle": "notice",
-      "items": [
-        {
-          "label": "Sabbat at Apa's",
-          "type": "note",
-          "access": "public",
-          "details": "Open link for map",
-          "url": "https://www.google.com/maps/place/741+7+Mile+Ferry+Rd,+Clarksville,+TN+37040/@36.4131051,-87.3556623,17z/data=!3m1!4b1!4m6!3m5!1s0x8864dace708ce26b:0xf3543261155da4dc!8m2!3d36.4131008!4d-87.353082!16s%2Fg%2F11hj5b5s20?entry=ttu&g_ep=EgoyMDI2MDYwMS4wIKXMDSoASAFQAw%3D%3D"
-        }
-      ]
-    },
-    {
       "title": "Files / Links / Media",
       "displayStyle": "default",
       "items": []

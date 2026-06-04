@@ -1,0 +1,28 @@
+{
+  "enochYear": 2026,
+  "month": 4,
+  "day": 11,
+  "title": "Month 4 Day 11",
+  "notes": "",
+  "scriptureReadings": [],
+  "sections": [
+    {
+      "title": "Notices",
+      "displayStyle": "notice",
+      "items": [
+        {
+          "label": "Shabbat at Mary OG",
+          "type": "note",
+          "access": "public",
+          "details": "Open link for Address",
+          "url": "https://www.google.com/maps/place/1192+Freedom+Dr,+Clarksville,+TN+37042/@36.5616372,-87.4718073,17z/data=!3m1!4b1!4m6!3m5!1s0x8864d5e7f2f3751d:0x5d59e039029499b6!8m2!3d36.5616329!4d-87.469227!16s%2Fg%2F11hj5w35wy?entry=ttu&g_ep=EgoyMDI2MDYwMS4wIKXMDSoASAFQAw%3D%3D"
+        }
+      ]
+    },
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": []
+    }
+  ]
+}
