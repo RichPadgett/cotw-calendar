@@ -1,0 +1,21 @@
+{
+  "enochYear": 2023,
+  "month": 5,
+  "day": 10,
+  "title": "Month 5 Day 10",
+  "notes": "Church of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Revelation 14 - Winepress & The Wrath of Yah Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/6V4aynhyt8lJFurqVrNPLJ",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

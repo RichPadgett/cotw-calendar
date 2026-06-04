@@ -1,0 +1,27 @@
+{
+  "enochYear": 2024,
+  "month": 4,
+  "day": 19,
+  "title": "Month 4 Day 19",
+  "notes": "Timeline: First Fruits & Soundings:\nChurch of the Word · Episode\n\nThrough Prayer & Fasting:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Timeline: First Fruits & Soundings Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/4goqGYN95kyrLCjoJ5JVTc",
+          "access": "public"
+        },
+        {
+          "label": "Through Prayer & Fasting Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/7wIW02sstluUCt4X1XZi2X",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

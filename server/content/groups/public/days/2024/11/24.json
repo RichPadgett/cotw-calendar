@@ -1,0 +1,27 @@
+{
+  "enochYear": 2024,
+  "month": 11,
+  "day": 24,
+  "title": "Month 11 Day 24",
+  "notes": "The Betrayal of Yeshua:\nChurch of the Word · Episode\n\nThe Prayer of Messiah:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "The Betrayal of Yeshua Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/3VkdmPDAlooT1VQTpONTcS",
+          "access": "public"
+        },
+        {
+          "label": "The Prayer of Messiah Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/6RWT6nbGB3kmhHdFoE0anL",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

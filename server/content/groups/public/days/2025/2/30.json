@@ -1,0 +1,21 @@
+{
+  "enochYear": 2025,
+  "month": 2,
+  "day": 30,
+  "title": "Month 2 Day 30",
+  "notes": "Church of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Shavuot: Yah of Deliverance Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/34sJs9E7Kmwmb7rdeV8jzn",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

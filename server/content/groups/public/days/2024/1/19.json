@@ -1,0 +1,27 @@
+{
+  "enochYear": 2024,
+  "month": 1,
+  "day": 19,
+  "title": "Month 1 Day 19",
+  "notes": "Fullness of the Moadim - Passover & Unleavened Bread:\nChurch of the Word · Episode\n\nThe Heart of Obedience:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Fullness of the Moadim - Passover & Unleavened Bread Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/1MwdpABBhOh0xheEG3DZ1A",
+          "access": "public"
+        },
+        {
+          "label": "The Heart of Obedience Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/7zuvZVYqaLdhelLxld8hlq",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "enochYear": 2024,
+  "month": 12,
+  "day": 8,
+  "title": "Month 12 Day 8",
+  "notes": "Church of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "The Trials of Yeshua Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/3oYw29joPwSs9mqGMqpeqV",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

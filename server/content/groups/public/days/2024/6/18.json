@@ -1,0 +1,27 @@
+{
+  "enochYear": 2024,
+  "month": 6,
+  "day": 18,
+  "title": "Month 6 Day 18",
+  "notes": "Numbers 1 - Prepare for War:\nChurch of the Word · Episode\n\nGospel Accounts - Submitting to Obedience:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Numbers 1 - Prepare for War Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/2NodS6Y8Aa4BjZ4oTzygGW",
+          "access": "public"
+        },
+        {
+          "label": "Gospel Accounts - Submitting to Obedience Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/4YDDl615SAMal24MWCPHL4",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

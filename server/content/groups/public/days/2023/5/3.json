@@ -1,0 +1,39 @@
+{
+  "enochYear": 2023,
+  "month": 5,
+  "day": 3,
+  "title": "Month 5 Day 3",
+  "notes": "Everlasting - Kings & Priests:\nChurch of the Word · Episode\n\nThe Beast & Return of the Nephilim:\nChurch of the Word · Episode\n\nRevelation 13 - Beware of the Beast:\nChurch of the Word · Episode\n\nRevelation 14 - The Eternal Gospel:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Everlasting - Kings & Priests Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/0eW3HzjqRlItI4hkc5ctLu",
+          "access": "public"
+        },
+        {
+          "label": "The Beast & Return of the Nephilim Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/4lrdOPvHHPT6Rbj7j7yZd5",
+          "access": "public"
+        },
+        {
+          "label": "Revelation 13 - Beware of the Beast Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/6cDqUrMBsYx9l6hZh0XlOP",
+          "access": "public"
+        },
+        {
+          "label": "Revelation 14 - The Eternal Gospel Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/7vlmBfy3sKWKS7m19x3Mci",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

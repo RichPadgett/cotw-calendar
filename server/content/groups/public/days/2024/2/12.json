@@ -1,0 +1,27 @@
+{
+  "enochYear": 2024,
+  "month": 2,
+  "day": 12,
+  "title": "Month 2 Day 12",
+  "notes": "Love & Forgiveness:\nChurch of the Word · Episode\n\nPromise of Zechariah:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Love & Forgiveness Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/4PSL8l31FlYCsXnLczGgkP",
+          "access": "public"
+        },
+        {
+          "label": "Promise of Zechariah Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/7KZE3iEhhyCryjHFHvBM4g",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

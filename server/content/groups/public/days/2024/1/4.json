@@ -1,0 +1,21 @@
+{
+  "enochYear": 2024,
+  "month": 1,
+  "day": 4,
+  "title": "Month 1 Day 4",
+  "notes": "Church of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Cleansing the Leprous House of Our Souls Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/3Jn12ktMXtQJYU24HpHSzt",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

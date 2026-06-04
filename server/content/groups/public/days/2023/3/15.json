@@ -1,0 +1,33 @@
+{
+  "enochYear": 2023,
+  "month": 3,
+  "day": 15,
+  "title": "Month 3 Day 15",
+  "notes": "Exodus 19 - Moses: Giving of the Covenant:\nChurch of the Word · Episode\n\nBondservant To Elohim (Exodus 21 & Revelation 11):\nChurch of the Word · Episode\n\nObedience: The Love Language of YHWH:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Exodus 19 - Moses: Giving of the Covenant Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/1O1Sv5WXur8vkghkx6FSTl",
+          "access": "public"
+        },
+        {
+          "label": "Bondservant To Elohim (Exodus 21 & Revelation 11) Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/4ySRGLO5F8xWEOkUpjBEN7",
+          "access": "public"
+        },
+        {
+          "label": "Obedience: The Love Language of YHWH Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/7H0Vd8v6XiNEvHAKfids9k",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

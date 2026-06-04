@@ -1,0 +1,39 @@
+{
+  "enochYear": 2024,
+  "month": 1,
+  "day": 23,
+  "title": "Month 1 Day 23",
+  "notes": "The Unleavened Word of Yeshua:\nChurch of the Word · Episode\n\nProphecy & Punishment - Passover (2024):\nChurch of the Word · Episode\n\nEyewitness Account of the Crucifixion:\nChurch of the Word · Episode\n\nRepresentation of Messiah: The Passover (2024):\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "The Unleavened Word of Yeshua Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/03HXu33HYcdrjKZAd8NMjn",
+          "access": "public"
+        },
+        {
+          "label": "Prophecy & Punishment - Passover (2024) Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/2cssdPuagh58LXP4nd0kaY",
+          "access": "public"
+        },
+        {
+          "label": "Eyewitness Account of the Crucifixion Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/2kKxda8rbB5CuWfB0xIkG9",
+          "access": "public"
+        },
+        {
+          "label": "Representation of Messiah: The Passover (2024) Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/35uK0PCU0ywzXToSS7KsLT",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

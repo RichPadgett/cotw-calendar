@@ -1,0 +1,27 @@
+{
+  "enochYear": 2026,
+  "month": 1,
+  "day": 15,
+  "title": "Month 1 Day 15",
+  "notes": "The Lamb Slain – Yeshua’s Crucifixion & Resurrection (Passover 2026):\nChurch of the Word · Episode\n\nThe Heavens Declare: Yeshua’s Crucifixion, Goliath, and the Mazzaroth at Passover:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "The Lamb Slain – Yeshua’s Crucifixion & Resurrection (Passover 2026) Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/49hUSeO1HhyxBQLt8hjZ20",
+          "access": "public"
+        },
+        {
+          "label": "The Heavens Declare: Yeshua’s Crucifixion, Goliath, and the Mazzaroth at Passover Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/5ouPQLeEfj2zZXOwpSJCiH",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

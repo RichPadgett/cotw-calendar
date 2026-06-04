@@ -1,0 +1,27 @@
+{
+  "enochYear": 2023,
+  "month": 4,
+  "day": 12,
+  "title": "Month 4 Day 12",
+  "notes": "Revelation 13 - Beast of the Sea:\nChurch of the Word · Episode\n\nRevelation 12 - The Woman & The Dragon:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Revelation 13 - Beast of the Sea Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/2kYQhiyPQSaoUwVBYSQQd5",
+          "access": "public"
+        },
+        {
+          "label": "Revelation 12 - The Woman & The Dragon Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/6eiQNl3IWR5Um3hdP9KYAB",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

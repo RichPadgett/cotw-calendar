@@ -1,0 +1,26 @@
+{
+  "enochYear": 2026,
+  "month": 4,
+  "day": 11,
+  "title": "Month 4 Day 11",
+  "notes": "",
+  "scriptureReadings": [],
+  "sections": [
+    {
+      "title": "Notices",
+      "displayStyle": "notice",
+      "items": [
+        {
+          "label": "Shabbat at Mary OG",
+          "type": "note",
+          "access": "public"
+        }
+      ]
+    },
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": []
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "enochYear": 2025,
+  "month": 3,
+  "day": 15,
+  "title": "Month 3 Day 15",
+  "notes": "Faith in the Final Days:\nChurch of the Word · Episode\n\nHumility & Honor: Lessons From Moses & Miriam:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Faith in the Final Days Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/0HPt85KefARdFvqILOvIp9",
+          "access": "public"
+        },
+        {
+          "label": "Humility & Honor: Lessons From Moses & Miriam Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/7Eu3k2opnEbuWr7sTNa2El",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "enochYear": 2026,
+  "month": 3,
+  "day": 1,
+  "title": "Month 3 Day 1",
+  "notes": "Church of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Spiritual Gifts for the Common Good: Speaking, Serving & Building the Body (Shavuout 2026) Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/1RLvuYibJ9JVM3P8KMKAAU",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "enochYear": 2024,
+  "month": 6,
+  "day": 1,
+  "title": "Month 6 Day 1",
+  "notes": "Church of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Yeshua - The Good Shepherd Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/4bR4Yo6heFKlyvTaNIcEn0",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

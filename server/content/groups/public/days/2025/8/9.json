@@ -1,0 +1,27 @@
+{
+  "enochYear": 2025,
+  "month": 8,
+  "day": 9,
+  "title": "Month 8 Day 9",
+  "notes": "The Daughters of Zelophehad and the Lineage of the Messiah:\nChurch of the Word · Episode\n\nPeter’s Vision and the Gospel’s Reach: Understanding Elohim's Call to the Gentiles:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "The Daughters of Zelophehad and the Lineage of the Messiah Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/3JxKVIrz1Sx60Fi8yNaVqf",
+          "access": "public"
+        },
+        {
+          "label": "Peter’s Vision and the Gospel’s Reach: Understanding Elohim's Call to the Gentiles Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/70H8IfY2mcZ4k3L0bFfgDV",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

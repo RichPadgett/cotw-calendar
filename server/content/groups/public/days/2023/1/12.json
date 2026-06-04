@@ -1,0 +1,33 @@
+{
+  "enochYear": 2023,
+  "month": 1,
+  "day": 12,
+  "title": "Month 1 Day 12",
+  "notes": "Reasons of Obedience - In Those Days:\nChurch of the Word · Episode\n\nReasons for Obedience - Message of the Kingdom:\nChurch of the Word · Episode\n\nIn The Days of Noah:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Reasons of Obedience - In Those Days Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/3X0RSJvOtB3OTAzqcClEOY",
+          "access": "public"
+        },
+        {
+          "label": "Reasons for Obedience - Message of the Kingdom Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/4w60QuQFpzDDFhaEO7kDjF",
+          "access": "public"
+        },
+        {
+          "label": "In The Days of Noah Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/5ZjQAaBqMQqYkTVY7RilUn",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

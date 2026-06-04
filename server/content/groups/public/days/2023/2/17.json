@@ -1,0 +1,33 @@
+{
+  "enochYear": 2023,
+  "month": 2,
+  "day": 17,
+  "title": "Month 2 Day 17",
+  "notes": "Shabbat: From Slavery to Shalom:\nChurch of the Word · Episode\n\nThe Bread of Life (1/2):\nChurch of the Word · Episode\n\nThe Bread of Life (2/2):\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Shabbat: From Slavery to Shalom Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/4GhsriYxJfv9QhY0Twwwnz",
+          "access": "public"
+        },
+        {
+          "label": "The Bread of Life (1/2) Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/4JIthm923Q5ZCtwAqLyXRN",
+          "access": "public"
+        },
+        {
+          "label": "The Bread of Life (2/2) Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/5WxsDdmuSXuxGxL2rVMIep",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "enochYear": 2022,
+  "month": 11,
+  "day": 10,
+  "title": "Month 11 Day 10",
+  "notes": "Philadelphia - Church of Brotherly Love (1/2):\nChurch of the Word · Episode\n\nLetters to the Church of Thessalonica:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Philadelphia - Church of Brotherly Love (1/2) Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/0cSqg9zZPKEt3wjI9rx8rF",
+          "access": "public"
+        },
+        {
+          "label": "Letters to the Church of Thessalonica Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/73bQ0AcvDBiksE377aRFC7",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

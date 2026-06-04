@@ -1,0 +1,27 @@
+{
+  "enochYear": 2023,
+  "month": 10,
+  "day": 22,
+  "title": "Month 10 Day 22",
+  "notes": "Into the Wilderness:\nChurch of the Word · Episode\n\nPeace Offering:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Into the Wilderness Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/75fEtHef4b6W6BlvLpGCa3",
+          "access": "public"
+        },
+        {
+          "label": "Peace Offering Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/7fOUsvVKvtaEPPGlp8J62r",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

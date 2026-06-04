@@ -1,0 +1,27 @@
+{
+  "enochYear": 2026,
+  "month": 2,
+  "day": 23,
+  "title": "Month 2 Day 23",
+  "notes": "Not By Your Righteousness: Grace, Rebellion & Warnings from Deuteronomy 9:\nChurch of the Word · Episode\n\nImitating Messiah: Head Coverings, the Master’s Supper & The Single Generation:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Not By Your Righteousness: Grace, Rebellion & Warnings from Deuteronomy 9 Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/4ByMvYPcwM3j1OXXhVN1A5",
+          "access": "public"
+        },
+        {
+          "label": "Imitating Messiah: Head Coverings, the Master’s Supper & The Single Generation Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/5UbhjglmlumgkgjATmgppX",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

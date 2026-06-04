@@ -1,0 +1,27 @@
+{
+  "enochYear": 2026,
+  "month": 1,
+  "day": 4,
+  "title": "Month 1 Day 4",
+  "notes": "Gospel to All Nations: Acts 17, Daniel's Kingdoms, and Matthew 24 Fulfilled:\nChurch of the Word · Episode\n\nThe Law Stands Forever: Shema, Signs on Heart & Hand, Passover Statute, and the Unchanging Word:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Gospel to All Nations: Acts 17, Daniel's Kingdoms, and Matthew 24 Fulfilled Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/0J50jpsg8FTaXVXgbteXRK",
+          "access": "public"
+        },
+        {
+          "label": "The Law Stands Forever: Shema, Signs on Heart & Hand, Passover Statute, and the Unchanging Word Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/2XoapFiDX8JWy4fqMmE7x6",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

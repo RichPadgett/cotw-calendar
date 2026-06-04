@@ -1,0 +1,21 @@
+{
+  "enochYear": 2024,
+  "month": 9,
+  "day": 8,
+  "title": "Month 9 Day 8",
+  "notes": "Church of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Faith & Duty of Discipleship Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/1FvSRstuB1DKoI0pERSy2E",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "enochYear": 2024,
+  "month": 6,
+  "day": 8,
+  "title": "Month 6 Day 8",
+  "notes": "Sabbath Year - Power & Promise:\nChurch of the Word · Episode\n\nAsleep Unto Resurrection:\nChurch of the Word · Episode\n\nVows: Devoted to Yahweh:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Sabbath Year - Power & Promise Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/1QFCXgU5vd1ut5jzYEMyiU",
+          "access": "public"
+        },
+        {
+          "label": "Asleep Unto Resurrection Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/2zXf9VfhgRLtFU6lq2EDiA",
+          "access": "public"
+        },
+        {
+          "label": "Vows: Devoted to Yahweh Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/6h3OGyKn5mEZl90voG1Agp",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "enochYear": 2023,
+  "month": 12,
+  "day": 23,
+  "title": "Month 12 Day 23",
+  "notes": "Gospel Accounts: Rise Up & Walk:\nChurch of the Word · Episode\n\nBecoming a New Creation:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Gospel Accounts: Rise Up & Walk Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/0WKIKBGej5DgEyqEqCQ55A",
+          "access": "public"
+        },
+        {
+          "label": "Becoming a New Creation Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/4fOVEumGWy5oNW5kUqI5CC",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

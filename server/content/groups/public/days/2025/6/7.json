@@ -1,0 +1,33 @@
+{
+  "enochYear": 2025,
+  "month": 6,
+  "day": 7,
+  "title": "Month 6 Day 7",
+  "notes": "The Red Heifer and Yeshua’s Sacrifice:\nChurch of the Word · Episode\n\nFrom Rock to Living Water: Trust, Rebellion, and the Messiah:\nChurch of the Word · Episode\n\nFrom Persecution to Power: The Spread of the Gospel and the Gift of the Spirit:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "The Red Heifer and Yeshua’s Sacrifice Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/1v5jdl7QV5vg7pS1cAz6mb",
+          "access": "public"
+        },
+        {
+          "label": "From Rock to Living Water: Trust, Rebellion, and the Messiah Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/3uKKh5IYqZefyaXzmO9hyi",
+          "access": "public"
+        },
+        {
+          "label": "From Persecution to Power: The Spread of the Gospel and the Gift of the Spirit Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/4uN8L0XQp54wkzNaDQaypa",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

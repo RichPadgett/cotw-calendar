@@ -1,0 +1,21 @@
+{
+  "enochYear": 2025,
+  "month": 3,
+  "day": 24,
+  "title": "Month 3 Day 24",
+  "notes": "Church of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Faith Over Fear Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/2s2lnLgx9HEMWwvAuQLN9C",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

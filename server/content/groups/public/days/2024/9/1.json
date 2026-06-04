@@ -1,0 +1,33 @@
+{
+  "enochYear": 2024,
+  "month": 9,
+  "day": 1,
+  "title": "Month 9 Day 1",
+  "notes": "Sons of Light - Faithful & Obedient:\nChurch of the Word · Episode\n\nNumbers 7 - Consecrated & Anointed:\nChurch of the Word · Episode\n\nEstablished Priesthood & Eldership:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Sons of Light - Faithful & Obedient Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/4vfiwFyzbaunyEXiCzQ8XE",
+          "access": "public"
+        },
+        {
+          "label": "Numbers 7 - Consecrated & Anointed Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/61iSmfVGO8jNulvuTPanha",
+          "access": "public"
+        },
+        {
+          "label": "Established Priesthood & Eldership Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/6cMsjLoYnDihDmt4MxYzTq",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

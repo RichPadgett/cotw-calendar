@@ -1,0 +1,27 @@
+{
+  "enochYear": 2024,
+  "month": 2,
+  "day": 24,
+  "title": "Month 2 Day 24",
+  "notes": "Love & Forgiveness - Part 2:\nChurch of the Word · Episode\n\nContained in Dogmas:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Love & Forgiveness - Part 2 Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/3peKN4WBsEoWSU4zV2uJI7",
+          "access": "public"
+        },
+        {
+          "label": "Contained in Dogmas Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/78weuwgddt07kxqFHNhtHu",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

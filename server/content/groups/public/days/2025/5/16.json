@@ -1,0 +1,21 @@
+{
+  "enochYear": 2025,
+  "month": 5,
+  "day": 16,
+  "title": "Month 5 Day 16",
+  "notes": "Church of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "The Branch of Righteousness: Tracing Yeshua Through the Tribes and Scriptures Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/4k0nZmXeRwSo8jEGRFPsDY",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

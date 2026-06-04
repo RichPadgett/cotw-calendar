@@ -1,0 +1,33 @@
+{
+  "enochYear": 2022,
+  "month": 3,
+  "day": 29,
+  "title": "Month 3 Day 29",
+  "notes": "Story of Ruth - Pentecost 2022 (1/2):\nChurch of the Word · Episode\n\nSpiritual Warfare - Part 1:\nChurch of the Word · Episode\n\nPentecost 2022 - (2/2):\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Story of Ruth - Pentecost 2022 (1/2) Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/0tc6A2PMfWlGTXBakP1RFp",
+          "access": "public"
+        },
+        {
+          "label": "Spiritual Warfare - Part 1 Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/6lFmRlyfFTIZ1qZb7VXYI3",
+          "access": "public"
+        },
+        {
+          "label": "Pentecost 2022 - (2/2) Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/78JlitKJhNZIAqhXN5b8FR",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

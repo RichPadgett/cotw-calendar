@@ -1,0 +1,26 @@
+{
+  "enochYear": 2026,
+  "month": 3,
+  "day": 14,
+  "title": "Month 3 Day 14",
+  "notes": "",
+  "scriptureReadings": [],
+  "sections": [
+    {
+      "title": "Notices",
+      "displayStyle": "notice",
+      "items": [
+        {
+          "label": "Shabbat at Nate and Jordyn's",
+          "type": "note",
+          "access": "public"
+        }
+      ]
+    },
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": []
+    }
+  ]
+}

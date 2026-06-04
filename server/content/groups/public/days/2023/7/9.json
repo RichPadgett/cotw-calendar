@@ -1,0 +1,21 @@
+{
+  "enochYear": 2023,
+  "month": 7,
+  "day": 9,
+  "title": "Month 7 Day 9",
+  "notes": "Church of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Revelation 19 - Marriage Supper of the Lamb Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/0kuOuVATzQTrHkQzFc6cMH",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

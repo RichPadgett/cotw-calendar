@@ -1,0 +1,27 @@
+{
+  "enochYear": 2022,
+  "month": 5,
+  "day": 3,
+  "title": "Month 5 Day 3",
+  "notes": "End Times: Ezekiel's Vision:\nChurch of the Word · Episode\n\nEnd Times: Daniel & Nebuchadnezzar:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "End Times: Ezekiel's Vision Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/3Y0Z21Vk00Ph62RSRBYFMe",
+          "access": "public"
+        },
+        {
+          "label": "End Times: Daniel & Nebuchadnezzar Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/7kqN8k4flBnALGUbFKFQz0",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

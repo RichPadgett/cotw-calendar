@@ -1,0 +1,27 @@
+{
+  "enochYear": 2024,
+  "month": 2,
+  "day": 3,
+  "title": "Month 2 Day 3",
+  "notes": "Deliverance From Defilement (2/2):\nChurch of the Word · Episode\n\nDeliverance from Defilement (1/2):\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Deliverance From Defilement (2/2) Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/1kulL35J4a8r82F5Pfo1Xd",
+          "access": "public"
+        },
+        {
+          "label": "Deliverance from Defilement (1/2) Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/38feKKNBvJ9NCKuvuEHIe1",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

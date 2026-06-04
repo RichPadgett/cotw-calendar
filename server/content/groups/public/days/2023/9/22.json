@@ -1,0 +1,27 @@
+{
+  "enochYear": 2023,
+  "month": 9,
+  "day": 22,
+  "title": "Month 9 Day 22",
+  "notes": "Gospel Accounts: Yeshua Was That Prophet:\nChurch of the Word · Episode\n\nSacrifices: Commitment to Elohim:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Gospel Accounts: Yeshua Was That Prophet Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/1M1VtJWhR6DiihgRXyo4uG",
+          "access": "public"
+        },
+        {
+          "label": "Sacrifices: Commitment to Elohim Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/3clGFPy316PLeHlWO4HpnE",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

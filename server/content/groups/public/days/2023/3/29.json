@@ -1,0 +1,27 @@
+{
+  "enochYear": 2023,
+  "month": 3,
+  "day": 29,
+  "title": "Month 3 Day 29",
+  "notes": "Justice & Mercy:\nChurch of the Word · Episode\n\nRevelation 11 - Remnant Of Her Seed:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Justice & Mercy Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/07QqQfymHK3bKQoMhwOYTB",
+          "access": "public"
+        },
+        {
+          "label": "Revelation 11 - Remnant Of Her Seed Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/2CtH1RfXmkhhAoHt6zkvAQ",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

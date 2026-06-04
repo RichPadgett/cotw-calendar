@@ -1,0 +1,21 @@
+{
+  "enochYear": 2023,
+  "month": 9,
+  "day": 6,
+  "title": "Month 9 Day 6",
+  "notes": "Church of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Before the Birth of Yeshua Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/2myKZY62gc8XVv5nFJoy11",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

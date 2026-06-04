@@ -1,0 +1,21 @@
+{
+  "enochYear": 2024,
+  "month": 8,
+  "day": 17,
+  "title": "Month 8 Day 17",
+  "notes": "Church of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "The Vow of Restitution Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/0UGMXFEGqU9kme7hdOb6TM",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

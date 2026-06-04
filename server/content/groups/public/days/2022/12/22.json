@@ -1,0 +1,27 @@
+{
+  "enochYear": 2022,
+  "month": 12,
+  "day": 22,
+  "title": "Month 12 Day 22",
+  "notes": "Inside the Throne Room (2/2):\nChurch of the Word · Episode\n\nThe Crown - Living by the Spirit:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Inside the Throne Room (2/2) Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/0XeqdND1ZQoZRl3YPAW1OJ",
+          "access": "public"
+        },
+        {
+          "label": "The Crown - Living by the Spirit Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/2Nuezo6D3KOlauDqeKvXPf",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

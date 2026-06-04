@@ -1,0 +1,27 @@
+{
+  "enochYear": 2024,
+  "month": 6,
+  "day": 29,
+  "title": "Month 6 Day 29",
+  "notes": "Set Forth in Order:\nChurch of the Word · Episode\n\nNumbers 2 - A Messianic Typology:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "Set Forth in Order Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/2HvmFtSJp2S427MEeVMwGM",
+          "access": "public"
+        },
+        {
+          "label": "Numbers 2 - A Messianic Typology Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/3EHzJBw90cpfnf1oSCDKbi",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

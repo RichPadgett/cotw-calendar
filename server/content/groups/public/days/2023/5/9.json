@@ -1,0 +1,21 @@
+{
+  "enochYear": 2023,
+  "month": 5,
+  "day": 9,
+  "title": "Month 5 Day 9",
+  "notes": "Church of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "It All Points to Yeshua Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/4ig1htNAp9xprGnsryYTrM",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

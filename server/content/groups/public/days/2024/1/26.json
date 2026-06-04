@@ -1,0 +1,27 @@
+{
+  "enochYear": 2024,
+  "month": 1,
+  "day": 26,
+  "title": "Month 1 Day 26",
+  "notes": "The Sabbath - Truth & Timeline:\nChurch of the Word · Episode\n\nThe Ancient Path & Deceit of Dogma:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "The Sabbath - Truth & Timeline Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/0p2Jc3jQuBOnt3065QKyuP",
+          "access": "public"
+        },
+        {
+          "label": "The Ancient Path & Deceit of Dogma Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/79jTa9tlDT8lIxktPjtt06",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}
