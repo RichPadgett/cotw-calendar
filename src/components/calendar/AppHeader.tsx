@@ -13,6 +13,7 @@ type Props = {
   // Currently active Enoch month
   month?: EnochMonth;
   todayNode?: CalendarNode;
+  upcomingShabbatNode?: CalendarNode;
 
   // Top secondary label
   // Example:
@@ -22,6 +23,7 @@ type Props = {
 
   // Optional navigation actions
   onPressToday?: () => void;
+  onPressUpcomingShabbat?: () => void;
   onPreviousMonth?: () => void;
   onNextMonth?: () => void;
 };
@@ -35,9 +37,11 @@ export default function AppHeader({
   gregorianLabel,
   onChangeGroup,
   onPressToday,
+  onPressUpcomingShabbat,
   onPreviousMonth,
   onNextMonth,
   todayNode,
+  upcomingShabbatNode,
 }: Props) {
   return (
     <View
@@ -228,57 +232,93 @@ export default function AppHeader({
               {month.season}
             </Text>
 
-            {todayNode ? (
-              <Pressable
-                onPress={onPressToday}
-                style={{
-                  marginTop: 8,
+            <View
+              style={{
+                marginTop: 8,
 
-                  paddingHorizontal: 10,
-                  paddingVertical: 6,
+                flexDirection: "row",
+                flexWrap: "wrap",
 
-                  borderRadius: 999,
-
-                  backgroundColor: todayNode.enoch?.events?.[0]
-                    ? "#eff6ff"
-                    : "#ffffff",
-
-                  borderWidth: 1,
-                  borderColor: todayNode.enoch?.events?.[0]
-                    ? "#bfdbfe"
-                    : "#e5e7eb",
-
-                  alignSelf: "flex-start",
-                }}
-              >
-                <Text
+                gap: 6,
+              }}
+            >
+              {todayNode ? (
+                <Pressable
+                  onPress={onPressToday}
                   style={{
-                    fontSize: 11,
-                    fontWeight: "800",
-                    color: "#374151",
+                    paddingHorizontal: 10,
+                    paddingVertical: 6,
+
+                    borderRadius: 999,
+
+                    backgroundColor: todayNode.enoch?.events?.[0]
+                      ? "#eff6ff"
+                      : "#ffffff",
+
+                    borderWidth: 1,
+                    borderColor: todayNode.enoch?.events?.[0]
+                      ? "#bfdbfe"
+                      : "#e5e7eb",
                   }}
                 >
-                  {`Today • M${todayNode.enoch?.month?.number ?? ""} D${
-                    todayNode.enoch?.day ?? ""
-                  }`}
-                </Text>
-
-                {todayNode.enoch?.events?.[0] ? (
                   <Text
                     style={{
-                      marginTop: 2,
-
-                      fontSize: 10,
-                      fontWeight: "700",
-
-                      color: todayNode.enoch.events[0].color ?? "#2563eb",
+                      fontSize: 11,
+                      fontWeight: "800",
+                      color: "#374151",
                     }}
                   >
-                    {todayNode.enoch.events[0].englishName}
+                    {`Today • M${todayNode.enoch?.month?.number ?? ""} D${
+                      todayNode.enoch?.day ?? ""
+                    }`}
                   </Text>
-                ) : null}
-              </Pressable>
-            ) : null}
+
+                  {todayNode.enoch?.events?.[0] ? (
+                    <Text
+                      style={{
+                        marginTop: 2,
+
+                        fontSize: 10,
+                        fontWeight: "700",
+
+                        color: todayNode.enoch.events[0].color ?? "#2563eb",
+                      }}
+                    >
+                      {todayNode.enoch.events[0].englishName}
+                    </Text>
+                  ) : null}
+                </Pressable>
+              ) : null}
+
+              {upcomingShabbatNode ? (
+                <Pressable
+                  onPress={onPressUpcomingShabbat}
+                  style={{
+                    paddingHorizontal: 10,
+                    paddingVertical: 6,
+
+                    borderRadius: 999,
+
+                    backgroundColor: "#eef2ff",
+
+                    borderWidth: 1,
+                    borderColor: "#c7d2fe",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 11,
+                      fontWeight: "800",
+                      color: "#312e81",
+                    }}
+                  >
+                    {`Shabbat • M${
+                      upcomingShabbatNode.enoch?.month?.number ?? ""
+                    } D${upcomingShabbatNode.enoch?.day ?? ""}`}
+                  </Text>
+                </Pressable>
+              ) : null}
+            </View>
 
             {/* Future Optional Metadata
                 Hebrew / Paleo Hebrew / Babylonian names

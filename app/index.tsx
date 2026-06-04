@@ -444,6 +444,23 @@ export default function HomeScreen() {
     return node.gregorianDate === todayId;
   });
 
+  const upcomingShabbatNode =
+    nodes.find((node) => {
+      const today = new Date();
+
+      const todayId = `${today.getFullYear()}-${String(
+        today.getMonth() + 1
+      ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+
+      return (
+        node.gregorianDate >= todayId &&
+        node.enoch?.events?.some((event) => event.type === "weekly-sabbath")
+      );
+    }) ??
+    nodes.find((node) =>
+      node.enoch?.events?.some((event) => event.type === "weekly-sabbath")
+    );
+
   return (
     <>
       <ScrollView
@@ -470,6 +487,7 @@ export default function HomeScreen() {
           <AppHeader
             month={currentMonth}
             todayNode={todayNode}
+            upcomingShabbatNode={upcomingShabbatNode}
             gregorianLabel={`${config.enochYear} · Starts ${config.startsOnGregorianDate}`}
             onPreviousMonth={goPreviousYear}
             onNextMonth={goNextYear}
@@ -477,6 +495,11 @@ export default function HomeScreen() {
             onPressToday={() => {
               if (todayNode) {
                 openDay(todayNode);
+              }
+            }}
+            onPressUpcomingShabbat={() => {
+              if (upcomingShabbatNode) {
+                openDay(upcomingShabbatNode);
               }
             }}
           />

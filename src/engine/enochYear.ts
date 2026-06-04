@@ -7,6 +7,8 @@
 // Calendar baseline and app configuration
 const BASE_ENOCH_YEAR = 2026;
 const BASE_START_DATE = "2026-03-18";
+const BASE_SABBATH_WEEK_START_YEAR = 2025;
+const SABBATH_WEEK_CYCLE_YEARS = 7;
 
 // Date helpers
 /**
@@ -32,7 +34,12 @@ export function getEnochYearStartDate(targetYear: number): string {
  * This helper keeps sabbath-week display logic aligned for both forward and backward year navigation.
  */
 export function hasSabbathWeekBeforeEnochYear(targetYear: number): boolean {
-  return getEnochYearLength(targetYear - 1) === 371;
+  return (
+    positiveModulo(
+      targetYear - BASE_SABBATH_WEEK_START_YEAR,
+      SABBATH_WEEK_CYCLE_YEARS
+    ) === 0
+  );
 }
 
 /**
@@ -40,10 +47,15 @@ export function hasSabbathWeekBeforeEnochYear(targetYear: number): boolean {
  * This calendar helper includes the extra sabbath-week reset after every sixth completed year.
  */
 function getEnochYearLength(year: number): number {
-  const completedYearNumber = year - BASE_ENOCH_YEAR + 1;
-  const hasSabbathWeekAfterYear = completedYearNumber % 6 === 0;
+  return hasSabbathWeekBeforeEnochYear(year + 1) ? 371 : 364;
+}
 
-  return hasSabbathWeekAfterYear ? 371 : 364;
+/**
+ * Calculates a modulo result that stays positive for years before the base cycle.
+ * JavaScript's remainder operator can return negative values when navigating backward.
+ */
+function positiveModulo(value: number, divisor: number): number {
+  return ((value % divisor) + divisor) % divisor;
 }
 
 /**

@@ -1,8 +1,8 @@
 {
   "enochYear": 2025,
-  "month": 1,
-  "day": 25,
-  "title": "Month 1 Day 25",
+  "month": 2,
+  "day": 30,
+  "title": "Month 2 Day 30",
   "notes": "Church of the Word · Episode",
   "sections": [
     {
@@ -10,9 +10,9 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Out of Egypt Spotify",
+          "label": "Shavuot: Yah of Deliverance Spotify",
           "type": "external-link",
-          "url": "https://open.spotify.com/episode/0fHzA0b8NCIj7HjOkYGk1u",
+          "url": "https://open.spotify.com/episode/34sJs9E7Kmwmb7rdeV8jzn",
           "access": "public"
         }
       ]

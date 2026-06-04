@@ -3,16 +3,22 @@
   "month": 11,
   "day": 23,
   "title": "Month 11 Day 23",
-  "notes": "Church of the Word · Episode",
+  "notes": "Yahweh's Jealous Marriage Covenant: The Torah as Wedding Vows to His Bride Israel:\nChurch of the Word · Episode\n\nMidnight Praise That Shakes the Foundations: From Prison Chains to Household Salvation in Philippi:\nChurch of the Word · Episode",
   "sections": [
     {
       "title": "Files / Links / Media",
       "displayStyle": "default",
       "items": [
         {
-          "label": "Hear, O Israel: The Voice from the Fire – Meditating on the Law in Deuteronomy 4 Spotify",
+          "label": "Yahweh's Jealous Marriage Covenant: The Torah as Wedding Vows to His Bride Israel Spotify",
           "type": "external-link",
-          "url": "https://open.spotify.com/episode/6ulgf3yXH0o2j9cvIJXUKh",
+          "url": "https://open.spotify.com/episode/0DUaWvJLzUorKr94wxvYnr",
+          "access": "public"
+        },
+        {
+          "label": "Midnight Praise That Shakes the Foundations: From Prison Chains to Household Salvation in Philippi Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/5GROKfdBtvcYu5UwvkmaEd",
           "access": "public"
         }
       ]

@@ -1,0 +1,33 @@
+{
+  "enochYear": 2025,
+  "month": 7,
+  "day": 4,
+  "title": "Month 7 Day 4",
+  "notes": "The Eunuch’s Journey to Faith: Unveiling Yeshua in Prophecy:\nChurch of the Word · Episode\n\nThe Feast of Trumpets: Remembrance, Devotion, and Renewal:\nChurch of the Word · Episode\n\nFrom Vows to Victory: The Bronze Serpent and Israel's Journey of Faith:\nChurch of the Word · Episode",
+  "sections": [
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "The Eunuch’s Journey to Faith: Unveiling Yeshua in Prophecy Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/1Bne0ceOVfdgGUSDBm4Yxw",
+          "access": "public"
+        },
+        {
+          "label": "The Feast of Trumpets: Remembrance, Devotion, and Renewal Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/35q4DqdBdF0VSjhMWGcicf",
+          "access": "public"
+        },
+        {
+          "label": "From Vows to Victory: The Bronze Serpent and Israel's Journey of Faith Spotify",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/6QpayawYS8VuYZEL3Z8Dfb",
+          "access": "public"
+        }
+      ]
+    }
+  ]
+}

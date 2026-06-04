@@ -1,8 +1,8 @@
 {
   "enochYear": 2025,
-  "month": 1,
-  "day": 23,
-  "title": "Month 1 Day 23",
+  "month": 3,
+  "day": 24,
+  "title": "Month 3 Day 24",
   "notes": "Church of the Word · Episode",
   "sections": [
     {
@@ -10,9 +10,9 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Spiritual Unleavened Word of Yah Spotify",
+          "label": "Faith Over Fear Spotify",
           "type": "external-link",
-          "url": "https://open.spotify.com/episode/6zibZUY8dSr2lmcPPdfK7u",
+          "url": "https://open.spotify.com/episode/2s2lnLgx9HEMWwvAuQLN9C",
           "access": "public"
         }
       ]
