@@ -4,10 +4,18 @@
  */
 
 import { useEffect, useRef, useState } from "react";
-import { Alert, Platform, ScrollView, Text, View } from "react-native";
+import {
+  Alert,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 
 import AppHeader from "../src/components/calendar/AppHeader";
 import DayDetailModal from "../src/components/calendar/DayDetailModal";
+import HistoryTimelineView from "../src/components/calendar/HistoryTimelineView";
 import YearView from "../src/components/calendar/YearView";
 import YearWheelView from "../src/components/calendar/YearWheelView";
 import WelcomeScreen from "../src/components/onboarding/WelcomeScreen";
@@ -24,12 +32,15 @@ import { API_BASE_URL } from "../src/config/api";
 const STICKY_HEADER_OFFSET = 220;
 const YEAR_VIEW_TOP_OFFSET = 685;
 
+type CalendarTab = "calendar" | "timeline";
+
 export default function HomeScreen() {
   const scrollViewRef = useRef<ScrollView>(null);
   const monthOffsetsRef = useRef<Record<number, number>>({});
 
   const [visibleEnochYear, setVisibleEnochYear] = useState(2026);
   const [activeMonthNumber, setActiveMonthNumber] = useState(1);
+  const [activeTab, setActiveTab] = useState<CalendarTab>("calendar");
 
   const [yearNotices, setYearNotices] = useState<any[]>([]);
   const [selectedNode, setSelectedNode] = useState<CalendarNode | null>(null);
@@ -374,6 +385,8 @@ export default function HomeScreen() {
   }
 
   function handleScroll(event: any) {
+    if (activeTab !== "calendar") return;
+
     const scrollY = event.nativeEvent.contentOffset.y;
 
     const activeMonth = Object.entries(monthOffsetsRef.current)
@@ -480,21 +493,76 @@ export default function HomeScreen() {
               }
             }}
           />
+
+          <View
+            style={{
+              marginTop: 12,
+              flexDirection: "row",
+              gap: 8,
+              padding: 4,
+              borderRadius: 999,
+              backgroundColor: "#e5e7eb",
+            }}
+          >
+            {[
+              { id: "calendar" as const, label: "Calendar" },
+              { id: "timeline" as const, label: "Timeline" },
+            ].map((tab) => {
+              const isActive = activeTab === tab.id;
+
+              return (
+                <Pressable
+                  key={tab.id}
+                  onPress={() => setActiveTab(tab.id)}
+                  style={{
+                    flex: 1,
+                    minHeight: 38,
+                    borderRadius: 999,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: isActive ? "#ffffff" : "transparent",
+                    borderWidth: isActive ? 1 : 0,
+                    borderColor: "#d1d5db",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      fontWeight: "900",
+                      color: isActive ? "#081a33" : "#4b5563",
+                    }}
+                  >
+                    {tab.label}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
         </View>
 
-        <YearWheelView
-          nodes={nodes}
-          onPressMonth={scrollToMonth}
-          onPressDay={openDay}
-        />
+        {activeTab === "calendar" ? (
+          <>
+            <YearWheelView
+              nodes={nodes}
+              onPressMonth={scrollToMonth}
+              onPressDay={openDay}
+            />
 
-        <YearView
-          nodes={nodes}
-          notices={yearNotices}
-          perpetualMarkers={perpetualMarkers}
-          onMonthLayout={handleMonthLayout}
-          onPressDay={openDay}
-        />
+            <YearView
+              nodes={nodes}
+              notices={yearNotices}
+              perpetualMarkers={perpetualMarkers}
+              onMonthLayout={handleMonthLayout}
+              onPressDay={openDay}
+            />
+          </>
+        ) : (
+          <HistoryTimelineView
+            adminToken={adminToken}
+            groupCode={groupCode}
+            userRole={userRole}
+          />
+        )}
       </ScrollView>
 
       <DayDetailModal
