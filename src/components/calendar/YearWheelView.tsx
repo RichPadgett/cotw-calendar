@@ -5,7 +5,7 @@
  */
 
 // Dependencies
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   GestureResponderEvent,
   Image,
@@ -65,6 +65,18 @@ const GATE_DOTS = [
   { label: "Winter Gate", angle: Math.PI / 2, color: "#38bdf8" },
 ];
 
+const FRACTIONAL_MARKER_SPACING = (Math.PI * 2 * 0.34) / 364;
+
+type WheelMarkerEntry = {
+  id: string;
+  node: CalendarNode;
+  angle: number;
+  color: string;
+  label: string;
+  shortLabel: string;
+  markerType: keyof typeof MARKER_COLORS;
+};
+
 // Helpers
 /**
  * Converts an Enoch day-of-year into a wheel rotation angle.
@@ -72,58 +84,6 @@ const GATE_DOTS = [
  */
 function getAngleForDay(dayOfYear: number) {
   return -((dayOfYear - 1) / 364) * Math.PI * 2;
-}
-
-/**
- * Classifies a calendar node for wheel marker styling.
- * This style helper decides whether a day appears as a feast, sabbath, intercalary, or normal marker.
- */
-function getMarkerType(node: CalendarNode) {
-  const events = node.enoch?.events ?? [];
-
-  if (events.some((event) => event.type === "weekly-sabbath")) {
-    return "sabbath";
-  }
-
-  if (events.some((event) => event.type === "high-sabbath")) {
-    return "highSabbath";
-  }
-
-  if (events.some((event) => event.type === "feast")) {
-    return "feast";
-  }
-
-  if (events.some((event) => event.type === "fast")) {
-    return "fast";
-  }
-
-  if (events.some((event) => event.type === "preparation")) {
-    return "preparation";
-  }
-
-  if (node.enoch?.isIntercalary) {
-    return "gate";
-  }
-
-  return null;
-}
-
-/**
- * Selects the most useful event name for a detailed wheel marker label.
- * The clicked marker is the only visible label, so weekly sabbaths can be named too.
- */
-function getWheelLabel(node: CalendarNode) {
-  const events = node.enoch?.events ?? [];
-  const labelEvent =
-    events.find((event) => event.type !== "weekly-sabbath") ?? events[0];
-
-  return (
-    labelEvent?.englishName ??
-    labelEvent?.hebrewName ??
-    node.enoch?.label ??
-    labelEvent?.shortName ??
-    undefined
-  );
 }
 
 function getPerpetualMarkersForNode(
@@ -150,10 +110,99 @@ function getPerpetualMarkersForNode(
   });
 }
 
-function getPerpetualMarkerLabel(markers: PerpetualMarker[]) {
-  const marker = markers[0];
+function getEventMarkerColor(eventType: string) {
+  switch (eventType) {
+    case "weekly-sabbath":
+      return MARKER_COLORS.sabbath;
+    case "high-sabbath":
+      return MARKER_COLORS.highSabbath;
+    case "feast":
+      return MARKER_COLORS.feast;
+    case "fast":
+      return MARKER_COLORS.fast;
+    case "preparation":
+      return MARKER_COLORS.preparation;
+    default:
+      return MARKER_COLORS.perpetual;
+  }
+}
 
-  return marker?.title || marker?.shortName;
+function getEventMarkerType(eventType: string): WheelMarkerEntry["markerType"] {
+  switch (eventType) {
+    case "weekly-sabbath":
+      return "sabbath";
+    case "high-sabbath":
+      return "highSabbath";
+    case "feast":
+      return "feast";
+    case "fast":
+      return "fast";
+    case "preparation":
+      return "preparation";
+    default:
+      return "perpetual";
+  }
+}
+
+function buildWheelMarkerEntries(
+  nodes: CalendarNode[],
+  perpetualMarkers: PerpetualMarker[]
+) {
+  return nodes.flatMap((node) => {
+    const dayOfYear = node.enoch?.dayOfYear;
+
+    if (!dayOfYear) return [];
+
+    const entries: Omit<WheelMarkerEntry, "angle">[] = [];
+
+    for (const event of node.enoch?.events ?? []) {
+      const markerType = getEventMarkerType(event.type);
+
+      entries.push({
+        id: `${node.id}:event:${event.id}`,
+        node,
+        color: getEventMarkerColor(event.type),
+        label:
+          event.englishName ??
+          event.hebrewName ??
+          event.shortName ??
+          "Calendar Event",
+        shortLabel:
+          event.shortName ?? event.englishName ?? event.hebrewName ?? "Event",
+        markerType,
+      });
+    }
+
+    if (node.enoch?.isIntercalary && entries.length === 0) {
+      entries.push({
+        id: `${node.id}:gate`,
+        node,
+        color: MARKER_COLORS.gate,
+        label: node.enoch.label ?? "Gate Day",
+        shortLabel: node.enoch.label ?? "Gate",
+        markerType: "gate",
+      });
+    }
+
+    for (const marker of getPerpetualMarkersForNode(node, perpetualMarkers)) {
+      entries.push({
+        id: `${node.id}:perpetual:${marker.id}`,
+        node,
+        color: marker.color || MARKER_COLORS.perpetual,
+        label: marker.title || marker.shortName || "Perpetual Marker",
+        shortLabel: marker.shortName || marker.title || "Marker",
+        markerType: "perpetual",
+      });
+    }
+
+    const baseAngle = getAngleForDay(dayOfYear);
+    const offsetStart = -((entries.length - 1) / 2);
+
+    return entries.map((entry, index) => ({
+      ...entry,
+      angle: baseAngle + (offsetStart + index) * FRACTIONAL_MARKER_SPACING,
+    }));
+  });
 }
 
 /**
@@ -332,7 +381,11 @@ export default function YearWheelView({
   onPressDay,
   todayDateId,
 }: Props) {
-  const [selectedWheelNodeId, setSelectedWheelNodeId] = useState<string | null>(
+  const [selectedWheelMarkerId, setSelectedWheelMarkerId] = useState<
+    string | null
+  >(null);
+  const [isWheelInteracting, setIsWheelInteracting] = useState(false);
+  const interactionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null
   );
   const months = Array.from({ length: 12 }, (_, index) => index + 1);
@@ -341,59 +394,51 @@ export default function YearWheelView({
   const todayNode = nodes.find((node) => {
     return node.gregorianDate === activeTodayDateId;
   });
-  const wheelMarkerNodes = useMemo(() => {
-    return nodes.filter((node) => {
-      const hasPerpetualMarker = getPerpetualMarkersForNode(
-        node,
-        perpetualMarkers
-      ).length;
-
-      return Boolean(
-        node.enoch?.dayOfYear && (getMarkerType(node) || hasPerpetualMarker)
-      );
-    });
+  const wheelMarkerEntries = useMemo(() => {
+    return buildWheelMarkerEntries(nodes, perpetualMarkers);
   }, [nodes, perpetualMarkers]);
-  const todayMarkerNode =
-    todayNode &&
-    (getMarkerType(todayNode) ||
-      getPerpetualMarkersForNode(todayNode, perpetualMarkers).length)
-      ? todayNode
-      : undefined;
-
-  const selectedWheelNode = nodes.find(
-    (node) => node.id === selectedWheelNodeId
+  const todayMarkerEntry = wheelMarkerEntries.find(
+    (entry) => entry.node.id === todayNode?.id
   );
-  const selectedWheelPerpetualMarkers = selectedWheelNode
-    ? getPerpetualMarkersForNode(selectedWheelNode, perpetualMarkers)
-    : [];
-  const selectedWheelMarkerType = selectedWheelNode
-    ? getMarkerType(selectedWheelNode)
-    : null;
-  const selectedWheelColor = selectedWheelMarkerType
-    ? MARKER_COLORS[selectedWheelMarkerType as keyof typeof MARKER_COLORS]
-    : selectedWheelPerpetualMarkers[0]?.color ||
-      MARKER_COLORS.perpetual ||
-      "#3157a8";
-  const selectedWheelLabel = selectedWheelNode
-    ? getWheelLabel(selectedWheelNode) ||
-      getPerpetualMarkerLabel(selectedWheelPerpetualMarkers)
-    : undefined;
+  const selectedWheelEntry = wheelMarkerEntries.find(
+    (entry) => entry.id === selectedWheelMarkerId
+  );
+  const selectedWheelEntryIndex = selectedWheelEntry
+    ? wheelMarkerEntries.findIndex(
+        (entry) => entry.id === selectedWheelEntry.id
+      )
+    : -1;
+  const magnifierEntries =
+    selectedWheelEntryIndex >= 0
+      ? [-2, -1, 0, 1, 2]
+          .map((offset) => {
+            const index =
+              (selectedWheelEntryIndex + offset + wheelMarkerEntries.length) %
+              wheelMarkerEntries.length;
+
+            return wheelMarkerEntries[index];
+          })
+          .filter(Boolean)
+      : [];
+  const selectedWheelNode = selectedWheelEntry?.node;
+  const selectedWheelColor = selectedWheelEntry?.color ?? "#3157a8";
+  const selectedWheelLabel = selectedWheelEntry?.label;
 
   useEffect(() => {
-    setSelectedWheelNodeId((currentNodeId) => {
+    setSelectedWheelMarkerId((currentMarkerId) => {
       if (
-        currentNodeId &&
-        wheelMarkerNodes.some((node) => node.id === currentNodeId)
+        currentMarkerId &&
+        wheelMarkerEntries.some((entry) => entry.id === currentMarkerId)
       ) {
-        return currentNodeId;
+        return currentMarkerId;
       }
 
-      return todayMarkerNode?.id ?? null;
+      return todayMarkerEntry?.id ?? null;
     });
-  }, [todayMarkerNode?.id, wheelMarkerNodes]);
+  }, [todayMarkerEntry?.id, wheelMarkerEntries]);
 
   function selectNearestWheelMarker(event: GestureResponderEvent) {
-    if (wheelMarkerNodes.length === 0) return;
+    if (wheelMarkerEntries.length === 0) return;
 
     const touchX = event.nativeEvent.locationX;
     const touchY = event.nativeEvent.locationY;
@@ -402,21 +447,46 @@ export default function YearWheelView({
     if (distanceFromCenter < CENTER_BADGE_SIZE / 2) return;
 
     const touchAngle = Math.atan2(touchY - CENTER, touchX - CENTER);
-    const nearestNode = wheelMarkerNodes
-      .map((node) => {
-        const dayOfYear = node.enoch?.dayOfYear ?? 1;
-
+    const nearestEntry = wheelMarkerEntries
+      .map((entry) => {
         return {
-          node,
-          distance: getAngularDistance(touchAngle, getAngleForDay(dayOfYear)),
+          entry,
+          distance: getAngularDistance(touchAngle, entry.angle),
         };
       })
-      .sort((a, b) => a.distance - b.distance)[0]?.node;
+      .sort((a, b) => a.distance - b.distance)[0]?.entry;
 
-    if (nearestNode) {
-      setSelectedWheelNodeId(nearestNode.id);
+    if (nearestEntry) {
+      setSelectedWheelMarkerId(nearestEntry.id);
     }
   }
+
+  function showWheelMagnifier(event: GestureResponderEvent) {
+    if (interactionTimeoutRef.current) {
+      clearTimeout(interactionTimeoutRef.current);
+    }
+
+    setIsWheelInteracting(true);
+    selectNearestWheelMarker(event);
+  }
+
+  function hideWheelMagnifierSoon() {
+    if (interactionTimeoutRef.current) {
+      clearTimeout(interactionTimeoutRef.current);
+    }
+
+    interactionTimeoutRef.current = setTimeout(() => {
+      setIsWheelInteracting(false);
+    }, 900);
+  }
+
+  useEffect(() => {
+    return () => {
+      if (interactionTimeoutRef.current) {
+        clearTimeout(interactionTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <View
@@ -571,8 +641,10 @@ export default function YearWheelView({
           <View
             onStartShouldSetResponder={() => true}
             onMoveShouldSetResponder={() => true}
-            onResponderGrant={selectNearestWheelMarker}
-            onResponderMove={selectNearestWheelMarker}
+            onResponderGrant={showWheelMagnifier}
+            onResponderMove={showWheelMagnifier}
+            onResponderRelease={hideWheelMagnifierSoon}
+            onResponderTerminate={hideWheelMagnifierSoon}
             style={{
               position: "absolute",
               left: 0,
@@ -625,39 +697,20 @@ export default function YearWheelView({
             );
           })}
 
-          {nodes.map((node) => {
-            const perpetualMarkersForNode = getPerpetualMarkersForNode(
-              node,
-              perpetualMarkers
-            );
-            const markerType = getMarkerType(node);
-
-            if (!markerType && perpetualMarkersForNode.length === 0) {
-              return null;
-            }
-
-            const dayOfYear = node.enoch?.dayOfYear;
-
-            if (!dayOfYear) return null;
-
-            const angle = getAngleForDay(dayOfYear);
-            const isSelected = selectedWheelNodeId === node.id;
+          {wheelMarkerEntries.map((entry) => {
+            const isSelected = selectedWheelMarkerId === entry.id;
             const markerHeight = isSelected ? 6 : 2;
             const markerSegment = getCircleSegment(
               CENTER,
               CENTER,
               MARKER_INNER_RADIUS,
               MARKER_OUTER_RADIUS,
-              angle
+              entry.angle
             );
-
-            const markerColor = markerType
-              ? MARKER_COLORS[markerType as keyof typeof MARKER_COLORS]
-              : perpetualMarkersForNode[0]?.color || MARKER_COLORS.perpetual;
 
             return (
               <View
-                key={`marker-${node.id}`}
+                key={`marker-${entry.id}`}
                 pointerEvents="none"
                 style={{
                   position: "absolute",
@@ -667,11 +720,11 @@ export default function YearWheelView({
                   height: markerHeight,
                   transform: [{ rotate: `${markerSegment.rotation}rad` }],
                   transformOrigin: "center center" as any,
-                  backgroundColor: markerColor,
+                  backgroundColor: entry.color,
                   borderRadius: 999,
-                  opacity: markerType === "sabbath" ? 0.65 : 1,
+                  opacity: entry.markerType === "sabbath" ? 0.65 : 1,
                   zIndex: isSelected ? 15 : 8,
-                  shadowColor: markerColor,
+                  shadowColor: entry.color,
                   shadowOpacity: isSelected ? 0.35 : 0,
                   shadowRadius: isSelected ? 4 : 0,
                   shadowOffset: { width: 0, height: 0 },
@@ -864,6 +917,73 @@ export default function YearWheelView({
                 : "Days"}
             </Text>
           </Pressable>
+
+          {isWheelInteracting && magnifierEntries.length > 0 ? (
+            <View
+              pointerEvents="none"
+              style={{
+                position: "absolute",
+                left: 28,
+                right: 28,
+                bottom: 14,
+                minHeight: 50,
+                borderRadius: 12,
+                borderWidth: 1,
+                borderColor: "#d1d5db",
+                backgroundColor: "#ffffffee",
+                paddingHorizontal: 10,
+                paddingVertical: 8,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+                zIndex: 35,
+                shadowColor: "#111827",
+                shadowOpacity: 0.16,
+                shadowRadius: 8,
+                shadowOffset: { width: 0, height: 3 },
+              }}
+            >
+              {magnifierEntries.map((entry) => {
+                const isSelected = entry.id === selectedWheelMarkerId;
+
+                return (
+                  <View
+                    key={`magnifier-${entry.id}`}
+                    style={{
+                      width: isSelected ? 46 : 34,
+                      alignItems: "center",
+                      gap: 5,
+                    }}
+                  >
+                    <View
+                      style={{
+                        width: isSelected ? 38 : 26,
+                        height: isSelected ? 8 : 5,
+                        borderRadius: 999,
+                        backgroundColor: entry.color,
+                        opacity: isSelected ? 1 : 0.55,
+                      }}
+                    />
+                    <Text
+                      numberOfLines={1}
+                      adjustsFontSizeToFit
+                      minimumFontScale={0.62}
+                      style={{
+                        width: isSelected ? 46 : 34,
+                        fontSize: isSelected ? 9 : 7,
+                        fontWeight: isSelected ? "900" : "800",
+                        color: isSelected ? entry.color : "#64748b",
+                        textAlign: "center",
+                      }}
+                    >
+                      {entry.shortLabel}
+                    </Text>
+                  </View>
+                );
+              })}
+            </View>
+          ) : null}
         </View>
       </View>
 
@@ -876,10 +996,12 @@ export default function YearWheelView({
           gap: 18,
         }}
       >
-        <LegendItem color="#ef4444" label="High Sabbaths" />
-        <LegendItem color="#eab308" label="Weekly Sabbaths" />
-        <LegendItem color="#16a34a" label="Feasts" />
-        <LegendItem color="#7e22ce" label="Fasts" />
+        <LegendItem color={MARKER_COLORS.highSabbath} label="High Sabbaths" />
+        <LegendItem color={MARKER_COLORS.sabbath} label="Weekly Sabbaths" />
+        <LegendItem color={MARKER_COLORS.feast} label="Feasts" />
+        <LegendItem color={MARKER_COLORS.fast} label="Fasts" />
+        <LegendItem color={MARKER_COLORS.preparation} label="Preparation" />
+        <LegendItem color={MARKER_COLORS.perpetual} label="Perpetual Markers" />
         <LegendDot color="#84cc16" label="Spring Gate" />
         <LegendDot color="#facc15" label="Summer Gate" />
         <LegendDot color="#fb923c" label="Fall Gate" />
