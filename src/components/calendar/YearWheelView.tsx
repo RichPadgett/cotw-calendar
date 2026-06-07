@@ -39,7 +39,6 @@ const MONTH_LABEL_RADIUS = SIZE / 2 - 22;
 const CENTER_BADGE_SIZE = 104;
 const MARKER_INNER_RADIUS = CENTER_BADGE_SIZE / 2;
 const MARKER_OUTER_RADIUS = SIZE / 2 - 4;
-const FULL_MARKER_LENGTH = MARKER_OUTER_RADIUS - MARKER_INNER_RADIUS;
 const TODAY_TICK_LENGTH = 18;
 const DAY_SHADE_HEIGHT = 1;
 const GATE_SHADE_HEIGHT = 3;
@@ -168,6 +167,38 @@ function getAngularDistance(firstAngle: number, secondAngle: number) {
       Math.cos(firstAngle - secondAngle)
     )
   );
+}
+
+function getCirclePoint(
+  centerX: number,
+  centerY: number,
+  radius: number,
+  angle: number
+) {
+  return {
+    x: centerX + Math.cos(angle) * radius,
+    y: centerY + Math.sin(angle) * radius,
+  };
+}
+
+function getCircleSegment(
+  centerX: number,
+  centerY: number,
+  innerRadius: number,
+  outerRadius: number,
+  angle: number
+) {
+  const start = getCirclePoint(centerX, centerY, innerRadius, angle);
+  const end = getCirclePoint(centerX, centerY, outerRadius, angle);
+  const deltaX = end.x - start.x;
+  const deltaY = end.y - start.y;
+
+  return {
+    centerX: (start.x + end.x) / 2,
+    centerY: (start.y + end.y) / 2,
+    length: Math.hypot(deltaX, deltaY),
+    rotation: Math.atan2(deltaY, deltaX),
+  };
 }
 
 /**
@@ -391,20 +422,10 @@ export default function YearWheelView({
     <View
       style={{
         alignItems: "center",
-        marginTop: 0,
+        marginTop: 18,
         marginBottom: 24,
       }}
     >
-      <Text
-        style={{
-          marginBottom: 16,
-          fontSize: 22,
-          fontWeight: "800",
-        }}
-      >
-        Enochs Wheel
-      </Text>
-
       <View
         style={{
           width: OUTER_RING_SIZE,
@@ -421,17 +442,20 @@ export default function YearWheelView({
       >
         {GATE_DOTS.map((gate) => {
           const radius = OUTER_RING_SIZE / 2 - 4;
-
-          const x = OUTER_CENTER + Math.cos(gate.angle) * radius;
-          const y = OUTER_CENTER + Math.sin(gate.angle) * radius;
+          const point = getCirclePoint(
+            OUTER_CENTER,
+            OUTER_CENTER,
+            radius,
+            gate.angle
+          );
 
           return (
             <View
               key={gate.label}
               style={{
                 position: "absolute",
-                left: x - 6,
-                top: y - 6,
+                left: point.x - 6,
+                top: point.y - 6,
                 width: 12,
                 height: 12,
                 borderRadius: 6,
@@ -447,29 +471,33 @@ export default function YearWheelView({
         {todayNode?.enoch?.dayOfYear
           ? (() => {
               const angle = getAngleForDay(todayNode.enoch.dayOfYear);
-              const tickCenterRadius =
-                OUTER_RING_SIZE / 2 + TODAY_TICK_LENGTH / 2;
-              const labelRadius = OUTER_RING_SIZE / 2 + TODAY_TICK_LENGTH + 11;
-
-              const tickCenterX =
-                OUTER_CENTER + Math.cos(angle) * tickCenterRadius;
-              const tickCenterY =
-                OUTER_CENTER + Math.sin(angle) * tickCenterRadius;
-              const labelX = OUTER_CENTER + Math.cos(angle) * labelRadius;
-              const labelY = OUTER_CENTER + Math.sin(angle) * labelRadius;
+              const labelRadius = OUTER_RING_SIZE / 2 - 12;
+              const tick = getCircleSegment(
+                OUTER_CENTER,
+                OUTER_CENTER,
+                OUTER_RING_SIZE / 2,
+                OUTER_RING_SIZE / 2 + TODAY_TICK_LENGTH,
+                angle
+              );
+              const labelPoint = getCirclePoint(
+                OUTER_CENTER,
+                OUTER_CENTER,
+                labelRadius,
+                angle
+              );
 
               return (
                 <>
                   <View
                     style={{
                       position: "absolute",
-                      left: tickCenterX - TODAY_TICK_LENGTH / 2,
-                      top: tickCenterY - 2,
-                      width: TODAY_TICK_LENGTH,
+                      left: tick.centerX - tick.length / 2,
+                      top: tick.centerY - 2,
+                      width: tick.length,
                       height: 4,
                       borderRadius: 999,
                       backgroundColor: "#dc2626",
-                      transform: [{ rotate: `${angle}rad` }],
+                      transform: [{ rotate: `${tick.rotation}rad` }],
                       transformOrigin: "center center" as any,
                       zIndex: 40,
                     }}
@@ -477,14 +505,24 @@ export default function YearWheelView({
                   <Text
                     style={{
                       position: "absolute",
-                      left: labelX - 9,
-                      top: labelY - 7,
-                      width: 18,
+                      left: labelPoint.x - 10,
+                      top: labelPoint.y - 10,
+                      width: 20,
+                      height: 20,
+                      borderRadius: 10,
+                      backgroundColor: "#fffafa",
+                      borderWidth: 1,
+                      borderColor: "#fecaca",
                       fontSize: 10,
+                      lineHeight: 20,
                       fontWeight: "900",
                       color: "#991b1b",
                       textAlign: "center",
                       zIndex: 40,
+                      shadowColor: "#dc2626",
+                      shadowOpacity: 0.18,
+                      shadowRadius: 3,
+                      shadowOffset: { width: 0, height: 1 },
                     }}
                   >
                     {todayNode.enoch.day}
@@ -556,10 +594,13 @@ export default function YearWheelView({
             const shadeHeight = isGateDay
               ? GATE_SHADE_HEIGHT
               : DAY_SHADE_HEIGHT;
-            const shadeCenterRadius =
-              MARKER_INNER_RADIUS + FULL_MARKER_LENGTH / 2;
-            const shadeCenterX = CENTER + Math.cos(angle) * shadeCenterRadius;
-            const shadeCenterY = CENTER + Math.sin(angle) * shadeCenterRadius;
+            const shadeSegment = getCircleSegment(
+              CENTER,
+              CENTER,
+              MARKER_INNER_RADIUS,
+              MARKER_OUTER_RADIUS,
+              angle
+            );
 
             return (
               <View
@@ -567,11 +608,11 @@ export default function YearWheelView({
                 pointerEvents="none"
                 style={{
                   position: "absolute",
-                  left: shadeCenterX - FULL_MARKER_LENGTH / 2,
-                  top: shadeCenterY - shadeHeight / 2,
-                  width: FULL_MARKER_LENGTH,
+                  left: shadeSegment.centerX - shadeSegment.length / 2,
+                  top: shadeSegment.centerY - shadeHeight / 2,
+                  width: shadeSegment.length,
                   height: shadeHeight,
-                  transform: [{ rotate: `${angle}rad` }],
+                  transform: [{ rotate: `${shadeSegment.rotation}rad` }],
                   transformOrigin: "center center" as any,
                   backgroundColor: isGateDay
                     ? DAY_SHADE_COLORS.gate
@@ -602,11 +643,14 @@ export default function YearWheelView({
             const angle = getAngleForDay(dayOfYear);
             const isSelected = selectedWheelNodeId === node.id;
             const markerHeight = isSelected ? 6 : 2;
-            const markerLength = FULL_MARKER_LENGTH;
-            const markerCenterRadius = MARKER_INNER_RADIUS + markerLength / 2;
+            const markerSegment = getCircleSegment(
+              CENTER,
+              CENTER,
+              MARKER_INNER_RADIUS,
+              MARKER_OUTER_RADIUS,
+              angle
+            );
 
-            const markerCenterX = CENTER + Math.cos(angle) * markerCenterRadius;
-            const markerCenterY = CENTER + Math.sin(angle) * markerCenterRadius;
             const markerColor = markerType
               ? MARKER_COLORS[markerType as keyof typeof MARKER_COLORS]
               : perpetualMarkersForNode[0]?.color || MARKER_COLORS.perpetual;
@@ -617,11 +661,11 @@ export default function YearWheelView({
                 pointerEvents="none"
                 style={{
                   position: "absolute",
-                  left: markerCenterX - markerLength / 2,
-                  top: markerCenterY - markerHeight / 2,
-                  width: markerLength,
+                  left: markerSegment.centerX - markerSegment.length / 2,
+                  top: markerSegment.centerY - markerHeight / 2,
+                  width: markerSegment.length,
                   height: markerHeight,
-                  transform: [{ rotate: `${angle}rad` }],
+                  transform: [{ rotate: `${markerSegment.rotation}rad` }],
                   transformOrigin: "center center" as any,
                   backgroundColor: markerColor,
                   borderRadius: 999,
@@ -653,26 +697,27 @@ export default function YearWheelView({
 
           {months.map((_, index) => {
             const angle = -(index / 12) * Math.PI * 2;
-
-            const startX = CENTER + Math.cos(angle) * MONTH_RING_INNER_RADIUS;
-
-            const startY = CENTER + Math.sin(angle) * MONTH_RING_INNER_RADIUS;
-
-            const length = SIZE / 2 - MONTH_RING_INNER_RADIUS;
+            const separatorSegment = getCircleSegment(
+              CENTER,
+              CENTER,
+              MONTH_RING_INNER_RADIUS,
+              SIZE / 2,
+              angle
+            );
 
             return (
               <View
                 key={`month-separator-${index}`}
                 style={{
                   position: "absolute",
-                  left: startX,
-                  top: startY,
-                  width: length,
+                  left: separatorSegment.centerX - separatorSegment.length / 2,
+                  top: separatorSegment.centerY - 1,
+                  width: separatorSegment.length,
                   height: 2,
                   backgroundColor: "#285a2c",
                   opacity: 0.25,
-                  transform: [{ rotate: `${angle}rad` }],
-                  transformOrigin: "left center" as any,
+                  transform: [{ rotate: `${separatorSegment.rotation}rad` }],
+                  transformOrigin: "center center" as any,
                   zIndex: 4,
                 }}
               />
@@ -681,11 +726,12 @@ export default function YearWheelView({
 
           {months.map((monthNumber, index) => {
             const angle = -(index / 12) * Math.PI * 2;
-
-            const labelPoint = {
-              x: CENTER + Math.cos(angle) * MONTH_LABEL_RADIUS,
-              y: CENTER + Math.sin(angle) * MONTH_LABEL_RADIUS,
-            };
+            const labelPoint = getCirclePoint(
+              CENTER,
+              CENTER,
+              MONTH_LABEL_RADIUS,
+              angle
+            );
 
             return (
               <Pressable
@@ -699,11 +745,15 @@ export default function YearWheelView({
                   height: 32,
                   alignItems: "center",
                   justifyContent: "center",
-                  backgroundColor: "#ffffff",
+                  backgroundColor: "#fffdf7",
                   borderRadius: 999,
                   borderWidth: 1,
-                  borderColor: "#e5e7eb",
+                  borderColor: "#d8cfae",
                   zIndex: 10,
+                  shadowColor: "#111827",
+                  shadowOpacity: 0.08,
+                  shadowRadius: 3,
+                  shadowOffset: { width: 0, height: 1 },
                 }}
               >
                 <Text
@@ -726,16 +776,15 @@ export default function YearWheelView({
             { label: "Winter", angle: Math.PI / 2 },
           ].map((season) => {
             const radius = 95;
-            const x = CENTER + Math.cos(season.angle) * radius;
-            const y = CENTER + Math.sin(season.angle) * radius;
+            const point = getCirclePoint(CENTER, CENTER, radius, season.angle);
 
             return (
               <View
                 key={season.label}
                 style={{
                   position: "absolute",
-                  left: x - 38,
-                  top: y - 13,
+                  left: point.x - 38,
+                  top: point.y - 13,
                   width: 76,
                   height: 20,
                   borderRadius: 13,
