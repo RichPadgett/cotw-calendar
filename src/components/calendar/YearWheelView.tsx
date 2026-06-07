@@ -5,14 +5,26 @@
  */
 
 // Dependencies
-import { Pressable, Text, View } from "react-native";
+import { useEffect, useMemo, useState } from "react";
+import {
+  GestureResponderEvent,
+  Image,
+  Pressable,
+  Text,
+  View,
+} from "react-native";
+import ScrollIcon from "../../../assets/enoch/icons/scroll.png";
 import { CalendarNode } from "../../models/calendar";
+import type { PerpetualMarker } from "../../types/perpetualMarkers";
+import { getAppDateId } from "../../utils/appDay";
 
 // Types
 type Props = {
   nodes: CalendarNode[];
+  perpetualMarkers?: PerpetualMarker[];
   onPressMonth?: (monthNumber: number) => void;
   onPressDay?: (node: CalendarNode) => void;
+  todayDateId?: string;
 };
 
 // Constants
@@ -24,13 +36,27 @@ const OUTER_CENTER = OUTER_RING_SIZE / 2;
 
 const MONTH_RING_INNER_RADIUS = SIZE / 2 - 42;
 const MONTH_LABEL_RADIUS = SIZE / 2 - 22;
+const CENTER_BADGE_SIZE = 104;
+const MARKER_INNER_RADIUS = CENTER_BADGE_SIZE / 2;
+const MARKER_OUTER_RADIUS = SIZE / 2 - 4;
+const FULL_MARKER_LENGTH = MARKER_OUTER_RADIUS - MARKER_INNER_RADIUS;
+const TODAY_TICK_LENGTH = 18;
+const DAY_SHADE_HEIGHT = 1;
+const GATE_SHADE_HEIGHT = 3;
 
 const MARKER_COLORS = {
-  sabbath: "#eab308",
-  highSabbath: "#ef4444",
-  feast: "#16a34a",
-  fast: "#7e22ce",
-  preparation: "#f59e0b",
+  sabbath: "#d6a406",
+  highSabbath: "#dc2626",
+  feast: "#15803d",
+  fast: "#7c3aed",
+  preparation: "#ea580c",
+  gate: "#0284c7",
+  perpetual: "#0f766e",
+};
+
+const DAY_SHADE_COLORS = {
+  standard: "#cbd5e1",
+  gate: "#0ea5e9",
 };
 
 const GATE_DOTS = [
@@ -76,28 +102,72 @@ function getMarkerType(node: CalendarNode) {
     return "preparation";
   }
 
+  if (node.enoch?.isIntercalary) {
+    return "gate";
+  }
+
   return null;
 }
 
 /**
- * Returns the visual length for a wheel marker type.
- * This style helper gives feasts, sabbaths, and ordinary days distinct radial emphasis.
+ * Selects the most useful event name for a detailed wheel marker label.
+ * The clicked marker is the only visible label, so weekly sabbaths can be named too.
  */
-function getMarkerLength(markerType: string) {
-  switch (markerType) {
-    case "sabbath":
-      return 92;
-    case "feast":
-      return 98;
-    case "fast":
-      return 88;
-    case "highSabbath":
-      return 106;
-    case "preparation":
-      return 84;
-    default:
-      return 70;
-  }
+function getWheelLabel(node: CalendarNode) {
+  const events = node.enoch?.events ?? [];
+  const labelEvent =
+    events.find((event) => event.type !== "weekly-sabbath") ?? events[0];
+
+  return (
+    labelEvent?.shortName ??
+    labelEvent?.englishName ??
+    labelEvent?.hebrewName ??
+    node.enoch?.label ??
+    undefined
+  );
+}
+
+function getPerpetualMarkersForNode(
+  node: CalendarNode,
+  perpetualMarkers: PerpetualMarker[]
+) {
+  return perpetualMarkers.filter((marker) => {
+    const matchesMonthDay =
+      typeof marker.month === "number" &&
+      typeof marker.day === "number" &&
+      marker.month === node.enoch?.month?.number &&
+      marker.day === node.enoch?.day;
+
+    const matchesGateDay =
+      typeof marker.gateDay === "number" &&
+      node.enoch?.isIntercalary === true &&
+      node.enoch?.isSabbathWeek !== true &&
+      marker.gateDay === node.enoch?.quarter;
+
+    const matchesIntercalaryWeek =
+      marker.intercalaryWeek === true && node.enoch?.isSabbathWeek === true;
+
+    return matchesMonthDay || matchesGateDay || matchesIntercalaryWeek;
+  });
+}
+
+function getPerpetualMarkerLabel(markers: PerpetualMarker[]) {
+  const marker = markers[0];
+
+  return marker?.shortName || marker?.title;
+}
+
+/**
+ * Measures the shortest angle between two wheel positions.
+ * This keeps sliding selection smooth around the 0/364 day boundary.
+ */
+function getAngularDistance(firstAngle: number, secondAngle: number) {
+  return Math.abs(
+    Math.atan2(
+      Math.sin(firstAngle - secondAngle),
+      Math.cos(firstAngle - secondAngle)
+    )
+  );
 }
 
 /**
@@ -145,6 +215,57 @@ function LegendDot({ color, label }: { color: string; label: string }) {
   );
 }
 
+function LegendNotice({ label }: { label: string }) {
+  return (
+    <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+      <View
+        style={{
+          width: 14,
+          height: 14,
+          borderRadius: 7,
+          backgroundColor: "#f97316",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 10,
+            lineHeight: 12,
+            fontWeight: "900",
+            color: "#ffffff",
+          }}
+        >
+          !
+        </Text>
+      </View>
+
+      <Text style={{ fontSize: 12, color: "#374151", fontWeight: "600" }}>
+        {label}
+      </Text>
+    </View>
+  );
+}
+
+function LegendScroll({ label }: { label: string }) {
+  return (
+    <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+      <Image
+        source={ScrollIcon}
+        style={{
+          width: 16,
+          height: 16,
+        }}
+        resizeMode="contain"
+      />
+
+      <Text style={{ fontSize: 12, color: "#374151", fontWeight: "600" }}>
+        {label}
+      </Text>
+    </View>
+  );
+}
+
 /**
  * Creates a legend row for sabbath rest symbols.
  * This small UX component explains weekly and high-sabbath markers in the wheel legend.
@@ -173,18 +294,98 @@ function LegendRest({ color, label }: { color: string; label: string }) {
  * Creates the circular Enoch year wheel view.
  * This UX component renders months, day markers, seasonal gates, sabbath markers, and month/day press targets.
  */
-export default function YearWheelView({ nodes, onPressMonth }: Props) {
+export default function YearWheelView({
+  nodes,
+  perpetualMarkers = [],
+  onPressMonth,
+  onPressDay,
+  todayDateId,
+}: Props) {
+  const [selectedWheelNodeId, setSelectedWheelNodeId] = useState<string | null>(
+    null
+  );
   const months = Array.from({ length: 12 }, (_, index) => index + 1);
+  const activeTodayDateId = todayDateId ?? getAppDateId();
 
   const todayNode = nodes.find((node) => {
-    const today = new Date();
-
-    const todayId = `${today.getFullYear()}-${String(
-      today.getMonth() + 1
-    ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-
-    return node.gregorianDate === todayId;
+    return node.gregorianDate === activeTodayDateId;
   });
+  const wheelMarkerNodes = useMemo(() => {
+    return nodes.filter((node) => {
+      const hasPerpetualMarker = getPerpetualMarkersForNode(
+        node,
+        perpetualMarkers
+      ).length;
+
+      return Boolean(
+        node.enoch?.dayOfYear && (getMarkerType(node) || hasPerpetualMarker)
+      );
+    });
+  }, [nodes, perpetualMarkers]);
+  const todayMarkerNode =
+    todayNode &&
+    (getMarkerType(todayNode) ||
+      getPerpetualMarkersForNode(todayNode, perpetualMarkers).length)
+      ? todayNode
+      : undefined;
+
+  const selectedWheelNode = nodes.find(
+    (node) => node.id === selectedWheelNodeId
+  );
+  const selectedWheelPerpetualMarkers = selectedWheelNode
+    ? getPerpetualMarkersForNode(selectedWheelNode, perpetualMarkers)
+    : [];
+  const selectedWheelMarkerType = selectedWheelNode
+    ? getMarkerType(selectedWheelNode)
+    : null;
+  const selectedWheelColor = selectedWheelMarkerType
+    ? MARKER_COLORS[selectedWheelMarkerType as keyof typeof MARKER_COLORS]
+    : selectedWheelPerpetualMarkers[0]?.color ||
+      MARKER_COLORS.perpetual ||
+      "#3157a8";
+  const selectedWheelLabel = selectedWheelNode
+    ? getWheelLabel(selectedWheelNode) ||
+      getPerpetualMarkerLabel(selectedWheelPerpetualMarkers)
+    : undefined;
+
+  useEffect(() => {
+    setSelectedWheelNodeId((currentNodeId) => {
+      if (
+        currentNodeId &&
+        wheelMarkerNodes.some((node) => node.id === currentNodeId)
+      ) {
+        return currentNodeId;
+      }
+
+      return todayMarkerNode?.id ?? null;
+    });
+  }, [todayMarkerNode?.id, wheelMarkerNodes]);
+
+  function selectNearestWheelMarker(event: GestureResponderEvent) {
+    if (wheelMarkerNodes.length === 0) return;
+
+    const touchX = event.nativeEvent.locationX;
+    const touchY = event.nativeEvent.locationY;
+    const distanceFromCenter = Math.hypot(touchX - CENTER, touchY - CENTER);
+
+    if (distanceFromCenter < CENTER_BADGE_SIZE / 2) return;
+
+    const touchAngle = Math.atan2(touchY - CENTER, touchX - CENTER);
+    const nearestNode = wheelMarkerNodes
+      .map((node) => {
+        const dayOfYear = node.enoch?.dayOfYear ?? 1;
+
+        return {
+          node,
+          distance: getAngularDistance(touchAngle, getAngleForDay(dayOfYear)),
+        };
+      })
+      .sort((a, b) => a.distance - b.distance)[0]?.node;
+
+    if (nearestNode) {
+      setSelectedWheelNodeId(nearestNode.id);
+    }
+  }
 
   return (
     <View
@@ -246,55 +447,49 @@ export default function YearWheelView({ nodes, onPressMonth }: Props) {
         {todayNode?.enoch?.dayOfYear
           ? (() => {
               const angle = getAngleForDay(todayNode.enoch.dayOfYear);
-              const radius = OUTER_RING_SIZE / 2 + 4;
+              const tickCenterRadius =
+                OUTER_RING_SIZE / 2 + TODAY_TICK_LENGTH / 2;
+              const labelRadius = OUTER_RING_SIZE / 2 + TODAY_TICK_LENGTH + 11;
 
-              const x = OUTER_CENTER + Math.cos(angle) * radius;
-              const y = OUTER_CENTER + Math.sin(angle) * radius;
+              const tickCenterX =
+                OUTER_CENTER + Math.cos(angle) * tickCenterRadius;
+              const tickCenterY =
+                OUTER_CENTER + Math.sin(angle) * tickCenterRadius;
+              const labelX = OUTER_CENTER + Math.cos(angle) * labelRadius;
+              const labelY = OUTER_CENTER + Math.sin(angle) * labelRadius;
 
               return (
-                <View
-                  style={{
-                    position: "absolute",
-
-                    left: x - 14,
-                    top: y - 10,
-
-                    alignItems: "center",
-
-                    zIndex: 40,
-                  }}
-                >
-                  <Text
+                <>
+                  <View
                     style={{
-                      fontSize: 20,
-                      fontWeight: "900",
-
-                      color: "#dc2626",
-
-                      transform: [
-                        {
-                          rotate: `${angle}rad`,
-                        },
-                      ],
+                      position: "absolute",
+                      left: tickCenterX - TODAY_TICK_LENGTH / 2,
+                      top: tickCenterY - 2,
+                      width: TODAY_TICK_LENGTH,
+                      height: 4,
+                      borderRadius: 999,
+                      backgroundColor: "#dc2626",
+                      transform: [{ rotate: `${angle}rad` }],
+                      transformOrigin: "center center" as any,
+                      zIndex: 40,
                     }}
-                  >
-                    ◀
-                  </Text>
+                  />
                   <Text
                     style={{
-                      marginTop: -2,
-                      marginRight: 6,
-
+                      position: "absolute",
+                      left: labelX - 9,
+                      top: labelY - 7,
+                      width: 18,
                       fontSize: 10,
-
                       fontWeight: "900",
-
                       color: "#991b1b",
+                      textAlign: "center",
+                      zIndex: 40,
                     }}
                   >
                     {todayNode.enoch.day}
                   </Text>
-                </View>
+                </>
               );
             })()
           : null}
@@ -335,38 +530,107 @@ export default function YearWheelView({ nodes, onPressMonth }: Props) {
             }}
           />
 
+          <View
+            onStartShouldSetResponder={() => true}
+            onMoveShouldSetResponder={() => true}
+            onResponderGrant={selectNearestWheelMarker}
+            onResponderMove={selectNearestWheelMarker}
+            style={{
+              position: "absolute",
+              left: 0,
+              top: 0,
+              width: SIZE,
+              height: SIZE,
+              borderRadius: SIZE / 2,
+              zIndex: 7,
+            }}
+          />
+
           {nodes.map((node) => {
+            const dayOfYear = node.enoch?.dayOfYear;
+
+            if (!dayOfYear) return null;
+
+            const angle = getAngleForDay(dayOfYear);
+            const isGateDay = node.enoch?.isIntercalary === true;
+            const shadeHeight = isGateDay
+              ? GATE_SHADE_HEIGHT
+              : DAY_SHADE_HEIGHT;
+            const shadeCenterRadius =
+              MARKER_INNER_RADIUS + FULL_MARKER_LENGTH / 2;
+            const shadeCenterX = CENTER + Math.cos(angle) * shadeCenterRadius;
+            const shadeCenterY = CENTER + Math.sin(angle) * shadeCenterRadius;
+
+            return (
+              <View
+                key={`day-shade-${node.id}`}
+                pointerEvents="none"
+                style={{
+                  position: "absolute",
+                  left: shadeCenterX - FULL_MARKER_LENGTH / 2,
+                  top: shadeCenterY - shadeHeight / 2,
+                  width: FULL_MARKER_LENGTH,
+                  height: shadeHeight,
+                  transform: [{ rotate: `${angle}rad` }],
+                  transformOrigin: "center center" as any,
+                  backgroundColor: isGateDay
+                    ? DAY_SHADE_COLORS.gate
+                    : DAY_SHADE_COLORS.standard,
+                  borderRadius: 999,
+                  opacity: isGateDay ? 0.55 : 0.28,
+                  zIndex: 2,
+                }}
+              />
+            );
+          })}
+
+          {nodes.map((node) => {
+            const perpetualMarkersForNode = getPerpetualMarkersForNode(
+              node,
+              perpetualMarkers
+            );
             const markerType = getMarkerType(node);
 
-            if (!markerType) return null;
+            if (!markerType && perpetualMarkersForNode.length === 0) {
+              return null;
+            }
 
             const dayOfYear = node.enoch?.dayOfYear;
 
             if (!dayOfYear) return null;
 
             const angle = getAngleForDay(dayOfYear);
-            const innerRadius = 35;
-            const length = getMarkerLength(markerType);
+            const isSelected = selectedWheelNodeId === node.id;
+            const markerHeight = isSelected ? 6 : 2;
+            const markerLength = FULL_MARKER_LENGTH;
+            const markerCenterRadius = MARKER_INNER_RADIUS + markerLength / 2;
 
-            const startX = CENTER + Math.cos(angle) * innerRadius;
-            const startY = CENTER + Math.sin(angle) * innerRadius;
+            const markerCenterX = CENTER + Math.cos(angle) * markerCenterRadius;
+            const markerCenterY = CENTER + Math.sin(angle) * markerCenterRadius;
+            const markerColor = markerType
+              ? MARKER_COLORS[markerType as keyof typeof MARKER_COLORS]
+              : perpetualMarkersForNode[0]?.color || MARKER_COLORS.perpetual;
 
             return (
               <View
                 key={`marker-${node.id}`}
+                pointerEvents="none"
                 style={{
                   position: "absolute",
-                  left: startX,
-                  top: startY,
-                  width: length,
-                  height: 2,
-                  backgroundColor:
-                    MARKER_COLORS[markerType as keyof typeof MARKER_COLORS],
+                  left: markerCenterX - markerLength / 2,
+                  top: markerCenterY - markerHeight / 2,
+                  width: markerLength,
+                  height: markerHeight,
                   transform: [{ rotate: `${angle}rad` }],
-                  transformOrigin: "left center" as any,
+                  transformOrigin: "center center" as any,
+                  backgroundColor: markerColor,
                   borderRadius: 999,
                   opacity: markerType === "sabbath" ? 0.65 : 1,
-                  zIndex: 1,
+                  zIndex: isSelected ? 15 : 8,
+                  shadowColor: markerColor,
+                  shadowOpacity: isSelected ? 0.35 : 0,
+                  shadowRadius: isSelected ? 4 : 0,
+                  shadowOffset: { width: 0, height: 0 },
                 }}
               />
             );
@@ -496,16 +760,22 @@ export default function YearWheelView({ nodes, onPressMonth }: Props) {
             );
           })}
 
-          <View
+          <Pressable
+            onPress={() => {
+              if (selectedWheelNode) {
+                onPressDay?.(selectedWheelNode);
+              }
+            }}
             style={{
               position: "absolute",
-              left: CENTER - 36,
-              top: CENTER - 36,
-              width: 72,
-              height: 72,
-              borderRadius: 36,
+              left: CENTER - CENTER_BADGE_SIZE / 2,
+              top: CENTER - CENTER_BADGE_SIZE / 2,
+              width: CENTER_BADGE_SIZE,
+              height: CENTER_BADGE_SIZE,
+              paddingHorizontal: 8,
+              borderRadius: CENTER_BADGE_SIZE / 2,
               borderWidth: 3,
-              borderColor: "#87a1d9",
+              borderColor: selectedWheelNode ? selectedWheelColor : "#87a1d9",
               alignItems: "center",
               justifyContent: "center",
               backgroundColor: "#ffffff",
@@ -513,25 +783,34 @@ export default function YearWheelView({ nodes, onPressMonth }: Props) {
             }}
           >
             <Text
+              numberOfLines={selectedWheelNode ? 2 : 1}
               style={{
-                fontSize: 18,
+                fontSize: selectedWheelNode ? 11 : 18,
                 fontWeight: "900",
-                color: "#3157a8",
+                color: selectedWheelNode ? selectedWheelColor : "#3157a8",
+                textAlign: "center",
               }}
             >
-              364
+              {selectedWheelNode ? (selectedWheelLabel ?? "Selected") : 364}
             </Text>
 
             <Text
+              numberOfLines={1}
               style={{
-                fontSize: 9,
+                marginTop: selectedWheelNode ? 4 : 0,
+                fontSize: selectedWheelNode ? 8 : 9,
                 fontWeight: "800",
                 color: "#64748b",
+                textAlign: "center",
               }}
             >
-              Days
+              {selectedWheelNode
+                ? `M${selectedWheelNode.enoch?.month?.number ?? "-"} D${
+                    selectedWheelNode.enoch?.day ?? "-"
+                  }`
+                : "Days"}
             </Text>
-          </View>
+          </Pressable>
         </View>
       </View>
 
@@ -554,6 +833,8 @@ export default function YearWheelView({ nodes, onPressMonth }: Props) {
         <LegendDot color="#38bdf8" label="Winter Gate" />
         <LegendRest color="#ca8a04" label="High Sabbath" />
         <LegendRest color="#2563eb" label="Sabbath" />
+        <LegendNotice label="Day Notice" />
+        <LegendScroll label="Content Available" />
       </View>
     </View>
   );

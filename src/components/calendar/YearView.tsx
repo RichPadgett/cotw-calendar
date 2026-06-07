@@ -21,6 +21,7 @@ type Props = {
   onPressDay?: (node: CalendarNode) => void;
   notices: CalendarDaySummary[];
   perpetualMarkers: PerpetualMarker[];
+  todayDateId?: string;
 };
 
 type CalendarDaySummary = {
@@ -86,6 +87,7 @@ export default function YearView({
   perpetualMarkers = [],
   onMonthLayout,
   onPressDay,
+  todayDateId,
 }: Props) {
   const monthGroups = groupByEnochMonth(nodes);
   const firstNode = nodes[0];
@@ -250,6 +252,7 @@ export default function YearView({
                       hasContent={hasContent}
                       perpetualMarkers={markersForDay}
                       onPressDay={onPressDay}
+                      todayDateId={todayDateId}
                     />
                   </View>
                 );

@@ -4,7 +4,8 @@
  * Author: rpadgett
  */
 
-import { Image, Pressable, Text, View } from "react-native";
+import { Animated, Easing, Image, Pressable, Text, View } from "react-native";
+import { useEffect, useRef } from "react";
 
 import { MaterialIcons } from "@expo/vector-icons";
 import { CalendarNode, EnochMonth } from "../../models/calendar";
@@ -19,6 +20,12 @@ type Props = {
   // Example:
   // "Enoch Year 2026"
   gregorianLabel: string;
+  groupLabel: string;
+  userRole?: "member" | "admin";
+  yearTransition?: {
+    direction: "previous" | "next";
+    id: number;
+  } | null;
   onChangeGroup: () => void;
 
   // Optional navigation actions
@@ -35,6 +42,9 @@ type Props = {
 export default function AppHeader({
   month,
   gregorianLabel,
+  groupLabel,
+  userRole = "member",
+  yearTransition,
   onChangeGroup,
   onPressToday,
   onPressUpcomingShabbat,
@@ -43,6 +53,31 @@ export default function AppHeader({
   todayNode,
   upcomingShabbatNode,
 }: Props) {
+  const yearTransitionProgress = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (!yearTransition) return;
+
+    yearTransitionProgress.setValue(0);
+
+    Animated.timing(yearTransitionProgress, {
+      toValue: 1,
+      duration: 520,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true,
+    }).start();
+  }, [yearTransition?.id, yearTransitionProgress]);
+
+  const transitionTranslateX = yearTransitionProgress.interpolate({
+    inputRange: [0, 1],
+    outputRange: [yearTransition?.direction === "next" ? 24 : -24, 0],
+  });
+
+  const transitionOpacity = yearTransitionProgress.interpolate({
+    inputRange: [0, 0.25, 1],
+    outputRange: [0, 1, 1],
+  });
+
   return (
     <View
       style={{
@@ -112,48 +147,94 @@ export default function AppHeader({
 
         <View
           style={{
-            flexDirection: "row",
-            gap: 8,
+            alignItems: "center",
             flexShrink: 0,
           }}
         >
-          {/* Previous Month */}
-
-          <Pressable
-            onPress={onPreviousMonth}
+          <View
             style={{
-              width: 36,
-              height: 36,
-
-              borderRadius: 18,
-
-              backgroundColor: "#e5e7eb",
-
-              alignItems: "center",
-              justifyContent: "center",
+              flexDirection: "row",
+              gap: 8,
             }}
           >
-            <MaterialIcons name="chevron-left" size={28} />
-          </Pressable>
+            {/* Previous Month */}
 
-          {/* Next Month */}
+            <Pressable
+              onPress={onPreviousMonth}
+              style={{
+                width: 36,
+                height: 36,
 
-          <Pressable
-            onPress={onNextMonth}
-            style={{
-              width: 36,
-              height: 36,
+                borderRadius: 18,
 
-              borderRadius: 18,
+                backgroundColor: "#e5e7eb",
 
-              backgroundColor: "#e5e7eb",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <MaterialIcons name="chevron-left" size={28} />
+            </Pressable>
 
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <MaterialIcons name="chevron-right" size={28} />
-          </Pressable>
+            {/* Next Month */}
+
+            <Pressable
+              onPress={onNextMonth}
+              style={{
+                width: 36,
+                height: 36,
+
+                borderRadius: 18,
+
+                backgroundColor: "#e5e7eb",
+
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <MaterialIcons name="chevron-right" size={28} />
+            </Pressable>
+          </View>
+
+          {yearTransition ? (
+            <Animated.View
+              style={{
+                marginTop: 5,
+                minWidth: 78,
+                paddingHorizontal: 8,
+                paddingVertical: 4,
+                borderRadius: 999,
+                backgroundColor: "#ecfeff",
+                borderWidth: 1,
+                borderColor: "#a5f3fc",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 4,
+                opacity: transitionOpacity,
+                transform: [{ translateX: transitionTranslateX }],
+              }}
+            >
+              <MaterialIcons
+                name={
+                  yearTransition.direction === "next"
+                    ? "arrow-forward"
+                    : "arrow-back"
+                }
+                size={12}
+                color="#0e7490"
+              />
+              <Text
+                style={{
+                  fontSize: 10,
+                  fontWeight: "900",
+                  color: "#155e75",
+                }}
+              >
+                Year
+              </Text>
+            </Animated.View>
+          ) : null}
         </View>
       </View>
 
@@ -172,6 +253,49 @@ export default function AppHeader({
       >
         {gregorianLabel}
       </Text>
+
+      <View
+        style={{
+          marginTop: 10,
+          flexDirection: "row",
+          flexWrap: "wrap",
+          alignItems: "center",
+          gap: 8,
+        }}
+      >
+        <Text
+          style={{
+            paddingHorizontal: 10,
+            paddingVertical: 6,
+            borderRadius: 999,
+            backgroundColor: "#eef2ff",
+            borderWidth: 1,
+            borderColor: "#c7d2fe",
+            fontSize: 12,
+            fontWeight: "900",
+            color: "#312e81",
+          }}
+        >
+          {groupLabel}
+        </Text>
+
+        <Text
+          style={{
+            paddingHorizontal: 10,
+            paddingVertical: 6,
+            borderRadius: 999,
+            backgroundColor: userRole === "admin" ? "#ecfdf5" : "#f8fafc",
+            borderWidth: 1,
+            borderColor: userRole === "admin" ? "#bbf7d0" : "#e2e8f0",
+            fontSize: 12,
+            fontWeight: "900",
+            color: userRole === "admin" ? "#166534" : "#475569",
+            textTransform: "capitalize",
+          }}
+        >
+          {userRole}
+        </Text>
+      </View>
 
       {/* ====================================================
           ACTIVE MONTH INFORMATION
