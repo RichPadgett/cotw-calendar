@@ -118,10 +118,10 @@ function getWheelLabel(node: CalendarNode) {
     events.find((event) => event.type !== "weekly-sabbath") ?? events[0];
 
   return (
-    labelEvent?.shortName ??
     labelEvent?.englishName ??
     labelEvent?.hebrewName ??
     node.enoch?.label ??
+    labelEvent?.shortName ??
     undefined
   );
 }
@@ -153,7 +153,7 @@ function getPerpetualMarkersForNode(
 function getPerpetualMarkerLabel(markers: PerpetualMarker[]) {
   const marker = markers[0];
 
-  return marker?.shortName || marker?.title;
+  return marker?.title || marker?.shortName;
 }
 
 /**
@@ -832,9 +832,13 @@ export default function YearWheelView({
             }}
           >
             <Text
-              numberOfLines={selectedWheelNode ? 2 : 1}
+              numberOfLines={selectedWheelNode ? 3 : 1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.58}
               style={{
-                fontSize: selectedWheelNode ? 11 : 18,
+                width: CENTER_BADGE_SIZE - 18,
+                fontSize: selectedWheelNode ? 12 : 18,
+                lineHeight: selectedWheelNode ? 14 : 20,
                 fontWeight: "900",
                 color: selectedWheelNode ? selectedWheelColor : "#3157a8",
                 textAlign: "center",
