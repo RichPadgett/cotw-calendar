@@ -11,6 +11,7 @@ import { logApiRequest } from "./middleware/logApiRequest";
 import adminCalendarRoutes from "./routes/adminCalendarRoutes";
 import adminFileRoutes from "./routes/adminFileRoutes";
 import calendarRoutes from "./routes/calendarRoutes";
+import commandResourceRoutes from "./routes/commandResourceRoutes";
 import groupRoutes from "./routes/groupRoutes";
 import perpetualMarkerRoutes from "./routes/perpetualMarkerRoutes";
 
@@ -25,6 +26,7 @@ app.get("/", (_req, res) => {
 });
 
 app.use("/api/calendar", calendarRoutes);
+app.use("/api/command-resources", commandResourceRoutes);
 app.use("/api/admin/calendar", adminCalendarRoutes);
 app.use("/api/admin/calendar", adminFileRoutes);
 app.use("/api/files", express.static("content"));
