@@ -22,13 +22,15 @@ import type { PerpetualMarker } from "../src/types/perpetualMarkers";
 import { API_BASE_URL } from "../src/config/api";
 import { formatGroupLabel, getAppDateId } from "../src/utils/appDay";
 
-const STICKY_HEADER_OFFSET = 220;
-const YEAR_VIEW_TOP_OFFSET = 685;
-const MONTH_HEADER_SWITCH_OFFSET = YEAR_VIEW_TOP_OFFSET - STICKY_HEADER_OFFSET;
+const DEFAULT_STICKY_HEADER_OFFSET = 220;
+const DEFAULT_YEAR_VIEW_TOP_OFFSET = 685;
+const MONTH_TITLE_BEHIND_HEADER_OFFSET = 32;
 
 export default function HomeScreen() {
   const scrollViewRef = useRef<ScrollView>(null);
   const monthOffsetsRef = useRef<Record<number, number>>({});
+  const headerHeightRef = useRef(DEFAULT_STICKY_HEADER_OFFSET);
+  const yearViewTopOffsetRef = useRef(DEFAULT_YEAR_VIEW_TOP_OFFSET);
 
   const [visibleEnochYear, setVisibleEnochYear] = useState(2026);
   const [activeMonthNumber, setActiveMonthNumber] = useState<number | null>(
@@ -397,9 +399,25 @@ export default function HomeScreen() {
     monthOffsetsRef.current[monthNumber] = y;
   }
 
+  function handleHeaderLayout(height: number) {
+    headerHeightRef.current = height;
+  }
+
+  function handleYearViewLayout(y: number) {
+    yearViewTopOffsetRef.current = y;
+  }
+
+  function getMonthHeaderScrollOffset() {
+    return (
+      yearViewTopOffsetRef.current -
+      headerHeightRef.current +
+      MONTH_TITLE_BEHIND_HEADER_OFFSET
+    );
+  }
+
   function handleScroll(event: any) {
     const scrollY = event.nativeEvent.contentOffset.y;
-    const headerEdgeY = scrollY - MONTH_HEADER_SWITCH_OFFSET;
+    const headerEdgeY = scrollY - getMonthHeaderScrollOffset();
 
     const activeMonth = Object.entries(monthOffsetsRef.current)
       .filter(([, y]) => y <= headerEdgeY)
@@ -419,7 +437,7 @@ export default function HomeScreen() {
     if (typeof y !== "number") return;
 
     scrollViewRef.current?.scrollTo({
-      y: Math.max(0, y + YEAR_VIEW_TOP_OFFSET - STICKY_HEADER_OFFSET),
+      y: Math.max(0, y + getMonthHeaderScrollOffset()),
       animated: true,
     });
 
@@ -494,6 +512,9 @@ export default function HomeScreen() {
         }}
       >
         <View
+          onLayout={(event) => {
+            handleHeaderLayout(event.nativeEvent.layout.height);
+          }}
           style={{
             backgroundColor: "#ffffff",
             paddingBottom: 12,
@@ -532,14 +553,20 @@ export default function HomeScreen() {
           onInteractionChange={setIsWheelInteracting}
         />
 
-        <YearView
-          nodes={nodes}
-          notices={yearNotices}
-          perpetualMarkers={perpetualMarkers}
-          todayDateId={todayDateId}
-          onMonthLayout={handleMonthLayout}
-          onPressDay={openDay}
-        />
+        <View
+          onLayout={(event) => {
+            handleYearViewLayout(event.nativeEvent.layout.y);
+          }}
+        >
+          <YearView
+            nodes={nodes}
+            notices={yearNotices}
+            perpetualMarkers={perpetualMarkers}
+            todayDateId={todayDateId}
+            onMonthLayout={handleMonthLayout}
+            onPressDay={openDay}
+          />
+        </View>
       </ScrollView>
 
       <DayDetailModal
