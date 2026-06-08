@@ -39,6 +39,7 @@ export default function HomeScreen() {
     direction: "previous" | "next";
     id: number;
   } | null>(null);
+  const [isWheelInteracting, setIsWheelInteracting] = useState(false);
 
   const [yearNotices, setYearNotices] = useState<any[]>([]);
   const [selectedNode, setSelectedNode] = useState<CalendarNode | null>(null);
@@ -479,6 +480,7 @@ export default function HomeScreen() {
       <ScrollView
         ref={scrollViewRef}
         stickyHeaderIndices={[0]}
+        scrollEnabled={!isWheelInteracting}
         onScroll={handleScroll}
         scrollEventThrottle={16}
         style={{
@@ -527,6 +529,7 @@ export default function HomeScreen() {
           todayDateId={todayDateId}
           onPressMonth={scrollToMonth}
           onPressDay={openDay}
+          onInteractionChange={setIsWheelInteracting}
         />
 
         <YearView

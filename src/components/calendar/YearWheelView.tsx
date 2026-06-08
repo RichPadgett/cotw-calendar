@@ -24,6 +24,7 @@ type Props = {
   perpetualMarkers?: PerpetualMarker[];
   onPressMonth?: (monthNumber: number) => void;
   onPressDay?: (node: CalendarNode) => void;
+  onInteractionChange?: (isInteracting: boolean) => void;
   todayDateId?: string;
 };
 
@@ -379,6 +380,7 @@ export default function YearWheelView({
   perpetualMarkers = [],
   onPressMonth,
   onPressDay,
+  onInteractionChange,
   todayDateId,
 }: Props) {
   const [selectedWheelMarkerId, setSelectedWheelMarkerId] = useState<
@@ -409,16 +411,63 @@ export default function YearWheelView({
       )
     : -1;
   const magnifierEntries =
-    selectedWheelEntryIndex >= 0
-      ? [-2, -1, 0, 1, 2]
-          .map((offset) => {
-            const index =
-              (selectedWheelEntryIndex + offset + wheelMarkerEntries.length) %
-              wheelMarkerEntries.length;
+    selectedWheelEntry && selectedWheelEntryIndex >= 0
+      ? (() => {
+          const markerWindow = [-2, -1, 0, 1, 2]
+            .map((offset) => {
+              const index =
+                (selectedWheelEntryIndex + offset + wheelMarkerEntries.length) %
+                wheelMarkerEntries.length;
+              const entry = wheelMarkerEntries[index];
 
-            return wheelMarkerEntries[index];
-          })
-          .filter(Boolean)
+              return {
+                entry,
+                offset,
+                xDelta:
+                  Math.cos(entry.angle) - Math.cos(selectedWheelEntry.angle),
+              };
+            })
+            .filter(
+              (
+                item
+              ): item is {
+                entry: WheelMarkerEntry;
+                offset: number;
+                xDelta: number;
+              } => Boolean(item.entry)
+            );
+
+          const selectedItem = markerWindow.find((item) => item.offset === 0);
+          const leftItems = markerWindow
+            .filter((item) => item.xDelta < -0.001)
+            .sort((leftItem, rightItem) => leftItem.xDelta - rightItem.xDelta)
+            .slice(-2);
+          const rightItems = markerWindow
+            .filter((item) => item.xDelta > 0.001)
+            .sort((leftItem, rightItem) => leftItem.xDelta - rightItem.xDelta)
+            .slice(0, 2);
+
+          if (
+            selectedItem &&
+            leftItems.length === 2 &&
+            rightItems.length === 2
+          ) {
+            return [...leftItems, selectedItem, ...rightItems].map(
+              (item) => item.entry
+            );
+          }
+
+          const fallbackOffsets =
+            Math.sin(selectedWheelEntry.angle) < 0
+              ? [2, 1, 0, -1, -2]
+              : [-2, -1, 0, 1, 2];
+
+          return fallbackOffsets
+            .map((offset) => {
+              return markerWindow.find((item) => item.offset === offset)?.entry;
+            })
+            .filter((entry): entry is WheelMarkerEntry => Boolean(entry));
+        })()
       : [];
   const selectedWheelNode = selectedWheelEntry?.node;
   const selectedWheelColor = selectedWheelEntry?.color ?? "#3157a8";
@@ -467,6 +516,7 @@ export default function YearWheelView({
     }
 
     setIsWheelInteracting(true);
+    onInteractionChange?.(true);
     selectNearestWheelMarker(event);
   }
 
@@ -477,6 +527,7 @@ export default function YearWheelView({
 
     interactionTimeoutRef.current = setTimeout(() => {
       setIsWheelInteracting(false);
+      onInteractionChange?.(false);
     }, 900);
   }
 
@@ -485,16 +536,25 @@ export default function YearWheelView({
       if (interactionTimeoutRef.current) {
         clearTimeout(interactionTimeoutRef.current);
       }
+      onInteractionChange?.(false);
     };
-  }, []);
+  }, [onInteractionChange]);
 
   return (
     <View
-      style={{
-        alignItems: "center",
-        marginTop: 18,
-        marginBottom: 24,
-      }}
+      style={[
+        {
+          alignItems: "center",
+          marginTop: 18,
+          marginBottom: 24,
+        },
+        {
+          userSelect: "none",
+          WebkitUserSelect: "none",
+          WebkitTouchCallout: "none",
+          touchAction: "none",
+        } as any,
+      ]}
     >
       <View
         style={{
