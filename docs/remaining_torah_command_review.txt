@@ -1,0 +1,406 @@
+Remaining Torah Command Review Checklist
+========================================
+
+Purpose
+-------
+This is a review-only checklist for Torah command candidates that are not yet
+fully represented, or may only be represented broadly, in the current Prolog
+catalog.
+
+Source rule for future cataloging:
+- Use written Torah wording first.
+- Do not turn rabbinic fences, later summaries, or denominational applications
+  into commands.
+- Use traditional 613 lists only as a coverage aid, not as final wording.
+- Verify each command against the Torah passage before adding it to Prolog.
+
+Current Prolog catalog count after promoting this checklist: 464 commands.
+
+
+Worship, Name, And Idolatry Details
+-----------------------------------
+- Do not make gods of silver or gold alongside YHWH. Reference: Exodus 20:23.
+- Do not mention the names of other gods. Reference: Exodus 23:13.
+- Do not cause the names of other gods to be heard from your mouth. Reference: Exodus 23:13.
+- Do not bow down to other gods. References: Exodus 20:5; Deuteronomy 5:9.
+- Do not serve other gods. References: Exodus 20:5; Deuteronomy 5:9.
+- Do not make a molten god. Reference: Exodus 34:17.
+- Do not turn to idols. Reference: Leviticus 19:4.
+- Do not make idols for yourselves. Reference: Leviticus 19:4.
+- Do not make pillars for worship. Reference: Deuteronomy 16:22.
+- Do not plant an Asherah beside YHWH's altar. Reference: Deuteronomy 16:21.
+- Do not set up a sacred stone YHWH hates. Reference: Deuteronomy 16:22.
+- Do not inquire how the nations served their gods in order to do likewise. Reference: Deuteronomy 12:30.
+- Do not add to YHWH's commands. References: Deuteronomy 4:2; 12:32.
+- Do not take away from YHWH's commands. References: Deuteronomy 4:2; 12:32.
+- Destroy idolatrous altars, pillars, Asherim, and images in the land. References: Deuteronomy 7:5; 12:2-3.
+- Do not bring an abomination into your house. Reference: Deuteronomy 7:26.
+- Do not desire silver or gold from idols. Reference: Deuteronomy 7:25.
+- Do not make a covenant with idolatrous nations or their gods. References: Exodus 23:32; Deuteronomy 7:2.
+- Do not show mercy to the idolatrous nations in the land when commanded to dispossess them. Reference: Deuteronomy 7:2.
+- Do not intermarry with the idolatrous nations listed in the land context. Reference: Deuteronomy 7:3.
+- Test a prophet by whether his word comes to pass and whether he turns people from YHWH. References: Deuteronomy 13:1-5; 18:20-22.
+- Do not fear a false prophet. Reference: Deuteronomy 18:22.
+- Do not prophesy falsely in YHWH's Name. Reference: Deuteronomy 18:20.
+- Do not prophesy in the name of other gods. Reference: Deuteronomy 18:20.
+- Do not listen to one who secretly entices you to serve other gods. Reference: Deuteronomy 13:6-11.
+- Do not spare or conceal the enticer to idolatry. Reference: Deuteronomy 13:8.
+- Investigate the idolatrous city matter carefully. Reference: Deuteronomy 13:12-18.
+- Do not rebuild an idolatrous city placed under destruction. Reference: Deuteronomy 13:16.
+- Do not let anything devoted from that city cling to your hand. Reference: Deuteronomy 13:17.
+
+
+Occult, Mourning, And Bodily Mark Commands
+------------------------------------------
+- Do not practice divination. Reference: Deuteronomy 18:10.
+- Do not practice soothsaying or cloud-reading. Reference: Deuteronomy 18:10.
+- Do not practice omen-reading. Reference: Deuteronomy 18:10.
+- Do not practice sorcery. Reference: Deuteronomy 18:10.
+- Do not cast spells. Reference: Deuteronomy 18:11.
+- Do not consult a medium. Reference: Deuteronomy 18:11.
+- Do not consult a spiritist. Reference: Deuteronomy 18:11.
+- Do not inquire of the dead. Reference: Deuteronomy 18:11.
+- Do not turn to mediums or spiritists. Reference: Leviticus 19:31.
+- Do not make baldness between your eyes for the dead. Reference: Deuteronomy 14:1.
+- Do not cut the flesh for the dead. References: Leviticus 19:28; Deuteronomy 14:1.
+- Do not make tattoo marks on yourself. Reference: Leviticus 19:28.
+- Priests must not make baldness, shave edges of beard, or cut flesh for the dead. Reference: Leviticus 21:5.
+
+
+Sabbath And Appointed Time Details To Split Further
+---------------------------------------------------
+- Do not go out to gather manna on the Sabbath. Reference: Exodus 16:29.
+- Prepare the Sabbath portion before Sabbath in the manna context. Reference: Exodus 16:23.
+- Do not do work on the Sabbath. References: Exodus 20:10; Deuteronomy 5:14.
+- Let son, daughter, servants, animals, and stranger rest on Sabbath. References: Exodus 20:10; Deuteronomy 5:14.
+- Keep the Sabbath throughout generations as a covenant. Reference: Exodus 31:16.
+- Keep the Sabbath as a sign. Reference: Exodus 31:13.
+- Keep Yom Teruah as a memorial of blowing. Reference: Leviticus 23:24.
+- Do no ordinary work on Yom Teruah. References: Leviticus 23:25; Numbers 29:1.
+- Afflict yourselves on the Day of Atonement. References: Leviticus 23:27; Numbers 29:7.
+- Do no work at all on the Day of Atonement. Reference: Leviticus 23:28.
+- Observe the Day of Atonement from evening to evening. Reference: Leviticus 23:32.
+- Take fruit of splendid trees and branches for Booths. Reference: Leviticus 23:40.
+- Dwell in booths seven days. Reference: Leviticus 23:42.
+- Rejoice at the appointed feasts with household and vulnerable neighbors. References: Deuteronomy 16:11, 14.
+- Appear before YHWH at the three pilgrimage feasts. Reference: Deuteronomy 16:16.
+- Do not appear before YHWH empty-handed at the pilgrimage feasts. Reference: Deuteronomy 16:16-17.
+
+
+Passover And Unleavened Bread Details To Split Further
+------------------------------------------------------
+- Choose the Passover lamb on the tenth day. Reference: Exodus 12:3.
+- Keep the Passover lamb until the fourteenth day. Reference: Exodus 12:6.
+- Slaughter the Passover at twilight on the appointed day. References: Exodus 12:6; Deuteronomy 16:6.
+- Put Passover blood on the doorposts and lintel in the Exodus context. Reference: Exodus 12:7.
+- Eat the Passover with loins girded, sandals on, and staff in hand. Reference: Exodus 12:11.
+- Do not eat the Passover raw. Reference: Exodus 12:9.
+- Do not eat the Passover boiled in water. Reference: Exodus 12:9.
+- Roast the Passover with fire. Reference: Exodus 12:9.
+- Do not leave any Passover until morning. Reference: Exodus 12:10.
+- Burn what remains until morning. Reference: Exodus 12:10.
+- No uncircumcised male may eat the Passover. Reference: Exodus 12:48.
+- No foreigner may eat the Passover unless joined under the stated covenant sign. References: Exodus 12:43-49.
+- Do not break a bone of the Passover lamb. Reference: Exodus 12:46.
+- Eat Passover in one house. Reference: Exodus 12:46.
+- Do not take Passover meat outside the house. Reference: Exodus 12:46.
+- Keep Passover in the second month if unclean by corpse or on a distant journey. Reference: Numbers 9:9-14.
+- Do not leave second Passover until morning. Reference: Numbers 9:12.
+- Do not break a bone of second Passover. Reference: Numbers 9:12.
+- Remove leaven by the first day. Reference: Exodus 12:15.
+- No leaven shall be seen with you during the feast. Reference: Exodus 13:7.
+- Do not eat leaven during the seven days. References: Exodus 12:15, 19-20.
+- Eat unleavened bread from the evening of the fourteenth to the evening of the twenty-first. Reference: Exodus 12:18.
+
+
+Offerings, Sanctuary, And Priestly Procedure Details
+---------------------------------------------------
+- Build the sanctuary according to the pattern shown. Reference: Exodus 25:8-9.
+- Make the ark according to Torah instructions. Reference: Exodus 25:10-22.
+- Make the table, lampstand, altar, curtains, and court according to the pattern. References: Exodus 25-27.
+- Keep the lamp burning with pure beaten olive oil. Reference: Exodus 27:20-21.
+- Make priestly garments for glory and beauty. Reference: Exodus 28.
+- Consecrate Aaron and his sons according to Torah. Reference: Exodus 29.
+- Offer the daily continual offering morning and evening. References: Exodus 29:38-42; Numbers 28:1-8.
+- Make the incense altar. Reference: Exodus 30:1-10.
+- Do not offer strange incense on the incense altar. Reference: Exodus 30:9.
+- Do not offer burnt offering or grain offering on the incense altar. Reference: Exodus 30:9.
+- Make the bronze laver for washing. Reference: Exodus 30:17-21.
+- Priests must wash hands and feet before service. Reference: Exodus 30:19-21.
+- Make the anointing oil according to Torah. Reference: Exodus 30:22-33.
+- Do not pour holy anointing oil on ordinary flesh. Reference: Exodus 30:32.
+- Do not make anointing oil with the same composition for ordinary use. Reference: Exodus 30:32-33.
+- Make the holy incense according to Torah. Reference: Exodus 30:34-38.
+- Do not make incense with the same composition for ordinary smelling. Reference: Exodus 30:37-38.
+- Bring burnt offerings according to Leviticus 1.
+- Bring grain offerings according to Leviticus 2.
+- Do not offer leaven or honey as fire offering on the altar. Reference: Leviticus 2:11.
+- Season every grain offering with salt. Reference: Leviticus 2:13.
+- Do not let the salt of the covenant be lacking from grain offerings. Reference: Leviticus 2:13.
+- Bring peace offerings according to Leviticus 3.
+- Bring sin offerings according to Leviticus 4.
+- Bring guilt offerings according to Leviticus 5.
+- Restore what was taken or withheld and add the fifth in guilt cases. Reference: Leviticus 6:1-7.
+- Keep the altar fire burning continually. Reference: Leviticus 6:12-13.
+- Do not let the altar fire go out. Reference: Leviticus 6:13.
+- Priests eat certain grain offerings in a holy place. Reference: Leviticus 6:14-18.
+- Burn the priestly grain offering completely. Reference: Leviticus 6:23.
+- Eat the sin offering in a holy place when Torah permits. Reference: Leviticus 6:24-30.
+- Eat the thanksgiving peace offering the same day. Reference: Leviticus 7:15.
+- Do not leave thanksgiving peace offering until morning. Reference: Leviticus 7:15.
+- Do not eat sacrificial flesh on the third day. Reference: Leviticus 7:17-18.
+- Burn leftover sacrificial flesh according to Torah. Reference: Leviticus 7:17.
+- Do not eat holy flesh while unclean. Reference: Leviticus 7:19-21.
+- Do not eat the fat of ox, sheep, or goat reserved by Torah. Reference: Leviticus 7:23.
+- Do not eat blood. References: Leviticus 7:26; 17:10-14.
+- The high priest must not enter the Most Holy Place at any time, but according to Torah. Reference: Leviticus 16:2.
+- Follow the Day of Atonement sanctuary service procedure. Reference: Leviticus 16.
+- Do not slaughter offerings outside the appointed place when sanctuary rules apply. Reference: Leviticus 17:1-9.
+- Cover the blood of hunted clean bird or animal with dust. Reference: Leviticus 17:13.
+- Do not offer blemished animals. Reference: Leviticus 22:20-25.
+- Do not slaughter an animal and its young on the same day. Reference: Leviticus 22:28.
+- Bring firstfruits to the place YHWH chooses and make the declaration. Reference: Deuteronomy 26:1-11.
+- Make the tithe declaration in the third year. Reference: Deuteronomy 26:12-15.
+
+
+Priests, Levites, And Holy Things
+---------------------------------
+- Priests must be holy to YHWH. Reference: Leviticus 21:6.
+- Ordinary priests must not become unclean for the dead except close relatives. Reference: Leviticus 21:1-4.
+- Priests must not marry a prostitute, profaned woman, or divorced woman. Reference: Leviticus 21:7.
+- The high priest must not become unclean even for father or mother. Reference: Leviticus 21:11.
+- The high priest must not leave the sanctuary in the stated case. Reference: Leviticus 21:12.
+- The high priest must marry a virgin of his people. Reference: Leviticus 21:13-14.
+- A priest with listed defect must not approach to offer bread. Reference: Leviticus 21:16-23.
+- Priests who are unclean must not eat holy things. Reference: Leviticus 22:1-9.
+- No layperson may eat holy food. Reference: Leviticus 22:10.
+- A priest's purchased servant may eat holy food. Reference: Leviticus 22:11.
+- A priest's daughter married to a layman may not eat holy food. Reference: Leviticus 22:12.
+- A widowed or divorced priest's daughter returned childless to her father's house may eat her father's food. Reference: Leviticus 22:13.
+- One who eats holy food unintentionally must add a fifth and give it to the priest. Reference: Leviticus 22:14.
+- Levites guard the tabernacle service. Reference: Numbers 18.
+- Priests guard priesthood service and altar service. Reference: Numbers 18:5-7.
+- Levites receive the tithe for their service. Reference: Numbers 18:21-24.
+- Levites give a tithe from the tithe. Reference: Numbers 18:26-32.
+
+
+Clean, Unclean, And Purity Details
+----------------------------------
+- Do not touch carcasses of unclean animals in purity context. Reference: Leviticus 11.
+- Wash clothes after carrying carcass impurity. Reference: Leviticus 11:25, 28.
+- Break earthenware vessel made unclean by carcass contact. Reference: Leviticus 11:33.
+- Put certain unclean articles in water until evening. Reference: Leviticus 11:32.
+- Observe childbirth purification days. Reference: Leviticus 12.
+- Bring childbirth purification offerings when system applies. Reference: Leviticus 12:6-8.
+- The priest examines skin disease cases. Reference: Leviticus 13.
+- Isolate the person with suspected skin disease according to Torah. Reference: Leviticus 13.
+- The person with skin disease must dwell outside the camp and cry unclean. Reference: Leviticus 13:45-46.
+- Purify the healed skin disease case according to Torah. Reference: Leviticus 14.
+- Handle house plague inspection and cleansing according to Torah. Reference: Leviticus 14:33-57.
+- Observe bodily discharge impurity instructions. Reference: Leviticus 15.
+- Bathe and wash garments after specified discharge impurity. Reference: Leviticus 15.
+- Observe menstrual impurity instructions. Reference: Leviticus 15:19-24.
+- Do not enter sanctuary while unclean when sanctuary applies. Reference: Leviticus 15:31.
+- Use red heifer water for corpse impurity. Reference: Numbers 19.
+- The unclean by corpse must be purified on the third and seventh days. Reference: Numbers 19:11-19.
+- One unclean by corpse who does not purify defiles the sanctuary. Reference: Numbers 19:20.
+
+
+Food And Animal Commands
+------------------------
+- Eat only animals meeting Torah clean animal signs. References: Leviticus 11; Deuteronomy 14.
+- Eat only fish with fins and scales. References: Leviticus 11:9-12; Deuteronomy 14:9-10.
+- Do not eat listed unclean birds. References: Leviticus 11:13-19; Deuteronomy 14:11-20.
+- Do not eat swarming things. Reference: Leviticus 11:41-43.
+- Do not make yourself detestable with swarming things. Reference: Leviticus 11:43.
+- Do not eat anything that dies of itself. Reference: Deuteronomy 14:21.
+- Give or sell what dies of itself to the stranger/foreigner as stated. Reference: Deuteronomy 14:21.
+- Do not eat a limb or flesh with its life-blood. Reference: Leviticus 17:10-14.
+- Do not eat fruit of a tree for its first three years. Reference: Leviticus 19:23.
+- Treat fourth-year fruit as holy praise to YHWH. Reference: Leviticus 19:24.
+- Eat fifth-year fruit. Reference: Leviticus 19:25.
+
+
+Agriculture, Land, Tithes, And Poor Gifts
+-----------------------------------------
+- Leave the corner of the field for the poor and stranger. Reference: Leviticus 19:9.
+- Do not reap the field corner completely. Reference: Leviticus 19:9.
+- Leave gleanings of harvest for the poor and stranger. Reference: Leviticus 19:9.
+- Do not gather the gleanings of harvest. Reference: Leviticus 19:9.
+- Leave fallen grapes for the poor and stranger. Reference: Leviticus 19:10.
+- Do not strip the vineyard bare. Reference: Leviticus 19:10.
+- Let the land rest in the seventh year. Reference: Leviticus 25:1-7.
+- Do not sow the field in the seventh year. Reference: Leviticus 25:4.
+- Do not prune the vineyard in the seventh year. Reference: Leviticus 25:4.
+- Do not reap aftergrowth as ordinary harvest in the seventh year. Reference: Leviticus 25:5.
+- Do not gather unpruned grapes as ordinary harvest in the seventh year. Reference: Leviticus 25:5.
+- Count seven sabbatical cycles toward Jubilee. Reference: Leviticus 25:8.
+- Sound the shofar for Jubilee on Day of Atonement. Reference: Leviticus 25:9.
+- Proclaim liberty in the Jubilee year. Reference: Leviticus 25:10.
+- Return each man to his property in Jubilee. Reference: Leviticus 25:10.
+- Do not sow or reap ordinary harvest in Jubilee. Reference: Leviticus 25:11.
+- Do not sell land permanently. Reference: Leviticus 25:23.
+- Redeem land according to Torah redemption law. Reference: Leviticus 25:24-34.
+- Bring firstfruits of the land. Reference: Deuteronomy 26:1-11.
+- Give the tithe to Levite, stranger, orphan, and widow in the third year. Reference: Deuteronomy 14:28-29; 26:12.
+- Do not neglect the Levite. Reference: Deuteronomy 12:19.
+
+
+Justice, Courts, And Penalties
+------------------------------
+- Appoint judges and officers in your gates. Reference: Deuteronomy 16:18.
+- Judges must judge righteously. Reference: Deuteronomy 16:18-20.
+- Do not show partiality in judgment. References: Leviticus 19:15; Deuteronomy 1:17.
+- Do not fear man in judgment. Reference: Deuteronomy 1:17.
+- Do not take a bribe. References: Exodus 23:8; Deuteronomy 16:19.
+- Do not follow the many to do evil. Reference: Exodus 23:2.
+- Do not testify in a way that bends justice after the many. Reference: Exodus 23:2.
+- Do not favor the poor in his dispute. Reference: Exodus 23:3.
+- Do not pervert justice for the stranger, orphan, or widow. Reference: Deuteronomy 24:17.
+- Do not punish children for fathers or fathers for children. Reference: Deuteronomy 24:16.
+- Establish matters by two or three witnesses. Reference: Deuteronomy 19:15.
+- Do to a false witness as he intended to do. Reference: Deuteronomy 19:16-21.
+- Do not pity in the false witness case. Reference: Deuteronomy 19:21.
+- Do not accept ransom for a murderer. Reference: Numbers 35:31.
+- Do not accept ransom for one in refuge to return early. Reference: Numbers 35:32.
+- Do not pollute the land with blood. Reference: Numbers 35:33-34.
+- Execute judgment for intentional murder when lawful court system applies. References: Exodus 21:12; Numbers 35.
+- Execute judgment for kidnapping when lawful court system applies. Reference: Exodus 21:16.
+- Execute judgment for striking or cursing father or mother when lawful court system applies. Reference: Exodus 21:15, 17.
+- Execute judgment for blaspheming the Name when lawful court system applies. Reference: Leviticus 24:10-16.
+- Execute judgment for idolatry cases when lawful court system applies. Reference: Deuteronomy 13; 17:2-7.
+- Execute judgment for specific sexual violations when lawful court system applies. References: Leviticus 20; Deuteronomy 22.
+- Do not degrade your brother with excessive lashes. Reference: Deuteronomy 25:1-3.
+- Limit lashes to forty. Reference: Deuteronomy 25:3.
+
+
+Property, Damages, Lending, And Business
+----------------------------------------
+- Do not steal. Reference: Exodus 20:15.
+- Do not deny falsely about a deposit, pledge, robbery, or oppression. Reference: Leviticus 6:1-7.
+- Do not lie to one another. Reference: Leviticus 19:11.
+- Restore stolen or withheld property and add a fifth in the guilt case. Reference: Leviticus 6:1-7.
+- Pay restitution for theft according to the case. Reference: Exodus 22:1-4.
+- Pay for grazing damage. Reference: Exodus 22:5.
+- Pay for fire damage. Reference: Exodus 22:6.
+- Pay for pit damage. Reference: Exodus 21:33-34.
+- Pay for borrowed animal loss when Torah assigns responsibility. Reference: Exodus 22:14-15.
+- Handle entrusted property loss according to Torah. Reference: Exodus 22:7-13.
+- Do not oppress your neighbor. Reference: Leviticus 19:13.
+- Do not rob. Reference: Leviticus 19:13.
+- Do not keep a hired worker's wages overnight. Reference: Leviticus 19:13.
+- Pay a poor hired worker the same day. Reference: Deuteronomy 24:14-15.
+- Do not charge interest to your brother. Reference: Exodus 22:25; Deuteronomy 23:19.
+- You may charge interest to a foreigner as stated. Reference: Deuteronomy 23:20.
+- Do not take a widow's garment in pledge. Reference: Deuteronomy 24:17.
+- Do not enter a borrower's house to take a pledge. Reference: Deuteronomy 24:10-11.
+- Return a poor man's pledge by sunset. Reference: Exodus 22:26-27; Deuteronomy 24:12-13.
+- Do not take both millstones or the upper millstone as pledge. Reference: Deuteronomy 24:6.
+- Do not move your neighbor's boundary marker. Reference: Deuteronomy 19:14.
+
+
+Family, Marriage, And Sexual Boundaries
+---------------------------------------
+- Honor father and mother. References: Exodus 20:12; Deuteronomy 5:16.
+- Do not strike father or mother. Reference: Exodus 21:15.
+- Do not curse father or mother. Reference: Exodus 21:17.
+- Do not uncover the nakedness of close relatives. Reference: Leviticus 18.
+- Do not commit adultery. References: Exodus 20:14; Deuteronomy 5:18.
+- Do not lie with your neighbor's wife. Reference: Leviticus 18:20.
+- Do not lie with a male as with a woman. Reference: Leviticus 18:22.
+- Do not lie with an animal. Reference: Leviticus 18:23.
+- A woman must not stand before an animal to mate with it. Reference: Leviticus 18:23.
+- Do not give offspring to Molech. Reference: Leviticus 18:21.
+- Do not marry a woman and her mother. Reference: Leviticus 20:14.
+- Follow the accused bride case procedure. Reference: Deuteronomy 22:13-21.
+- Follow the betrothed virgin violation case procedure. Reference: Deuteronomy 22:23-27.
+- Follow the unbetrothed virgin violation case procedure. Reference: Deuteronomy 22:28-29.
+- Do not take your father's wife. Reference: Deuteronomy 22:30.
+- Do not remarry a former wife after she became another man's wife. Reference: Deuteronomy 24:1-4.
+- Perform levirate marriage in the stated brother-childless case. Reference: Deuteronomy 25:5-6.
+- Perform the shoe-removal procedure if levirate duty is refused. Reference: Deuteronomy 25:7-10.
+- A newly married man must not go out with the army or be charged with public duty for one year. Reference: Deuteronomy 24:5.
+
+
+Servants, Captives, And Vulnerable People
+-----------------------------------------
+- Release a Hebrew servant in the seventh year. Reference: Exodus 21:2; Deuteronomy 15:12.
+- Do not send the released servant away empty. Reference: Deuteronomy 15:13.
+- Furnish the released servant from flock, threshing floor, and winepress. Reference: Deuteronomy 15:14.
+- If servant chooses to remain, perform the ear-piercing procedure. Reference: Exodus 21:5-6; Deuteronomy 15:16-17.
+- Do not rule over a poor brother ruthlessly. Reference: Leviticus 25:39-43.
+- Redeem a poor brother sold to a stranger according to Torah. Reference: Leviticus 25:47-54.
+- Do not return a runaway slave to his master. Reference: Deuteronomy 23:15-16.
+- Let the runaway slave dwell where he chooses among you. Reference: Deuteronomy 23:16.
+- Do not oppress the stranger. References: Exodus 22:21; 23:9.
+- Love the stranger. Reference: Deuteronomy 10:19.
+- Do not afflict widow or orphan. Reference: Exodus 22:22.
+- Give justice to stranger, orphan, and widow. Reference: Deuteronomy 24:17.
+- Leave forgotten sheaf for stranger, orphan, and widow. Reference: Deuteronomy 24:19.
+- Leave olive and grape gleanings for stranger, orphan, and widow. Reference: Deuteronomy 24:20-21.
+- Follow the captive woman procedure before marriage. Reference: Deuteronomy 21:10-14.
+- Do not sell the captive woman if released. Reference: Deuteronomy 21:14.
+- Do not treat the captive woman as a slave after humbling her. Reference: Deuteronomy 21:14.
+
+
+Kings, War, And National Leadership
+-----------------------------------
+- Appoint a king only as Torah allows. Reference: Deuteronomy 17:14-15.
+- Do not appoint a foreigner as king over Israel. Reference: Deuteronomy 17:15.
+- King must not multiply horses. Reference: Deuteronomy 17:16.
+- King must not cause the people to return to Egypt for horses. Reference: Deuteronomy 17:16.
+- King must not multiply wives. Reference: Deuteronomy 17:17.
+- King must not greatly multiply silver and gold. Reference: Deuteronomy 17:17.
+- King must write a Torah copy. Reference: Deuteronomy 17:18.
+- King must read Torah all his days. Reference: Deuteronomy 17:19.
+- Offer peace to a city before fighting. Reference: Deuteronomy 20:10.
+- Exempt from battle the man with new house, vineyard, betrothal, or fear. Reference: Deuteronomy 20:5-9.
+- Do not fear enemies in battle when priest gives the Torah exhortation. Reference: Deuteronomy 20:1-4.
+- Do not destroy fruit trees in siege. Reference: Deuteronomy 20:19-20.
+- Keep the war camp clean. Reference: Deuteronomy 23:9-14.
+- Designate a place outside the camp. Reference: Deuteronomy 23:12.
+- Carry a digging tool with your equipment and cover excrement. Reference: Deuteronomy 23:13.
+
+
+Vows, Nazirite, And Special Procedures
+--------------------------------------
+- Keep vows to YHWH. Reference: Numbers 30:2.
+- Do not delay paying vows. Reference: Deuteronomy 23:21-23.
+- A father may annul a young daughter's vow in the stated case. Reference: Numbers 30:3-5.
+- A husband may annul a wife's vow in the stated case. Reference: Numbers 30:6-15.
+- Nazirite must abstain from wine and strong drink. Reference: Numbers 6:3.
+- Nazirite must abstain from grape products. Reference: Numbers 6:4.
+- Nazirite must let hair grow. Reference: Numbers 6:5.
+- Nazirite must not go near a dead body. Reference: Numbers 6:6-7.
+- Nazirite made unclean must follow the reset purification procedure. Reference: Numbers 6:9-12.
+- Nazirite completion requires offerings and shaving procedure. Reference: Numbers 6:13-20.
+- Priests bless Israel with the words YHWH gave. Reference: Numbers 6:22-27.
+- Follow the Sotah jealousy procedure when the stated case arises. Reference: Numbers 5:11-31.
+
+
+Clothing, Mixtures, And Everyday Detail Commands
+------------------------------------------------
+- Do not wear wool and linen woven together. Reference: Deuteronomy 22:11.
+- Do not sow a field with two kinds of seed. Reference: Leviticus 19:19.
+- Do not sow a vineyard with mixed seed. Reference: Deuteronomy 22:9.
+- Do not plow with ox and donkey together. Reference: Deuteronomy 22:10.
+- Do not let livestock breed with another kind. Reference: Leviticus 19:19.
+- Make tassels on the four corners of the garment with which you cover yourself. Reference: Deuteronomy 22:12.
+- Make tassels with a cord of blue to remember the commands. Reference: Numbers 15:37-41.
+- Do not wear what pertains to a man/woman as stated in Torah. Reference: Deuteronomy 22:5.
+- Do not round the side-growth of the head. Reference: Leviticus 19:27.
+- Do not destroy the edge of the beard. Reference: Leviticus 19:27.
+
+
+Items Already Broadly Represented But Worth Splitting Later
+-----------------------------------------------------------
+- Each forbidden relation in Leviticus 18 may need its own exact entry.
+- Each offering type in Leviticus 1-7 may need multiple exact entries.
+- Each priestly defect / service restriction in Leviticus 21 may need exact entries.
+- Each clean/unclean animal class in Leviticus 11 and Deuteronomy 14 may need exact entries.
+- Each appointed-time offering in Numbers 28-29 may need exact entries.
+- Each court penalty should be cataloged as written, then marked system-dependent.
+- Each tithing and firstfruits procedure may need exact entries.
+- Each servant, debt, pledge, and restitution case may need exact entries.
+- Each city-of-refuge condition may need exact entries.
+- Each Nazirite and Sotah procedural detail may need exact entries.

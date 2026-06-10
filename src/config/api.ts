@@ -18,9 +18,23 @@
  * - Future domain/HTTPS deployments
  */
 
-const API_ORIGIN = process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
+const ENV_API_ORIGIN =
+  process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
+const LOCAL_WEB_API_ORIGIN = "http://localhost:3001";
 
-export const API_BASE_URL = API_ORIGIN;
+function getApiOrigin() {
+  if (typeof window !== "undefined") {
+    const hostname = window.location?.hostname;
+
+    if (hostname === "localhost" || hostname === "127.0.0.1") {
+      return LOCAL_WEB_API_ORIGIN;
+    }
+  }
+
+  return ENV_API_ORIGIN;
+}
+
+export const API_BASE_URL = getApiOrigin();
 
 /**
  * Builds a full API URL from a relative path.

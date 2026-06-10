@@ -13,13 +13,11 @@ const serverRoot = path.resolve(__dirname, "../..");
 const prologEntry = path.join(serverRoot, "prolog", "api.pl");
 const safeAtomPattern = /^[a-z][a-z0-9_]*$/;
 
-export type CommandAnswer = {
-  question: string;
-  answer: "yes" | "no";
-};
-
-type EvaluateBody = {
-  answers?: CommandAnswer[];
+export type CommandResourceFilters = {
+  category?: string;
+  fact?: string;
+  facts?: string[];
+  appliesIf?: string;
 };
 
 export function assertSafeAtom(value: string, fieldName: string): void {
@@ -28,7 +26,33 @@ export function assertSafeAtom(value: string, fieldName: string): void {
   }
 }
 
-export async function listCommandResources() {
+export async function listCommandResources(
+  filters: CommandResourceFilters = {}
+) {
+  if (filters.category) {
+    assertSafeAtom(filters.category, "category");
+    return runPrologJson(`api_commands_by_category_json(${filters.category})`);
+  }
+
+  if (filters.fact) {
+    assertSafeAtom(filters.fact, "fact");
+    return runPrologJson(`api_commands_by_fact_json(${filters.fact})`);
+  }
+
+  if (filters.facts?.length) {
+    filters.facts.forEach((fact) => assertSafeAtom(fact, "facts"));
+    return runPrologJson(
+      `api_commands_by_facts_json(${toPrologList(filters.facts)})`
+    );
+  }
+
+  if (filters.appliesIf) {
+    assertSafeAtom(filters.appliesIf, "appliesIf");
+    return runPrologJson(
+      `api_commands_by_applicability_json(${filters.appliesIf})`
+    );
+  }
+
   return runPrologJson("api_commands_json");
 }
 
@@ -38,17 +62,64 @@ export async function getCommandResource(commandKey: string) {
   return runPrologJson(`api_command_json(${commandKey})`);
 }
 
-export async function evaluateCommandResource(commandKey: string, body: unknown) {
-  assertSafeAtom(commandKey, "commandKey");
+export async function getCommandResourceCategories() {
+  return runPrologJson("api_command_categories_json");
+}
 
-  const answers = normalizeAnswers(body);
-  const prologAnswers = `[${answers
-    .map(({ question, answer }) => `answer(${question}, ${answer})`)
-    .join(",")}]`;
+export async function getCommandResourcesGroupedByCategory() {
+  return runPrologJson("api_commands_grouped_by_category_json");
+}
 
-  return runPrologJson(
-    `api_evaluate_command_json(${commandKey}, ${prologAnswers})`
-  );
+export async function getRandomCommandResourceCategory() {
+  return runPrologJson("api_random_category_json");
+}
+
+export async function getRandomCommandResourceInRandomCategory() {
+  return runPrologJson("api_random_command_in_random_category_json");
+}
+
+export async function getCommandResourceFacts() {
+  return runPrologJson("api_command_facts_json");
+}
+
+export async function getCommandResourceApplicability() {
+  return runPrologJson("api_command_applicability_json");
+}
+
+export async function getRandomCommandResource(
+  filters: CommandResourceFilters = {}
+) {
+  if (filters.category) {
+    assertSafeAtom(filters.category, "category");
+    return runPrologJson(
+      `api_random_command_by_category_json(${filters.category})`
+    );
+  }
+
+  if (filters.fact) {
+    assertSafeAtom(filters.fact, "fact");
+    return runPrologJson(`api_random_command_by_fact_json(${filters.fact})`);
+  }
+
+  if (filters.facts?.length) {
+    filters.facts.forEach((fact) => assertSafeAtom(fact, "facts"));
+    return runPrologJson(
+      `api_random_command_by_facts_json(${toPrologList(filters.facts)})`
+    );
+  }
+
+  if (filters.appliesIf) {
+    assertSafeAtom(filters.appliesIf, "appliesIf");
+    return runPrologJson(
+      `api_random_command_by_applicability_json(${filters.appliesIf})`
+    );
+  }
+
+  return runPrologJson("api_random_command_json");
+}
+
+function toPrologList(values: string[]) {
+  return `[${values.join(",")}]`;
 }
 
 async function runPrologJson<T>(goal: string): Promise<T> {
@@ -65,23 +136,4 @@ async function runPrologJson<T>(goal: string): Promise<T> {
   }
 
   return JSON.parse(stdout) as T;
-}
-
-function normalizeAnswers(body: unknown): CommandAnswer[] {
-  const parsedBody = body as EvaluateBody;
-  const answers = parsedBody.answers ?? [];
-
-  if (!Array.isArray(answers)) {
-    throw new Error("answers must be an array.");
-  }
-
-  return answers.map((answer) => {
-    assertSafeAtom(answer.question, "question");
-
-    if (answer.answer !== "yes" && answer.answer !== "no") {
-      throw new Error("answer must be yes or no.");
-    }
-
-    return answer;
-  });
 }

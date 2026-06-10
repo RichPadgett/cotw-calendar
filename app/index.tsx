@@ -6,18 +6,26 @@
 import { useEffect, useRef, useState } from "react";
 import {
   Alert,
+  Image,
+  ImageSourcePropType,
   Platform,
   Pressable,
   ScrollView,
   Text,
+  useWindowDimensions,
   View,
 } from "react-native";
+
+import { MaterialIcons } from "@expo/vector-icons";
 
 import AppHeader from "../src/components/calendar/AppHeader";
 import DayDetailModal from "../src/components/calendar/DayDetailModal";
 import YearView from "../src/components/calendar/YearView";
 import YearWheelView from "../src/components/calendar/YearWheelView";
-import CommandExplorerView from "../src/components/commands/CommandExplorerView";
+import CommandExplorerView, {
+  type CommandHeaderCommand,
+  type CommandNavigationState,
+} from "../src/components/commands/CommandExplorerView";
 import WelcomeScreen from "../src/components/onboarding/WelcomeScreen";
 
 import { buildEnochYear } from "../src/engine/buildEnochYear";
@@ -35,12 +43,18 @@ const YEAR_VIEW_TOP_OFFSET = 685;
 type AppTab = "calendar" | "timeline" | "commands";
 
 export default function HomeScreen() {
+  const { height: viewportHeight } = useWindowDimensions();
   const scrollViewRef = useRef<ScrollView>(null);
   const monthOffsetsRef = useRef<Record<number, number>>({});
+  const currentScrollYRef = useRef(0);
 
   const [visibleEnochYear, setVisibleEnochYear] = useState(2026);
   const [activeMonthNumber, setActiveMonthNumber] = useState(1);
   const [activeTab, setActiveTab] = useState<AppTab>("calendar");
+  const [selectedCommandHeader, setSelectedCommandHeader] =
+    useState<CommandHeaderCommand | null>(null);
+  const [commandNavigation, setCommandNavigation] =
+    useState<CommandNavigationState | null>(null);
 
   const [yearNotices, setYearNotices] = useState<any[]>([]);
   const [selectedNode, setSelectedNode] = useState<CalendarNode | null>(null);
@@ -385,9 +399,11 @@ export default function HomeScreen() {
   }
 
   function handleScroll(event: any) {
+    currentScrollYRef.current = event.nativeEvent.contentOffset.y;
+
     if (activeTab !== "calendar") return;
 
-    const scrollY = event.nativeEvent.contentOffset.y;
+    const scrollY = currentScrollYRef.current;
 
     const activeMonth = Object.entries(monthOffsetsRef.current)
       .filter(([, y]) => y <= scrollY + 180)
@@ -409,6 +425,19 @@ export default function HomeScreen() {
     });
 
     setActiveMonthNumber(monthNumber);
+  }
+
+  function centerMobileSelectedCommand({
+    pageY,
+    height,
+  }: {
+    pageY: number;
+    height: number;
+  }) {
+    scrollViewRef.current?.scrollTo({
+      y: Math.max(0, currentScrollYRef.current + pageY - viewportHeight / 2 + height / 2),
+      animated: true,
+    });
   }
 
   function goPreviousYear() {
@@ -497,27 +526,40 @@ export default function HomeScreen() {
             paddingBottom: 12,
           }}
         >
-          <AppHeader
-            month={currentMonth}
-            todayNode={todayNode}
-            upcomingShabbatNode={upcomingShabbatNode}
-            gregorianLabel={`${config.enochYear} · Starts ${config.startsOnGregorianDate}`}
-            onPreviousMonth={goPreviousYear}
-            onNextMonth={goNextYear}
-            onChangeGroup={confirmChangeGroup}
-            onPressToday={() => {
-              if (todayNode) {
-                openDay(todayNode);
-              }
-            }}
-            onPressUpcomingShabbat={() => {
-              if (upcomingShabbatNode) {
-                openDay(upcomingShabbatNode);
-              }
-            }}
-          />
+          {activeTab === "calendar" && (
+            <AppHeader
+              month={currentMonth}
+              todayNode={todayNode}
+              upcomingShabbatNode={upcomingShabbatNode}
+              gregorianLabel={`${config.enochYear} · Starts ${config.startsOnGregorianDate}`}
+              onPreviousMonth={goPreviousYear}
+              onNextMonth={goNextYear}
+              onChangeGroup={confirmChangeGroup}
+              onPressToday={() => {
+                if (todayNode) {
+                  openDay(todayNode);
+                }
+              }}
+              onPressUpcomingShabbat={() => {
+                if (upcomingShabbatNode) {
+                  openDay(upcomingShabbatNode);
+                }
+              }}
+            />
+          )}
 
-          <TabSelector activeTab={activeTab} onChangeTab={setActiveTab} />
+          {activeTab === "commands" && (
+            <CommandStickyHeader
+              command={selectedCommandHeader}
+              navigation={commandNavigation}
+            />
+          )}
+
+          <TabSelector
+            activeTab={activeTab}
+            onChangeTab={setActiveTab}
+            hasCalendarHeader={activeTab === "calendar" || activeTab === "commands"}
+          />
         </View>
 
         {activeTab === "calendar" && (
@@ -540,7 +582,13 @@ export default function HomeScreen() {
 
         {activeTab === "timeline" && <TimelinePlaceholder />}
 
-        {activeTab === "commands" && <CommandExplorerView />}
+        {activeTab === "commands" && (
+          <CommandExplorerView
+            onSelectedCommandChange={setSelectedCommandHeader}
+            onNavigationStateChange={setCommandNavigation}
+            onMobileSelectedCommandLayout={centerMobileSelectedCommand}
+          />
+        )}
       </ScrollView>
 
       {activeTab === "calendar" && (
@@ -571,9 +619,11 @@ export default function HomeScreen() {
 function TabSelector({
   activeTab,
   onChangeTab,
+  hasCalendarHeader,
 }: {
   activeTab: AppTab;
   onChangeTab: (tab: AppTab) => void;
+  hasCalendarHeader: boolean;
 }) {
   const tabs: { id: AppTab; label: string }[] = [
     { id: "calendar", label: "Calendar" },
@@ -584,7 +634,7 @@ function TabSelector({
   return (
     <View
       style={{
-        marginTop: 12,
+        marginTop: hasCalendarHeader ? 12 : 0,
         flexDirection: "row",
         gap: 6,
         padding: 4,
@@ -627,6 +677,209 @@ function TabSelector({
       })}
     </View>
   );
+}
+
+function CommandStickyHeader({
+  command,
+  navigation,
+}: {
+  command: CommandHeaderCommand | null;
+  navigation: CommandNavigationState | null;
+}) {
+  const commandCategory = command?.categories?.[0] ?? null;
+  const categoryLabel = commandCategory
+    ? formatCommandCategoryLabel(commandCategory)
+    : null;
+  const categoryIcon = getCommandCategoryIcon(commandCategory);
+
+  return (
+    <View
+      style={{
+        padding: 16,
+        borderRadius: 20,
+        backgroundColor: "#f9fafb",
+        borderWidth: 1,
+        borderColor: "#e5e7eb",
+      }}
+    >
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <View style={{ flex: 1 }}>
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.72}
+            style={{
+              fontSize: 34,
+              fontWeight: "900",
+              color: "#081a33",
+              letterSpacing: 4.5,
+            }}
+          >
+            Torah
+          </Text>
+
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.75}
+            style={{
+              marginTop: -2,
+              fontSize: 18,
+              fontWeight: "800",
+              color: "#081a33",
+              letterSpacing: 2.5,
+              textTransform: "uppercase",
+            }}
+          >
+            Command Study
+          </Text>
+        </View>
+
+        <View
+          style={{
+            flexDirection: "row",
+            gap: 8,
+            flexShrink: 0,
+          }}
+        >
+          <Pressable
+            onPress={navigation?.goPrevious}
+            disabled={!navigation?.canGoPrevious}
+            style={({ pressed }) => [
+              {
+                width: 36,
+                height: 36,
+                borderRadius: 18,
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "#e5e7eb",
+                opacity: navigation?.canGoPrevious ? 1 : 0.38,
+              },
+              pressed && { opacity: 0.78 },
+            ]}
+          >
+            <MaterialIcons name="chevron-left" size={28} />
+          </Pressable>
+
+          <Pressable
+            onPress={navigation?.goNext}
+            disabled={!navigation?.canGoNext}
+            style={({ pressed }) => [
+              {
+                width: 36,
+                height: 36,
+                borderRadius: 18,
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "#e5e7eb",
+                opacity: navigation?.canGoNext ? 1 : 0.38,
+              },
+              pressed && { opacity: 0.78 },
+            ]}
+          >
+            <MaterialIcons name="chevron-right" size={28} />
+          </Pressable>
+        </View>
+      </View>
+
+      <View
+        style={{
+          marginTop: 16,
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 12,
+        }}
+      >
+        {categoryIcon ? (
+          <Image
+            source={categoryIcon}
+            style={{
+              width: 56,
+              height: 56,
+            }}
+            resizeMode="contain"
+          />
+        ) : null}
+
+        <View
+          style={{
+            flex: 1,
+          }}
+        >
+          {categoryLabel ? (
+            <Text
+              numberOfLines={1}
+              style={{
+                fontSize: 18,
+                lineHeight: 23,
+                fontWeight: "900",
+                color: "#081a33",
+                textTransform: "capitalize",
+              }}
+            >
+              {categoryLabel}
+            </Text>
+          ) : (
+            <Text
+              numberOfLines={1}
+              style={{
+                fontSize: 18,
+                lineHeight: 23,
+                fontWeight: "900",
+                color: "#081a33",
+              }}
+            >
+              Select a category
+            </Text>
+          )}
+        </View>
+      </View>
+    </View>
+  );
+}
+
+const commandCategoryIcons: Record<string, ImageSourcePropType> = {
+  animal_welfare: require("../assets/command/icons/animal_welfare.png"),
+  appointed_times: require("../assets/command/icons/appointed_times.png"),
+  atonement: require("../assets/command/icons/atonement.png"),
+  clean_purity: require("../assets/command/icons/clean_purity.png"),
+  command_remembrance: require("../assets/command/icons/command_remembrance.png"),
+  community_care: require("../assets/command/icons/community_care.png"),
+  family_household: require("../assets/command/icons/family_household.png"),
+  firstfruits_omer: require("../assets/command/icons/firstfruits_omer.png"),
+  justice_neighbor: require("../assets/command/icons/justice_neighbor.png"),
+  leadership_warfare: require("../assets/command/icons/leadership_warfare.png"),
+  marriage_household: require("../assets/command/icons/marriage_household.png"),
+  mixed_kinds: require("../assets/command/icons/mixed_kinds.png"),
+  name_vows_remembrance: require("../assets/command/icons/name_vows_remembrance.png"),
+  offerings: require("../assets/command/icons/offerings.png"),
+  passover_unleavened_bread: require("../assets/command/icons/passover_unleavened_bread.png"),
+  priestly_holiness: require("../assets/command/icons/priestly_holiness.png"),
+  property_economics_land: require("../assets/command/icons/property_economics_land.png"),
+  refuge_court_procedure: require("../assets/command/icons/refuge_court_procedure.png"),
+  sabbath: require("../assets/command/icons/sabbath.png"),
+  sacred_assembly: require("../assets/command/icons/sacred_assembly.png"),
+  servants_release: require("../assets/command/icons/servants_release.png"),
+  tabernacles: require("../assets/command/icons/tabernacles.png"),
+  torah_teaching: require("../assets/command/icons/torah_teaching.png"),
+  vows_separation: require("../assets/command/icons/vows_separation.png"),
+  worship_idolatry: require("../assets/command/icons/worship_idolatry.png"),
+};
+
+function getCommandCategoryIcon(category: string | null) {
+  if (!category) return null;
+
+  return commandCategoryIcons[category] ?? null;
+}
+
+function formatCommandCategoryLabel(category: string) {
+  return category.replace(/_/g, " ");
 }
 
 function TimelinePlaceholder() {

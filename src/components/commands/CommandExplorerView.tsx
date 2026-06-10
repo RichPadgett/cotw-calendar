@@ -1,99 +1,198 @@
 /*
  * File: src/components/commands/CommandExplorerView.tsx
- * Purpose: Simple command-resource explorer for visually walking Prolog command flows.
+ * Purpose: Command study view backed by the Prolog command knowledge base.
  */
 
-import { useEffect, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  Platform,
+  Pressable,
+  Text,
+  TextInput,
+  useWindowDimensions,
+  View,
+} from "react-native";
 
 import { apiUrl } from "../../config/api";
 
 type CommandSummary = {
   key: string;
   title: string;
+  categories?: string[];
 };
 
-type CommandQuestion = {
+type CommandCategoryGroup = {
   key: string;
-  title: string;
-  description: string;
-};
-
-type CommandRequirement = {
-  key: string;
-  title: string;
-  description: string;
+  commands: CommandSummary[];
 };
 
 type CommandResource = {
   key: string;
   title?: string;
-  normalObedience?: string;
-  canObeyToday: boolean;
-  firstQuestion?: CommandQuestion | null;
-  nextQuestion?: CommandQuestion | null;
-  flowComplete?: boolean;
+  requirement?: string | null;
+  reminderText?: string | null;
+  categories?: string[];
+  facts?: string[];
+  appliesIf?: string[];
   embodies?: string[];
-  blockedRequirements?: CommandRequirement[];
   scriptureReferences?: string[];
   studyNotes?: string[];
+  sourceTerms?: SourceTerm[];
+  translationNotes?: string[];
+  clarificationNotes?: string[];
 };
 
-type CommandAnswer = {
-  question: string;
-  answer: "yes" | "no";
+export type CommandHeaderCommand = Pick<
+  CommandResource,
+  "key" | "title" | "requirement" | "scriptureReferences" | "categories"
+>;
+
+export type CommandNavigationState = {
+  canGoPrevious: boolean;
+  canGoNext: boolean;
+  goPrevious: () => void;
+  goNext: () => void;
+};
+
+type SourceTerm = {
+  language: string;
+  term: string;
+  gloss: string;
 };
 
 type CommandListResponse = {
   commands: CommandSummary[];
 };
 
-export default function CommandExplorerView() {
-  const [commands, setCommands] = useState<CommandSummary[]>([]);
+type RandomCommandResponse = {
+  command: CommandResource | null;
+};
+
+type Props = {
+  onSelectedCommandChange?: (command: CommandHeaderCommand | null) => void;
+  onNavigationStateChange?: (navigation: CommandNavigationState) => void;
+  onMobileSelectedCommandLayout?: (layout: {
+    pageY: number;
+    height: number;
+  }) => void;
+};
+
+export default function CommandExplorerView({
+  onSelectedCommandChange,
+  onNavigationStateChange,
+  onMobileSelectedCommandLayout,
+}: Props) {
+  const { width } = useWindowDimensions();
+  const selectedCommandRef = useRef<any>(null);
+  const shouldCenterSelectedCommandRef = useRef(false);
+  const [categoryGroups, setCategoryGroups] = useState<CommandCategoryGroup[]>(
+    []
+  );
+  const [expandedCategories, setExpandedCategories] = useState<
+    Record<string, boolean>
+  >({});
   const [selectedCommandKey, setSelectedCommandKey] = useState<string | null>(
     null
   );
   const [command, setCommand] = useState<CommandResource | null>(null);
-  const [answers, setAnswers] = useState<CommandAnswer[]>([]);
+  const [searchText, setSearchText] = useState("");
+  const [isMobileListOpen, setIsMobileListOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSelectingRandom, setIsSelectingRandom] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    loadCommands();
+    loadCommandGroups();
   }, []);
 
-  async function loadCommands() {
+  const normalizedSearch = searchText.trim().toLowerCase();
+
+  const visibleGroups = useMemo(() => {
+    if (!normalizedSearch) return categoryGroups;
+
+    return categoryGroups
+      .map((group) => ({
+        ...group,
+        commands: group.commands.filter((item) =>
+          [item.title, item.key, group.key, ...(item.categories ?? [])]
+            .join(" ")
+            .toLowerCase()
+            .includes(normalizedSearch)
+        ),
+      }))
+      .filter((group) => group.commands.length > 0);
+  }, [categoryGroups, normalizedSearch]);
+
+  const commandCount = useMemo(
+    () => categoryGroups.reduce((total, group) => total + group.commands.length, 0),
+    [categoryGroups]
+  );
+  const usesSplitPane = width >= 680;
+  const visibleCommands = useMemo(
+    () => visibleGroups.flatMap((group) => group.commands),
+    [visibleGroups]
+  );
+  const selectedCommandIndex = selectedCommandKey
+    ? visibleCommands.findIndex((item) => item.key === selectedCommandKey)
+    : -1;
+
+  useEffect(() => {
+    onNavigationStateChange?.({
+      canGoPrevious: selectedCommandIndex > 0,
+      canGoNext:
+        selectedCommandIndex >= 0 &&
+        selectedCommandIndex < visibleCommands.length - 1,
+      goPrevious: selectPreviousCommand,
+      goNext: selectNextCommand,
+    });
+  }, [onNavigationStateChange, selectedCommandIndex, visibleCommands]);
+
+  async function loadCommandGroups() {
     try {
       setIsLoading(true);
       setErrorMessage(null);
 
-      const response = await fetch(apiUrl("/command-resources"));
+      const groups = await loadGroupedCommands();
+      const firstGroup = groups[0];
+      const firstCommand = firstGroup?.commands[0];
 
-      if (!response.ok) {
-        throw new Error("Failed to load command resources.");
-      }
+      setCategoryGroups(groups);
+      setExpandedCategories(firstGroup ? { [firstGroup.key]: true } : {});
 
-      const data: CommandListResponse = await response.json();
-
-      setCommands(data.commands);
-
-      if (data.commands[0]) {
-        await selectCommand(data.commands[0].key);
+      if (firstCommand) {
+        await selectCommand(firstCommand.key, firstGroup.key);
       }
     } catch (error) {
-      console.log("Failed to load command resources", error);
+      console.log("Failed to load command groups", error);
       setErrorMessage("Command resources could not be loaded.");
     } finally {
       setIsLoading(false);
     }
   }
 
-  async function selectCommand(commandKey: string) {
+  async function loadGroupedCommands() {
+    const listResponse = await fetch(apiUrl("/command-resources"));
+
+    if (!listResponse.ok) {
+      throw new Error("Failed to load command resources.");
+    }
+
+    const data: CommandListResponse = await listResponse.json();
+    return groupCommandsByCategory(data.commands);
+  }
+
+  async function selectCommand(commandKey: string, categoryKey?: string) {
     try {
       setSelectedCommandKey(commandKey);
-      setAnswers([]);
       setCommand(null);
       setErrorMessage(null);
+
+      if (categoryKey) {
+        setExpandedCategories((current) => ({
+          ...current,
+          [categoryKey]: true,
+        }));
+      }
 
       const response = await fetch(apiUrl(`/command-resources/${commandKey}`));
 
@@ -103,403 +202,404 @@ export default function CommandExplorerView() {
 
       const data: CommandResource = await response.json();
       setCommand(data);
+      onSelectedCommandChange?.(data);
+
+      if (!usesSplitPane) {
+        collapseMobileList();
+      }
     } catch (error) {
       console.log("Failed to select command resource", error);
       setErrorMessage("This command resource could not be loaded.");
     }
   }
 
-  async function answerQuestion(answer: "yes" | "no") {
-    const question = command?.nextQuestion ?? command?.firstQuestion;
-
-    if (!selectedCommandKey || !question) return;
-
-    const nextAnswers = [
-      ...answers,
-      {
-        question: question.key,
-        answer,
-      },
-    ];
-
+  async function selectRandomCommand() {
     try {
-      setAnswers(nextAnswers);
+      setIsSelectingRandom(true);
       setErrorMessage(null);
 
       const response = await fetch(
-        apiUrl(`/command-resources/${selectedCommandKey}/evaluate`),
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            answers: nextAnswers,
-          }),
-        }
+        apiUrl("/command-resources/random?facts=reminder_eligible,scripture_backed")
       );
 
       if (!response.ok) {
-        throw new Error("Failed to evaluate command resource.");
+        throw new Error("Failed to load random command resource.");
       }
 
-      const data: CommandResource = await response.json();
-      setCommand((current) => ({
-        ...current,
-        ...data,
-        title: current?.title,
-        normalObedience: current?.normalObedience,
-      }));
+      const data: RandomCommandResponse = await response.json();
+
+      if (!data.command) {
+        setErrorMessage("No matching command resource was found.");
+        return;
+      }
+
+      setCommand(data.command);
+      setSelectedCommandKey(data.command.key);
+      onSelectedCommandChange?.(data.command);
+
+      if (!usesSplitPane) {
+        collapseMobileList();
+      }
+
+      const firstCategory = data.command.categories?.[0];
+      if (firstCategory) {
+        setExpandedCategories((current) => ({
+          ...current,
+          [firstCategory]: true,
+        }));
+      }
     } catch (error) {
-      console.log("Failed to evaluate command resource", error);
-      setAnswers(answers);
-      setErrorMessage("This answer could not be evaluated.");
+      console.log("Failed to select random command resource", error);
+      setErrorMessage("A random command resource could not be loaded.");
+    } finally {
+      setIsSelectingRandom(false);
     }
   }
 
-  async function resetFlow() {
-    if (!selectedCommandKey) return;
-
-    await selectCommand(selectedCommandKey);
+  function toggleCategory(categoryKey: string) {
+    setExpandedCategories((current) => ({
+      ...current,
+      [categoryKey]: !current[categoryKey],
+    }));
   }
 
-  const activeQuestion = command?.nextQuestion ?? command?.firstQuestion;
-  const flowComplete = command?.flowComplete === true || !activeQuestion;
+  function selectPreviousCommand() {
+    const previousCommand = visibleCommands[selectedCommandIndex - 1];
+    if (!previousCommand) return;
+
+    selectCommand(previousCommand.key, previousCommand.categories?.[0]);
+  }
+
+  function selectNextCommand() {
+    const nextCommand = visibleCommands[selectedCommandIndex + 1];
+    if (!nextCommand) return;
+
+    selectCommand(nextCommand.key, nextCommand.categories?.[0]);
+  }
+
+  function collapseMobileList() {
+    if (!isMobileListOpen) return;
+
+    setIsMobileListOpen(false);
+  }
+
+  function toggleMobileList() {
+    if (isMobileListOpen) {
+      collapseMobileList();
+      return;
+    }
+
+    shouldCenterSelectedCommandRef.current = true;
+    setIsMobileListOpen(true);
+  }
+
+  function handleListPaneLayout() {
+    if (!shouldCenterSelectedCommandRef.current) return;
+
+    shouldCenterSelectedCommandRef.current = false;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        selectedCommandRef.current?.measure?.(
+          (
+            _x: number,
+            _y: number,
+            _width: number,
+            height: number,
+            _pageX: number,
+            pageY: number
+          ) => {
+            if (typeof pageY !== "number" || typeof height !== "number") return;
+
+            onMobileSelectedCommandLayout?.({ pageY, height });
+          }
+        );
+      });
+    });
+  }
+
+  const shouldShowMobileListToggle = !usesSplitPane && Boolean(command);
+  const shouldShowListPane = usesSplitPane || !command || isMobileListOpen;
 
   return (
-    <View style={{ gap: 16 }}>
-      <View
-        style={{
-          padding: 16,
-          borderRadius: 20,
-          backgroundColor: "#f9fafb",
-          borderWidth: 1,
-          borderColor: "#e5e7eb",
-        }}
-      >
-        <Text
-          style={{
-            fontSize: 24,
-            fontWeight: "900",
-            color: "#081a33",
-          }}
-        >
-          Command Explorer
-        </Text>
-
-        <Text
-          style={{
-            marginTop: 6,
-            fontSize: 14,
-            lineHeight: 20,
-            color: "#4b5563",
-          }}
-        >
-          Walk through each command resource and see the final answer from the
-          Prolog engine.
-        </Text>
-      </View>
-
-      {errorMessage && (
-        <View
-          style={{
-            padding: 12,
-            borderRadius: 14,
-            backgroundColor: "#fef2f2",
-            borderWidth: 1,
-            borderColor: "#fecaca",
-          }}
-        >
-          <Text style={{ color: "#991b1b", fontWeight: "800" }}>
-            {errorMessage}
-          </Text>
-        </View>
-      )}
-
-      <View style={{ gap: 8 }}>
-        <Text
-          style={{
-            fontSize: 13,
-            fontWeight: "900",
-            color: "#374151",
-            textTransform: "uppercase",
-          }}
-        >
-          Commands
-        </Text>
-
-        {isLoading ? (
-          <Text style={{ color: "#6b7280" }}>Loading commands...</Text>
-        ) : (
-          <View style={{ gap: 8 }}>
-            {commands.map((item) => {
-              const isSelected = item.key === selectedCommandKey;
-
-              return (
-                <Pressable
-                  key={item.key}
-                  onPress={() => selectCommand(item.key)}
-                  style={{
-                    padding: 12,
-                    borderRadius: 14,
-                    backgroundColor: isSelected ? "#eff6ff" : "#ffffff",
-                    borderWidth: 1,
-                    borderColor: isSelected ? "#93c5fd" : "#e5e7eb",
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      fontWeight: "900",
-                      color: "#111827",
-                    }}
-                  >
-                    {item.title}
-                  </Text>
-                  <Text
-                    style={{
-                      marginTop: 2,
-                      fontSize: 12,
-                      color: "#6b7280",
-                    }}
-                  >
-                    {item.key}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
-        )}
-      </View>
-
-      {command && (
-        <View
-          style={{
-            padding: 16,
-            borderRadius: 20,
-            backgroundColor: "#ffffff",
-            borderWidth: 1,
-            borderColor: "#e5e7eb",
-            gap: 14,
-          }}
-        >
-          <View>
-            <Text
-              style={{
-                fontSize: 20,
-                fontWeight: "900",
-                color: "#081a33",
-              }}
-            >
-              {command.title ?? command.key}
-            </Text>
-
-            {command.normalObedience && (
-              <Text
-                style={{
-                  marginTop: 6,
-                  fontSize: 14,
-                  lineHeight: 20,
-                  color: "#374151",
-                }}
-              >
-                {command.normalObedience}
-              </Text>
-            )}
-          </View>
-
-          <View
-            style={{
-              padding: 12,
-              borderRadius: 16,
-              backgroundColor: command.canObeyToday ? "#ecfdf5" : "#fff7ed",
-              borderWidth: 1,
-              borderColor: command.canObeyToday ? "#bbf7d0" : "#fed7aa",
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 13,
-                fontWeight: "900",
-                color: command.canObeyToday ? "#166534" : "#9a3412",
-              }}
-            >
-              {command.canObeyToday
-                ? "Can obey today"
-                : "Cannot fully obey today"}
-            </Text>
-          </View>
-
-          {activeQuestion && !flowComplete ? (
-            <View
-              style={{
-                padding: 14,
-                borderRadius: 16,
-                backgroundColor: "#f8fafc",
-                borderWidth: 1,
-                borderColor: "#e2e8f0",
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 12,
-                  fontWeight: "900",
-                  color: "#64748b",
-                  textTransform: "uppercase",
-                }}
-              >
-                Next Question
-              </Text>
-
-              <Text
-                style={{
-                  marginTop: 6,
-                  fontSize: 17,
-                  fontWeight: "900",
-                  color: "#111827",
-                }}
-              >
-                {activeQuestion.title}
-              </Text>
-
-              <Text
-                style={{
-                  marginTop: 6,
-                  fontSize: 14,
-                  lineHeight: 20,
-                  color: "#475569",
-                }}
-              >
-                {activeQuestion.description}
-              </Text>
-
-              <View style={{ marginTop: 12, flexDirection: "row", gap: 8 }}>
-                <AnswerButton
-                  label="Yes"
-                  onPress={() => answerQuestion("yes")}
-                />
-                <AnswerButton label="No" onPress={() => answerQuestion("no")} />
-              </View>
-            </View>
+    <View style={{ gap: 14 }}>
+      <View style={[styles.studyGrid, usesSplitPane && styles.studyGridSplit]}>
+        <View style={[styles.detailPanel, usesSplitPane && styles.detailPaneSplit]}>
+          {command ? (
+            <CommandDetail command={command} />
           ) : (
-            <View
-              style={{
-                padding: 14,
-                borderRadius: 16,
-                backgroundColor: "#f8fafc",
-                borderWidth: 1,
-                borderColor: "#e2e8f0",
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 17,
-                  fontWeight: "900",
-                  color: "#111827",
-                }}
-              >
-                Final Answer
-              </Text>
+            <Text style={styles.mutedText}>Select a command.</Text>
+          )}
+        </View>
 
-              <Text
-                style={{
-                  marginTop: 6,
-                  fontSize: 14,
-                  lineHeight: 20,
-                  color: "#475569",
-                }}
-              >
-                The command flow is complete. Review the requirements,
-                references, and notes below.
+        {shouldShowMobileListToggle && (
+          <Pressable
+            onPress={toggleMobileList}
+            style={({ pressed }) => [
+              styles.mobileListToggle,
+              pressed && { backgroundColor: "#e2e8f0" },
+            ]}
+          >
+            <View style={{ flex: 1 }}>
+              <Text style={styles.mobileListToggleTitle}>
+                {isMobileListOpen ? "Hide command list" : "Browse commands"}
+              </Text>
+              <Text style={styles.mobileListToggleMeta}>
+                {categoryGroups.length} categories - {commandCount} entries
               </Text>
             </View>
-          )}
 
-          {answers.length > 0 && (
-            <View style={{ gap: 6 }}>
-              <Text
-                style={{
-                  fontSize: 13,
-                  fontWeight: "900",
-                  color: "#374151",
-                }}
-              >
-                Answers
-              </Text>
+            <Text style={styles.mobileListToggleIcon}>
+              {isMobileListOpen ? "-" : "+"}
+            </Text>
+          </Pressable>
+        )}
 
-              {answers.map((answer, index) => (
-                <Text
-                  key={`${answer.question}-${index}`}
-                  style={{ color: "#4b5563" }}
-                >
-                  {index + 1}. {answer.question}: {answer.answer}
+        {shouldShowListPane && (
+          <View
+            onLayout={handleListPaneLayout}
+            style={[styles.listPane, usesSplitPane && styles.listPaneSplit]}
+          >
+            <View style={styles.commandControls}>
+              <View style={{ flex: 1, minWidth: 210 }}>
+                <Text style={styles.countText}>
+                  {categoryGroups.length} categories - {commandCount} grouped entries
                 </Text>
-              ))}
+
+                <TextInput
+                  value={searchText}
+                  onChangeText={setSearchText}
+                  placeholder="Search commands"
+                  placeholderTextColor="#94a3b8"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  style={styles.searchInput}
+                />
+              </View>
 
               <Pressable
-                onPress={resetFlow}
-                style={{ alignSelf: "flex-start" }}
+                onPress={selectRandomCommand}
+                disabled={isSelectingRandom}
+                style={({ pressed }) => [
+                  styles.randomButton,
+                  pressed && { opacity: 0.82 },
+                  isSelectingRandom && { opacity: 0.65 },
+                ]}
               >
-                <Text style={{ color: "#2563eb", fontWeight: "900" }}>
-                  Reset flow
+                <Text style={styles.randomButtonText}>
+                  {isSelectingRandom ? "Loading..." : "Random"}
                 </Text>
               </Pressable>
             </View>
-          )}
 
-          <DetailList
-            title="Blocked Requirements"
-            items={(command.blockedRequirements ?? []).map(
-              (requirement) =>
-                `${requirement.title}: ${requirement.description}`
+            {errorMessage && (
+              <View style={styles.errorPanel}>
+                <Text style={styles.errorText}>{errorMessage}</Text>
+              </View>
             )}
-            emptyText="No blocked requirements."
-          />
 
-          <DetailList
-            title="Scripture References"
-            items={command.scriptureReferences ?? []}
-            emptyText="No scripture references."
-          />
+            {isLoading ? (
+              <Text style={styles.mutedText}>Loading commands...</Text>
+            ) : visibleGroups.length === 0 ? (
+              <Text style={styles.mutedText}>No commands found.</Text>
+            ) : (
+              visibleGroups.map((group) => {
+                const isExpanded =
+                  Boolean(expandedCategories[group.key]) ||
+                  Boolean(normalizedSearch);
 
-          <DetailList
-            title="Study Notes"
-            items={command.studyNotes ?? []}
-            emptyText="No study notes."
-          />
+                return (
+                  <View key={group.key} style={styles.categorySection}>
+                    <Pressable
+                      onPress={() => toggleCategory(group.key)}
+                      style={({ pressed }) => [
+                        styles.categoryHeader,
+                        pressed && { backgroundColor: "#eef2f7" },
+                      ]}
+                    >
+                      <Text style={styles.categoryTitle}>{formatKey(group.key)}</Text>
+                      <Text style={styles.categoryCount}>{group.commands.length}</Text>
+                    </Pressable>
 
-          <DetailList
-            title="Embodies"
-            items={command.embodies ?? []}
-            emptyText="No embodiment tags."
-          />
-        </View>
-      )}
+                    {isExpanded && (
+                      <View style={styles.commandList}>
+                        {group.commands.map((item) => (
+                          <CommandListItem
+                            key={`${group.key}-${item.key}`}
+                            item={item}
+                            isSelected={item.key === selectedCommandKey}
+                            itemRef={
+                              item.key === selectedCommandKey
+                                ? (node) => {
+                                    selectedCommandRef.current = node;
+                                  }
+                                : undefined
+                            }
+                            onPress={() => selectCommand(item.key, group.key)}
+                          />
+                        ))}
+                      </View>
+                    )}
+                  </View>
+                );
+              })
+            )}
+          </View>
+        )}
+
+      </View>
     </View>
   );
 }
 
-function AnswerButton({
-  label,
+function CommandListItem({
+  item,
+  itemRef,
+  isSelected,
   onPress,
 }: {
-  label: string;
+  item: CommandSummary;
+  itemRef?: (node: any) => void;
+  isSelected: boolean;
   onPress: () => void;
 }) {
   return (
     <Pressable
+      ref={itemRef}
       onPress={onPress}
-      style={{
-        flex: 1,
-        minHeight: 42,
-        borderRadius: 999,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "#081a33",
-      }}
+      style={({ pressed }) => [
+        styles.commandItem,
+        isSelected && styles.commandItemSelected,
+        pressed && { opacity: 0.86 },
+      ]}
     >
-      <Text style={{ color: "#ffffff", fontWeight: "900" }}>{label}</Text>
+      <Text style={styles.commandTitle}>{item.title}</Text>
     </Pressable>
+  );
+}
+
+function CommandDetail({ command }: { command: CommandResource }) {
+  const references = command.scriptureReferences ?? [];
+  const commandTitle = command.title
+    ? formatCommandTitle(command.title, references)
+    : formatKey(command.key);
+  const requirementText = command.requirement;
+  const shouldShowRequirement =
+    Boolean(requirementText) &&
+    requirementText?.trim().toLowerCase() !== commandTitle.trim().toLowerCase();
+
+  return (
+    <View style={{ gap: 16 }}>
+      <View style={styles.commandSummaryBlock}>
+        <Text
+          style={styles.commandSummaryTitle}
+          numberOfLines={3}
+          adjustsFontSizeToFit
+          minimumFontScale={0.78}
+        >
+          {commandTitle}
+        </Text>
+
+        {shouldShowRequirement ? (
+          <Text style={styles.commandSummaryRequirement}>{requirementText}</Text>
+        ) : null}
+
+        {references.length > 0 ? (
+          <View style={styles.referenceWrap}>
+            {references.map((reference) => (
+              <Text key={reference} style={styles.referenceTag}>
+                {reference}
+              </Text>
+            ))}
+          </View>
+        ) : null}
+      </View>
+
+      <DetailList
+        title="Study Notes"
+        items={command.studyNotes ?? []}
+        emptyText="No study notes."
+      />
+
+      <SourceTermList items={command.sourceTerms ?? []} />
+
+      <DetailList
+        title="Translation Notes"
+        items={command.translationNotes ?? []}
+        emptyText="No translation notes."
+      />
+
+      <DetailList
+        title="Clarification"
+        items={command.clarificationNotes ?? []}
+        emptyText="No clarification notes."
+      />
+
+      <DetailTags
+        title="Categories"
+        items={command.categories ?? []}
+        emptyText="No categories."
+      />
+
+      <DetailTags
+        title="Embodies"
+        items={command.embodies ?? []}
+        emptyText="No embodiment tags."
+      />
+
+      <DetailTags
+        title="Facts"
+        items={command.facts ?? []}
+        emptyText="No facts."
+      />
+    </View>
+  );
+}
+
+function SourceTermList({ items }: { items: SourceTerm[] }) {
+  if (items.length === 0) return null;
+
+  return (
+    <View style={{ gap: 8 }}>
+      <SectionTitle title="Source Terms" />
+
+      {items.map((item, index) => (
+        <View key={`${item.language}-${item.term}-${index}`} style={styles.termRow}>
+          <Text style={styles.termTitle}>
+            {formatKey(item.language)} - {item.term}
+          </Text>
+
+          <Text style={styles.termGloss}>{item.gloss}</Text>
+        </View>
+      ))}
+    </View>
+  );
+}
+
+function DetailTags({
+  title,
+  items,
+  emptyText,
+}: {
+  title: string;
+  items: string[];
+  emptyText: string;
+}) {
+  return (
+    <View style={{ gap: 8 }}>
+      <SectionTitle title={title} />
+
+      {items.length === 0 ? (
+        <Text style={styles.mutedText}>{emptyText}</Text>
+      ) : (
+        <View style={styles.tagWrap}>
+          {items.map((item) => (
+            <Text key={`${title}-${item}`} style={styles.tag}>
+              {formatKey(item)}
+            </Text>
+          ))}
+        </View>
+      )}
+    </View>
   );
 }
 
@@ -514,32 +614,352 @@ function DetailList({
 }) {
   return (
     <View style={{ gap: 6 }}>
-      <Text
-        style={{
-          fontSize: 13,
-          fontWeight: "900",
-          color: "#374151",
-        }}
-      >
-        {title}
-      </Text>
+      <SectionTitle title={title} />
 
       {items.length === 0 ? (
-        <Text style={{ color: "#6b7280" }}>{emptyText}</Text>
+        <Text style={styles.mutedText}>{emptyText}</Text>
       ) : (
         items.map((item, index) => (
-          <Text
-            key={`${title}-${index}`}
-            style={{
-              fontSize: 14,
-              lineHeight: 20,
-              color: "#4b5563",
-            }}
-          >
-            {index + 1}. {item}
+          <Text key={`${title}-${index}`} style={styles.listText}>
+            {index + 1}. {formatKey(item)}
           </Text>
         ))
       )}
     </View>
   );
 }
+
+function SectionTitle({ title }: { title: string }) {
+  return <Text style={styles.sectionTitle}>{title}</Text>;
+}
+
+function formatCommandTitle(title: string, references: string[]) {
+  const matchingReference = references.find((reference) =>
+    title.toLowerCase().startsWith(reference.toLowerCase())
+  );
+
+  if (matchingReference) {
+    return title.slice(matchingReference.length).replace(/^\s*[-:]\s*/, "");
+  }
+
+  return title.replace(
+    /^(Gen|Exod|Exo|Lev|Num|Deut|Deu|Genesis|Exodus|Leviticus|Numbers|Deuteronomy)\.?\s+\d+:\d+(?:-\d+)?\s*[-:]\s*/i,
+    ""
+  );
+}
+
+function formatKey(value: string) {
+  return value.replace(/_/g, " ");
+}
+
+function groupCommandsByCategory(commands: CommandSummary[]) {
+  const groupsByKey = new Map<string, CommandSummary[]>();
+
+  commands.forEach((command) => {
+    const categories = command.categories?.length
+      ? command.categories
+      : ["uncategorized"];
+
+    categories.forEach((category) => {
+      const currentCommands = groupsByKey.get(category) ?? [];
+      currentCommands.push(command);
+      groupsByKey.set(category, currentCommands);
+    });
+  });
+
+  return Array.from(groupsByKey.entries())
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([key, categoryCommands]) => ({
+      key,
+      commands: categoryCommands,
+    }));
+}
+
+const styles = {
+  commandControls: {
+    flexDirection: "row" as const,
+    flexWrap: "wrap" as const,
+    alignItems: "center" as const,
+    gap: 12,
+    padding: 16,
+    borderRadius: 8,
+    backgroundColor: "#f8fafc",
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+  },
+  countText: {
+    marginBottom: 8,
+    fontSize: 13,
+    lineHeight: 18,
+    color: "#64748b",
+  },
+  randomButton: {
+    minHeight: 40,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    backgroundColor: "#0f766e",
+  },
+  randomButtonText: {
+    fontSize: 13,
+    fontWeight: "900" as const,
+    color: "#ffffff",
+  },
+  searchInput: {
+    minHeight: 44,
+    paddingHorizontal: 14,
+    borderRadius: 8,
+    backgroundColor: "#ffffff",
+    borderWidth: 1,
+    borderColor: "#cbd5e1",
+    color: "#0f172a",
+    fontSize: 15,
+  },
+  errorPanel: {
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: "#fef2f2",
+    borderWidth: 1,
+    borderColor: "#fecaca",
+  },
+  errorText: {
+    color: "#991b1b",
+    fontWeight: "800" as const,
+  },
+  studyGrid: {
+    gap: 12,
+  },
+  studyGridSplit: {
+    flexDirection: "row" as const,
+    alignItems: "flex-start" as const,
+  },
+  listPane: {
+    gap: 10,
+  },
+  listPaneSplit: {
+    flex: 0.42,
+    minWidth: 250,
+  },
+  mobileListToggle: {
+    minHeight: 56,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#cbd5e1",
+    backgroundColor: "#f8fafc",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "space-between" as const,
+    gap: 12,
+  },
+  mobileListToggleTitle: {
+    fontSize: 14,
+    lineHeight: 18,
+    fontWeight: "900" as const,
+    color: "#0f172a",
+  },
+  mobileListToggleMeta: {
+    marginTop: 2,
+    fontSize: 12,
+    lineHeight: 16,
+    color: "#64748b",
+  },
+  mobileListToggleIcon: {
+    minWidth: 48,
+    textAlign: "right" as const,
+    fontSize: 12,
+    fontWeight: "900" as const,
+    color: "#0f766e",
+    textTransform: "uppercase" as const,
+  },
+  detailPanel: {
+    padding: 16,
+    borderRadius: 8,
+    backgroundColor: "#ffffff",
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+  },
+  detailPaneSplit: {
+    flex: 0.58,
+    minWidth: 300,
+    ...(Platform.OS === "web"
+      ? {
+          position: "sticky" as const,
+          top: 260,
+        }
+      : {}),
+  },
+  categorySection: {
+    borderRadius: 8,
+    overflow: "hidden" as const,
+    backgroundColor: "#ffffff",
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+  },
+  categoryHeader: {
+    minHeight: 46,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "space-between" as const,
+    gap: 10,
+    backgroundColor: "#f8fafc",
+  },
+  categoryTitle: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: "900" as const,
+    color: "#1e293b",
+    textTransform: "capitalize" as const,
+  },
+  categoryCount: {
+    minWidth: 34,
+    textAlign: "center" as const,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 999,
+    overflow: "hidden" as const,
+    backgroundColor: "#e0f2fe",
+    color: "#075985",
+    fontSize: 12,
+    fontWeight: "900" as const,
+  },
+  commandList: {
+    padding: 8,
+    gap: 8,
+  },
+  commandItem: {
+    padding: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
+    backgroundColor: "#ffffff",
+  },
+  commandItemSelected: {
+    borderColor: "#38bdf8",
+    backgroundColor: "#f0f9ff",
+  },
+  commandTitle: {
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: "900" as const,
+    color: "#111827",
+  },
+  commandSummaryBlock: {
+    gap: 8,
+  },
+  commandSummaryTitle: {
+    fontSize: 21,
+    lineHeight: 27,
+    fontWeight: "500" as const,
+    color: "#111827",
+  },
+  commandSummaryRequirement: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: "#6b7280",
+  },
+  referenceWrap: {
+    flexDirection: "row" as const,
+    flexWrap: "wrap" as const,
+    gap: 6,
+  },
+  referenceTag: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 999,
+    overflow: "hidden" as const,
+    backgroundColor: "#ecfeff",
+    borderWidth: 1,
+    borderColor: "#a5f3fc",
+    color: "#155e75",
+    fontSize: 12,
+    fontWeight: "900" as const,
+  },
+  commandKey: {
+    marginTop: 2,
+    fontSize: 11,
+    lineHeight: 16,
+    color: "#64748b",
+  },
+  reviewBlock: {
+    gap: 14,
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: "#fefce8",
+    borderWidth: 1,
+    borderColor: "#fde68a",
+  },
+  sectionTitle: {
+    fontSize: 13,
+    fontWeight: "900" as const,
+    color: "#334155",
+    textTransform: "uppercase" as const,
+  },
+  listText: {
+    fontSize: 14,
+    lineHeight: 21,
+    color: "#475569",
+  },
+  mutedText: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: "#64748b",
+  },
+  tagRow: {
+    marginTop: 8,
+    flexDirection: "row" as const,
+    flexWrap: "wrap" as const,
+    gap: 6,
+  },
+  tagWrap: {
+    flexDirection: "row" as const,
+    flexWrap: "wrap" as const,
+    gap: 6,
+  },
+  smallTag: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 999,
+    overflow: "hidden" as const,
+    backgroundColor: "#f1f5f9",
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+    fontSize: 11,
+    fontWeight: "800" as const,
+    color: "#475569",
+  },
+  tag: {
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: 999,
+    overflow: "hidden" as const,
+    backgroundColor: "#f8fafc",
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+    fontSize: 12,
+    fontWeight: "800" as const,
+    color: "#475569",
+  },
+  termRow: {
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: "#ffffff",
+    borderWidth: 1,
+    borderColor: "#facc15",
+  },
+  termTitle: {
+    fontSize: 14,
+    fontWeight: "900" as const,
+    color: "#713f12",
+  },
+  termGloss: {
+    marginTop: 2,
+    fontSize: 13,
+    lineHeight: 18,
+    color: "#854d0e",
+  },
+};

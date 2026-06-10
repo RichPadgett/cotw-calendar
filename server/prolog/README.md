@@ -2,42 +2,45 @@
 
 Author: rpadgett
 
-This folder is a tiny Prolog learning area for modeling biblical commands as
-facts and rules.
+This folder models Torah commands as a catalog of commands, facts, scripture
+references, reminders, and applicability notes.
 
 ## Folder Structure
 
 ```text
 prolog/
   main.pl
+  api.pl
   commands.pl
   commands/
-    clean_meats.pl
+    passover_unleavened_bread_commands.pl
   facts/
-    availability.pl
     great_commands.pl
-    requirement_labels.pl
   rules/
-    obeyability.pl
+    catalog.pl
     embodiment.pl
-    flow.pl
-  tests/
-    clean_meats_tests.pl
 ```
 
-## What Each Area Does
+## Shape
 
-`main.pl` loads the whole Prolog knowledge base.
+Each command file defines catalog facts:
 
-`commands.pl` is a compatibility entry point so `swipl commands.pl` still works.
+```prolog
+command(eat_unleavened_bread_seven_days).
+command_title(eat_unleavened_bread_seven_days, 'Exo 12:15 - Eat unleavened bread seven days.').
+normal_obedience(eat_unleavened_bread_seven_days, 'Eat unleavened bread throughout the Feast of Unleavened Bread.').
+concerns(eat_unleavened_bread_seven_days, unleavened_bread_obedience).
+scripture_reference(eat_unleavened_bread_seven_days, 'Exodus 12:15').
+study_note(eat_unleavened_bread_seven_days, 'This is the specific positive requirement to eat unleavened bread during the seven-day feast.').
+```
 
-`commands/` contains one file per biblical command.
+Shared rules in `rules/catalog.pl` infer:
 
-`facts/` contains shared facts that many commands can use.
-
-`rules/` contains shared logic that evaluates the facts.
-
-`tests/` contains small checks that prove the example still works.
+- `command_requirement/2`
+- `reminder_text/2`
+- `command_fact/2`
+- `command_category/2`
+- `applies_if/2`
 
 ## Run It
 
@@ -47,123 +50,53 @@ From this folder:
 swipl main.pl
 ```
 
-Then try these questions inside Prolog:
+Example questions:
 
 ```prolog
-can_obey_today(clean_meats).
-blocked_requirement(clean_meats, Requirement).
-embodies(clean_meats, GreatCommand).
-next_question(clean_meats, [], Question).
-next_question(clean_meats, [answer(distinguish_clean_from_unclean, yes)], Question).
-flow_complete(clean_meats, [answer(distinguish_clean_from_unclean, yes), answer(individual_can_choose_food, yes)]).
-scripture_reference(clean_meats, Reference).
-study_note(clean_meats, Note).
-```
-
-## Run The Tests
-
-From this folder:
-
-```bash
-swipl -q -s tests/clean_meats_tests.pl -g run_tests -t halt
+command(eat_unleavened_bread_seven_days).
+command_fact(eat_unleavened_bread_seven_days, Fact).
+command_category(eat_unleavened_bread_seven_days, Category).
+applies_if(eat_unleavened_bread_seven_days, Applicability).
+scripture_reference(eat_unleavened_bread_seven_days, Reference).
 ```
 
 ## API
 
 The TypeScript API lives in `../server`.
 
-From the project root:
-
-```bash
-npm install
-npm run dev
-```
-
-The API starts on:
-
-```text
-http://localhost:3002
-```
-
 Current endpoints:
 
 ```text
-GET  /api/health
-GET  /api/commands
-GET  /api/commands/:commandKey
-POST /api/commands/:commandKey/evaluate
+GET /api/command-resources
+GET /api/command-resources?category=:category
+GET /api/command-resources?fact=:fact
+GET /api/command-resources?facts=:fact_a,:fact_b
+GET /api/command-resources?appliesIf=:applicability
+GET /api/command-resources/categories
+GET /api/command-resources/categories/commands
+GET /api/command-resources/facts
+GET /api/command-resources/applicability
+GET /api/command-resources/random
+GET /api/command-resources/random?category=:category
+GET /api/command-resources/random?fact=:fact
+GET /api/command-resources/random?facts=:fact_a,:fact_b
+GET /api/command-resources/random?appliesIf=:applicability
+GET /api/command-resources/random/category
+GET /api/command-resources/random/category-command
+GET /api/command-resources/:commandKey
 ```
 
-Example evaluate body:
+The API returns catalog data for the app command tab:
 
 ```json
 {
-  "answers": [
-    {
-      "question": "identify_dead_animal_article_contact",
-      "answer": "yes"
-    }
-  ]
+  "key": "eat_unleavened_bread_seven_days",
+  "title": "Exo 12:15 - Eat unleavened bread seven days.",
+  "requirement": "Eat unleavened bread throughout the Feast of Unleavened Bread.",
+  "reminderText": "Eat unleavened bread throughout the Feast of Unleavened Bread.",
+  "categories": ["passover_unleavened_bread"],
+  "facts": ["unleavened_bread", "scripture_backed"],
+  "appliesIf": ["during_feast_of_unleavened_bread"],
+  "scriptureReferences": ["Exodus 12:15"]
 }
 ```
-
-## How To Read The Syntax
-
-This is a fact:
-
-```prolog
-command(clean_meats).
-```
-
-Human reading:
-
-> Clean meats is a command.
-
-This is also a fact:
-
-```prolog
-requires(clean_meats, individual_can_choose_food).
-```
-
-Human reading:
-
-> The clean meats command requires that an individual can choose food.
-
-This is a question flow fact:
-
-```prolog
-question_order(clean_meats, [
-    distinguish_clean_from_unclean,
-    individual_can_choose_food
-]).
-```
-
-Human reading:
-
-> When walking through clean meats, ask about clean/unclean distinction first,
-> then ask whether the person can choose food.
-
-This is a rule:
-
-```prolog
-can_obey_today(Command) :-
-    command(Command),
-    \+ blocked_requirement(Command, _).
-```
-
-Human reading:
-
-> A command can be obeyed today if it is a known command and there is no blocked
-> requirement.
-
-## Important Prolog Ideas
-
-- Lowercase names like `clean_meats` are atoms, which are plain values.
-- Uppercase names like `Command` are variables.
-- A period ends every fact or rule.
-- `:-` means "if".
-- `,` means "and".
-- `\+` means "Prolog cannot prove this".
-- `_` means "something exists here, but I do not need to name it".
-- `[a, b, c]` is a list.
-- `answer(question_key, yes)` is a structured value.

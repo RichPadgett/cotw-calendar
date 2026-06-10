@@ -18,34 +18,33 @@
 :- multifile command/1.
 :- multifile command_title/2.
 :- multifile normal_obedience/2.
-:- multifile requires/2.
-:- multifile question_order/2.
+:- multifile command_requirement/2.
+:- multifile command_category/2.
+:- multifile command_fact/2.
+:- multifile applies_if/2.
+:- multifile reminder_text/2.
 :- multifile concerns/2.
 :- multifile scripture_reference/2.
 :- multifile study_note/2.
-:- multifile available_today/1.
-:- multifile unavailable_today/1.
+:- multifile source_term/4.
+:- multifile clarification_note/2.
+:- multifile translation_note/2.
 :- multifile points_to/2.
-:- multifile requirement_title/2.
-:- multifile requirement_description/2.
 
 % -----------------------------------------------------------------------------
 % Shared Facts
 % -----------------------------------------------------------------------------
 % These files define reusable values that many commands can reference.
 
-:- consult('facts/availability.pl').
 :- consult('facts/great_commands.pl').
-:- consult('facts/requirement_labels.pl').
 
 % -----------------------------------------------------------------------------
 % Shared Rules
 % -----------------------------------------------------------------------------
-% These files define the logic used to evaluate commands.
+% These files define the logic used to classify and describe commands.
 
-:- consult('rules/obeyability.pl').
 :- consult('rules/embodiment.pl').
-:- consult('rules/flow.pl').
+:- consult('rules/catalog.pl').
 
 % -----------------------------------------------------------------------------
 % Command Definitions
@@ -53,6 +52,21 @@
 % Each command gets its own file so the Torah command library can grow without
 % turning one file into a wall of facts.
 
-:- consult('commands/clean_meats.pl').
-:- consult('commands/purify_unclean_articles.pl').
-:- consult('commands/blasphemy_penalty.pl').
+:- consult('commands/foundation_commands.pl').
+:- consult('commands/passover_unleavened_bread_commands.pl').
+:- consult('commands/firstfruits_omer_commands.pl').
+:- consult('commands/shavuot_commands.pl').
+:- consult('commands/trumpets_commands.pl').
+:- consult('commands/day_of_atonement_commands.pl').
+:- consult('commands/tabernacles_commands.pl').
+:- consult('commands/offerings_commands.pl').
+:- consult('commands/general_torah_review_commands.pl').
+:- consult('commands/worship_idolatry_commands.pl').
+:- consult('commands/name_vows_remembrance_commands.pl').
+:- consult('commands/clean_purity_commands.pl').
+:- consult('commands/justice_neighbor_commands.pl').
+:- consult('commands/family_household_commands.pl').
+:- consult('commands/property_economics_land_commands.pl').
+:- consult('commands/priestly_holiness_commands.pl').
+:- consult('commands/leadership_warfare_commands.pl').
+:- consult('commands/text_specific_detail_commands.pl').
