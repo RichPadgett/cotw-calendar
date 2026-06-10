@@ -36,9 +36,11 @@ import { CalendarNode } from "../src/models/calendar";
 import type { DayContent } from "../src/types/calendarContent";
 import type { PerpetualMarker } from "../src/types/perpetualMarkers";
 import { API_BASE_URL } from "../src/config/api";
+import { formatGroupLabel, getAppDateId } from "../src/utils/appDay";
 
-const STICKY_HEADER_OFFSET = 220;
-const YEAR_VIEW_TOP_OFFSET = 685;
+const DEFAULT_STICKY_HEADER_OFFSET = 220;
+const DEFAULT_YEAR_VIEW_TOP_OFFSET = 685;
+const MONTH_TITLE_BEHIND_HEADER_OFFSET = 32;
 
 type AppTab = "calendar" | "timeline" | "commands";
 
@@ -47,9 +49,19 @@ export default function HomeScreen() {
   const scrollViewRef = useRef<ScrollView>(null);
   const monthOffsetsRef = useRef<Record<number, number>>({});
   const currentScrollYRef = useRef(0);
+  const headerHeightRef = useRef(DEFAULT_STICKY_HEADER_OFFSET);
+  const yearViewTopOffsetRef = useRef(DEFAULT_YEAR_VIEW_TOP_OFFSET);
 
   const [visibleEnochYear, setVisibleEnochYear] = useState(2026);
-  const [activeMonthNumber, setActiveMonthNumber] = useState(1);
+  const [activeMonthNumber, setActiveMonthNumber] = useState<number | null>(
+    null
+  );
+  const [todayDateId, setTodayDateId] = useState(getAppDateId);
+  const [yearTransition, setYearTransition] = useState<{
+    direction: "previous" | "next";
+    id: number;
+  } | null>(null);
+  const [isWheelInteracting, setIsWheelInteracting] = useState(false);
   const [activeTab, setActiveTab] = useState<AppTab>("calendar");
   const [selectedCommandHeader, setSelectedCommandHeader] =
     useState<CommandHeaderCommand | null>(null);
@@ -89,9 +101,15 @@ export default function HomeScreen() {
   };
 
   const nodes = buildEnochYear(config);
+  const groupLabel = formatGroupLabel(groupCode);
+  const todayNode = nodes.find((node) => {
+    return node.gregorianDate === todayDateId;
+  });
+  const fallbackMonthNumber = todayNode?.enoch?.month?.number ?? 1;
+  const currentMonthNumber = activeMonthNumber ?? fallbackMonthNumber;
 
   const currentMonth = nodes.find(
-    (node) => node.enoch?.month?.number === activeMonthNumber
+    (node) => node.enoch?.month?.number === currentMonthNumber
   )?.enoch?.month;
 
   const selectedDayMarkers = selectedNode
@@ -208,6 +226,14 @@ export default function HomeScreen() {
 
     loadPerpetualMarkers();
   }, [hasEnteredApp, perpetualMarkersChecksum]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setTodayDateId(getAppDateId());
+    }, 60_000);
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   async function loadPerpetualMarkers() {
     try {
@@ -398,20 +424,40 @@ export default function HomeScreen() {
     monthOffsetsRef.current[monthNumber] = y;
   }
 
+  function handleHeaderLayout(height: number) {
+    headerHeightRef.current = height;
+  }
+
+  function handleYearViewLayout(y: number) {
+    yearViewTopOffsetRef.current = y;
+  }
+
+  function getMonthHeaderScrollOffset() {
+    return (
+      yearViewTopOffsetRef.current -
+      headerHeightRef.current +
+      MONTH_TITLE_BEHIND_HEADER_OFFSET
+    );
+  }
+
   function handleScroll(event: any) {
-    currentScrollYRef.current = event.nativeEvent.contentOffset.y;
+    const scrollY = event.nativeEvent.contentOffset.y;
+    currentScrollYRef.current = scrollY;
 
     if (activeTab !== "calendar") return;
 
-    const scrollY = currentScrollYRef.current;
+    const headerEdgeY = scrollY - getMonthHeaderScrollOffset();
 
     const activeMonth = Object.entries(monthOffsetsRef.current)
-      .filter(([, y]) => y <= scrollY + 180)
+      .filter(([, y]) => y <= headerEdgeY)
       .sort((a, b) => b[1] - a[1])[0];
 
     if (activeMonth) {
       setActiveMonthNumber(Number(activeMonth[0]));
+      return;
     }
+
+    setActiveMonthNumber(null);
   }
 
   function scrollToMonth(monthNumber: number) {
@@ -420,7 +466,7 @@ export default function HomeScreen() {
     if (typeof y !== "number") return;
 
     scrollViewRef.current?.scrollTo({
-      y: Math.max(0, y + YEAR_VIEW_TOP_OFFSET - STICKY_HEADER_OFFSET),
+      y: Math.max(0, y + getMonthHeaderScrollOffset()),
       animated: true,
     });
 
@@ -441,15 +487,17 @@ export default function HomeScreen() {
   }
 
   function goPreviousYear() {
+    setYearTransition({ direction: "previous", id: Date.now() });
     setVisibleEnochYear((year) => year - 1);
-    setActiveMonthNumber(1);
+    setActiveMonthNumber(null);
     closeDay();
     scrollViewRef.current?.scrollTo({ y: 0, animated: true });
   }
 
   function goNextYear() {
+    setYearTransition({ direction: "next", id: Date.now() });
     setVisibleEnochYear((year) => year + 1);
-    setActiveMonthNumber(1);
+    setActiveMonthNumber(null);
     closeDay();
     scrollViewRef.current?.scrollTo({ y: 0, animated: true });
   }
@@ -476,26 +524,10 @@ export default function HomeScreen() {
     }
   }
 
-  const todayNode = nodes.find((node) => {
-    const today = new Date();
-
-    const todayId = `${today.getFullYear()}-${String(
-      today.getMonth() + 1
-    ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-
-    return node.gregorianDate === todayId;
-  });
-
   const upcomingShabbatNode =
     nodes.find((node) => {
-      const today = new Date();
-
-      const todayId = `${today.getFullYear()}-${String(
-        today.getMonth() + 1
-      ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-
       return (
-        node.gregorianDate >= todayId &&
+        node.gregorianDate >= todayDateId &&
         node.enoch?.events?.some((event) => event.type === "weekly-sabbath")
       );
     }) ??
@@ -508,6 +540,7 @@ export default function HomeScreen() {
       <ScrollView
         ref={scrollViewRef}
         stickyHeaderIndices={[0]}
+        scrollEnabled={!isWheelInteracting}
         onScroll={handleScroll}
         scrollEventThrottle={16}
         style={{
@@ -521,6 +554,9 @@ export default function HomeScreen() {
         }}
       >
         <View
+          onLayout={(event) => {
+            handleHeaderLayout(event.nativeEvent.layout.height);
+          }}
           style={{
             backgroundColor: "#ffffff",
             paddingBottom: 12,
@@ -532,6 +568,9 @@ export default function HomeScreen() {
               todayNode={todayNode}
               upcomingShabbatNode={upcomingShabbatNode}
               gregorianLabel={`${config.enochYear} · Starts ${config.startsOnGregorianDate}`}
+              groupLabel={groupLabel}
+              userRole={userRole}
+              yearTransition={yearTransition}
               onPreviousMonth={goPreviousYear}
               onNextMonth={goNextYear}
               onChangeGroup={confirmChangeGroup}
@@ -566,17 +605,27 @@ export default function HomeScreen() {
           <>
             <YearWheelView
               nodes={nodes}
+              perpetualMarkers={perpetualMarkers}
+              todayDateId={todayDateId}
               onPressMonth={scrollToMonth}
               onPressDay={openDay}
+              onInteractionChange={setIsWheelInteracting}
             />
 
-            <YearView
-              nodes={nodes}
-              notices={yearNotices}
-              perpetualMarkers={perpetualMarkers}
-              onMonthLayout={handleMonthLayout}
-              onPressDay={openDay}
-            />
+            <View
+              onLayout={(event) => {
+                handleYearViewLayout(event.nativeEvent.layout.y);
+              }}
+            >
+              <YearView
+                nodes={nodes}
+                notices={yearNotices}
+                perpetualMarkers={perpetualMarkers}
+                todayDateId={todayDateId}
+                onMonthLayout={handleMonthLayout}
+                onPressDay={openDay}
+              />
+            </View>
           </>
         )}
 

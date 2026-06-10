@@ -13,6 +13,7 @@ import { CalendarNode } from "../../models/calendar";
 
 type Props = {
   nodes: CalendarNode[];
+  todayDateId?: string;
 };
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -23,7 +24,7 @@ const CELL_WIDTH = (SCREEN_WIDTH - 32 - 12) / 7;
  * Creates a compact month grid from calendar nodes.
  * This legacy or focused UX component renders day cells in a seven-column layout.
  */
-export default function MonthView({ nodes }: Props) {
+export default function MonthView({ nodes, todayDateId }: Props) {
   return (
     <View
       style={{
@@ -44,7 +45,7 @@ export default function MonthView({ nodes }: Props) {
               padding: 2,
             }}
           >
-            <DayCell node={item} />
+            <DayCell node={item} todayDateId={todayDateId} />
           </View>
         );
       })}

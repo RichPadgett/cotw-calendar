@@ -16,6 +16,7 @@ import {
 import ScrollIcon from "../../../assets/enoch/icons/scroll.png";
 import { CalendarNode } from "../../models/calendar";
 import { PerpetualMarker } from "../../types/perpetualMarkers";
+import { getAppDateId } from "../../utils/appDay";
 
 const DEFAULT_MARKER_COLOR = "#2563eb";
 
@@ -26,21 +27,8 @@ type Props = {
   hasContent?: boolean;
   hasNotice?: boolean;
   perpetualMarkers?: PerpetualMarker[];
+  todayDateId?: string;
 };
-
-// Helpers
-/**
- * Formats the current local date as YYYY-MM-DD.
- * This date helper is used to highlight today's calendar cell during development and runtime.
- */
-function getTodayDateId(): string {
-  const date = new Date();
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-}
 
 /**
  * Returns a usable marker label color.
@@ -64,14 +52,10 @@ export function DayCell({
   hasContent = false,
   hasNotice = false,
   perpetualMarkers = [],
+  todayDateId,
 }: Props) {
   const { width: viewportWidth } = useWindowDimensions();
-
-  const DEV_TODAY_ID = getTodayDateId();
-
-  const todayId = __DEV__
-    ? DEV_TODAY_ID
-    : new Date().toISOString().slice(0, 10);
+  const todayId = todayDateId ?? getAppDateId();
 
   const isToday = node.gregorianDate === todayId;
 
@@ -148,16 +132,30 @@ export function DayCell({
                 bottom: 6,
                 left: 6,
 
-                width: 8,
-                height: 8,
+                width: 14,
+                height: 14,
 
-                borderRadius: 4,
+                borderRadius: 7,
 
-                backgroundColor: "#06b6d4",
+                alignItems: "center",
+                justifyContent: "center",
+
+                backgroundColor: "#f97316",
 
                 zIndex: 30,
               }}
-            />
+            >
+              <Text
+                style={{
+                  fontSize: 10,
+                  lineHeight: 12,
+                  fontWeight: "900",
+                  color: "#ffffff",
+                }}
+              >
+                !
+              </Text>
+            </View>
           )}
           {showScrollIcon && (
             <Image

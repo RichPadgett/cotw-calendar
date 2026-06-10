@@ -150,11 +150,17 @@ export default function DayDetailModal({
     return trimmedUrl;
   }
 
-  function getLinkVariant(url?: string): "spotify" | "maps" | "default" {
+  function getLinkVariant(
+    url?: string
+  ): "spotify" | "maps" | "zoom" | "default" {
     const normalizedUrl = url?.toLowerCase() ?? "";
 
     if (normalizedUrl.includes("spotify")) {
       return "spotify";
+    }
+
+    if (normalizedUrl.includes("zoom")) {
+      return "zoom";
     }
 
     if (normalizedUrl.includes("https://www.google.com/maps/")) {
@@ -186,6 +192,7 @@ export default function DayDetailModal({
         style={[
           styles.linkButton,
           linkVariant === "spotify" && styles.spotifyLinkButton,
+          linkVariant === "zoom" && styles.zoomLinkButton,
           linkVariant === "maps" && styles.mapsLinkButton,
         ]}
       >
@@ -194,6 +201,7 @@ export default function DayDetailModal({
             <View
               style={[
                 styles.linkButtonDot,
+                linkVariant === "zoom" && styles.zoomDot,
                 linkVariant === "maps" && styles.mapsDot,
               ]}
             />
@@ -207,9 +215,11 @@ export default function DayDetailModal({
           >
             {linkVariant === "spotify"
               ? "Spotify"
-              : linkVariant === "maps"
-                ? "Google Maps"
-                : label}
+              : linkVariant === "zoom"
+                ? "Zoom"
+                : linkVariant === "maps"
+                  ? "Google Maps"
+                  : label}
           </Text>
         </View>
       </Pressable>
@@ -1068,6 +1078,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#2563eb",
   },
 
+  zoomLinkButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: "#2d8cff",
+  },
+
   brandedLinkButtonText: {
     color: "#ffffff",
   },
@@ -1081,6 +1098,10 @@ const styles = StyleSheet.create({
 
   mapsDot: {
     backgroundColor: "#fbbf24",
+  },
+
+  zoomDot: {
+    backgroundColor: "#dbeafe",
   },
 
   inversePillButton: {
