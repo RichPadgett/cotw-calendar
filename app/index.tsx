@@ -20,6 +20,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 import AppHeader from "../src/components/calendar/AppHeader";
 import DayDetailModal from "../src/components/calendar/DayDetailModal";
+import HistoryTimelineView from "../src/components/calendar/HistoryTimelineView";
 import YearView from "../src/components/calendar/YearView";
 import YearWheelView from "../src/components/calendar/YearWheelView";
 import CommandExplorerView, {
@@ -441,6 +442,8 @@ export default function HomeScreen() {
   }
 
   function handleScroll(event: any) {
+    if (activeTab !== "calendar") return;
+
     const scrollY = event.nativeEvent.contentOffset.y;
     currentScrollYRef.current = scrollY;
 
@@ -629,7 +632,13 @@ export default function HomeScreen() {
           </>
         )}
 
-        {activeTab === "timeline" && <TimelinePlaceholder />}
+        {activeTab === "timeline" && (
+          <HistoryTimelineView
+            adminToken={adminToken}
+            groupCode={groupCode}
+            userRole={userRole}
+          />
+        )}
 
         {activeTab === "commands" && (
           <CommandExplorerView
