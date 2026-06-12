@@ -1,25 +1,4 @@
 [
-  { 
-    "id": "example-day-marker",
-    "month": 1,
-    "day": 1,
-    "title": "Example Day Marker",
-    "shortName": "Day",
-    "color": "#2563eb",
-    "notes": "This date is derived from...",
-    "sourceLabel": "Calendar Study Notes",
-    "sourceUrl": "https://..."
-  },
-  {
-    "id": "example-quarter-day",
-    "gateDay": 1,
-    "title": "Example Quarter Day",
-    "shortName": "QD",
-    "color": "#16a34a",
-    "notes": "This date is derived from...",
-    "sourceLabel": "Calendar Study Notes",
-    "sourceUrl": "https://..."
-  },
   {
     "id": "example-land-rest",
     "intercalaryWeek": true,
@@ -29,5 +8,14 @@
     "notes": "This date is derived from...",
     "sourceLabel": "Calendar Study Notes",
     "sourceUrl": "https://..."
+  },
+  {
+    "id": "firstfruits-1780883732258",
+    "title": "FirstFruits",
+    "shortName": "Wave Offering",
+    "color": "#2777eb",
+    "notes": "Leviticus 23:9–14 (KJV)\n9 And the LORD spake unto Moses, saying,\n10 Speak unto the children of Israel, and say unto them, When ye be come into the land which I give unto you, and shall reap the harvest thereof, then ye shall bring a sheaf of the firstfruits of your harvest unto the priest:\n11 And he shall wave the sheaf before the LORD, to be accepted for you: on the morrow after the sabbath the priest shall wave it.\n12 And ye shall offer that day when ye wave the sheaf an he lamb without blemish of the first year for a burnt offering unto the LORD.\n13 And the meat offering thereof shall be two tenth deals of fine flour mingled with oil, an offering made by fire unto the LORD for a sweet savour: and the drink offering thereof shall be of wine, the fourth part of an hin.\n14 And ye shall eat neither bread, nor parched corn, nor green ears, until the selfsame day that ye have brought an offering unto your God: it shall be a statute for ever throughout your generations in all your dwellings.",
+    "month": 1,
+    "day": 12
   }
 ]
