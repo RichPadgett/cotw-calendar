@@ -14,9 +14,9 @@
 % normal_obedience(command_key, 'Text-faithful statement of what the command says to do or not do.').
 % concerns(command_key, concern_key).
 % scripture_reference(command_key, 'Book 1:1-2').
-% study_note(command_key, 'Short human note about scope, context, or review status.').
+% study_note(command_key, 'Short human note about scope, context, or catalog status.').
 %
-% Optional review/detail fields:
+% Optional detail fields:
 %
 % source_term(command_key, hebrew, word, 'brief gloss').
 % source_term(command_key, greek, word, 'brief gloss').
@@ -51,6 +51,7 @@ normal_obedience(do_not_take_name_in_vain, 'Do not misuse or bear YHWH''s Name f
 concerns(do_not_take_name_in_vain, honor_yhwhs_name).
 scripture_reference(do_not_take_name_in_vain, 'Exodus 20:7').
 scripture_reference(do_not_take_name_in_vain, 'Deuteronomy 5:11').
+story_reference(do_not_take_name_in_vain, 'Leviticus 24:10-16', 'The blasphemy case shows the seriousness of profaning the Name.').
 study_note(do_not_take_name_in_vain, 'The command protects reverence for YHWH''s Name.').
 
 % Command: do_not_swear_falsely
@@ -67,6 +68,7 @@ command_title(do_not_profane_yhwhs_name, 'Lev 22:32 - Do not profane YHWH''s Nam
 normal_obedience(do_not_profane_yhwhs_name, 'Do not profane YHWH''s holy Name.').
 concerns(do_not_profane_yhwhs_name, honor_yhwhs_name).
 scripture_reference(do_not_profane_yhwhs_name, 'Leviticus 22:32').
+story_reference(do_not_profane_yhwhs_name, 'Leviticus 24:10-16', 'The son of the Israelite woman blasphemes the Name and the matter is brought before YHWH.').
 study_note(do_not_profane_yhwhs_name, 'The command is paired with sanctifying YHWH among Israel.').
 
 % Command: keep_vows
@@ -76,6 +78,8 @@ normal_obedience(keep_vows, 'Keep vows and do according to what has gone out of 
 concerns(keep_vows, honor_yhwhs_name).
 scripture_reference(keep_vows, 'Numbers 30:2').
 scripture_reference(keep_vows, 'Deuteronomy 23:21-23').
+story_reference(keep_vows, '1 Samuel 1:21-28', 'Hannah fulfills her vow by bringing Samuel to serve before YHWH.').
+story_reference(keep_vows, 'Jonah 2:9', 'Jonah declares that he will pay what he vowed.').
 study_note(keep_vows, 'Vows require careful speech and faithful completion.').
 
 % Command: do_not_delay_vow_payment
@@ -84,6 +88,7 @@ command_title(do_not_delay_vow_payment, 'Deu 23:21 - Do not delay paying vows.')
 normal_obedience(do_not_delay_vow_payment, 'Do not delay fulfilling a vow made to YHWH.').
 concerns(do_not_delay_vow_payment, honor_yhwhs_name).
 scripture_reference(do_not_delay_vow_payment, 'Deuteronomy 23:21-23').
+story_reference(do_not_delay_vow_payment, '1 Samuel 1:21-28', 'Hannah does not abandon her vow but brings Samuel after he is weaned.').
 study_note(do_not_delay_vow_payment, 'Voluntary vows become serious obligations once spoken.').
 
 % Command: wear_tassels_to_remember_commands
@@ -114,7 +119,7 @@ scripture_reference(write_words_on_doorposts, 'Deuteronomy 11:20').
 study_note(write_words_on_doorposts, 'The home itself becomes a place of Torah remembrance.').
 
 % -----------------------------------------------------------------------------
-% Additional Vow And Remembrance Review Commands
+% Additional Vow And Remembrance Commands
 % -----------------------------------------------------------------------------
 
 % Command: a_father_may_annul_a_young_daughter_s_vow_in_the_stated_case
@@ -123,7 +128,7 @@ command_title(a_father_may_annul_a_young_daughter_s_vow_in_the_stated_case, 'Num
 normal_obedience(a_father_may_annul_a_young_daughter_s_vow_in_the_stated_case, 'A father may annul a young daughter''s vow in the stated case.').
 concerns(a_father_may_annul_a_young_daughter_s_vow_in_the_stated_case, vow_separation).
 scripture_reference(a_father_may_annul_a_young_daughter_s_vow_in_the_stated_case, 'Numbers 30:3-5').
-study_note(a_father_may_annul_a_young_daughter_s_vow_in_the_stated_case, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(a_father_may_annul_a_young_daughter_s_vow_in_the_stated_case, 'This command governs vowed separation and spoken obligation so voluntary devotion is handled with care before YHWH: A father may annul a young daughter''s vow in the stated case.').
 
 % Command: a_husband_may_annul_a_wife_s_vow_in_the_stated_case
 command(a_husband_may_annul_a_wife_s_vow_in_the_stated_case).
@@ -131,7 +136,7 @@ command_title(a_husband_may_annul_a_wife_s_vow_in_the_stated_case, 'Numbers 30:6
 normal_obedience(a_husband_may_annul_a_wife_s_vow_in_the_stated_case, 'A husband may annul a wife''s vow in the stated case.').
 concerns(a_husband_may_annul_a_wife_s_vow_in_the_stated_case, vow_separation).
 scripture_reference(a_husband_may_annul_a_wife_s_vow_in_the_stated_case, 'Numbers 30:6-15').
-study_note(a_husband_may_annul_a_wife_s_vow_in_the_stated_case, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(a_husband_may_annul_a_wife_s_vow_in_the_stated_case, 'This command governs vowed separation and spoken obligation so voluntary devotion is handled with care before YHWH: A husband may annul a wife''s vow in the stated case.').
 
 % Command: nazirite_made_unclean_must_follow_the_reset_purification_procedure
 command(nazirite_made_unclean_must_follow_the_reset_purification_procedure).
@@ -139,4 +144,4 @@ command_title(nazirite_made_unclean_must_follow_the_reset_purification_procedure
 normal_obedience(nazirite_made_unclean_must_follow_the_reset_purification_procedure, 'Nazirite made unclean must follow the reset purification procedure.').
 concerns(nazirite_made_unclean_must_follow_the_reset_purification_procedure, vow_separation).
 scripture_reference(nazirite_made_unclean_must_follow_the_reset_purification_procedure, 'Numbers 6:9-12').
-study_note(nazirite_made_unclean_must_follow_the_reset_purification_procedure, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(nazirite_made_unclean_must_follow_the_reset_purification_procedure, 'This command governs vowed separation and spoken obligation so voluntary devotion is handled with care before YHWH: Nazirite made unclean must follow the reset purification procedure.').

@@ -14,9 +14,9 @@
 % normal_obedience(command_key, 'Text-faithful statement of what the command says to do or not do.').
 % concerns(command_key, concern_key).
 % scripture_reference(command_key, 'Book 1:1-2').
-% study_note(command_key, 'Short human note about scope, context, or review status.').
+% study_note(command_key, 'Short human note about scope, context, or catalog status.').
 %
-% Optional review/detail fields:
+% Optional detail fields:
 %
 % source_term(command_key, hebrew, word, 'brief gloss').
 % source_term(command_key, greek, word, 'brief gloss').
@@ -52,6 +52,7 @@ concerns(keep_feast_of_weeks, appointed_times).
 scripture_reference(keep_feast_of_weeks, 'Exodus 34:22').
 scripture_reference(keep_feast_of_weeks, 'Leviticus 23:15-21').
 scripture_reference(keep_feast_of_weeks, 'Deuteronomy 16:9-12').
+story_reference(keep_feast_of_weeks, '2 Chronicles 8:13', 'Solomon observes the yearly appointed feasts, including the Feast of Weeks.').
 study_note(keep_feast_of_weeks, 'Shavuot is reached through the commanded count from Firstfruits.').
 
 % Command: bring_new_grain_offering
@@ -61,6 +62,7 @@ normal_obedience(bring_new_grain_offering, 'Present the firstfruits or new grain
 concerns(bring_new_grain_offering, firstfruits_and_counting).
 scripture_reference(bring_new_grain_offering, 'Leviticus 23:16-17').
 scripture_reference(bring_new_grain_offering, 'Numbers 28:26').
+story_reference(bring_new_grain_offering, '2 Chronicles 31:5', 'Israel brings firstfruits of grain, wine, oil, honey, and field produce abundantly.').
 study_note(bring_new_grain_offering, 'The offering marks the completion of the count.').
 
 % Command: shavuot_sacred_assembly

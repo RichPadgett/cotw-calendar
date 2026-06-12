@@ -7,6 +7,8 @@ import { execFile } from "node:child_process";
 import path from "node:path";
 import { promisify } from "node:util";
 
+import { listApprovedCommandContributions } from "./commandContributionStore";
+
 const execFileAsync = promisify(execFile);
 
 const serverRoot = path.resolve(__dirname, "../..");
@@ -18,6 +20,28 @@ export type CommandResourceFilters = {
   fact?: string;
   facts?: string[];
   appliesIf?: string;
+};
+
+type CommandResourceDetail = {
+  key: string;
+  requirement?: string | null;
+  requirements?: string[];
+  studyNotes?: string[];
+  storyReferences?: {
+    reference: string;
+    label: string;
+  }[];
+  sourceTerms?: {
+    language: string;
+    term: string;
+    gloss: string;
+  }[];
+  translationNotes?: string[];
+  clarificationNotes?: string[];
+};
+
+type RandomCommandResourceResponse = {
+  command: CommandResourceDetail | null;
 };
 
 export function assertSafeAtom(value: string, fieldName: string): void {
@@ -59,7 +83,11 @@ export async function listCommandResources(
 export async function getCommandResource(commandKey: string) {
   assertSafeAtom(commandKey, "commandKey");
 
-  return runPrologJson(`api_command_json(${commandKey})`);
+  const command = await runPrologJson<CommandResourceDetail>(
+    `api_command_json(${commandKey})`
+  );
+
+  return mergeApprovedContributions(command);
 }
 
 export async function getCommandResourceCategories() {
@@ -91,31 +119,115 @@ export async function getRandomCommandResource(
 ) {
   if (filters.category) {
     assertSafeAtom(filters.category, "category");
-    return runPrologJson(
-      `api_random_command_by_category_json(${filters.category})`
+    return mergeRandomCommandResponse(
+      await runPrologJson<RandomCommandResourceResponse>(
+        `api_random_command_by_category_json(${filters.category})`
+      )
     );
   }
 
   if (filters.fact) {
     assertSafeAtom(filters.fact, "fact");
-    return runPrologJson(`api_random_command_by_fact_json(${filters.fact})`);
+    return mergeRandomCommandResponse(
+      await runPrologJson<RandomCommandResourceResponse>(
+        `api_random_command_by_fact_json(${filters.fact})`
+      )
+    );
   }
 
   if (filters.facts?.length) {
     filters.facts.forEach((fact) => assertSafeAtom(fact, "facts"));
-    return runPrologJson(
-      `api_random_command_by_facts_json(${toPrologList(filters.facts)})`
+    return mergeRandomCommandResponse(
+      await runPrologJson<RandomCommandResourceResponse>(
+        `api_random_command_by_facts_json(${toPrologList(filters.facts)})`
+      )
     );
   }
 
   if (filters.appliesIf) {
     assertSafeAtom(filters.appliesIf, "appliesIf");
-    return runPrologJson(
-      `api_random_command_by_applicability_json(${filters.appliesIf})`
+    return mergeRandomCommandResponse(
+      await runPrologJson<RandomCommandResourceResponse>(
+        `api_random_command_by_applicability_json(${filters.appliesIf})`
+      )
     );
   }
 
-  return runPrologJson("api_random_command_json");
+  return mergeRandomCommandResponse(
+    await runPrologJson<RandomCommandResourceResponse>("api_random_command_json")
+  );
+}
+
+function mergeRandomCommandResponse(response: RandomCommandResourceResponse) {
+  if (!response.command) {
+    return response;
+  }
+
+  return {
+    ...response,
+    command: mergeApprovedContributions(response.command),
+  };
+}
+
+function mergeApprovedContributions(command: CommandResourceDetail) {
+  const contributions = listApprovedCommandContributions(command.key);
+  const requirementContributions = contributions
+    .filter((contribution) => contribution.type === "requirement")
+    .map((contribution) => contribution.text);
+
+  return {
+    ...command,
+    requirements: [
+      ...(command.requirement ? [command.requirement] : []),
+      ...requirementContributions,
+    ],
+    studyNotes: [
+      ...(command.studyNotes ?? []),
+      ...contributions
+        .filter((contribution) => contribution.type === "study_note")
+        .map((contribution) => contribution.text),
+    ],
+    storyReferences: [
+      ...(command.storyReferences ?? []),
+      ...contributions
+        .filter((contribution) => contribution.type === "story_reference")
+        .map((contribution) =>
+          parseCommunityStoryReference(contribution.text)
+        ),
+    ],
+    sourceTerms: [
+      ...(command.sourceTerms ?? []),
+      ...contributions
+        .filter((contribution) => contribution.type === "source_term")
+        .map((contribution) => ({
+          language: "community",
+          term: "suggested term",
+          gloss: contribution.text,
+        })),
+    ],
+    translationNotes: [
+      ...(command.translationNotes ?? []),
+      ...contributions
+        .filter((contribution) => contribution.type === "translation_note")
+        .map((contribution) => contribution.text),
+    ],
+    clarificationNotes: [
+      ...(command.clarificationNotes ?? []),
+      ...contributions
+        .filter((contribution) => contribution.type === "clarification_note")
+        .map((contribution) => contribution.text),
+    ],
+  };
+}
+
+function parseCommunityStoryReference(text: string) {
+  const [reference, ...labelParts] = text.split(/\s*:\s+/);
+  const label = labelParts.join(": ").trim();
+
+  return {
+    reference: reference?.trim() || text,
+    label: label || text,
+  };
 }
 
 function toPrologList(values: string[]) {

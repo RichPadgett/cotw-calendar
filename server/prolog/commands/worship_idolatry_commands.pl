@@ -14,9 +14,9 @@
 % normal_obedience(command_key, 'Text-faithful statement of what the command says to do or not do.').
 % concerns(command_key, concern_key).
 % scripture_reference(command_key, 'Book 1:1-2').
-% study_note(command_key, 'Short human note about scope, context, or review status.').
+% study_note(command_key, 'Short human note about scope, context, or catalog status.').
 %
-% Optional review/detail fields:
+% Optional detail fields:
 %
 % source_term(command_key, hebrew, word, 'brief gloss').
 % source_term(command_key, greek, word, 'brief gloss').
@@ -51,6 +51,8 @@ normal_obedience(have_no_other_gods, 'Worship YHWH alone and do not place anothe
 concerns(have_no_other_gods, exclusive_worship).
 scripture_reference(have_no_other_gods, 'Exodus 20:3').
 scripture_reference(have_no_other_gods, 'Deuteronomy 5:7').
+story_reference(have_no_other_gods, 'Joshua 24:14-24', 'Joshua calls Israel to put away other gods and serve YHWH alone.').
+story_reference(have_no_other_gods, '1 Kings 18:21-39', 'Elijah confronts divided worship and the people confess that YHWH is Elohim.').
 study_note(have_no_other_gods, 'This is a foundation command for covenant loyalty and exclusive worship.').
 
 % Command: do_not_make_idols
@@ -60,6 +62,8 @@ normal_obedience(do_not_make_idols, 'Do not make carved images for worship or bo
 concerns(do_not_make_idols, reject_idolatry).
 scripture_reference(do_not_make_idols, 'Exodus 20:4-6').
 scripture_reference(do_not_make_idols, 'Deuteronomy 5:8-10').
+story_reference(do_not_make_idols, 'Exodus 32:1-35', 'The golden calf shows a grave violation of image-making for worship.').
+story_reference(do_not_make_idols, '2 Kings 23:4-15', 'Josiah removes and destroys idolatrous objects from worship places.').
 study_note(do_not_make_idols, 'The command guards worship from being redirected through images.').
 
 % Command: do_not_worship_like_nations
@@ -68,6 +72,8 @@ command_title(do_not_worship_like_nations, 'Deu 12:29-32 - Do not worship like t
 normal_obedience(do_not_worship_like_nations, 'Do not copy the nations'' worship practices for serving YHWH.').
 concerns(do_not_worship_like_nations, reject_idolatry).
 scripture_reference(do_not_worship_like_nations, 'Deuteronomy 12:29-32').
+story_reference(do_not_worship_like_nations, '2 Kings 17:7-18', 'Israel is judged for walking in the customs of the nations and serving idols.').
+story_reference(do_not_worship_like_nations, '2 Kings 21:1-9', 'Manasseh leads Judah into practices like the nations YHWH drove out.').
 study_note(do_not_worship_like_nations, 'Torah distinguishes YHWH''s worship from the practices of surrounding nations.').
 
 % Command: destroy_idolatrous_places
@@ -76,6 +82,9 @@ command_title(destroy_idolatrous_places, 'Deu 12:2-3 - Destroy idolatrous places
 normal_obedience(destroy_idolatrous_places, 'Destroy the places and objects of idolatrous worship in the land.').
 concerns(destroy_idolatrous_places, reject_idolatry).
 scripture_reference(destroy_idolatrous_places, 'Deuteronomy 12:2-3').
+story_reference(destroy_idolatrous_places, '2 Kings 18:4', 'Hezekiah removes high places, breaks pillars, cuts down the Asherah, and destroys the bronze serpent.').
+story_reference(destroy_idolatrous_places, '2 Kings 23:4-15', 'Josiah destroys idolatrous places and objects throughout his reforms.').
+story_reference(destroy_idolatrous_places, '2 Chronicles 34:3-7', 'Josiah purges Judah and Jerusalem of high places, Asherim, carved images, and molten images.').
 study_note(destroy_idolatrous_places, 'This land-context command removes public infrastructure for idolatry.').
 
 % Command: do_not_listen_to_false_prophet_idolatry
@@ -84,6 +93,8 @@ command_title(do_not_listen_to_false_prophet_idolatry, 'Deu 13:1-5 - Do not list
 normal_obedience(do_not_listen_to_false_prophet_idolatry, 'Do not follow a prophet or dreamer who leads people after other gods.').
 concerns(do_not_listen_to_false_prophet_idolatry, reject_idolatry).
 scripture_reference(do_not_listen_to_false_prophet_idolatry, 'Deuteronomy 13:1-5').
+story_reference(do_not_listen_to_false_prophet_idolatry, '1 Kings 18:19-40', 'Elijah exposes the prophets of Baal and turns Israel back to YHWH.').
+story_reference(do_not_listen_to_false_prophet_idolatry, 'Jeremiah 28:10-17', 'Hananiah falsely prophesies and Jeremiah exposes the false word.').
 study_note(do_not_listen_to_false_prophet_idolatry, 'Signs do not authorize turning away from YHWH.').
 
 % Command: do_not_make_covenant_with_idolatry
@@ -93,6 +104,8 @@ normal_obedience(do_not_make_covenant_with_idolatry, 'Do not make a covenant wit
 concerns(do_not_make_covenant_with_idolatry, reject_idolatry).
 scripture_reference(do_not_make_covenant_with_idolatry, 'Exodus 23:32-33').
 scripture_reference(do_not_make_covenant_with_idolatry, 'Deuteronomy 7:1-5').
+story_reference(do_not_make_covenant_with_idolatry, 'Joshua 9:14-16', 'Israel makes a covenant with the Gibeonites without asking counsel from YHWH.').
+story_reference(do_not_make_covenant_with_idolatry, 'Judges 2:1-3', 'YHWH rebukes Israel for not tearing down the altars of the land and warns of a snare.').
 study_note(do_not_make_covenant_with_idolatry, 'The command protects Israel from being drawn into idolatry.').
 
 % Command: do_not_practice_divination
@@ -101,6 +114,8 @@ command_title(do_not_practice_divination, 'Deu 18:9-14 - Do not practice divinat
 normal_obedience(do_not_practice_divination, 'Do not practice divination, sorcery, omens, witchcraft, or necromancy.').
 concerns(do_not_practice_divination, exclusive_worship).
 scripture_reference(do_not_practice_divination, 'Deuteronomy 18:9-14').
+story_reference(do_not_practice_divination, '1 Samuel 28:3-20', 'Saul consults a medium, showing a serious violation of this boundary.').
+story_reference(do_not_practice_divination, '2 Kings 23:24', 'Josiah removes mediums, spiritists, household gods, idols, and abominations.').
 study_note(do_not_practice_divination, 'Torah directs dependence away from occult practices and toward YHWH.').
 
 % Command: listen_to_prophet_like_moses
@@ -112,7 +127,7 @@ scripture_reference(listen_to_prophet_like_moses, 'Deuteronomy 18:15-19').
 study_note(listen_to_prophet_like_moses, 'This command frames true prophetic authority under YHWH.').
 
 % -----------------------------------------------------------------------------
-% Additional Worship And Idolatry Review Commands
+% Additional Worship And Idolatry Commands
 % -----------------------------------------------------------------------------
 
 % Command: do_not_make_gods_of_silver_or_gold_alongside_yhwh
@@ -121,7 +136,7 @@ command_title(do_not_make_gods_of_silver_or_gold_alongside_yhwh, 'Exodus 20:23 -
 normal_obedience(do_not_make_gods_of_silver_or_gold_alongside_yhwh, 'Do not make gods of silver or gold alongside YHWH.').
 concerns(do_not_make_gods_of_silver_or_gold_alongside_yhwh, reject_idolatry).
 scripture_reference(do_not_make_gods_of_silver_or_gold_alongside_yhwh, 'Exodus 20:23').
-study_note(do_not_make_gods_of_silver_or_gold_alongside_yhwh, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_make_gods_of_silver_or_gold_alongside_yhwh, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not make gods of silver or gold alongside YHWH.').
 
 % Command: do_not_mention_the_names_of_other_gods
 command(do_not_mention_the_names_of_other_gods).
@@ -129,7 +144,7 @@ command_title(do_not_mention_the_names_of_other_gods, 'Exodus 23:13 - Do not men
 normal_obedience(do_not_mention_the_names_of_other_gods, 'Do not mention the names of other gods.').
 concerns(do_not_mention_the_names_of_other_gods, reject_idolatry).
 scripture_reference(do_not_mention_the_names_of_other_gods, 'Exodus 23:13').
-study_note(do_not_mention_the_names_of_other_gods, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_mention_the_names_of_other_gods, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not mention the names of other gods.').
 
 % Command: do_not_cause_the_names_of_other_gods_to_be_heard_from_your_mouth
 command(do_not_cause_the_names_of_other_gods_to_be_heard_from_your_mouth).
@@ -137,7 +152,7 @@ command_title(do_not_cause_the_names_of_other_gods_to_be_heard_from_your_mouth, 
 normal_obedience(do_not_cause_the_names_of_other_gods_to_be_heard_from_your_mouth, 'Do not cause the names of other gods to be heard from your mouth.').
 concerns(do_not_cause_the_names_of_other_gods_to_be_heard_from_your_mouth, reject_idolatry).
 scripture_reference(do_not_cause_the_names_of_other_gods_to_be_heard_from_your_mouth, 'Exodus 23:13').
-study_note(do_not_cause_the_names_of_other_gods_to_be_heard_from_your_mouth, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_cause_the_names_of_other_gods_to_be_heard_from_your_mouth, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not cause the names of other gods to be heard from your mouth.').
 
 % Command: do_not_bow_down_to_other_gods
 command(do_not_bow_down_to_other_gods).
@@ -146,7 +161,8 @@ normal_obedience(do_not_bow_down_to_other_gods, 'Do not bow down to other gods.'
 concerns(do_not_bow_down_to_other_gods, reject_idolatry).
 scripture_reference(do_not_bow_down_to_other_gods, 'Exodus 20:5').
 scripture_reference(do_not_bow_down_to_other_gods, 'Deuteronomy 5:9').
-study_note(do_not_bow_down_to_other_gods, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+story_reference(do_not_bow_down_to_other_gods, 'Daniel 3:12-18', 'Hananiah, Mishael, and Azariah refuse to bow to Nebuchadnezzar''s image.').
+study_note(do_not_bow_down_to_other_gods, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not bow down to other gods.').
 
 % Command: do_not_serve_other_gods
 command(do_not_serve_other_gods).
@@ -155,7 +171,9 @@ normal_obedience(do_not_serve_other_gods, 'Do not serve other gods.').
 concerns(do_not_serve_other_gods, reject_idolatry).
 scripture_reference(do_not_serve_other_gods, 'Exodus 20:5').
 scripture_reference(do_not_serve_other_gods, 'Deuteronomy 5:9').
-study_note(do_not_serve_other_gods, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+story_reference(do_not_serve_other_gods, 'Joshua 24:14-24', 'Joshua charges Israel to serve YHWH in sincerity and put away other gods.').
+story_reference(do_not_serve_other_gods, '1 Kings 18:21', 'Elijah confronts Israel for wavering between YHWH and Baal.').
+study_note(do_not_serve_other_gods, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not serve other gods.').
 
 % Command: do_not_make_a_molten_god
 command(do_not_make_a_molten_god).
@@ -163,7 +181,8 @@ command_title(do_not_make_a_molten_god, 'Exodus 34:17 - Do not make a molten god
 normal_obedience(do_not_make_a_molten_god, 'Do not make a molten god.').
 concerns(do_not_make_a_molten_god, reject_idolatry).
 scripture_reference(do_not_make_a_molten_god, 'Exodus 34:17').
-study_note(do_not_make_a_molten_god, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+story_reference(do_not_make_a_molten_god, 'Exodus 32:4', 'Aaron fashions the golden calf as a molten image.').
+study_note(do_not_make_a_molten_god, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not make a molten god.').
 
 % Command: do_not_turn_to_idols
 command(do_not_turn_to_idols).
@@ -171,7 +190,8 @@ command_title(do_not_turn_to_idols, 'Leviticus 19:4 - Do not turn to idols.').
 normal_obedience(do_not_turn_to_idols, 'Do not turn to idols.').
 concerns(do_not_turn_to_idols, reject_idolatry).
 scripture_reference(do_not_turn_to_idols, 'Leviticus 19:4').
-study_note(do_not_turn_to_idols, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+story_reference(do_not_turn_to_idols, '1 Samuel 7:3-4', 'Samuel calls Israel to put away foreign gods and serve YHWH only.').
+study_note(do_not_turn_to_idols, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not turn to idols.').
 
 % Command: do_not_make_idols_for_yourselves
 command(do_not_make_idols_for_yourselves).
@@ -179,7 +199,8 @@ command_title(do_not_make_idols_for_yourselves, 'Leviticus 19:4 - Do not make id
 normal_obedience(do_not_make_idols_for_yourselves, 'Do not make idols for yourselves.').
 concerns(do_not_make_idols_for_yourselves, reject_idolatry).
 scripture_reference(do_not_make_idols_for_yourselves, 'Leviticus 19:4').
-study_note(do_not_make_idols_for_yourselves, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+story_reference(do_not_make_idols_for_yourselves, 'Exodus 32:1-8', 'Israel makes the golden calf and turns aside quickly from the commanded way.').
+study_note(do_not_make_idols_for_yourselves, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not make idols for yourselves.').
 
 % Command: do_not_make_pillars_for_worship
 command(do_not_make_pillars_for_worship).
@@ -187,7 +208,7 @@ command_title(do_not_make_pillars_for_worship, 'Deuteronomy 16:22 - Do not make 
 normal_obedience(do_not_make_pillars_for_worship, 'Do not make pillars for worship.').
 concerns(do_not_make_pillars_for_worship, reject_idolatry).
 scripture_reference(do_not_make_pillars_for_worship, 'Deuteronomy 16:22').
-study_note(do_not_make_pillars_for_worship, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_make_pillars_for_worship, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not make pillars for worship.').
 
 % Command: do_not_plant_an_asherah_beside_yhwh_s_altar
 command(do_not_plant_an_asherah_beside_yhwh_s_altar).
@@ -195,7 +216,9 @@ command_title(do_not_plant_an_asherah_beside_yhwh_s_altar, 'Deuteronomy 16:21 - 
 normal_obedience(do_not_plant_an_asherah_beside_yhwh_s_altar, 'Do not plant an Asherah beside YHWH''s altar.').
 concerns(do_not_plant_an_asherah_beside_yhwh_s_altar, reject_idolatry).
 scripture_reference(do_not_plant_an_asherah_beside_yhwh_s_altar, 'Deuteronomy 16:21').
-study_note(do_not_plant_an_asherah_beside_yhwh_s_altar, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+story_reference(do_not_plant_an_asherah_beside_yhwh_s_altar, '2 Kings 21:7', 'Manasseh sets the carved Asherah image in the house of YHWH, showing the violation.').
+story_reference(do_not_plant_an_asherah_beside_yhwh_s_altar, '2 Kings 23:6', 'Josiah removes the Asherah from the house of YHWH.').
+study_note(do_not_plant_an_asherah_beside_yhwh_s_altar, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not plant an Asherah beside YHWH''s altar.').
 
 % Command: do_not_set_up_a_sacred_stone_yhwh_hates
 command(do_not_set_up_a_sacred_stone_yhwh_hates).
@@ -203,7 +226,7 @@ command_title(do_not_set_up_a_sacred_stone_yhwh_hates, 'Deuteronomy 16:22 - Do n
 normal_obedience(do_not_set_up_a_sacred_stone_yhwh_hates, 'Do not set up a sacred stone YHWH hates.').
 concerns(do_not_set_up_a_sacred_stone_yhwh_hates, reject_idolatry).
 scripture_reference(do_not_set_up_a_sacred_stone_yhwh_hates, 'Deuteronomy 16:22').
-study_note(do_not_set_up_a_sacred_stone_yhwh_hates, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_set_up_a_sacred_stone_yhwh_hates, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not set up a sacred stone YHWH hates.').
 
 % Command: do_not_inquire_how_the_nations_served_their_gods_in_order_to_do_likewise
 command(do_not_inquire_how_the_nations_served_their_gods_in_order_to_do_likewise).
@@ -211,7 +234,7 @@ command_title(do_not_inquire_how_the_nations_served_their_gods_in_order_to_do_li
 normal_obedience(do_not_inquire_how_the_nations_served_their_gods_in_order_to_do_likewise, 'Do not inquire how the nations served their gods in order to do likewise.').
 concerns(do_not_inquire_how_the_nations_served_their_gods_in_order_to_do_likewise, reject_idolatry).
 scripture_reference(do_not_inquire_how_the_nations_served_their_gods_in_order_to_do_likewise, 'Deuteronomy 12:30').
-study_note(do_not_inquire_how_the_nations_served_their_gods_in_order_to_do_likewise, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_inquire_how_the_nations_served_their_gods_in_order_to_do_likewise, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not inquire how the nations served their gods in order to do likewise.').
 
 % Command: do_not_add_to_yhwh_s_commands
 command(do_not_add_to_yhwh_s_commands).
@@ -220,7 +243,7 @@ normal_obedience(do_not_add_to_yhwh_s_commands, 'Do not add to YHWH''s commands.
 concerns(do_not_add_to_yhwh_s_commands, reject_idolatry).
 scripture_reference(do_not_add_to_yhwh_s_commands, 'Deuteronomy 4:2').
 scripture_reference(do_not_add_to_yhwh_s_commands, '12:32').
-study_note(do_not_add_to_yhwh_s_commands, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_add_to_yhwh_s_commands, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not add to YHWH''s commands.').
 
 % Command: do_not_take_away_from_yhwh_s_commands
 command(do_not_take_away_from_yhwh_s_commands).
@@ -229,7 +252,7 @@ normal_obedience(do_not_take_away_from_yhwh_s_commands, 'Do not take away from Y
 concerns(do_not_take_away_from_yhwh_s_commands, reject_idolatry).
 scripture_reference(do_not_take_away_from_yhwh_s_commands, 'Deuteronomy 4:2').
 scripture_reference(do_not_take_away_from_yhwh_s_commands, '12:32').
-study_note(do_not_take_away_from_yhwh_s_commands, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_take_away_from_yhwh_s_commands, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not take away from YHWH''s commands.').
 
 % Command: destroy_idolatrous_altars_pillars_asherim_and_images_in_the_land
 command(destroy_idolatrous_altars_pillars_asherim_and_images_in_the_land).
@@ -238,7 +261,7 @@ normal_obedience(destroy_idolatrous_altars_pillars_asherim_and_images_in_the_lan
 concerns(destroy_idolatrous_altars_pillars_asherim_and_images_in_the_land, reject_idolatry).
 scripture_reference(destroy_idolatrous_altars_pillars_asherim_and_images_in_the_land, 'Deuteronomy 7:5').
 scripture_reference(destroy_idolatrous_altars_pillars_asherim_and_images_in_the_land, '12:2-3').
-study_note(destroy_idolatrous_altars_pillars_asherim_and_images_in_the_land, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(destroy_idolatrous_altars_pillars_asherim_and_images_in_the_land, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Destroy idolatrous altars, pillars, Asherim, and images in the land.').
 
 % Command: do_not_bring_an_abomination_into_your_house
 command(do_not_bring_an_abomination_into_your_house).
@@ -246,7 +269,7 @@ command_title(do_not_bring_an_abomination_into_your_house, 'Deuteronomy 7:26 - D
 normal_obedience(do_not_bring_an_abomination_into_your_house, 'Do not bring an abomination into your house.').
 concerns(do_not_bring_an_abomination_into_your_house, reject_idolatry).
 scripture_reference(do_not_bring_an_abomination_into_your_house, 'Deuteronomy 7:26').
-study_note(do_not_bring_an_abomination_into_your_house, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_bring_an_abomination_into_your_house, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not bring an abomination into your house.').
 
 % Command: do_not_desire_silver_or_gold_from_idols
 command(do_not_desire_silver_or_gold_from_idols).
@@ -254,7 +277,7 @@ command_title(do_not_desire_silver_or_gold_from_idols, 'Deuteronomy 7:25 - Do no
 normal_obedience(do_not_desire_silver_or_gold_from_idols, 'Do not desire silver or gold from idols.').
 concerns(do_not_desire_silver_or_gold_from_idols, reject_idolatry).
 scripture_reference(do_not_desire_silver_or_gold_from_idols, 'Deuteronomy 7:25').
-study_note(do_not_desire_silver_or_gold_from_idols, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_desire_silver_or_gold_from_idols, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not desire silver or gold from idols.').
 
 % Command: do_not_make_a_covenant_with_idolatrous_nations_or_their_gods
 command(do_not_make_a_covenant_with_idolatrous_nations_or_their_gods).
@@ -263,7 +286,7 @@ normal_obedience(do_not_make_a_covenant_with_idolatrous_nations_or_their_gods, '
 concerns(do_not_make_a_covenant_with_idolatrous_nations_or_their_gods, reject_idolatry).
 scripture_reference(do_not_make_a_covenant_with_idolatrous_nations_or_their_gods, 'Exodus 23:32').
 scripture_reference(do_not_make_a_covenant_with_idolatrous_nations_or_their_gods, 'Deuteronomy 7:2').
-study_note(do_not_make_a_covenant_with_idolatrous_nations_or_their_gods, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_make_a_covenant_with_idolatrous_nations_or_their_gods, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not make a covenant with idolatrous nations or their gods.').
 
 % Command: do_not_show_mercy_to_the_idolatrous_nations_in_the_land_when_commanded_to_disp
 command(do_not_show_mercy_to_the_idolatrous_nations_in_the_land_when_commanded_to_disp).
@@ -271,7 +294,7 @@ command_title(do_not_show_mercy_to_the_idolatrous_nations_in_the_land_when_comma
 normal_obedience(do_not_show_mercy_to_the_idolatrous_nations_in_the_land_when_commanded_to_disp, 'Do not show mercy to the idolatrous nations in the land when commanded to dispossess them.').
 concerns(do_not_show_mercy_to_the_idolatrous_nations_in_the_land_when_commanded_to_disp, reject_idolatry).
 scripture_reference(do_not_show_mercy_to_the_idolatrous_nations_in_the_land_when_commanded_to_disp, 'Deuteronomy 7:2').
-study_note(do_not_show_mercy_to_the_idolatrous_nations_in_the_land_when_commanded_to_disp, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_show_mercy_to_the_idolatrous_nations_in_the_land_when_commanded_to_disp, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not show mercy to the idolatrous nations in the land when commanded to dispossess them.').
 
 % Command: do_not_intermarry_with_the_idolatrous_nations_listed_in_the_land_context
 command(do_not_intermarry_with_the_idolatrous_nations_listed_in_the_land_context).
@@ -279,7 +302,7 @@ command_title(do_not_intermarry_with_the_idolatrous_nations_listed_in_the_land_c
 normal_obedience(do_not_intermarry_with_the_idolatrous_nations_listed_in_the_land_context, 'Do not intermarry with the idolatrous nations listed in the land context.').
 concerns(do_not_intermarry_with_the_idolatrous_nations_listed_in_the_land_context, reject_idolatry).
 scripture_reference(do_not_intermarry_with_the_idolatrous_nations_listed_in_the_land_context, 'Deuteronomy 7:3').
-study_note(do_not_intermarry_with_the_idolatrous_nations_listed_in_the_land_context, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_intermarry_with_the_idolatrous_nations_listed_in_the_land_context, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not intermarry with the idolatrous nations listed in the land context.').
 
 % Command: test_a_prophet_by_whether_his_word_comes_to_pass_and_whether_he_turns_people_f
 command(test_a_prophet_by_whether_his_word_comes_to_pass_and_whether_he_turns_people_f).
@@ -288,7 +311,7 @@ normal_obedience(test_a_prophet_by_whether_his_word_comes_to_pass_and_whether_he
 concerns(test_a_prophet_by_whether_his_word_comes_to_pass_and_whether_he_turns_people_f, reject_idolatry).
 scripture_reference(test_a_prophet_by_whether_his_word_comes_to_pass_and_whether_he_turns_people_f, 'Deuteronomy 13:1-5').
 scripture_reference(test_a_prophet_by_whether_his_word_comes_to_pass_and_whether_he_turns_people_f, '18:20-22').
-study_note(test_a_prophet_by_whether_his_word_comes_to_pass_and_whether_he_turns_people_f, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(test_a_prophet_by_whether_his_word_comes_to_pass_and_whether_he_turns_people_f, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Test a prophet by whether his word comes to pass and whether he turns people from YHWH.').
 
 % Command: do_not_fear_a_false_prophet
 command(do_not_fear_a_false_prophet).
@@ -296,7 +319,7 @@ command_title(do_not_fear_a_false_prophet, 'Deuteronomy 18:22 - Do not fear a fa
 normal_obedience(do_not_fear_a_false_prophet, 'Do not fear a false prophet.').
 concerns(do_not_fear_a_false_prophet, reject_idolatry).
 scripture_reference(do_not_fear_a_false_prophet, 'Deuteronomy 18:22').
-study_note(do_not_fear_a_false_prophet, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_fear_a_false_prophet, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not fear a false prophet.').
 
 % Command: do_not_prophesy_falsely_in_yhwh_s_name
 command(do_not_prophesy_falsely_in_yhwh_s_name).
@@ -304,7 +327,7 @@ command_title(do_not_prophesy_falsely_in_yhwh_s_name, 'Deuteronomy 18:20 - Do no
 normal_obedience(do_not_prophesy_falsely_in_yhwh_s_name, 'Do not prophesy falsely in YHWH''s Name.').
 concerns(do_not_prophesy_falsely_in_yhwh_s_name, reject_idolatry).
 scripture_reference(do_not_prophesy_falsely_in_yhwh_s_name, 'Deuteronomy 18:20').
-study_note(do_not_prophesy_falsely_in_yhwh_s_name, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_prophesy_falsely_in_yhwh_s_name, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not prophesy falsely in YHWH''s Name.').
 
 % Command: do_not_prophesy_in_the_name_of_other_gods
 command(do_not_prophesy_in_the_name_of_other_gods).
@@ -312,7 +335,7 @@ command_title(do_not_prophesy_in_the_name_of_other_gods, 'Deuteronomy 18:20 - Do
 normal_obedience(do_not_prophesy_in_the_name_of_other_gods, 'Do not prophesy in the name of other gods.').
 concerns(do_not_prophesy_in_the_name_of_other_gods, reject_idolatry).
 scripture_reference(do_not_prophesy_in_the_name_of_other_gods, 'Deuteronomy 18:20').
-study_note(do_not_prophesy_in_the_name_of_other_gods, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_prophesy_in_the_name_of_other_gods, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not prophesy in the name of other gods.').
 
 % Command: do_not_listen_to_one_who_secretly_entices_you_to_serve_other_gods
 command(do_not_listen_to_one_who_secretly_entices_you_to_serve_other_gods).
@@ -320,7 +343,7 @@ command_title(do_not_listen_to_one_who_secretly_entices_you_to_serve_other_gods,
 normal_obedience(do_not_listen_to_one_who_secretly_entices_you_to_serve_other_gods, 'Do not listen to one who secretly entices you to serve other gods.').
 concerns(do_not_listen_to_one_who_secretly_entices_you_to_serve_other_gods, reject_idolatry).
 scripture_reference(do_not_listen_to_one_who_secretly_entices_you_to_serve_other_gods, 'Deuteronomy 13:6-11').
-study_note(do_not_listen_to_one_who_secretly_entices_you_to_serve_other_gods, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_listen_to_one_who_secretly_entices_you_to_serve_other_gods, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not listen to one who secretly entices you to serve other gods.').
 
 % Command: do_not_spare_or_conceal_the_enticer_to_idolatry
 command(do_not_spare_or_conceal_the_enticer_to_idolatry).
@@ -328,7 +351,7 @@ command_title(do_not_spare_or_conceal_the_enticer_to_idolatry, 'Deuteronomy 13:8
 normal_obedience(do_not_spare_or_conceal_the_enticer_to_idolatry, 'Do not spare or conceal the enticer to idolatry.').
 concerns(do_not_spare_or_conceal_the_enticer_to_idolatry, reject_idolatry).
 scripture_reference(do_not_spare_or_conceal_the_enticer_to_idolatry, 'Deuteronomy 13:8').
-study_note(do_not_spare_or_conceal_the_enticer_to_idolatry, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_spare_or_conceal_the_enticer_to_idolatry, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not spare or conceal the enticer to idolatry.').
 
 % Command: investigate_the_idolatrous_city_matter_carefully
 command(investigate_the_idolatrous_city_matter_carefully).
@@ -336,7 +359,7 @@ command_title(investigate_the_idolatrous_city_matter_carefully, 'Deuteronomy 13:
 normal_obedience(investigate_the_idolatrous_city_matter_carefully, 'Investigate the idolatrous city matter carefully.').
 concerns(investigate_the_idolatrous_city_matter_carefully, reject_idolatry).
 scripture_reference(investigate_the_idolatrous_city_matter_carefully, 'Deuteronomy 13:12-18').
-study_note(investigate_the_idolatrous_city_matter_carefully, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(investigate_the_idolatrous_city_matter_carefully, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Investigate the idolatrous city matter carefully.').
 
 % Command: do_not_rebuild_an_idolatrous_city_placed_under_destruction
 command(do_not_rebuild_an_idolatrous_city_placed_under_destruction).
@@ -344,7 +367,7 @@ command_title(do_not_rebuild_an_idolatrous_city_placed_under_destruction, 'Deute
 normal_obedience(do_not_rebuild_an_idolatrous_city_placed_under_destruction, 'Do not rebuild an idolatrous city placed under destruction.').
 concerns(do_not_rebuild_an_idolatrous_city_placed_under_destruction, reject_idolatry).
 scripture_reference(do_not_rebuild_an_idolatrous_city_placed_under_destruction, 'Deuteronomy 13:16').
-study_note(do_not_rebuild_an_idolatrous_city_placed_under_destruction, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_rebuild_an_idolatrous_city_placed_under_destruction, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not rebuild an idolatrous city placed under destruction.').
 
 % Command: do_not_let_anything_devoted_from_that_city_cling_to_your_hand
 command(do_not_let_anything_devoted_from_that_city_cling_to_your_hand).
@@ -352,7 +375,7 @@ command_title(do_not_let_anything_devoted_from_that_city_cling_to_your_hand, 'De
 normal_obedience(do_not_let_anything_devoted_from_that_city_cling_to_your_hand, 'Do not let anything devoted from that city cling to your hand.').
 concerns(do_not_let_anything_devoted_from_that_city_cling_to_your_hand, reject_idolatry).
 scripture_reference(do_not_let_anything_devoted_from_that_city_cling_to_your_hand, 'Deuteronomy 13:17').
-study_note(do_not_let_anything_devoted_from_that_city_cling_to_your_hand, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_let_anything_devoted_from_that_city_cling_to_your_hand, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not let anything devoted from that city cling to your hand.').
 
 % Command: do_not_practice_divination_2
 command(do_not_practice_divination_2).
@@ -360,7 +383,7 @@ command_title(do_not_practice_divination_2, 'Deuteronomy 18:10 - Do not practice
 normal_obedience(do_not_practice_divination_2, 'Do not practice divination.').
 concerns(do_not_practice_divination_2, reject_idolatry).
 scripture_reference(do_not_practice_divination_2, 'Deuteronomy 18:10').
-study_note(do_not_practice_divination_2, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_practice_divination_2, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not practice divination.').
 
 % Command: do_not_practice_soothsaying_or_cloud_reading
 command(do_not_practice_soothsaying_or_cloud_reading).
@@ -368,7 +391,7 @@ command_title(do_not_practice_soothsaying_or_cloud_reading, 'Deuteronomy 18:10 -
 normal_obedience(do_not_practice_soothsaying_or_cloud_reading, 'Do not practice soothsaying or cloud-reading.').
 concerns(do_not_practice_soothsaying_or_cloud_reading, reject_idolatry).
 scripture_reference(do_not_practice_soothsaying_or_cloud_reading, 'Deuteronomy 18:10').
-study_note(do_not_practice_soothsaying_or_cloud_reading, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_practice_soothsaying_or_cloud_reading, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not practice soothsaying or cloud-reading.').
 
 % Command: do_not_practice_omen_reading
 command(do_not_practice_omen_reading).
@@ -376,7 +399,7 @@ command_title(do_not_practice_omen_reading, 'Deuteronomy 18:10 - Do not practice
 normal_obedience(do_not_practice_omen_reading, 'Do not practice omen-reading.').
 concerns(do_not_practice_omen_reading, reject_idolatry).
 scripture_reference(do_not_practice_omen_reading, 'Deuteronomy 18:10').
-study_note(do_not_practice_omen_reading, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_practice_omen_reading, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not practice omen-reading.').
 
 % Command: do_not_practice_sorcery
 command(do_not_practice_sorcery).
@@ -384,7 +407,7 @@ command_title(do_not_practice_sorcery, 'Deuteronomy 18:10 - Do not practice sorc
 normal_obedience(do_not_practice_sorcery, 'Do not practice sorcery.').
 concerns(do_not_practice_sorcery, reject_idolatry).
 scripture_reference(do_not_practice_sorcery, 'Deuteronomy 18:10').
-study_note(do_not_practice_sorcery, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_practice_sorcery, 'Deuteronomy strictly prohibits doing anything that has to do with sorcery, divination, or witchcraft.').
 
 % Command: do_not_cast_spells
 command(do_not_cast_spells).
@@ -392,7 +415,7 @@ command_title(do_not_cast_spells, 'Deuteronomy 18:11 - Do not cast spells.').
 normal_obedience(do_not_cast_spells, 'Do not cast spells.').
 concerns(do_not_cast_spells, reject_idolatry).
 scripture_reference(do_not_cast_spells, 'Deuteronomy 18:11').
-study_note(do_not_cast_spells, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_cast_spells, 'Charmers, mediums, spirits, wizards, and necromancers are treated as abominations that YHWH''s people must avoid.').
 
 % Command: do_not_consult_a_medium
 command(do_not_consult_a_medium).
@@ -400,7 +423,7 @@ command_title(do_not_consult_a_medium, 'Deuteronomy 18:11 - Do not consult a med
 normal_obedience(do_not_consult_a_medium, 'Do not consult a medium.').
 concerns(do_not_consult_a_medium, reject_idolatry).
 scripture_reference(do_not_consult_a_medium, 'Deuteronomy 18:11').
-study_note(do_not_consult_a_medium, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_consult_a_medium, 'This is an abomination to YHWH.').
 
 % Command: do_not_consult_a_spiritist
 command(do_not_consult_a_spiritist).
@@ -408,7 +431,7 @@ command_title(do_not_consult_a_spiritist, 'Deuteronomy 18:11 - Do not consult a 
 normal_obedience(do_not_consult_a_spiritist, 'Do not consult a spiritist.').
 concerns(do_not_consult_a_spiritist, reject_idolatry).
 scripture_reference(do_not_consult_a_spiritist, 'Deuteronomy 18:11').
-study_note(do_not_consult_a_spiritist, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_consult_a_spiritist, 'This is an abomination to YHWH.').
 
 % Command: do_not_inquire_of_the_dead
 command(do_not_inquire_of_the_dead).
@@ -416,7 +439,7 @@ command_title(do_not_inquire_of_the_dead, 'Deuteronomy 18:11 - Do not inquire of
 normal_obedience(do_not_inquire_of_the_dead, 'Do not inquire of the dead.').
 concerns(do_not_inquire_of_the_dead, reject_idolatry).
 scripture_reference(do_not_inquire_of_the_dead, 'Deuteronomy 18:11').
-study_note(do_not_inquire_of_the_dead, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_inquire_of_the_dead, 'This is an abomination to YHWH.').
 
 % Command: do_not_turn_to_mediums_or_spiritists
 command(do_not_turn_to_mediums_or_spiritists).
@@ -424,7 +447,7 @@ command_title(do_not_turn_to_mediums_or_spiritists, 'Leviticus 19:31 - Do not tu
 normal_obedience(do_not_turn_to_mediums_or_spiritists, 'Do not turn to mediums or spiritists.').
 concerns(do_not_turn_to_mediums_or_spiritists, reject_idolatry).
 scripture_reference(do_not_turn_to_mediums_or_spiritists, 'Leviticus 19:31').
-study_note(do_not_turn_to_mediums_or_spiritists, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_turn_to_mediums_or_spiritists, 'This is an abomination to YHWH.').
 
 % Command: do_not_make_baldness_between_your_eyes_for_the_dead
 command(do_not_make_baldness_between_your_eyes_for_the_dead).
@@ -432,7 +455,8 @@ command_title(do_not_make_baldness_between_your_eyes_for_the_dead, 'Deuteronomy 
 normal_obedience(do_not_make_baldness_between_your_eyes_for_the_dead, 'Do not make baldness between your eyes for the dead.').
 concerns(do_not_make_baldness_between_your_eyes_for_the_dead, reject_idolatry).
 scripture_reference(do_not_make_baldness_between_your_eyes_for_the_dead, 'Deuteronomy 14:1').
-study_note(do_not_make_baldness_between_your_eyes_for_the_dead, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+source_term(do_not_make_baldness_between_your_eyes_for_the_dead, 'hebrew', word, 'brief gloss').
+study_note(do_not_make_baldness_between_your_eyes_for_the_dead, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not make baldness between your eyes for the dead.').
 
 % Command: do_not_cut_the_flesh_for_the_dead
 command(do_not_cut_the_flesh_for_the_dead).
@@ -441,7 +465,7 @@ normal_obedience(do_not_cut_the_flesh_for_the_dead, 'Do not cut the flesh for th
 concerns(do_not_cut_the_flesh_for_the_dead, reject_idolatry).
 scripture_reference(do_not_cut_the_flesh_for_the_dead, 'Leviticus 19:28').
 scripture_reference(do_not_cut_the_flesh_for_the_dead, 'Deuteronomy 14:1').
-study_note(do_not_cut_the_flesh_for_the_dead, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_cut_the_flesh_for_the_dead, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not cut the flesh for the dead.').
 
 % Command: do_not_make_tattoo_marks_on_yourself
 command(do_not_make_tattoo_marks_on_yourself).
@@ -449,7 +473,7 @@ command_title(do_not_make_tattoo_marks_on_yourself, 'Leviticus 19:28 - Do not ma
 normal_obedience(do_not_make_tattoo_marks_on_yourself, 'Do not make tattoo marks on yourself.').
 concerns(do_not_make_tattoo_marks_on_yourself, reject_idolatry).
 scripture_reference(do_not_make_tattoo_marks_on_yourself, 'Leviticus 19:28').
-study_note(do_not_make_tattoo_marks_on_yourself, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_make_tattoo_marks_on_yourself, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not make tattoo marks on yourself.').
 
 % Command: priests_must_not_make_baldness_shave_edges_of_beard_or_cut_flesh_for_the_dead
 command(priests_must_not_make_baldness_shave_edges_of_beard_or_cut_flesh_for_the_dead).
@@ -457,4 +481,4 @@ command_title(priests_must_not_make_baldness_shave_edges_of_beard_or_cut_flesh_f
 normal_obedience(priests_must_not_make_baldness_shave_edges_of_beard_or_cut_flesh_for_the_dead, 'Priests must not make baldness, shave edges of beard, or cut flesh for the dead.').
 concerns(priests_must_not_make_baldness_shave_edges_of_beard_or_cut_flesh_for_the_dead, reject_idolatry).
 scripture_reference(priests_must_not_make_baldness_shave_edges_of_beard_or_cut_flesh_for_the_dead, 'Leviticus 21:5').
-study_note(priests_must_not_make_baldness_shave_edges_of_beard_or_cut_flesh_for_the_dead, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(priests_must_not_make_baldness_shave_edges_of_beard_or_cut_flesh_for_the_dead, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Priests must not make baldness, shave edges of beard, or cut flesh for the dead.').

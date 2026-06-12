@@ -129,6 +129,7 @@ command_detail_json(Command, json([
     appliesIf=AppliesIf,
     embodies=GreatCommands,
     scriptureReferences=ScriptureReferences,
+    storyReferences=StoryReferences,
     studyNotes=StudyNotes,
     sourceTerms=SourceTerms,
     translationNotes=TranslationNotes,
@@ -143,6 +144,10 @@ command_detail_json(Command, json([
     setof_or_empty(Applicability, applies_if(Command, Applicability), AppliesIf),
     embodies_list(Command, GreatCommands),
     findall(Reference, scripture_reference(Command, Reference), ScriptureReferences),
+    findall(json([
+        reference=Reference,
+        label=Label
+    ]), story_reference(Command, Reference, Label), StoryReferences),
     findall(Note, study_note(Command, Note), StudyNotes),
     findall(json([
         language=Language,

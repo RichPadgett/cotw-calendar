@@ -17,9 +17,9 @@
 % normal_obedience(command_key, 'Text-faithful statement of what the command says to do or not do.').
 % concerns(command_key, concern_key).
 % scripture_reference(command_key, 'Book 1:1-2').
-% study_note(command_key, 'Short human note about scope, context, or review status.').
+% study_note(command_key, 'Short human note about scope, context, or catalog status.').
 %
-% Optional review/detail fields:
+% Optional detail fields:
 %
 % source_term(command_key, hebrew, word, 'brief gloss').
 % source_term(command_key, greek, word, 'brief gloss').
@@ -78,7 +78,6 @@ command_title(do_not_plow_with_ox_and_donkey_together, 'Deu 22:10 - Do not plow 
 normal_obedience(do_not_plow_with_ox_and_donkey_together, 'Do not plow with an ox and donkey together.').
 concerns(do_not_plow_with_ox_and_donkey_together, animal_welfare).
 scripture_reference(do_not_plow_with_ox_and_donkey_together, 'Deuteronomy 22:10').
-study_note(do_not_plow_with_ox_and_donkey_together, 'This command is text-specific to plowing with an ox and donkey together.').
 
 % Command: do_not_crossbreed_livestock
 command(do_not_crossbreed_livestock).
@@ -138,6 +137,7 @@ concerns(release_hebrew_servant_in_seventh_year, servant_release_mercy).
 scripture_reference(release_hebrew_servant_in_seventh_year, 'Exodus 21:2-6').
 scripture_reference(release_hebrew_servant_in_seventh_year, 'Deuteronomy 15:12').
 scripture_reference(release_hebrew_servant_in_seventh_year, 'Exodus 21:2').
+story_reference(release_hebrew_servant_in_seventh_year, 'Jeremiah 34:8-17', 'Jeremiah rebukes Judah for releasing servants and then taking them back into bondage.').
 study_note(release_hebrew_servant_in_seventh_year, 'This applies within Torah servant-release law.').
 
 % Command: furnish_released_servant
@@ -147,6 +147,7 @@ normal_obedience(furnish_released_servant, 'When a Hebrew servant is released, d
 concerns(furnish_released_servant, servant_release_mercy).
 scripture_reference(furnish_released_servant, 'Deuteronomy 15:13-14').
 scripture_reference(furnish_released_servant, 'Deuteronomy 15:14').
+story_reference(furnish_released_servant, 'Jeremiah 34:8-17', 'The servant-release failure in Jeremiah shows the seriousness of release obligations.').
 study_note(furnish_released_servant, 'Release includes provision, not merely dismissal.').
 
 % Command: do_not_send_released_servant_empty
@@ -155,6 +156,7 @@ command_title(do_not_send_released_servant_empty, 'Deu 15:13 - Do not send relea
 normal_obedience(do_not_send_released_servant_empty, 'Do not send a released Hebrew servant away empty-handed.').
 concerns(do_not_send_released_servant_empty, servant_release_mercy).
 scripture_reference(do_not_send_released_servant_empty, 'Deuteronomy 15:13').
+story_reference(do_not_send_released_servant_empty, 'Jeremiah 34:8-17', 'Judah breaks covenant by reclaiming released servants, showing a release-law violation.').
 study_note(do_not_send_released_servant_empty, 'This is the negative side of furnishing the released servant.').
 
 % Command: allow_servant_to_choose_lifelong_service
@@ -188,6 +190,7 @@ command_title(pay_restitution_for_theft, 'Exo 22:1-4 - Pay restitution for theft
 normal_obedience(pay_restitution_for_theft, 'Pay restitution for stolen ox, sheep, or property according to Torah.').
 concerns(pay_restitution_for_theft, damages_and_restitution).
 scripture_reference(pay_restitution_for_theft, 'Exodus 22:1-4').
+story_reference(pay_restitution_for_theft, '2 Samuel 12:1-6', 'David recognizes that the rich man in Nathan''s parable should restore fourfold.').
 study_note(pay_restitution_for_theft, 'The restitution amount depends on the specific theft case.').
 
 % Command: pay_for_pit_damage
@@ -237,6 +240,7 @@ normal_obedience(establish_cities_of_refuge, 'Set apart cities of refuge for the
 concerns(establish_cities_of_refuge, refuge_and_bloodguilt).
 scripture_reference(establish_cities_of_refuge, 'Numbers 35:9-15').
 scripture_reference(establish_cities_of_refuge, 'Deuteronomy 19:1-13').
+story_reference(establish_cities_of_refuge, 'Joshua 20:1-9', 'Joshua appoints the cities of refuge as YHWH commanded through Moses.').
 study_note(establish_cities_of_refuge, 'This command requires land and judicial structures.').
 
 % Command: manslayer_flee_to_refuge
@@ -246,6 +250,7 @@ normal_obedience(manslayer_flee_to_refuge, 'The unintentional manslayer may flee
 concerns(manslayer_flee_to_refuge, refuge_and_bloodguilt).
 scripture_reference(manslayer_flee_to_refuge, 'Numbers 35:11-12').
 scripture_reference(manslayer_flee_to_refuge, 'Deuteronomy 19:4-6').
+story_reference(manslayer_flee_to_refuge, 'Joshua 20:1-9', 'The cities of refuge are appointed so the manslayer can flee there.').
 study_note(manslayer_flee_to_refuge, 'Refuge protects from blood avenger until judgment.').
 
 % Command: do_not_accept_ransom_for_murderer
@@ -286,6 +291,8 @@ command_title(perform_levirate_marriage, 'Deu 25:5-6 - Perform levirate marriage
 normal_obedience(perform_levirate_marriage, 'When brothers dwell together and one dies childless, the brother performs the levirate duty.').
 concerns(perform_levirate_marriage, marriage_household_procedure).
 scripture_reference(perform_levirate_marriage, 'Deuteronomy 25:5-6').
+story_reference(perform_levirate_marriage, 'Genesis 38:6-11', 'Judah tells Onan to perform the brother-in-law duty for Tamar.').
+story_reference(perform_levirate_marriage, 'Ruth 4:1-10', 'Boaz redeems Ruth and raises up the name of the dead upon his inheritance.').
 study_note(perform_levirate_marriage, 'This applies to the specific household and inheritance case in the passage.').
 
 % Command: perform_halitzah_if_levirate_refused
@@ -294,6 +301,7 @@ command_title(perform_halitzah_if_levirate_refused, 'Deu 25:7-10 - Perform halit
 normal_obedience(perform_halitzah_if_levirate_refused, 'If the brother refuses levirate duty, perform the shoe-removal procedure before the elders.').
 concerns(perform_halitzah_if_levirate_refused, marriage_household_procedure).
 scripture_reference(perform_halitzah_if_levirate_refused, 'Deuteronomy 25:7-10').
+story_reference(perform_halitzah_if_levirate_refused, 'Ruth 4:7-8', 'The nearer redeemer removes his sandal in the gate when declining redemption.').
 study_note(perform_halitzah_if_levirate_refused, 'The procedure is tied to elders and the named refusal case.').
 
 % Command: captive_woman_waiting_period
@@ -320,6 +328,7 @@ concerns(nazirite_abstain_from_wine_and_grape_products, vow_separation).
 scripture_reference(nazirite_abstain_from_wine_and_grape_products, 'Numbers 6:1-4').
 scripture_reference(nazirite_abstain_from_wine_and_grape_products, 'Numbers 6:3').
 scripture_reference(nazirite_abstain_from_wine_and_grape_products, 'Numbers 6:4').
+story_reference(nazirite_abstain_from_wine_and_grape_products, 'Judges 13:3-7', 'Samson''s mother is told that the child will be a Nazirite from the womb and that wine and strong drink are forbidden.').
 study_note(nazirite_abstain_from_wine_and_grape_products, 'This applies during Nazirite vow status.').
 
 % Command: nazirite_let_hair_grow
@@ -328,6 +337,8 @@ command_title(nazirite_let_hair_grow, 'Num 6:5 - Nazirite lets hair grow.').
 normal_obedience(nazirite_let_hair_grow, 'During the Nazirite vow, no razor passes over the head; the hair grows.').
 concerns(nazirite_let_hair_grow, vow_separation).
 scripture_reference(nazirite_let_hair_grow, 'Numbers 6:5').
+story_reference(nazirite_let_hair_grow, 'Judges 13:5', 'No razor is to come upon Samson''s head because he is a Nazirite from the womb.').
+story_reference(nazirite_let_hair_grow, 'Judges 16:17-22', 'Samson explains the Nazirite hair sign, and his hair begins to grow again after it is shaved.').
 study_note(nazirite_let_hair_grow, 'Hair growth is part of the visible separation of the vow.').
 
 % Command: nazirite_avoid_corpse_impurity
@@ -336,6 +347,7 @@ command_title(nazirite_avoid_corpse_impurity, 'Num 6:6-7 - Nazirite avoids corps
 normal_obedience(nazirite_avoid_corpse_impurity, 'During the Nazirite vow, do not go near a dead body, even for close family.').
 concerns(nazirite_avoid_corpse_impurity, vow_separation).
 scripture_reference(nazirite_avoid_corpse_impurity, 'Numbers 6:6-7').
+story_reference(nazirite_avoid_corpse_impurity, 'Judges 14:8-9', 'Samson takes honey from the carcass of the lion, a narrative point to compare with Nazirite impurity boundaries.').
 study_note(nazirite_avoid_corpse_impurity, 'This is stricter than ordinary corpse contact because of Nazirite status.').
 
 % Command: nazirite_complete_vow_offerings
@@ -360,10 +372,12 @@ command_title(priestly_blessing, 'Num 6:22-27 - Priests bless Israel with YHWH''
 normal_obedience(priestly_blessing, 'Aaron and his sons bless Israel using the words YHWH gave.').
 concerns(priestly_blessing, priestly_holiness).
 scripture_reference(priestly_blessing, 'Numbers 6:22-27').
+story_reference(priestly_blessing, 'Leviticus 9:22', 'Aaron lifts his hands toward the people and blesses them after the offerings.').
+story_reference(priestly_blessing, '2 Chronicles 30:27', 'The priests and Levites bless the people, and their voice is heard.').
 study_note(priestly_blessing, 'The blessing wording is given directly in Torah and belongs to priestly service.').
 
 % -----------------------------------------------------------------------------
-% Additional Text-Specific Review Commands
+% Additional Text-Specific Commands
 % -----------------------------------------------------------------------------
 
 % Command: do_not_wear_what_pertains_to_a_man_woman_as_stated_in_torah
@@ -372,7 +386,7 @@ command_title(do_not_wear_what_pertains_to_a_man_woman_as_stated_in_torah, 'Deut
 normal_obedience(do_not_wear_what_pertains_to_a_man_woman_as_stated_in_torah, 'Do not wear what pertains to a man/woman as stated in Torah.').
 concerns(do_not_wear_what_pertains_to_a_man_woman_as_stated_in_torah, mixed_kinds_boundary).
 scripture_reference(do_not_wear_what_pertains_to_a_man_woman_as_stated_in_torah, 'Deuteronomy 22:5').
-study_note(do_not_wear_what_pertains_to_a_man_woman_as_stated_in_torah, 'TODO: Verify wording against the written Torah text before final catalog refinement.').
+study_note(do_not_wear_what_pertains_to_a_man_woman_as_stated_in_torah, 'This command preserves a Torah boundary around kinds, garments, fields, animals, or visible bodily practice: Do not wear what pertains to a man/woman as stated in Torah.').
 
 % Command: do_not_round_the_side_growth_of_the_head
 command(do_not_round_the_side_growth_of_the_head).

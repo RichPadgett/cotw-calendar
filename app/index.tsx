@@ -12,11 +12,13 @@ import {
   Pressable,
   ScrollView,
   Text,
+  TextInput,
   useWindowDimensions,
   View,
 } from "react-native";
 
 import { MaterialIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import AppHeader from "../src/components/calendar/AppHeader";
 import DayDetailModal from "../src/components/calendar/DayDetailModal";
@@ -24,6 +26,7 @@ import HistoryTimelineView from "../src/components/calendar/HistoryTimelineView"
 import YearView from "../src/components/calendar/YearView";
 import YearWheelView from "../src/components/calendar/YearWheelView";
 import CommandExplorerView, {
+  type BibleVersion,
   type CommandHeaderCommand,
   type CommandNavigationState,
 } from "../src/components/commands/CommandExplorerView";
@@ -42,8 +45,20 @@ import { formatGroupLabel, getAppDateId } from "../src/utils/appDay";
 const DEFAULT_STICKY_HEADER_OFFSET = 220;
 const DEFAULT_YEAR_VIEW_TOP_OFFSET = 685;
 const MONTH_TITLE_BEHIND_HEADER_OFFSET = 32;
+const COMMAND_CONTRIBUTOR_USERNAME_STORAGE_KEY =
+  "commandContributorUsername";
 
 type AppTab = "calendar" | "timeline" | "commands";
+const BIBLE_VERSIONS: BibleVersion[] = [
+  "KJV",
+  "NKJV",
+  "NLT",
+  "NIV",
+  "ESV",
+  "CSB",
+  "YLT",
+  "BES",
+];
 
 export default function HomeScreen() {
   const { height: viewportHeight } = useWindowDimensions();
@@ -68,6 +83,19 @@ export default function HomeScreen() {
     useState<CommandHeaderCommand | null>(null);
   const [commandNavigation, setCommandNavigation] =
     useState<CommandNavigationState | null>(null);
+  const [selectedBibleVersion, setSelectedBibleVersion] =
+    useState<BibleVersion>("KJV");
+  const [commandSearchText, setCommandSearchText] = useState("");
+  const [commandContributorUsername, setCommandContributorUsername] =
+    useState("");
+  const [commandRandomRequestId, setCommandRandomRequestId] = useState(0);
+  const [commandPendingRequestId, setCommandPendingRequestId] = useState(0);
+  const [commandResourceStats, setCommandResourceStats] = useState({
+    categoryCount: 0,
+    commandCount: 0,
+    isSelectingRandom: false,
+    isSelectingPending: false,
+  });
 
   const [yearNotices, setYearNotices] = useState<any[]>([]);
   const [selectedNode, setSelectedNode] = useState<CalendarNode | null>(null);
@@ -221,6 +249,36 @@ export default function HomeScreen() {
       loadYearNotices();
     }
   }, [config.enochYear, groupCode, hasEnteredApp]);
+
+  useEffect(() => {
+    async function loadSavedContributorUsername() {
+      const savedUsername = await AsyncStorage.getItem(
+        COMMAND_CONTRIBUTOR_USERNAME_STORAGE_KEY
+      );
+
+      if (savedUsername) {
+        setCommandContributorUsername(normalizeContributorUsername(savedUsername));
+      }
+    }
+
+    loadSavedContributorUsername();
+  }, []);
+
+  useEffect(() => {
+    const normalizedUsername = normalizeContributorUsername(
+      commandContributorUsername
+    );
+
+    if (normalizedUsername) {
+      AsyncStorage.setItem(
+        COMMAND_CONTRIBUTOR_USERNAME_STORAGE_KEY,
+        normalizedUsername
+      );
+      return;
+    }
+
+    AsyncStorage.removeItem(COMMAND_CONTRIBUTOR_USERNAME_STORAGE_KEY);
+  }, [commandContributorUsername]);
 
   useEffect(() => {
     if (!hasEnteredApp) return;
@@ -489,6 +547,38 @@ export default function HomeScreen() {
     });
   }
 
+  function handleCommandResourceStatsChange(stats: {
+    categoryCount: number;
+    commandCount: number;
+    isSelectingRandom: boolean;
+    isSelectingPending: boolean;
+  }) {
+    setCommandResourceStats((current) => {
+      if (
+        current.categoryCount === stats.categoryCount &&
+        current.commandCount === stats.commandCount &&
+        current.isSelectingRandom === stats.isSelectingRandom &&
+        current.isSelectingPending === stats.isSelectingPending
+      ) {
+        return current;
+      }
+
+      return stats;
+    });
+  }
+
+  function showCommandContributionHelp() {
+    const message =
+      "Command Study can be improved by Church of the Word contributors. You can add new study data, suggest edits to existing information, or suggest that an item be removed. Contributions are saved for review before they become part of the command study resources.\n\nRequirements describe what must be true, available, or in place to properly obey a command.\n\nStudy Notes add Torah context, cross-reference awareness, or practical framing without adding man-made rules.\n\nSource Terms capture original-language words and how they affect understanding.\n\nTranslation Notes explain wording differences, ambiguity, or translation choices.\n\nClarification helps prevent misunderstanding by naming a focused correction, boundary, or distinction.";
+
+    if (Platform.OS === "web" && typeof window.alert === "function") {
+      window.alert(message);
+      return;
+    }
+
+    Alert.alert("Community Contributions", message);
+  }
+
   function goPreviousYear() {
     setYearTransition({ direction: "previous", id: Date.now() });
     setVisibleEnochYear((year) => year - 1);
@@ -552,7 +642,7 @@ export default function HomeScreen() {
         }}
         contentContainerStyle={{
           paddingHorizontal: 16,
-          paddingTop: 56,
+          paddingTop: 36,
           paddingBottom: 24,
         }}
       >
@@ -565,6 +655,8 @@ export default function HomeScreen() {
             paddingBottom: 12,
           }}
         >
+          <TabSelector activeTab={activeTab} onChangeTab={setActiveTab} />
+
           {activeTab === "calendar" && (
             <AppHeader
               month={currentMonth}
@@ -594,14 +686,25 @@ export default function HomeScreen() {
             <CommandStickyHeader
               command={selectedCommandHeader}
               navigation={commandNavigation}
+              selectedBibleVersion={selectedBibleVersion}
+              searchText={commandSearchText}
+              contributorUsername={commandContributorUsername}
+              categoryCount={commandResourceStats.categoryCount}
+              commandCount={commandResourceStats.commandCount}
+              isSelectingRandom={commandResourceStats.isSelectingRandom}
+              isSelectingPending={commandResourceStats.isSelectingPending}
+              onChangeBibleVersion={setSelectedBibleVersion}
+              onChangeSearchText={setCommandSearchText}
+              onChangeContributorUsername={setCommandContributorUsername}
+              onShowContributionHelp={showCommandContributionHelp}
+              onRequestRandom={() => {
+                setCommandRandomRequestId((id) => id + 1);
+              }}
+              onRequestPending={() => {
+                setCommandPendingRequestId((id) => id + 1);
+              }}
             />
           )}
-
-          <TabSelector
-            activeTab={activeTab}
-            onChangeTab={setActiveTab}
-            hasCalendarHeader={activeTab === "calendar" || activeTab === "commands"}
-          />
         </View>
 
         {activeTab === "calendar" && (
@@ -642,8 +745,17 @@ export default function HomeScreen() {
 
         {activeTab === "commands" && (
           <CommandExplorerView
+            bibleVersion={selectedBibleVersion}
+            searchText={commandSearchText}
+            randomRequestId={commandRandomRequestId}
+            pendingRequestId={commandPendingRequestId}
+            adminToken={adminToken}
+            groupCode={groupCode}
+            contributorUsername={commandContributorUsername}
+            userRole={userRole}
             onSelectedCommandChange={setSelectedCommandHeader}
             onNavigationStateChange={setCommandNavigation}
+            onResourceStatsChange={handleCommandResourceStatsChange}
             onMobileSelectedCommandLayout={centerMobileSelectedCommand}
           />
         )}
@@ -677,11 +789,9 @@ export default function HomeScreen() {
 function TabSelector({
   activeTab,
   onChangeTab,
-  hasCalendarHeader,
 }: {
   activeTab: AppTab;
   onChangeTab: (tab: AppTab) => void;
-  hasCalendarHeader: boolean;
 }) {
   const tabs: { id: AppTab; label: string }[] = [
     { id: "calendar", label: "Calendar" },
@@ -692,7 +802,7 @@ function TabSelector({
   return (
     <View
       style={{
-        marginTop: hasCalendarHeader ? 12 : 0,
+        marginBottom: 12,
         flexDirection: "row",
         gap: 6,
         padding: 4,
@@ -740,15 +850,45 @@ function TabSelector({
 function CommandStickyHeader({
   command,
   navigation,
+  selectedBibleVersion,
+  searchText,
+  contributorUsername,
+  categoryCount,
+  commandCount,
+  isSelectingRandom,
+  isSelectingPending,
+  onChangeBibleVersion,
+  onChangeSearchText,
+  onChangeContributorUsername,
+  onShowContributionHelp,
+  onRequestRandom,
+  onRequestPending,
 }: {
   command: CommandHeaderCommand | null;
   navigation: CommandNavigationState | null;
+  selectedBibleVersion: BibleVersion;
+  searchText: string;
+  contributorUsername: string;
+  categoryCount: number;
+  commandCount: number;
+  isSelectingRandom: boolean;
+  isSelectingPending: boolean;
+  onChangeBibleVersion: (version: BibleVersion) => void;
+  onChangeSearchText: (text: string) => void;
+  onChangeContributorUsername: (username: string) => void;
+  onShowContributionHelp: () => void;
+  onRequestRandom: () => void;
+  onRequestPending: () => void;
 }) {
+  const { width } = useWindowDimensions();
+  const [isVersionMenuOpen, setIsVersionMenuOpen] = useState(false);
+  const isCompactHeader = width < 680;
   const commandCategory = command?.categories?.[0] ?? null;
   const categoryLabel = commandCategory
     ? formatCommandCategoryLabel(commandCategory)
     : null;
   const categoryIcon = getCommandCategoryIcon(commandCategory);
+  const canContribute = isValidContributorUsername(contributorUsername);
 
   return (
     <View
@@ -779,7 +919,7 @@ function CommandStickyHeader({
               letterSpacing: 4.5,
             }}
           >
-            Torah
+            TORAH
           </Text>
 
           <Text
@@ -806,6 +946,23 @@ function CommandStickyHeader({
             flexShrink: 0,
           }}
         >
+          <Pressable
+            onPress={onShowContributionHelp}
+            style={({ pressed }) => [
+              {
+                width: 36,
+                height: 36,
+                borderRadius: 18,
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "#e0f2fe",
+              },
+              pressed && { opacity: 0.78 },
+            ]}
+          >
+            <MaterialIcons name="help-outline" size={22} color="#075985" />
+          </Pressable>
+
           <Pressable
             onPress={navigation?.goPrevious}
             disabled={!navigation?.canGoPrevious}
@@ -898,6 +1055,289 @@ function CommandStickyHeader({
           )}
         </View>
       </View>
+
+      <View
+        style={{
+          marginTop: 12,
+          gap: 10,
+        }}
+      >
+        <Text
+          numberOfLines={1}
+          style={{
+            fontSize: 12,
+            lineHeight: 16,
+            color: "#64748b",
+            fontWeight: "700",
+          }}
+        >
+          {categoryCount} categories - {commandCount} commands
+        </Text>
+
+        <View
+          style={{
+            flexDirection: isCompactHeader ? "column" : "row",
+            alignItems: isCompactHeader ? "stretch" : "center",
+            gap: 8,
+          }}
+        >
+          <View
+            style={{
+              flex: isCompactHeader ? undefined : 1,
+              width: isCompactHeader ? "100%" : undefined,
+              minWidth: isCompactHeader ? undefined : 240,
+              minHeight: 42,
+              paddingLeft: 12,
+              paddingRight: 4,
+              borderRadius: 999,
+              backgroundColor: "#ffffff",
+              borderWidth: 1,
+              borderColor: "#cbd5e1",
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            <TextInput
+              value={searchText}
+              onChangeText={onChangeSearchText}
+              placeholder="Search commands"
+              placeholderTextColor="#94a3b8"
+              autoCapitalize="none"
+              autoCorrect={false}
+              style={{
+                flex: 1,
+                minHeight: 40,
+                color: "#0f172a",
+                fontSize: 14,
+                fontWeight: "700",
+              }}
+            />
+
+            <View
+              style={{
+                minHeight: 34,
+                borderRadius: 999,
+                overflow: "hidden",
+                backgroundColor: "#0f766e",
+                flexDirection: "row",
+                alignItems: "stretch",
+              }}
+            >
+              <Pressable
+                onPress={onRequestRandom}
+                disabled={isSelectingRandom}
+                style={({ pressed }) => [
+                  {
+                    paddingHorizontal: 11,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    opacity: isSelectingRandom ? 0.65 : 1,
+                  },
+                  pressed && { backgroundColor: "#115e59" },
+                ]}
+              >
+                <Text
+                  style={{
+                    fontSize: 12,
+                    fontWeight: "900",
+                    color: "#ffffff",
+                  }}
+                >
+                  {isSelectingRandom ? "..." : "Random"}
+                </Text>
+              </Pressable>
+
+              <View
+                style={{
+                  width: 1,
+                  backgroundColor: "rgba(255,255,255,0.35)",
+                }}
+              />
+
+              <Pressable
+                onPress={onRequestPending}
+                disabled={isSelectingPending}
+                style={({ pressed }) => [
+                  {
+                    paddingHorizontal: 11,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    opacity: isSelectingPending ? 0.65 : 1,
+                  },
+                  pressed && { backgroundColor: "#115e59" },
+                ]}
+              >
+                <Text
+                  style={{
+                    fontSize: 12,
+                    fontWeight: "900",
+                    color: "#ffffff",
+                  }}
+                >
+                  {isSelectingPending ? "..." : "Pending"}
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 8,
+              width: isCompactHeader ? "100%" : undefined,
+              flexShrink: 0,
+            }}
+          >
+            <View
+              style={{
+                flex: isCompactHeader ? 1 : undefined,
+                minWidth: isCompactHeader ? 0 : 180,
+                minHeight: 38,
+                paddingLeft: 12,
+                paddingRight: 10,
+                borderRadius: 999,
+                backgroundColor: "#ffffff",
+                borderWidth: 1,
+                borderColor: canContribute ? "#99f6e4" : "#cbd5e1",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 6,
+              }}
+            >
+              <MaterialIcons
+                name={canContribute ? "lock-open" : "lock-outline"}
+                size={18}
+                color={canContribute ? "#0f766e" : "#64748b"}
+              />
+
+              <TextInput
+                value={contributorUsername}
+                onChangeText={(value) =>
+                  onChangeContributorUsername(normalizeContributorUsername(value))
+                }
+                placeholder="username"
+                placeholderTextColor="#94a3b8"
+                autoCapitalize="none"
+                autoCorrect={false}
+                style={{
+                  flex: 1,
+                  minHeight: 36,
+                  color: "#0f172a",
+                  fontSize: 13,
+                  fontWeight: "800",
+                }}
+              />
+
+              <Text
+                style={{
+                  fontSize: 11,
+                  fontWeight: "900",
+                  color: canContribute ? "#0f766e" : "#64748b",
+                  textTransform: "uppercase",
+                }}
+              >
+                {canContribute ? "Unlocked" : "Locked"}
+              </Text>
+            </View>
+
+            <Pressable
+              onPress={() => setIsVersionMenuOpen((value) => !value)}
+              style={({ pressed }) => [
+                {
+                  width: isCompactHeader ? 116 : undefined,
+                  minHeight: 38,
+                  paddingHorizontal: 12,
+                  borderRadius: 999,
+                  borderWidth: 1,
+                  borderColor: "#cbd5e1",
+                  backgroundColor: "#ffffff",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: isCompactHeader ? "space-between" : "center",
+                  gap: 6,
+                },
+                pressed && { backgroundColor: "#f1f5f9" },
+              ]}
+            >
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontWeight: "900",
+                  color: "#64748b",
+                  textTransform: "uppercase",
+                }}
+              >
+                Bible
+              </Text>
+
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontWeight: "900",
+                  color: "#081a33",
+                }}
+              >
+                {selectedBibleVersion}
+              </Text>
+
+              <MaterialIcons
+                name={isVersionMenuOpen ? "expand-less" : "expand-more"}
+                size={20}
+                color="#475569"
+              />
+            </Pressable>
+          </View>
+        </View>
+
+        {isVersionMenuOpen ? (
+          <View
+            style={{
+              flexDirection: "row",
+              flexWrap: "wrap",
+              gap: 6,
+            }}
+          >
+            {BIBLE_VERSIONS.map((version) => {
+              const isSelected = version === selectedBibleVersion;
+
+              return (
+                <Pressable
+                  key={version}
+                  onPress={() => {
+                    onChangeBibleVersion(version);
+                    setIsVersionMenuOpen(false);
+                  }}
+                  style={({ pressed }) => [
+                    {
+                      minHeight: 34,
+                      paddingHorizontal: 10,
+                      borderRadius: 999,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: isSelected ? "#081a33" : "#ffffff",
+                      borderWidth: 1,
+                      borderColor: isSelected ? "#081a33" : "#cbd5e1",
+                    },
+                    pressed && { opacity: 0.8 },
+                  ]}
+                >
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      fontWeight: "900",
+                      color: isSelected ? "#ffffff" : "#334155",
+                    }}
+                  >
+                    {version}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        ) : null}
+      </View>
     </View>
   );
 }
@@ -938,6 +1378,14 @@ function getCommandCategoryIcon(category: string | null) {
 
 function formatCommandCategoryLabel(category: string) {
   return category.replace(/_/g, " ");
+}
+
+function isValidContributorUsername(username: string) {
+  return /^[a-z0-9_-]{2,32}$/.test(normalizeContributorUsername(username));
+}
+
+function normalizeContributorUsername(username: string) {
+  return username.trim().toLowerCase().replace(/\s/g, "");
 }
 
 function TimelinePlaceholder() {

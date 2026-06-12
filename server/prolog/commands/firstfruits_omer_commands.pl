@@ -14,9 +14,9 @@
 % normal_obedience(command_key, 'Text-faithful statement of what the command says to do or not do.').
 % concerns(command_key, concern_key).
 % scripture_reference(command_key, 'Book 1:1-2').
-% study_note(command_key, 'Short human note about scope, context, or review status.').
+% study_note(command_key, 'Short human note about scope, context, or catalog status.').
 %
-% Optional review/detail fields:
+% Optional detail fields:
 %
 % source_term(command_key, hebrew, word, 'brief gloss').
 % source_term(command_key, greek, word, 'brief gloss').
@@ -50,6 +50,7 @@ command_title(bring_firstfruits_sheaf, 'Lev 23:9-11 - Bring the firstfruits shea
 normal_obedience(bring_firstfruits_sheaf, 'Bring the sheaf of firstfruits to the priest.').
 concerns(bring_firstfruits_sheaf, firstfruits_and_counting).
 scripture_reference(bring_firstfruits_sheaf, 'Leviticus 23:9-11').
+story_reference(bring_firstfruits_sheaf, '2 Chronicles 31:5', 'Israel brings firstfruits abundantly during Hezekiah''s reforms.').
 study_note(bring_firstfruits_sheaf, 'The sheaf begins the count toward Shavuot.').
 
 % Command: wave_firstfruits_sheaf
@@ -66,6 +67,7 @@ command_title(do_not_eat_new_grain_before_offering, 'Lev 23:14 - Do not eat new 
 normal_obedience(do_not_eat_new_grain_before_offering, 'Do not eat bread, parched grain, or fresh grain until the offering.').
 concerns(do_not_eat_new_grain_before_offering, firstfruits_and_counting).
 scripture_reference(do_not_eat_new_grain_before_offering, 'Leviticus 23:14').
+story_reference(do_not_eat_new_grain_before_offering, 'Joshua 5:11-12', 'Israel eats from the produce of the land after Passover as the manna ceases.').
 study_note(do_not_eat_new_grain_before_offering, 'The firstfruits offering sets the boundary before eating from the new grain.').
 
 % Command: count_seven_sabbaths_to_shavuot

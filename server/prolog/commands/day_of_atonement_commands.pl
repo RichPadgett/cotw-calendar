@@ -14,9 +14,9 @@
 % normal_obedience(command_key, 'Text-faithful statement of what the command says to do or not do.').
 % concerns(command_key, concern_key).
 % scripture_reference(command_key, 'Book 1:1-2').
-% study_note(command_key, 'Short human note about scope, context, or review status.').
+% study_note(command_key, 'Short human note about scope, context, or catalog status.').
 %
-% Optional review/detail fields:
+% Optional detail fields:
 %
 % source_term(command_key, hebrew, word, 'brief gloss').
 % source_term(command_key, greek, word, 'brief gloss').
@@ -65,7 +65,9 @@ scripture_reference(afflict_yourselves_on_atonement, 'Leviticus 23:27').
 scripture_reference(afflict_yourselves_on_atonement, 'Leviticus 23:29').
 scripture_reference(afflict_yourselves_on_atonement, 'Leviticus 23:32').
 scripture_reference(afflict_yourselves_on_atonement, 'Numbers 29:7').
+source_term(do_not_destroy_the_edge_of_the_beard, 'hebrew', 'ʿānâ', 'to afflict, oppress, humble, be afflicted, be bowed down').
 study_note(afflict_yourselves_on_atonement, 'The command emphasizes humility and seriousness before YHWH.').
+study_note(afflict_yourselves_on_atonement, 'Leviticus 16:29 describes afflicting your souls. ').
 
 % Command: no_work_on_atonement
 command(no_work_on_atonement).

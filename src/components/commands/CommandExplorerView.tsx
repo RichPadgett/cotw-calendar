@@ -4,14 +4,18 @@
  */
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import {
+  Linking,
   Platform,
   Pressable,
+  ScrollView,
   Text,
   TextInput,
   useWindowDimensions,
   View,
 } from "react-native";
+import type { StyleProp, ViewStyle } from "react-native";
 
 import { apiUrl } from "../../config/api";
 
@@ -30,12 +34,14 @@ type CommandResource = {
   key: string;
   title?: string;
   requirement?: string | null;
+  requirements?: string[];
   reminderText?: string | null;
   categories?: string[];
   facts?: string[];
   appliesIf?: string[];
   embodies?: string[];
   scriptureReferences?: string[];
+  storyReferences?: StoryReference[];
   studyNotes?: string[];
   sourceTerms?: SourceTerm[];
   translationNotes?: string[];
@@ -54,10 +60,72 @@ export type CommandNavigationState = {
   goNext: () => void;
 };
 
+export type BibleVersion = "KJV" | "NKJV" | "NLT" | "NIV" | "ESV" | "CSB" | "YLT" | "BES";
+
 type SourceTerm = {
   language: string;
   term: string;
   gloss: string;
+};
+
+type StoryReference = {
+  reference: string;
+  label: string;
+};
+
+type CommandContributionType =
+  | "requirement"
+  | "study_note"
+  | "story_reference"
+  | "source_term"
+  | "translation_note"
+  | "clarification_note";
+
+type CommandContributionMode = "add" | "suggest_edit" | "suggest_remove";
+
+type CommandContributionTarget = {
+  source: "prolog" | "contribution";
+  index?: number;
+  currentText?: string;
+  currentValue?: unknown;
+};
+
+type PendingContribution = {
+  id: string;
+  commandKey: string;
+  mode: CommandContributionMode;
+  type: CommandContributionType;
+  text: string;
+  suggestedText?: string;
+  reason?: string;
+  createdBy?: string;
+  target?: CommandContributionTarget;
+  status?: "pending" | "approved" | "rejected" | "deleted";
+  promotedAt?: string;
+  promotedBy?: string;
+  prologFact?: string;
+  prologFile?: string;
+};
+
+type ContributionDraft = {
+  mode: CommandContributionMode;
+  type: CommandContributionType;
+  title: string;
+  text: string;
+  reason: string;
+  target?: CommandContributionTarget;
+};
+
+type PromotionDraft = {
+  language: string;
+  term: string;
+  gloss: string;
+  reference: string;
+  label: string;
+  requirementText: string;
+  studyNote: string;
+  translationNote: string;
+  clarificationNote: string;
 };
 
 type CommandListResponse = {
@@ -68,9 +136,29 @@ type RandomCommandResponse = {
   command: CommandResource | null;
 };
 
+type ContributionsResponse = {
+  contributions: PendingContribution[];
+};
+
+const CONTRIBUTION_GROUP_CODE = "church-of-the-word";
+
 type Props = {
+  bibleVersion: BibleVersion;
+  searchText: string;
+  randomRequestId: number;
+  pendingRequestId: number;
+  adminToken?: string | null;
+  groupCode?: string;
+  contributorUsername: string;
+  userRole?: string;
   onSelectedCommandChange?: (command: CommandHeaderCommand | null) => void;
   onNavigationStateChange?: (navigation: CommandNavigationState) => void;
+  onResourceStatsChange?: (stats: {
+    categoryCount: number;
+    commandCount: number;
+    isSelectingRandom: boolean;
+    isSelectingPending: boolean;
+  }) => void;
   onMobileSelectedCommandLayout?: (layout: {
     pageY: number;
     height: number;
@@ -78,13 +166,23 @@ type Props = {
 };
 
 export default function CommandExplorerView({
+  bibleVersion,
+  searchText,
+  randomRequestId,
+  pendingRequestId,
+  adminToken,
+  groupCode,
+  contributorUsername,
+  userRole,
   onSelectedCommandChange,
   onNavigationStateChange,
+  onResourceStatsChange,
   onMobileSelectedCommandLayout,
 }: Props) {
-  const { width } = useWindowDimensions();
+  const { height, width } = useWindowDimensions();
   const selectedCommandRef = useRef<any>(null);
   const shouldCenterSelectedCommandRef = useRef(false);
+  const pendingBrowseIndexRef = useRef(0);
   const [categoryGroups, setCategoryGroups] = useState<CommandCategoryGroup[]>(
     []
   );
@@ -95,15 +193,39 @@ export default function CommandExplorerView({
     null
   );
   const [command, setCommand] = useState<CommandResource | null>(null);
-  const [searchText, setSearchText] = useState("");
   const [isMobileListOpen, setIsMobileListOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [isSelectingRandom, setIsSelectingRandom] = useState(false);
+  const [isSelectingPending, setIsSelectingPending] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [contributionDraft, setContributionDraft] =
+    useState<ContributionDraft | null>(null);
+  const [pendingContributions, setPendingContributions] = useState<
+    PendingContribution[]
+  >([]);
+  const [reviewIndex, setReviewIndex] = useState(0);
+  const [reviewMode, setReviewMode] = useState<"pending" | "approved">(
+    "pending"
+  );
+  const [isSubmittingContribution, setIsSubmittingContribution] =
+    useState(false);
+  const [contributionMessage, setContributionMessage] = useState<string | null>(
+    null
+  );
+  const canModerateContributions = userRole === "admin" && Boolean(adminToken);
+  const canContribute =
+    Boolean(normalizeContributorUsername(contributorUsername)) &&
+    (groupCode === CONTRIBUTION_GROUP_CODE || canModerateContributions);
 
   useEffect(() => {
     loadCommandGroups();
   }, []);
+
+  useEffect(() => {
+    if (!canModerateContributions) return;
+
+    loadReviewContributions(reviewMode);
+  }, [adminToken, userRole, reviewMode]);
 
   const normalizedSearch = searchText.trim().toLowerCase();
 
@@ -137,6 +259,30 @@ export default function CommandExplorerView({
     : -1;
 
   useEffect(() => {
+    if (!normalizedSearch || usesSplitPane) return;
+
+    setIsMobileListOpen(true);
+  }, [normalizedSearch, usesSplitPane]);
+
+  useEffect(() => {
+    if (randomRequestId <= 0) return;
+
+    selectRandomCommand();
+  }, [randomRequestId]);
+
+  useEffect(() => {
+    if (pendingRequestId <= 0) return;
+
+    selectPendingContributionCommand();
+  }, [pendingRequestId]);
+
+  useEffect(() => {
+    setReviewIndex((current) =>
+      Math.min(current, Math.max(0, pendingContributions.length - 1))
+    );
+  }, [pendingContributions.length]);
+
+  useEffect(() => {
     onNavigationStateChange?.({
       canGoPrevious: selectedCommandIndex > 0,
       canGoNext:
@@ -146,6 +292,21 @@ export default function CommandExplorerView({
       goNext: selectNextCommand,
     });
   }, [onNavigationStateChange, selectedCommandIndex, visibleCommands]);
+
+  useEffect(() => {
+    onResourceStatsChange?.({
+      categoryCount: categoryGroups.length,
+      commandCount,
+      isSelectingRandom,
+      isSelectingPending,
+    });
+  }, [
+    categoryGroups.length,
+    commandCount,
+    isSelectingRandom,
+    isSelectingPending,
+    onResourceStatsChange,
+  ]);
 
   async function loadCommandGroups() {
     try {
@@ -181,6 +342,76 @@ export default function CommandExplorerView({
     return groupCommandsByCategory(data.commands);
   }
 
+  async function loadReviewContributions(
+    status: "pending" | "approved",
+    commandKey?: string
+  ) {
+    if (!canModerateContributions) return;
+
+    try {
+      const query = new URLSearchParams({
+        status,
+        ...(commandKey ? { commandKey } : {}),
+        ...(status === "approved" ? { promoted: "false" } : {}),
+      });
+
+      const response = await fetch(
+        apiUrl(`/command-resources/contributions?${query.toString()}`),
+        {
+          headers: {
+            Authorization: `Bearer ${adminToken}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to load command review contributions.");
+      }
+
+      const data: ContributionsResponse = await response.json();
+
+      setPendingContributions((current) => {
+        const otherContributions = commandKey
+          ? current.filter((item) => item.commandKey !== commandKey)
+          : [];
+
+        return [...data.contributions, ...otherContributions];
+      });
+    } catch (error) {
+      console.log("Failed to load command review contributions", error);
+    }
+  }
+
+  async function loadVisiblePendingContributions(commandKey: string) {
+    try {
+      const query = new URLSearchParams({
+        status: "pending",
+      });
+
+      const response = await fetch(
+        apiUrl(
+          `/command-resources/${commandKey}/contributions?${query.toString()}`
+        )
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to load command contributions under review.");
+      }
+
+      const data: ContributionsResponse = await response.json();
+
+      setPendingContributions((current) => {
+        const otherContributions = current.filter(
+          (item) => item.commandKey !== commandKey
+        );
+
+        return [...data.contributions, ...otherContributions];
+      });
+    } catch (error) {
+      console.log("Failed to load visible command contributions", error);
+    }
+  }
+
   async function selectCommand(commandKey: string, categoryKey?: string) {
     try {
       setSelectedCommandKey(commandKey);
@@ -203,6 +434,7 @@ export default function CommandExplorerView({
       const data: CommandResource = await response.json();
       setCommand(data);
       onSelectedCommandChange?.(data);
+      await loadVisiblePendingContributions(commandKey);
 
       if (!usesSplitPane) {
         collapseMobileList();
@@ -236,6 +468,7 @@ export default function CommandExplorerView({
       setCommand(data.command);
       setSelectedCommandKey(data.command.key);
       onSelectedCommandChange?.(data.command);
+      await loadVisiblePendingContributions(data.command.key);
 
       if (!usesSplitPane) {
         collapseMobileList();
@@ -253,6 +486,50 @@ export default function CommandExplorerView({
       setErrorMessage("A random command resource could not be loaded.");
     } finally {
       setIsSelectingRandom(false);
+    }
+  }
+
+  async function selectPendingContributionCommand() {
+    try {
+      setIsSelectingPending(true);
+      setErrorMessage(null);
+      setContributionMessage(null);
+      setReviewMode("pending");
+
+      const response = await fetch(
+        apiUrl("/command-resources/contributions/visible")
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to load pending command contributions.");
+      }
+
+      const data: ContributionsResponse = await response.json();
+      const contributions = data.contributions.filter(
+        (item) => item.status === "pending"
+      );
+
+      if (!contributions.length) {
+        setContributionMessage("There are no pending command suggestions.");
+        return;
+      }
+
+      setPendingContributions(contributions);
+
+      const contribution =
+        contributions[pendingBrowseIndexRef.current % contributions.length];
+      pendingBrowseIndexRef.current += 1;
+
+      const categoryKey = categoryGroups.find((group) =>
+        group.commands.some((item) => item.key === contribution.commandKey)
+      )?.key;
+
+      await selectCommand(contribution.commandKey, categoryKey);
+    } catch (error) {
+      console.log("Failed to browse pending command contributions", error);
+      setErrorMessage("Pending command suggestions could not be loaded.");
+    } finally {
+      setIsSelectingPending(false);
     }
   }
 
@@ -317,18 +594,333 @@ export default function CommandExplorerView({
     });
   }
 
+  function openContributionDraft(params: {
+    mode: CommandContributionMode;
+    type: CommandContributionType;
+    title: string;
+    currentText?: string;
+    index?: number;
+    currentValue?: unknown;
+  }) {
+    setContributionMessage(null);
+    setContributionDraft({
+      mode: params.mode,
+      type: params.type,
+      title: params.title,
+      text:
+        params.mode === "suggest_edit" ? params.currentText ?? "" : "",
+      reason: "",
+      target:
+        params.mode === "add"
+          ? undefined
+          : {
+              source: "prolog",
+              index: params.index,
+              currentText: params.currentText,
+              currentValue: params.currentValue,
+            },
+    });
+  }
+
+  async function submitContribution() {
+    if (!command || !contributionDraft || !canContribute) return;
+
+    const text = contributionDraft.text.trim();
+    const reason = contributionDraft.reason.trim();
+    const username = normalizeContributorUsername(contributorUsername);
+
+    if (!username) {
+      setContributionMessage(
+        "Add a lowercase username with no spaces before submitting."
+      );
+      return;
+    }
+
+    if (!text && contributionDraft.mode !== "suggest_remove") {
+      setContributionMessage("Add the suggested text before submitting.");
+      return;
+    }
+
+    if (contributionDraft.mode === "suggest_remove" && !reason) {
+      setContributionMessage("Add a short reason for the removal suggestion.");
+      return;
+    }
+
+    try {
+      setIsSubmittingContribution(true);
+      setContributionMessage(null);
+
+      const response = await fetch(
+        apiUrl(
+          `/command-resources/${command.key}/contributions?groupCode=${encodeURIComponent(
+            CONTRIBUTION_GROUP_CODE
+          )}`
+        ),
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(adminToken ? { Authorization: `Bearer ${adminToken}` } : {}),
+          },
+          body: JSON.stringify({
+            groupCode: CONTRIBUTION_GROUP_CODE,
+            mode: contributionDraft.mode,
+            type: contributionDraft.type,
+            text:
+              contributionDraft.mode === "suggest_remove"
+                ? contributionDraft.target?.currentText ?? "Suggested removal"
+                : contributionDraft.mode === "suggest_edit"
+                ? contributionDraft.target?.currentText ?? text
+                : text,
+            suggestedText:
+              contributionDraft.mode === "suggest_edit" ? text : undefined,
+            reason: reason || undefined,
+            target: contributionDraft.target,
+            createdBy: username,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Contribution could not be submitted.");
+      }
+
+      const data: { contribution: PendingContribution } =
+        await response.json();
+      setPendingContributions((current) => [data.contribution, ...current]);
+      setContributionDraft(null);
+      setContributionMessage("Contribution saved for review.");
+    } catch (error) {
+      console.log("Failed to submit command contribution", error);
+      setContributionMessage("Contribution could not be submitted.");
+    } finally {
+      setIsSubmittingContribution(false);
+    }
+  }
+
+  async function withdrawContribution(contributionId: string) {
+    if (!command || !canContribute) return;
+
+    const username = normalizeContributorUsername(contributorUsername);
+
+    if (!username) {
+      setContributionMessage(
+        "Enter the same lowercase username used for the contribution."
+      );
+      return;
+    }
+
+    try {
+      setContributionMessage(null);
+
+      const response = await fetch(
+        apiUrl(
+          `/command-resources/${command.key}/contributions/${contributionId}?groupCode=${encodeURIComponent(
+            CONTRIBUTION_GROUP_CODE
+          )}&username=${encodeURIComponent(username)}`
+        ),
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            ...(adminToken ? { Authorization: `Bearer ${adminToken}` } : {}),
+          },
+          body: JSON.stringify({
+            groupCode: CONTRIBUTION_GROUP_CODE,
+            username,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Contribution could not be withdrawn.");
+      }
+
+      setPendingContributions((current) =>
+        current.filter((item) => item.id !== contributionId)
+      );
+      setContributionMessage("Contribution withdrawn.");
+    } catch (error) {
+      console.log("Failed to withdraw command contribution", error);
+      setContributionMessage("Contribution could not be withdrawn.");
+    }
+  }
+
+  async function moderateContribution(
+    contributionId: string,
+    action: "approve" | "reject"
+  ) {
+    if (!canModerateContributions) return;
+
+    try {
+      setContributionMessage(null);
+
+      const response = await fetch(
+        apiUrl(`/command-resources/contributions/${contributionId}/${action}`),
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${adminToken}`,
+          },
+          body: JSON.stringify({
+            updatedBy: normalizeContributorUsername(contributorUsername) || "admin",
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Contribution review action failed.");
+      }
+
+      const moderatedContribution = pendingContributions.find(
+        (item) => item.id === contributionId
+      );
+
+      setPendingContributions((current) =>
+        current.filter((item) => item.id !== contributionId)
+      );
+
+      setContributionMessage(
+        action === "approve"
+          ? "Contribution approved."
+          : "Contribution rejected."
+      );
+
+      if (
+        action === "approve" &&
+        moderatedContribution?.commandKey &&
+        moderatedContribution.commandKey === command?.key
+      ) {
+        await selectCommand(moderatedContribution.commandKey);
+      }
+    } catch (error) {
+      console.log("Failed to moderate command contribution", error);
+      setContributionMessage("Contribution review action failed.");
+    }
+  }
+
+  async function promoteContribution(
+    contributionId: string,
+    official: PromotionDraft
+  ) {
+    if (!canModerateContributions) return;
+
+    try {
+      setContributionMessage(null);
+
+      const response = await fetch(
+        apiUrl(`/command-resources/contributions/${contributionId}/promote`),
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${adminToken}`,
+          },
+          body: JSON.stringify({
+            promotedBy:
+              normalizeContributorUsername(contributorUsername) || "admin",
+            official,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Contribution promotion failed.");
+      }
+
+      const promotedContribution = pendingContributions.find(
+        (item) => item.id === contributionId
+      );
+
+      setPendingContributions((current) =>
+        current.filter((item) => item.id !== contributionId)
+      );
+      setContributionMessage("Contribution promoted to Prolog.");
+
+      if (promotedContribution && promotedContribution.commandKey === command?.key) {
+        await selectCommand(promotedContribution.commandKey);
+      }
+    } catch (error) {
+      console.log("Failed to promote command contribution", error);
+      setContributionMessage("Contribution promotion failed.");
+    }
+  }
+
   const shouldShowMobileListToggle = !usesSplitPane && Boolean(command);
   const shouldShowListPane = usesSplitPane || !command || isMobileListOpen;
+  const desktopPaneHeight = Math.max(420, height - 285);
+  const commandPendingContributions = command
+    ? pendingContributions.filter((item) => item.commandKey === command.key)
+    : [];
+  const reviewContribution = canModerateContributions
+    ? pendingContributions[reviewIndex] ?? null
+    : null;
 
   return (
     <View style={{ gap: 14 }}>
       <View style={[styles.studyGrid, usesSplitPane && styles.studyGridSplit]}>
         <View style={[styles.detailPanel, usesSplitPane && styles.detailPaneSplit]}>
-          {command ? (
-            <CommandDetail command={command} />
-          ) : (
-            <Text style={styles.mutedText}>Select a command.</Text>
-          )}
+          <PaneScroll
+            enabled={usesSplitPane}
+            height={desktopPaneHeight}
+            scrollStyle={styles.detailPaneScroll}
+            contentContainerStyle={[
+              styles.detailPaneContent,
+              usesSplitPane && styles.detailPaneContentSplit,
+            ]}
+          >
+            {command ? (
+              <View style={{ gap: 16 }}>
+                {canModerateContributions ? (
+                  <AdminReviewPanel
+                    contribution={reviewContribution}
+                    reviewMode={reviewMode}
+                    currentIndex={reviewIndex}
+                    totalCount={pendingContributions.length}
+                    onChangeReviewMode={(mode) => {
+                      setReviewMode(mode);
+                      setReviewIndex(0);
+                    }}
+                    onPrevious={() =>
+                      setReviewIndex((current) => Math.max(0, current - 1))
+                    }
+                    onNext={() =>
+                      setReviewIndex((current) =>
+                        Math.min(pendingContributions.length - 1, current + 1)
+                      )
+                    }
+                    onOpenCommand={(commandKey) => selectCommand(commandKey)}
+                    onApprove={(contributionId) =>
+                      moderateContribution(contributionId, "approve")
+                    }
+                    onReject={(contributionId) =>
+                      moderateContribution(contributionId, "reject")
+                    }
+                    onPromote={promoteContribution}
+                  />
+                ) : null}
+
+                <CommandDetail
+                  command={command}
+                  bibleVersion={bibleVersion}
+                  canContribute={canContribute}
+                  contributionDraft={contributionDraft}
+                  contributionMessage={contributionMessage}
+                  contributorUsername={contributorUsername}
+                  isSubmittingContribution={isSubmittingContribution}
+                  pendingContributions={commandPendingContributions}
+                  onOpenContribution={openContributionDraft}
+                  onChangeContributionDraft={setContributionDraft}
+                  onCancelContribution={() => setContributionDraft(null)}
+                  onSubmitContribution={submitContribution}
+                  onWithdrawContribution={withdrawContribution}
+                />
+              </View>
+            ) : (
+              <Text style={styles.mutedText}>Select a command.</Text>
+            )}
+          </PaneScroll>
         </View>
 
         {shouldShowMobileListToggle && (
@@ -359,95 +951,102 @@ export default function CommandExplorerView({
             onLayout={handleListPaneLayout}
             style={[styles.listPane, usesSplitPane && styles.listPaneSplit]}
           >
-            <View style={styles.commandControls}>
-              <View style={{ flex: 1, minWidth: 210 }}>
-                <Text style={styles.countText}>
-                  {categoryGroups.length} categories - {commandCount} grouped entries
-                </Text>
+            <PaneScroll
+              enabled={usesSplitPane}
+              height={desktopPaneHeight}
+              contentContainerStyle={styles.listPaneContent}
+            >
+              {errorMessage && (
+                <View style={styles.errorPanel}>
+                  <Text style={styles.errorText}>{errorMessage}</Text>
+                </View>
+              )}
 
-                <TextInput
-                  value={searchText}
-                  onChangeText={setSearchText}
-                  placeholder="Search commands"
-                  placeholderTextColor="#94a3b8"
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  style={styles.searchInput}
-                />
-              </View>
+              {isLoading ? (
+                <Text style={styles.mutedText}>Loading commands...</Text>
+              ) : visibleGroups.length === 0 ? (
+                <Text style={styles.mutedText}>No commands found.</Text>
+              ) : (
+                visibleGroups.map((group) => {
+                  const isExpanded =
+                    Boolean(expandedCategories[group.key]) ||
+                    Boolean(normalizedSearch);
 
-              <Pressable
-                onPress={selectRandomCommand}
-                disabled={isSelectingRandom}
-                style={({ pressed }) => [
-                  styles.randomButton,
-                  pressed && { opacity: 0.82 },
-                  isSelectingRandom && { opacity: 0.65 },
-                ]}
-              >
-                <Text style={styles.randomButtonText}>
-                  {isSelectingRandom ? "Loading..." : "Random"}
-                </Text>
-              </Pressable>
-            </View>
+                  return (
+                    <View key={group.key} style={styles.categorySection}>
+                      <Pressable
+                        onPress={() => toggleCategory(group.key)}
+                        style={({ pressed }) => [
+                          styles.categoryHeader,
+                          pressed && { backgroundColor: "#eef2f7" },
+                        ]}
+                      >
+                        <Text style={styles.categoryTitle}>
+                          {formatKey(group.key)}
+                        </Text>
+                        <Text style={styles.categoryCount}>
+                          {group.commands.length}
+                        </Text>
+                      </Pressable>
 
-            {errorMessage && (
-              <View style={styles.errorPanel}>
-                <Text style={styles.errorText}>{errorMessage}</Text>
-              </View>
-            )}
-
-            {isLoading ? (
-              <Text style={styles.mutedText}>Loading commands...</Text>
-            ) : visibleGroups.length === 0 ? (
-              <Text style={styles.mutedText}>No commands found.</Text>
-            ) : (
-              visibleGroups.map((group) => {
-                const isExpanded =
-                  Boolean(expandedCategories[group.key]) ||
-                  Boolean(normalizedSearch);
-
-                return (
-                  <View key={group.key} style={styles.categorySection}>
-                    <Pressable
-                      onPress={() => toggleCategory(group.key)}
-                      style={({ pressed }) => [
-                        styles.categoryHeader,
-                        pressed && { backgroundColor: "#eef2f7" },
-                      ]}
-                    >
-                      <Text style={styles.categoryTitle}>{formatKey(group.key)}</Text>
-                      <Text style={styles.categoryCount}>{group.commands.length}</Text>
-                    </Pressable>
-
-                    {isExpanded && (
-                      <View style={styles.commandList}>
-                        {group.commands.map((item) => (
-                          <CommandListItem
-                            key={`${group.key}-${item.key}`}
-                            item={item}
-                            isSelected={item.key === selectedCommandKey}
-                            itemRef={
-                              item.key === selectedCommandKey
-                                ? (node) => {
-                                    selectedCommandRef.current = node;
-                                  }
-                                : undefined
-                            }
-                            onPress={() => selectCommand(item.key, group.key)}
-                          />
-                        ))}
-                      </View>
-                    )}
-                  </View>
-                );
-              })
-            )}
+                      {isExpanded && (
+                        <View style={styles.commandList}>
+                          {group.commands.map((item) => (
+                            <CommandListItem
+                              key={`${group.key}-${item.key}`}
+                              item={item}
+                              isSelected={item.key === selectedCommandKey}
+                              itemRef={
+                                item.key === selectedCommandKey
+                                  ? (node) => {
+                                      selectedCommandRef.current = node;
+                                    }
+                                  : undefined
+                              }
+                              onPress={() => selectCommand(item.key, group.key)}
+                            />
+                          ))}
+                        </View>
+                      )}
+                    </View>
+                  );
+                })
+              )}
+            </PaneScroll>
           </View>
         )}
 
       </View>
     </View>
+  );
+}
+
+function PaneScroll({
+  children,
+  contentContainerStyle,
+  enabled,
+  height,
+  scrollStyle,
+}: {
+  children: ReactNode;
+  contentContainerStyle?: StyleProp<ViewStyle>;
+  enabled: boolean;
+  height: number;
+  scrollStyle?: StyleProp<ViewStyle>;
+}) {
+  if (!enabled) {
+    return <View style={contentContainerStyle}>{children}</View>;
+  }
+
+  return (
+    <ScrollView
+      nestedScrollEnabled
+      showsVerticalScrollIndicator
+      style={[{ maxHeight: height }, scrollStyle]}
+      contentContainerStyle={contentContainerStyle}
+    >
+      {children}
+    </ScrollView>
   );
 }
 
@@ -477,15 +1076,53 @@ function CommandListItem({
   );
 }
 
-function CommandDetail({ command }: { command: CommandResource }) {
+function CommandDetail({
+  command,
+  bibleVersion,
+  canContribute,
+  contributionDraft,
+  contributionMessage,
+  contributorUsername,
+  isSubmittingContribution,
+  pendingContributions,
+  onOpenContribution,
+  onChangeContributionDraft,
+  onCancelContribution,
+  onSubmitContribution,
+  onWithdrawContribution,
+}: {
+  command: CommandResource;
+  bibleVersion: BibleVersion;
+  canContribute: boolean;
+  contributionDraft: ContributionDraft | null;
+  contributionMessage: string | null;
+  contributorUsername: string;
+  isSubmittingContribution: boolean;
+  pendingContributions: PendingContribution[];
+  onOpenContribution: (params: {
+    mode: CommandContributionMode;
+    type: CommandContributionType;
+    title: string;
+    currentText?: string;
+    index?: number;
+    currentValue?: unknown;
+  }) => void;
+  onChangeContributionDraft: (draft: ContributionDraft) => void;
+  onCancelContribution: () => void;
+  onSubmitContribution: () => void;
+  onWithdrawContribution: (contributionId: string) => void;
+}) {
   const references = command.scriptureReferences ?? [];
   const commandTitle = command.title
     ? formatCommandTitle(command.title, references)
     : formatKey(command.key);
   const requirementText = command.requirement;
-  const shouldShowRequirement =
-    Boolean(requirementText) &&
-    requirementText?.trim().toLowerCase() !== commandTitle.trim().toLowerCase();
+  const requirementItems = (
+    command.requirements ??
+    (requirementText ? [requirementText] : [])
+  ).filter(
+    (item) => item.trim().toLowerCase() !== commandTitle.trim().toLowerCase()
+  );
 
   return (
     <View style={{ gap: 16 }}>
@@ -499,39 +1136,108 @@ function CommandDetail({ command }: { command: CommandResource }) {
           {commandTitle}
         </Text>
 
-        {shouldShowRequirement ? (
-          <Text style={styles.commandSummaryRequirement}>{requirementText}</Text>
-        ) : null}
-
         {references.length > 0 ? (
           <View style={styles.referenceWrap}>
             {references.map((reference) => (
-              <Text key={reference} style={styles.referenceTag}>
-                {reference}
-              </Text>
+              <ScriptureReferencePill
+                key={reference}
+                reference={reference}
+                bibleVersion={bibleVersion}
+              />
             ))}
           </View>
         ) : null}
       </View>
 
       <DetailList
-        title="Study Notes"
-        items={command.studyNotes ?? []}
-        emptyText="No study notes."
+        title="Requirements"
+        contributionType="requirement"
+        items={requirementItems}
+        emptyText="No specific requirements."
+        canContribute={canContribute}
+        contributionDraft={contributionDraft}
+        contributionMessage={contributionMessage}
+        isSubmittingContribution={isSubmittingContribution}
+        onOpenContribution={onOpenContribution}
+        onChangeContributionDraft={onChangeContributionDraft}
+        onCancelContribution={onCancelContribution}
+        onSubmitContribution={onSubmitContribution}
       />
 
-      <SourceTermList items={command.sourceTerms ?? []} />
+      <DetailList
+        title="Study Notes"
+        contributionType="study_note"
+        items={command.studyNotes ?? []}
+        emptyText="No study notes."
+        canContribute={canContribute}
+        contributionDraft={contributionDraft}
+        contributionMessage={contributionMessage}
+        isSubmittingContribution={isSubmittingContribution}
+        onOpenContribution={onOpenContribution}
+        onChangeContributionDraft={onChangeContributionDraft}
+        onCancelContribution={onCancelContribution}
+        onSubmitContribution={onSubmitContribution}
+      />
+
+      <StoryReferenceList
+        items={command.storyReferences ?? []}
+        bibleVersion={bibleVersion}
+        canContribute={canContribute}
+        contributionDraft={contributionDraft}
+        contributionMessage={contributionMessage}
+        isSubmittingContribution={isSubmittingContribution}
+        onOpenContribution={onOpenContribution}
+        onChangeContributionDraft={onChangeContributionDraft}
+        onCancelContribution={onCancelContribution}
+        onSubmitContribution={onSubmitContribution}
+      />
+
+      <SourceTermList
+        items={command.sourceTerms ?? []}
+        canContribute={canContribute}
+        contributionDraft={contributionDraft}
+        contributionMessage={contributionMessage}
+        isSubmittingContribution={isSubmittingContribution}
+        onOpenContribution={onOpenContribution}
+        onChangeContributionDraft={onChangeContributionDraft}
+        onCancelContribution={onCancelContribution}
+        onSubmitContribution={onSubmitContribution}
+      />
 
       <DetailList
         title="Translation Notes"
+        contributionType="translation_note"
         items={command.translationNotes ?? []}
         emptyText="No translation notes."
+        canContribute={canContribute}
+        contributionDraft={contributionDraft}
+        contributionMessage={contributionMessage}
+        isSubmittingContribution={isSubmittingContribution}
+        onOpenContribution={onOpenContribution}
+        onChangeContributionDraft={onChangeContributionDraft}
+        onCancelContribution={onCancelContribution}
+        onSubmitContribution={onSubmitContribution}
       />
 
       <DetailList
         title="Clarification"
+        contributionType="clarification_note"
         items={command.clarificationNotes ?? []}
         emptyText="No clarification notes."
+        canContribute={canContribute}
+        contributionDraft={contributionDraft}
+        contributionMessage={contributionMessage}
+        isSubmittingContribution={isSubmittingContribution}
+        onOpenContribution={onOpenContribution}
+        onChangeContributionDraft={onChangeContributionDraft}
+        onCancelContribution={onCancelContribution}
+        onSubmitContribution={onSubmitContribution}
+      />
+
+      <PendingContributionList
+        items={pendingContributions}
+        username={contributorUsername}
+        onWithdraw={onWithdrawContribution}
       />
 
       <DetailTags
@@ -555,12 +1261,88 @@ function CommandDetail({ command }: { command: CommandResource }) {
   );
 }
 
-function SourceTermList({ items }: { items: SourceTerm[] }) {
-  if (items.length === 0) return null;
+function ScriptureReferencePill({
+  reference,
+  bibleVersion,
+}: {
+  reference: string;
+  bibleVersion: BibleVersion;
+}) {
+  const url = getBlueLetterBibleUrl(reference, bibleVersion);
+
+  return (
+    <Pressable
+      disabled={!url}
+      onPress={() => {
+        if (url) {
+          Linking.openURL(url);
+        }
+      }}
+      style={({ pressed }) => [
+        styles.referenceTag,
+        pressed && { opacity: 0.78 },
+        !url && { opacity: 0.68 },
+      ]}
+    >
+      <Text style={styles.referenceTagText}>{reference}</Text>
+    </Pressable>
+  );
+}
+
+function SourceTermList({
+  items,
+  canContribute,
+  contributionDraft,
+  contributionMessage,
+  isSubmittingContribution,
+  onOpenContribution,
+  onChangeContributionDraft,
+  onCancelContribution,
+  onSubmitContribution,
+}: {
+  items: SourceTerm[];
+  canContribute: boolean;
+  contributionDraft: ContributionDraft | null;
+  contributionMessage: string | null;
+  isSubmittingContribution: boolean;
+  onOpenContribution: (params: {
+    mode: CommandContributionMode;
+    type: CommandContributionType;
+    title: string;
+    currentText?: string;
+    index?: number;
+    currentValue?: unknown;
+  }) => void;
+  onChangeContributionDraft: (draft: ContributionDraft) => void;
+  onCancelContribution: () => void;
+  onSubmitContribution: () => void;
+}) {
+  const title = "Source Terms";
+  const ownsDraft = contributionDraft?.type === "source_term";
 
   return (
     <View style={{ gap: 8 }}>
-      <SectionTitle title="Source Terms" />
+      <EditableSectionTitle
+        title={title}
+        canContribute={canContribute}
+        isOpen={ownsDraft}
+        onToggle={() => {
+          if (ownsDraft) {
+            onCancelContribution();
+            return;
+          }
+
+          onOpenContribution({
+            mode: "add",
+            type: "source_term",
+            title,
+          });
+        }}
+      />
+
+      {items.length === 0 ? (
+        <Text style={styles.mutedText}>No source terms.</Text>
+      ) : null}
 
       {items.map((item, index) => (
         <View key={`${item.language}-${item.term}-${index}`} style={styles.termRow}>
@@ -569,8 +1351,167 @@ function SourceTermList({ items }: { items: SourceTerm[] }) {
           </Text>
 
           <Text style={styles.termGloss}>{item.gloss}</Text>
+
+          {canContribute ? (
+            <ContributionActions
+              onEdit={() =>
+                onOpenContribution({
+                  mode: "suggest_edit",
+                  type: "source_term",
+                  title,
+                  index,
+                  currentText: `${formatKey(item.language)} - ${item.term}: ${
+                    item.gloss
+                  }`,
+                  currentValue: item,
+                })
+              }
+              onRemove={() =>
+                onOpenContribution({
+                  mode: "suggest_remove",
+                  type: "source_term",
+                  title,
+                  index,
+                  currentText: `${formatKey(item.language)} - ${item.term}: ${
+                    item.gloss
+                  }`,
+                  currentValue: item,
+                })
+              }
+            />
+          ) : null}
         </View>
       ))}
+
+      {ownsDraft && contributionDraft ? (
+        <ContributionForm
+          draft={contributionDraft}
+          isSubmitting={isSubmittingContribution}
+          onChange={onChangeContributionDraft}
+          onSubmit={onSubmitContribution}
+        />
+      ) : null}
+
+      {ownsDraft && contributionMessage ? (
+        <Text style={styles.contributionMessage}>{contributionMessage}</Text>
+      ) : null}
+    </View>
+  );
+}
+
+function StoryReferenceList({
+  items,
+  bibleVersion,
+  canContribute,
+  contributionDraft,
+  contributionMessage,
+  isSubmittingContribution,
+  onOpenContribution,
+  onChangeContributionDraft,
+  onCancelContribution,
+  onSubmitContribution,
+}: {
+  items: StoryReference[];
+  bibleVersion: BibleVersion;
+  canContribute: boolean;
+  contributionDraft: ContributionDraft | null;
+  contributionMessage: string | null;
+  isSubmittingContribution: boolean;
+  onOpenContribution: (params: {
+    mode: CommandContributionMode;
+    type: CommandContributionType;
+    title: string;
+    currentText?: string;
+    index?: number;
+    currentValue?: unknown;
+  }) => void;
+  onChangeContributionDraft: (draft: ContributionDraft) => void;
+  onCancelContribution: () => void;
+  onSubmitContribution: () => void;
+}) {
+  const title = "Seen In Scripture";
+  const ownsDraft = contributionDraft?.type === "story_reference";
+
+  return (
+    <View style={{ gap: 8 }}>
+      <EditableSectionTitle
+        title={title}
+        canContribute={canContribute}
+        isOpen={ownsDraft}
+        onToggle={() => {
+          if (ownsDraft) {
+            onCancelContribution();
+            return;
+          }
+
+          onOpenContribution({
+            mode: "add",
+            type: "story_reference",
+            title,
+          });
+        }}
+      />
+
+      <Text style={styles.sectionHelpText}>
+        Biblical examples where this command is practiced, violated, enforced,
+        or illustrated.
+      </Text>
+
+      {items.length === 0 ? (
+        <Text style={styles.mutedText}>No scripture examples.</Text>
+      ) : null}
+
+      {items.map((item, index) => (
+        <View
+          key={`${item.reference}-${index}`}
+          style={styles.storyReferenceRow}
+        >
+          <ScriptureReferencePill
+            reference={item.reference}
+            bibleVersion={bibleVersion}
+          />
+
+          <Text style={styles.storyReferenceLabel}>{item.label}</Text>
+
+          {canContribute ? (
+            <ContributionActions
+              onEdit={() =>
+                onOpenContribution({
+                  mode: "suggest_edit",
+                  type: "story_reference",
+                  title,
+                  index,
+                  currentText: `${item.reference}: ${item.label}`,
+                  currentValue: item,
+                })
+              }
+              onRemove={() =>
+                onOpenContribution({
+                  mode: "suggest_remove",
+                  type: "story_reference",
+                  title,
+                  index,
+                  currentText: `${item.reference}: ${item.label}`,
+                  currentValue: item,
+                })
+              }
+            />
+          ) : null}
+        </View>
+      ))}
+
+      {ownsDraft && contributionDraft ? (
+        <ContributionForm
+          draft={contributionDraft}
+          isSubmitting={isSubmittingContribution}
+          onChange={onChangeContributionDraft}
+          onSubmit={onSubmitContribution}
+        />
+      ) : null}
+
+      {ownsDraft && contributionMessage ? (
+        <Text style={styles.contributionMessage}>{contributionMessage}</Text>
+      ) : null}
     </View>
   );
 }
@@ -605,32 +1546,624 @@ function DetailTags({
 
 function DetailList({
   title,
+  contributionType,
   items,
   emptyText,
+  canContribute = false,
+  contributionDraft,
+  contributionMessage,
+  isSubmittingContribution = false,
+  onOpenContribution,
+  onChangeContributionDraft,
+  onCancelContribution,
+  onSubmitContribution,
 }: {
   title: string;
+  contributionType?: CommandContributionType;
   items: string[];
   emptyText: string;
+  canContribute?: boolean;
+  contributionDraft?: ContributionDraft | null;
+  contributionMessage?: string | null;
+  isSubmittingContribution?: boolean;
+  onOpenContribution?: (params: {
+    mode: CommandContributionMode;
+    type: CommandContributionType;
+    title: string;
+    currentText?: string;
+    index?: number;
+  }) => void;
+  onChangeContributionDraft?: (draft: ContributionDraft) => void;
+  onCancelContribution?: () => void;
+  onSubmitContribution?: () => void;
 }) {
+  const canEditSection =
+    canContribute && Boolean(contributionType) && Boolean(onOpenContribution);
+  const ownsDraft =
+    Boolean(contributionType) && contributionDraft?.type === contributionType;
+
   return (
     <View style={{ gap: 6 }}>
-      <SectionTitle title={title} />
+      {canEditSection ? (
+        <EditableSectionTitle
+          title={title}
+          canContribute
+          isOpen={ownsDraft}
+          onToggle={() => {
+            if (ownsDraft) {
+              onCancelContribution?.();
+              return;
+            }
+
+            onOpenContribution?.({
+              mode: "add",
+              type: contributionType!,
+              title,
+            });
+          }}
+        />
+      ) : (
+        <SectionTitle title={title} />
+      )}
 
       {items.length === 0 ? (
         <Text style={styles.mutedText}>{emptyText}</Text>
       ) : (
         items.map((item, index) => (
-          <Text key={`${title}-${index}`} style={styles.listText}>
-            {index + 1}. {formatKey(item)}
-          </Text>
+          <View key={`${title}-${index}`} style={styles.editableListItem}>
+            <Text style={styles.listText}>
+              {index + 1}. {formatKey(item)}
+            </Text>
+
+            {canEditSection ? (
+              <ContributionActions
+                onEdit={() =>
+                  onOpenContribution?.({
+                    mode: "suggest_edit",
+                    type: contributionType!,
+                    title,
+                    index,
+                    currentText: item,
+                  })
+                }
+                onRemove={() =>
+                  onOpenContribution?.({
+                    mode: "suggest_remove",
+                    type: contributionType!,
+                    title,
+                    index,
+                    currentText: item,
+                  })
+                }
+              />
+            ) : null}
+          </View>
         ))
       )}
+
+      {ownsDraft &&
+      contributionDraft &&
+      onChangeContributionDraft &&
+      onCancelContribution &&
+      onSubmitContribution ? (
+        <ContributionForm
+          draft={contributionDraft}
+          isSubmitting={isSubmittingContribution}
+          onChange={onChangeContributionDraft}
+          onSubmit={onSubmitContribution}
+        />
+      ) : null}
+
+      {ownsDraft && contributionMessage ? (
+        <Text style={styles.contributionMessage}>{contributionMessage}</Text>
+      ) : null}
     </View>
   );
 }
 
 function SectionTitle({ title }: { title: string }) {
   return <Text style={styles.sectionTitle}>{title}</Text>;
+}
+
+function AdminReviewPanel({
+  contribution,
+  reviewMode,
+  currentIndex,
+  totalCount,
+  onChangeReviewMode,
+  onPrevious,
+  onNext,
+  onOpenCommand,
+  onApprove,
+  onReject,
+  onPromote,
+}: {
+  contribution: PendingContribution | null;
+  reviewMode: "pending" | "approved";
+  currentIndex: number;
+  totalCount: number;
+  onChangeReviewMode: (mode: "pending" | "approved") => void;
+  onPrevious: () => void;
+  onNext: () => void;
+  onOpenCommand: (commandKey: string) => void;
+  onApprove: (contributionId: string) => void;
+  onReject: (contributionId: string) => void;
+  onPromote: (contributionId: string, official: PromotionDraft) => void;
+}) {
+  const [draft, setDraft] = useState<PromotionDraft>(
+    createEmptyPromotionDraft()
+  );
+  const isRemovalSuggestion = contribution?.mode === "suggest_remove";
+
+  useEffect(() => {
+    setDraft(createPromotionDraft(contribution));
+  }, [contribution?.id]);
+
+  if (!contribution) {
+    return (
+      <View style={styles.adminReviewPanel}>
+        <AdminReviewModeToggle
+          reviewMode={reviewMode}
+          onChangeReviewMode={onChangeReviewMode}
+        />
+        <Text style={styles.mutedText}>
+          {reviewMode === "pending"
+            ? "No pending command suggestions."
+            : "No approved contributions waiting for promotion."}
+        </Text>
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.adminReviewPanel}>
+      <View style={styles.adminReviewHeader}>
+        <View style={{ flex: 1 }}>
+          <AdminReviewModeToggle
+            reviewMode={reviewMode}
+            onChangeReviewMode={onChangeReviewMode}
+          />
+          <Text style={styles.adminReviewMeta}>
+            {currentIndex + 1} of {totalCount} - {formatKey(contribution.commandKey)}
+          </Text>
+        </View>
+
+        <View style={styles.adminReviewStepControls}>
+          <Pressable
+            onPress={onPrevious}
+            disabled={currentIndex <= 0}
+            style={({ pressed }) => [
+              styles.adminReviewIconButton,
+              currentIndex <= 0 && { opacity: 0.38 },
+              pressed && { opacity: 0.78 },
+            ]}
+          >
+            <Text style={styles.adminReviewIconText}>‹</Text>
+          </Pressable>
+
+          <Pressable
+            onPress={onNext}
+            disabled={currentIndex >= totalCount - 1}
+            style={({ pressed }) => [
+              styles.adminReviewIconButton,
+              currentIndex >= totalCount - 1 && { opacity: 0.38 },
+              pressed && { opacity: 0.78 },
+            ]}
+          >
+            <Text style={styles.adminReviewIconText}>›</Text>
+          </Pressable>
+        </View>
+      </View>
+
+      <View style={styles.adminReviewBody}>
+        <Text style={styles.pendingContributionBadge}>Under review</Text>
+        <Text style={styles.pendingContributionTitle}>
+          {formatContributionMode(contribution.mode)} - {formatKey(contribution.type)}
+        </Text>
+        {contribution.createdBy ? (
+          <Text style={styles.pendingContributionByline}>
+            @{contribution.createdBy}
+          </Text>
+        ) : null}
+        {contribution.target?.currentText ? (
+          <View style={styles.contributionTargetBlock}>
+            <Text style={styles.contributionTargetLabel}>Current</Text>
+            <Text style={styles.contributionTargetText}>
+              {contribution.target.currentText}
+            </Text>
+          </View>
+        ) : null}
+        <Text style={styles.pendingContributionText}>
+          {contribution.suggestedText ?? contribution.text}
+        </Text>
+        {contribution.reason ? (
+          <Text style={styles.pendingContributionReason}>
+            {contribution.reason}
+          </Text>
+        ) : null}
+      </View>
+
+      {reviewMode === "approved" && !isRemovalSuggestion ? (
+        <PromotionForm
+          contribution={contribution}
+          draft={draft}
+          onChange={setDraft}
+          onPromote={() => onPromote(contribution.id, draft)}
+        />
+      ) : null}
+
+      <View style={styles.adminReviewActions}>
+        <Pressable
+          onPress={() => onOpenCommand(contribution.commandKey)}
+          style={({ pressed }) => [
+            styles.adminReviewSecondaryButton,
+            pressed && { opacity: 0.78 },
+          ]}
+        >
+          <Text style={styles.adminReviewSecondaryText}>Open Command</Text>
+        </Pressable>
+
+        {reviewMode === "pending" ? (
+          <>
+            <Pressable
+              onPress={() => onReject(contribution.id)}
+              style={({ pressed }) => [
+                styles.adminReviewRejectButton,
+                pressed && { opacity: 0.78 },
+              ]}
+            >
+              <Text style={styles.adminReviewActionText}>Reject</Text>
+            </Pressable>
+
+            <Pressable
+              onPress={() => onApprove(contribution.id)}
+              style={({ pressed }) => [
+                styles.adminReviewApproveButton,
+                pressed && { opacity: 0.78 },
+              ]}
+            >
+              <Text style={styles.adminReviewActionText}>
+                {isRemovalSuggestion ? "Approve Removal" : "Approve"}
+              </Text>
+            </Pressable>
+          </>
+        ) : (
+          <Pressable
+            onPress={() => onPromote(contribution.id, draft)}
+            style={({ pressed }) => [
+              styles.adminReviewApproveButton,
+              pressed && { opacity: 0.78 },
+            ]}
+          >
+            <Text style={styles.adminReviewActionText}>
+              {isRemovalSuggestion ? "Confirm Removal" : "Promote"}
+            </Text>
+          </Pressable>
+        )}
+      </View>
+    </View>
+  );
+}
+
+function AdminReviewModeToggle({
+  reviewMode,
+  onChangeReviewMode,
+}: {
+  reviewMode: "pending" | "approved";
+  onChangeReviewMode: (mode: "pending" | "approved") => void;
+}) {
+  return (
+    <View style={styles.adminReviewModeRow}>
+      {(["pending", "approved"] as const).map((mode) => {
+        const isActive = mode === reviewMode;
+
+        return (
+          <Pressable
+            key={mode}
+            onPress={() => onChangeReviewMode(mode)}
+            style={({ pressed }) => [
+              styles.adminReviewModeButton,
+              isActive && styles.adminReviewModeButtonActive,
+              pressed && { opacity: 0.78 },
+            ]}
+          >
+            <Text
+              style={[
+                styles.adminReviewModeText,
+                isActive && styles.adminReviewModeTextActive,
+              ]}
+            >
+              {mode === "pending" ? "Review" : "Promote"}
+            </Text>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
+
+function PromotionForm({
+  contribution,
+  draft,
+  onChange,
+  onPromote,
+}: {
+  contribution: PendingContribution;
+  draft: PromotionDraft;
+  onChange: (draft: PromotionDraft) => void;
+  onPromote: () => void;
+}) {
+  if (contribution.type === "source_term") {
+    return (
+      <View style={styles.promotionForm}>
+        <Text style={styles.promotionFormTitle}>Official Source Term</Text>
+        <View style={styles.promotionFieldRow}>
+          <TextInput
+            value={draft.language}
+            onChangeText={(language) =>
+              onChange({ ...draft, language: language.toLowerCase() })
+            }
+            placeholder="language"
+            placeholderTextColor="#94a3b8"
+            autoCapitalize="none"
+            style={styles.promotionInput}
+          />
+          <TextInput
+            value={draft.term}
+            onChangeText={(term) => onChange({ ...draft, term })}
+            placeholder="term"
+            placeholderTextColor="#94a3b8"
+            autoCapitalize="none"
+            style={styles.promotionInput}
+          />
+        </View>
+        <TextInput
+          value={draft.gloss}
+          onChangeText={(gloss) => onChange({ ...draft, gloss })}
+          placeholder="gloss"
+          placeholderTextColor="#94a3b8"
+          multiline
+          style={[styles.promotionInput, styles.promotionTextArea]}
+        />
+      </View>
+    );
+  }
+
+  if (contribution.type === "story_reference") {
+    return (
+      <View style={styles.promotionForm}>
+        <Text style={styles.promotionFormTitle}>Official Scripture Example</Text>
+        <TextInput
+          value={draft.reference}
+          onChangeText={(reference) => onChange({ ...draft, reference })}
+          placeholder="reference"
+          placeholderTextColor="#94a3b8"
+          autoCapitalize="none"
+          style={styles.promotionInput}
+        />
+        <TextInput
+          value={draft.label}
+          onChangeText={(label) => onChange({ ...draft, label })}
+          placeholder="short label"
+          placeholderTextColor="#94a3b8"
+          multiline
+          style={[styles.promotionInput, styles.promotionTextArea]}
+        />
+      </View>
+    );
+  }
+
+  const field = getPromotionTextField(contribution.type);
+
+  return (
+    <View style={styles.promotionForm}>
+      <Text style={styles.promotionFormTitle}>Official Prolog Entry</Text>
+      <TextInput
+        value={draft[field]}
+        onChangeText={(value) => onChange({ ...draft, [field]: value })}
+        placeholder="official wording"
+        placeholderTextColor="#94a3b8"
+        multiline
+        style={[styles.promotionInput, styles.promotionTextArea]}
+      />
+    </View>
+  );
+}
+
+function EditableSectionTitle({
+  title,
+  canContribute,
+  isOpen,
+  onToggle,
+}: {
+  title: string;
+  canContribute: boolean;
+  isOpen: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <View style={styles.sectionTitleRow}>
+      <SectionTitle title={title} />
+
+      {canContribute ? (
+        <Pressable
+          onPress={onToggle}
+          style={({ pressed }) => [
+            styles.contributionSmallButton,
+            isOpen && styles.contributionSmallButtonOpen,
+            pressed && { opacity: 0.78 },
+          ]}
+        >
+          <Text style={styles.contributionSmallButtonText}>
+            {isOpen ? "-" : "+"}
+          </Text>
+        </Pressable>
+      ) : null}
+    </View>
+  );
+}
+
+function ContributionActions({
+  onEdit,
+  onRemove,
+}: {
+  onEdit: () => void;
+  onRemove: () => void;
+}) {
+  return (
+    <View style={styles.contributionActions}>
+      <Pressable
+        onPress={onEdit}
+        style={({ pressed }) => [
+          styles.contributionActionButton,
+          pressed && { opacity: 0.78 },
+        ]}
+      >
+        <Text style={styles.contributionActionText}>Suggest edit</Text>
+      </Pressable>
+
+      <Pressable
+        onPress={onRemove}
+        style={({ pressed }) => [
+          styles.contributionActionButton,
+          pressed && { opacity: 0.78 },
+        ]}
+      >
+        <Text style={styles.contributionActionText}>Suggest remove</Text>
+      </Pressable>
+    </View>
+  );
+}
+
+function ContributionForm({
+  draft,
+  isSubmitting,
+  onChange,
+  onSubmit,
+}: {
+  draft: ContributionDraft;
+  isSubmitting: boolean;
+  onChange: (draft: ContributionDraft) => void;
+  onSubmit: () => void;
+}) {
+  const label =
+    draft.mode === "add"
+      ? `Add ${draft.title}`
+      : draft.mode === "suggest_edit"
+      ? `Suggest Edit - ${draft.title}`
+      : `Suggest Remove - ${draft.title}`;
+  const guidance = getContributionTypeGuidance(draft.type);
+
+  return (
+    <View style={styles.contributionForm}>
+      <Text style={styles.contributionFormTitle}>{label}</Text>
+      <Text style={styles.contributionGuidance}>{guidance}</Text>
+
+      {draft.target?.currentText ? (
+        <View style={styles.contributionTargetBlock}>
+          <Text style={styles.contributionTargetLabel}>Current</Text>
+          <Text style={styles.contributionTargetText}>
+            {draft.target.currentText}
+          </Text>
+        </View>
+      ) : null}
+
+      {draft.mode !== "suggest_remove" ? (
+        <TextInput
+          value={draft.text}
+          onChangeText={(text) => onChange({ ...draft, text })}
+          placeholder={
+            draft.type === "story_reference"
+              ? "Reference: short label"
+              : draft.mode === "add"
+              ? "Add the new information"
+              : "Enter the suggested wording"
+          }
+          placeholderTextColor="#94a3b8"
+          multiline
+          style={styles.contributionInput}
+        />
+      ) : null}
+
+      <TextInput
+        value={draft.reason}
+        onChangeText={(reason) => onChange({ ...draft, reason })}
+        placeholder="Reason or note for reviewers"
+        placeholderTextColor="#94a3b8"
+        multiline
+        style={[styles.contributionInput, styles.contributionReasonInput]}
+      />
+
+      <View style={styles.contributionFormActions}>
+        <Pressable
+          onPress={onSubmit}
+          disabled={isSubmitting}
+          style={({ pressed }) => [
+            styles.contributionSubmitButton,
+            isSubmitting && { opacity: 0.65 },
+            pressed && { opacity: 0.82 },
+          ]}
+        >
+          <Text style={styles.contributionSubmitText}>
+            {isSubmitting ? "Saving..." : "Submit"}
+          </Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+
+function PendingContributionList({
+  items,
+  username,
+  onWithdraw,
+}: {
+  items: PendingContribution[];
+  username: string;
+  onWithdraw: (contributionId: string) => void;
+}) {
+  if (items.length === 0) return null;
+
+  const normalizedUsername = normalizeContributorUsername(username);
+
+  return (
+    <View style={styles.pendingContributionBlock}>
+      <SectionTitle title="Under Review" />
+
+      {items.map((item) => (
+        <View key={item.id} style={styles.pendingContributionItem}>
+          <Text style={styles.pendingContributionBadge}>Under review</Text>
+          <Text style={styles.pendingContributionTitle}>
+            {formatContributionMode(item.mode)} - {formatKey(item.type)}
+          </Text>
+          {item.createdBy ? (
+            <Text style={styles.pendingContributionByline}>
+              @{item.createdBy}
+            </Text>
+          ) : null}
+          <Text style={styles.pendingContributionText}>
+            {item.suggestedText ?? item.text}
+          </Text>
+          {item.reason ? (
+            <Text style={styles.pendingContributionReason}>{item.reason}</Text>
+          ) : null}
+          {item.createdBy === normalizedUsername ? (
+            <Pressable
+              onPress={() => onWithdraw(item.id)}
+              style={({ pressed }) => [
+                styles.pendingContributionWithdrawButton,
+                pressed && { opacity: 0.78 },
+              ]}
+            >
+              <Text style={styles.pendingContributionWithdrawText}>
+                Withdraw
+              </Text>
+            </Pressable>
+          ) : null}
+        </View>
+      ))}
+    </View>
+  );
 }
 
 function formatCommandTitle(title: string, references: string[]) {
@@ -643,13 +2176,244 @@ function formatCommandTitle(title: string, references: string[]) {
   }
 
   return title.replace(
-    /^(Gen|Exod|Exo|Lev|Num|Deut|Deu|Genesis|Exodus|Leviticus|Numbers|Deuteronomy)\.?\s+\d+:\d+(?:-\d+)?\s*[-:]\s*/i,
+    /^(Gen|Exod|Exo|Lev|Num|Deut|Deu|Genesis|Exodus|Leviticus|Numbers|Deuteronomy)\.?\s+\d+(?::\d+(?:-\d+)?)?\s*[-:]\s*/i,
     ""
   );
 }
 
+function getBlueLetterBibleUrl(reference: string, bibleVersion: BibleVersion) {
+  const parsed = parseScriptureReference(reference);
+  if (!parsed) return null;
+
+  return `https://www.blueletterbible.org/${bibleVersion.toLowerCase()}/${parsed.book}/${parsed.chapter}/${parsed.verse}/`;
+}
+
+function parseScriptureReference(reference: string) {
+  const normalizedReference = reference.trim().replace(/\s+/g, " ");
+  const match = normalizedReference.match(/^(.+?)\s+(\d+)(?::(\d+))?/);
+  if (!match) return null;
+
+  const book = getBlueLetterBibleBookSlug(match[1]);
+  if (!book) return null;
+
+  return {
+    book,
+    chapter: match[2],
+    verse: match[3] ?? "1",
+  };
+}
+
+function getBlueLetterBibleBookSlug(book: string) {
+  const key = book.toLowerCase().replace(/\./g, "").trim();
+
+  const bookSlugs: Record<string, string> = {
+    gen: "gen",
+    genesis: "gen",
+    ex: "exo",
+    exod: "exo",
+    exo: "exo",
+    exodus: "exo",
+    lev: "lev",
+    leviticus: "lev",
+    num: "num",
+    numbers: "num",
+    deut: "deu",
+    deu: "deu",
+    deuteronomy: "deu",
+    jos: "jos",
+    josh: "jos",
+    joshua: "jos",
+    jdg: "jdg",
+    judg: "jdg",
+    judges: "jdg",
+    ruth: "rut",
+    rut: "rut",
+    "1 samuel": "1sa",
+    "1 sam": "1sa",
+    "1sa": "1sa",
+    "2 samuel": "2sa",
+    "2 sam": "2sa",
+    "2sa": "2sa",
+    "1 kings": "1ki",
+    "1 kgs": "1ki",
+    "1ki": "1ki",
+    "2 kings": "2ki",
+    "2 kgs": "2ki",
+    "2ki": "2ki",
+    "1 chronicles": "1ch",
+    "1 chron": "1ch",
+    "1 chr": "1ch",
+    "1ch": "1ch",
+    "2 chronicles": "2ch",
+    "2 chron": "2ch",
+    "2 chr": "2ch",
+    "2ch": "2ch",
+    ezra: "ezr",
+    ezr: "ezr",
+    nehemiah: "neh",
+    neh: "neh",
+    esther: "est",
+    est: "est",
+    job: "job",
+    psalm: "psa",
+    psalms: "psa",
+    psa: "psa",
+    proverb: "pro",
+    proverbs: "pro",
+    prov: "pro",
+    pro: "pro",
+    ecclesiastes: "ecc",
+    eccles: "ecc",
+    ecc: "ecc",
+    "song of solomon": "sng",
+    "song of songs": "sng",
+    song: "sng",
+    sng: "sng",
+    isaiah: "isa",
+    isa: "isa",
+    jeremiah: "jer",
+    jer: "jer",
+    lamentations: "lam",
+    lam: "lam",
+    ezekiel: "eze",
+    ezek: "eze",
+    eze: "eze",
+    daniel: "dan",
+    dan: "dan",
+    hosea: "hos",
+    hos: "hos",
+    joel: "joe",
+    joe: "joe",
+    amos: "amo",
+    amo: "amo",
+    obadiah: "oba",
+    obad: "oba",
+    oba: "oba",
+    jonah: "jon",
+    jon: "jon",
+    micah: "mic",
+    mic: "mic",
+    nahum: "nah",
+    nah: "nah",
+    habakkuk: "hab",
+    hab: "hab",
+    zephaniah: "zep",
+    zeph: "zep",
+    zep: "zep",
+    haggai: "hag",
+    hag: "hag",
+    zechariah: "zec",
+    zech: "zec",
+    zec: "zec",
+    malachi: "mal",
+    mal: "mal",
+  };
+
+  return bookSlugs[key] ?? null;
+}
+
 function formatKey(value: string) {
   return value.replace(/_/g, " ");
+}
+
+function formatContributionMode(mode: CommandContributionMode) {
+  if (mode === "suggest_edit") return "Suggest edit";
+  if (mode === "suggest_remove") return "Suggest remove";
+  return "Add";
+}
+
+function getContributionTypeGuidance(type: CommandContributionType) {
+  const guidance: Record<CommandContributionType, string> = {
+    requirement:
+      "Requirements describe what must be true, available, or in place to properly obey this command.",
+    study_note:
+      "Study notes add Torah context, cross-reference awareness, or practical framing without adding man-made rules.",
+    story_reference:
+      "Seen in Scripture references point to places where the command is practiced, violated, enforced, or illustrated in the biblical text.",
+    source_term:
+      "Source terms capture original-language words, such as Hebrew, Aramaic, or Greek, and how they affect understanding.",
+    translation_note:
+      "Translation notes explain wording differences, ambiguity, or translation choices that affect how the passage is read.",
+    clarification_note:
+      "Clarification names a focused correction, boundary, or distinction that helps prevent misunderstanding.",
+  };
+
+  return guidance[type];
+}
+
+function createEmptyPromotionDraft(): PromotionDraft {
+  return {
+    language: "hebrew",
+    term: "",
+    gloss: "",
+    reference: "",
+    label: "",
+    requirementText: "",
+    studyNote: "",
+    translationNote: "",
+    clarificationNote: "",
+  };
+}
+
+function createPromotionDraft(
+  contribution: PendingContribution | null
+): PromotionDraft {
+  const draft = createEmptyPromotionDraft();
+
+  if (!contribution) return draft;
+
+  const text = contribution.suggestedText ?? contribution.text;
+
+  if (contribution.type === "source_term") {
+    const [term, ...glossParts] = text.split(/\s+-\s+/);
+
+    return {
+      ...draft,
+      term: term?.trim() ?? "",
+      gloss: glossParts.join(" - ").trim() || text,
+    };
+  }
+
+  if (contribution.type === "story_reference") {
+    const [reference, ...labelParts] = text.split(/\s*:\s+/);
+
+    return {
+      ...draft,
+      reference: reference?.trim() ?? "",
+      label: labelParts.join(": ").trim() || text,
+    };
+  }
+
+  return {
+    ...draft,
+    [getPromotionTextField(contribution.type)]: text,
+  };
+}
+
+function getPromotionTextField(
+  type: Exclude<CommandContributionType, "source_term" | "story_reference">
+) {
+  const fields: Record<
+    Exclude<CommandContributionType, "source_term" | "story_reference">,
+    keyof PromotionDraft
+  > = {
+    requirement: "requirementText",
+    study_note: "studyNote",
+    translation_note: "translationNote",
+    clarification_note: "clarificationNote",
+  };
+
+  return fields[type];
+}
+
+function normalizeContributorUsername(username: string) {
+  const normalized = username.trim().toLowerCase();
+
+  if (!/^[a-z0-9_-]{2,32}$/.test(normalized)) {
+    return "";
+  }
+
+  return normalized;
 }
 
 function groupCommandsByCategory(commands: CommandSummary[]) {
@@ -676,46 +2440,6 @@ function groupCommandsByCategory(commands: CommandSummary[]) {
 }
 
 const styles = {
-  commandControls: {
-    flexDirection: "row" as const,
-    flexWrap: "wrap" as const,
-    alignItems: "center" as const,
-    gap: 12,
-    padding: 16,
-    borderRadius: 8,
-    backgroundColor: "#f8fafc",
-    borderWidth: 1,
-    borderColor: "#e2e8f0",
-  },
-  countText: {
-    marginBottom: 8,
-    fontSize: 13,
-    lineHeight: 18,
-    color: "#64748b",
-  },
-  randomButton: {
-    minHeight: 40,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    alignItems: "center" as const,
-    justifyContent: "center" as const,
-    backgroundColor: "#0f766e",
-  },
-  randomButtonText: {
-    fontSize: 13,
-    fontWeight: "900" as const,
-    color: "#ffffff",
-  },
-  searchInput: {
-    minHeight: 44,
-    paddingHorizontal: 14,
-    borderRadius: 8,
-    backgroundColor: "#ffffff",
-    borderWidth: 1,
-    borderColor: "#cbd5e1",
-    color: "#0f172a",
-    fontSize: 15,
-  },
   errorPanel: {
     padding: 12,
     borderRadius: 8,
@@ -736,6 +2460,10 @@ const styles = {
   },
   listPane: {
     gap: 10,
+  },
+  listPaneContent: {
+    gap: 10,
+    paddingBottom: 10,
   },
   listPaneSplit: {
     flex: 0.42,
@@ -777,9 +2505,18 @@ const styles = {
   detailPanel: {
     padding: 16,
     borderRadius: 8,
-    backgroundColor: "#ffffff",
+    backgroundColor: "#fffdf2",
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: "#f3e6b3",
+  },
+  detailPaneContent: {
+    paddingBottom: 4,
+  },
+  detailPaneContentSplit: {
+    paddingRight: 14,
+  },
+  detailPaneScroll: {
+    marginRight: -11,
   },
   detailPaneSplit: {
     flex: 0.58,
@@ -857,11 +2594,6 @@ const styles = {
     fontWeight: "500" as const,
     color: "#111827",
   },
-  commandSummaryRequirement: {
-    fontSize: 14,
-    lineHeight: 20,
-    color: "#6b7280",
-  },
   referenceWrap: {
     flexDirection: "row" as const,
     flexWrap: "wrap" as const,
@@ -875,6 +2607,8 @@ const styles = {
     backgroundColor: "#ecfeff",
     borderWidth: 1,
     borderColor: "#a5f3fc",
+  },
+  referenceTagText: {
     color: "#155e75",
     fontSize: 12,
     fontWeight: "900" as const,
@@ -893,20 +2627,194 @@ const styles = {
     borderWidth: 1,
     borderColor: "#fde68a",
   },
+  adminReviewPanel: {
+    gap: 10,
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: "#f0fdfa",
+    borderWidth: 1,
+    borderColor: "#99f6e4",
+  },
+  adminReviewHeader: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "space-between" as const,
+    gap: 10,
+  },
+  adminReviewTitle: {
+    fontSize: 14,
+    lineHeight: 19,
+    fontWeight: "900" as const,
+    color: "#0f766e",
+  },
+  adminReviewModeRow: {
+    flexDirection: "row" as const,
+    flexWrap: "wrap" as const,
+    gap: 6,
+  },
+  adminReviewModeButton: {
+    minHeight: 30,
+    paddingHorizontal: 10,
+    borderRadius: 999,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    backgroundColor: "#ffffff",
+    borderWidth: 1,
+    borderColor: "#99f6e4",
+  },
+  adminReviewModeButtonActive: {
+    backgroundColor: "#0f766e",
+    borderColor: "#0f766e",
+  },
+  adminReviewModeText: {
+    fontSize: 12,
+    fontWeight: "900" as const,
+    color: "#0f766e",
+  },
+  adminReviewModeTextActive: {
+    color: "#ffffff",
+  },
+  adminReviewMeta: {
+    marginTop: 2,
+    fontSize: 12,
+    lineHeight: 17,
+    color: "#475569",
+  },
+  adminReviewStepControls: {
+    flexDirection: "row" as const,
+    gap: 6,
+  },
+  adminReviewIconButton: {
+    width: 30,
+    minHeight: 30,
+    borderRadius: 999,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    backgroundColor: "#ccfbf1",
+  },
+  adminReviewIconText: {
+    fontSize: 22,
+    lineHeight: 24,
+    fontWeight: "900" as const,
+    color: "#0f766e",
+  },
+  adminReviewBody: {
+    gap: 7,
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: "#ffffff",
+    borderWidth: 1,
+    borderColor: "#ccfbf1",
+  },
+  adminReviewActions: {
+    flexDirection: "row" as const,
+    flexWrap: "wrap" as const,
+    justifyContent: "flex-end" as const,
+    gap: 8,
+  },
+  adminReviewSecondaryButton: {
+    minHeight: 34,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    backgroundColor: "#ffffff",
+    borderWidth: 1,
+    borderColor: "#99f6e4",
+  },
+  adminReviewSecondaryText: {
+    fontSize: 12,
+    fontWeight: "900" as const,
+    color: "#0f766e",
+  },
+  adminReviewRejectButton: {
+    minHeight: 34,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    backgroundColor: "#b91c1c",
+  },
+  adminReviewApproveButton: {
+    minHeight: 34,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    backgroundColor: "#0f766e",
+  },
+  adminReviewActionText: {
+    fontSize: 12,
+    fontWeight: "900" as const,
+    color: "#ffffff",
+  },
+  promotionForm: {
+    gap: 8,
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: "#ecfeff",
+    borderWidth: 1,
+    borderColor: "#a5f3fc",
+  },
+  promotionFormTitle: {
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: "900" as const,
+    color: "#155e75",
+  },
+  promotionFieldRow: {
+    flexDirection: "row" as const,
+    flexWrap: "wrap" as const,
+    gap: 8,
+  },
+  promotionInput: {
+    flex: 1,
+    minWidth: 150,
+    minHeight: 38,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderRadius: 8,
+    backgroundColor: "#ffffff",
+    borderWidth: 1,
+    borderColor: "#bae6fd",
+    color: "#0f172a",
+    fontSize: 13,
+    lineHeight: 18,
+  },
+  promotionTextArea: {
+    minHeight: 76,
+    textAlignVertical: "top" as const,
+  },
   sectionTitle: {
     fontSize: 13,
     fontWeight: "900" as const,
     color: "#334155",
     textTransform: "uppercase" as const,
   },
+  sectionTitleRow: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "space-between" as const,
+    gap: 8,
+  },
   listText: {
+    flex: 1,
     fontSize: 14,
     lineHeight: 21,
     color: "#475569",
   },
+  editableListItem: {
+    gap: 8,
+    paddingBottom: 5,
+  },
   mutedText: {
     fontSize: 14,
     lineHeight: 20,
+    color: "#64748b",
+  },
+  sectionHelpText: {
+    fontSize: 12,
+    lineHeight: 17,
     color: "#64748b",
   },
   tagRow: {
@@ -961,5 +2869,201 @@ const styles = {
     fontSize: 13,
     lineHeight: 18,
     color: "#854d0e",
+  },
+  contributionSmallButton: {
+    width: 28,
+    minHeight: 28,
+    borderRadius: 999,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    backgroundColor: "#0f766e",
+  },
+  contributionSmallButtonOpen: {
+    backgroundColor: "#64748b",
+  },
+  contributionSmallButtonText: {
+    fontSize: 18,
+    lineHeight: 22,
+    fontWeight: "900" as const,
+    color: "#ffffff",
+  },
+  contributionActions: {
+    flexDirection: "row" as const,
+    flexWrap: "wrap" as const,
+    gap: 6,
+  },
+  contributionActionButton: {
+    minHeight: 26,
+    paddingHorizontal: 8,
+    borderRadius: 999,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    backgroundColor: "#f8fafc",
+    borderWidth: 1,
+    borderColor: "#cbd5e1",
+  },
+  contributionActionText: {
+    fontSize: 11,
+    fontWeight: "800" as const,
+    color: "#475569",
+  },
+  contributionForm: {
+    gap: 10,
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: "#f8fafc",
+    borderWidth: 1,
+    borderColor: "#bae6fd",
+  },
+  contributionFormTitle: {
+    fontSize: 14,
+    lineHeight: 19,
+    fontWeight: "900" as const,
+    color: "#075985",
+  },
+  contributionGuidance: {
+    fontSize: 12,
+    lineHeight: 17,
+    color: "#475569",
+  },
+  contributionTargetBlock: {
+    gap: 4,
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: "#ffffff",
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+  },
+  contributionTargetLabel: {
+    fontSize: 11,
+    fontWeight: "900" as const,
+    color: "#64748b",
+    textTransform: "uppercase" as const,
+  },
+  contributionTargetText: {
+    fontSize: 13,
+    lineHeight: 18,
+    color: "#475569",
+  },
+  contributionInput: {
+    minHeight: 92,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 8,
+    backgroundColor: "#ffffff",
+    borderWidth: 1,
+    borderColor: "#cbd5e1",
+    color: "#0f172a",
+    fontSize: 14,
+    lineHeight: 19,
+    textAlignVertical: "top" as const,
+  },
+  contributionReasonInput: {
+    minHeight: 72,
+  },
+  contributionFormActions: {
+    flexDirection: "row" as const,
+    justifyContent: "flex-end" as const,
+    gap: 8,
+  },
+  contributionSubmitButton: {
+    minHeight: 34,
+    paddingHorizontal: 14,
+    borderRadius: 999,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    backgroundColor: "#0f766e",
+  },
+  contributionSubmitText: {
+    fontSize: 12,
+    fontWeight: "900" as const,
+    color: "#ffffff",
+  },
+  contributionMessage: {
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: "800" as const,
+    color: "#0f766e",
+  },
+  pendingContributionBlock: {
+    gap: 8,
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: "#eff6ff",
+    borderWidth: 1,
+    borderColor: "#bfdbfe",
+  },
+  pendingContributionItem: {
+    gap: 5,
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: "#ffffff",
+    borderWidth: 1,
+    borderColor: "#dbeafe",
+  },
+  pendingContributionBadge: {
+    alignSelf: "flex-start" as const,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 999,
+    overflow: "hidden" as const,
+    backgroundColor: "#dbeafe",
+    color: "#1d4ed8",
+    fontSize: 11,
+    fontWeight: "900" as const,
+    textTransform: "uppercase" as const,
+  },
+  pendingContributionTitle: {
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: "900" as const,
+    color: "#1e293b",
+  },
+  pendingContributionByline: {
+    fontSize: 12,
+    lineHeight: 17,
+    fontWeight: "800" as const,
+    color: "#0f766e",
+  },
+  pendingContributionText: {
+    fontSize: 13,
+    lineHeight: 18,
+    color: "#475569",
+  },
+  pendingContributionReason: {
+    fontSize: 12,
+    lineHeight: 17,
+    color: "#64748b",
+    fontStyle: "italic" as const,
+  },
+  pendingContributionWithdrawButton: {
+    alignSelf: "flex-start" as const,
+    minHeight: 30,
+    paddingHorizontal: 10,
+    borderRadius: 999,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    backgroundColor: "#fff7ed",
+    borderWidth: 1,
+    borderColor: "#fed7aa",
+  },
+  pendingContributionWithdrawText: {
+    fontSize: 12,
+    fontWeight: "900" as const,
+    color: "#9a3412",
+  },
+  storyReferenceRow: {
+    gap: 7,
+    alignItems: "flex-start" as const,
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: "#f8fafc",
+    borderWidth: 1,
+    borderColor: "#dbeafe",
+  },
+  storyReferenceLabel: {
+    fontSize: 13,
+    lineHeight: 18,
+    color: "#334155",
   },
 };
