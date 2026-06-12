@@ -131,6 +131,7 @@ export default function HomeScreen() {
 
   const nodes = buildEnochYear(config);
   const groupLabel = formatGroupLabel(groupCode);
+  const isTimelineVisible = userRole === "admin" && Boolean(adminToken);
   const todayNode = nodes.find((node) => {
     return node.gregorianDate === todayDateId;
   });
@@ -285,6 +286,12 @@ export default function HomeScreen() {
 
     loadPerpetualMarkers();
   }, [hasEnteredApp, perpetualMarkersChecksum]);
+
+  useEffect(() => {
+    if (activeTab === "timeline" && !isTimelineVisible) {
+      setActiveTab("calendar");
+    }
+  }, [activeTab, isTimelineVisible]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -655,7 +662,11 @@ export default function HomeScreen() {
             paddingBottom: 12,
           }}
         >
-          <TabSelector activeTab={activeTab} onChangeTab={setActiveTab} />
+          <TabSelector
+            activeTab={activeTab}
+            isTimelineVisible={isTimelineVisible}
+            onChangeTab={setActiveTab}
+          />
 
           {activeTab === "calendar" && (
             <AppHeader
@@ -735,7 +746,7 @@ export default function HomeScreen() {
           </>
         )}
 
-        {activeTab === "timeline" && (
+        {activeTab === "timeline" && isTimelineVisible && (
           <HistoryTimelineView
             adminToken={adminToken}
             groupCode={groupCode}
@@ -788,14 +799,18 @@ export default function HomeScreen() {
 
 function TabSelector({
   activeTab,
+  isTimelineVisible,
   onChangeTab,
 }: {
   activeTab: AppTab;
+  isTimelineVisible: boolean;
   onChangeTab: (tab: AppTab) => void;
 }) {
   const tabs: { id: AppTab; label: string }[] = [
     { id: "calendar", label: "Calendar" },
-    { id: "timeline", label: "Timeline" },
+    ...(isTimelineVisible
+      ? [{ id: "timeline" as const, label: "Timeline" }]
+      : []),
     { id: "commands", label: "Commands" },
   ];
 
