@@ -627,13 +627,20 @@ function SegmentedSelector<TValue extends string>({
   value,
   options,
   onChange,
+  compact = false,
 }: {
   value: TValue;
   options: { label: string; value: TValue }[];
   onChange: (value: TValue) => void;
+  compact?: boolean;
 }) {
   return (
-    <View style={styles.segmentedControl}>
+    <View
+      style={[
+        styles.segmentedControl,
+        compact ? styles.segmentedControlCompact : null,
+      ]}
+    >
       {options.map((option) => {
         const isActive = value === option.value;
 
@@ -643,12 +650,14 @@ function SegmentedSelector<TValue extends string>({
             onPress={() => onChange(option.value)}
             style={[
               styles.segmentButton,
+              compact ? styles.segmentButtonCompact : null,
               isActive ? styles.segmentButtonActive : null,
             ]}
           >
             <Text
               style={[
                 styles.segmentButtonText,
+                compact ? styles.segmentButtonTextCompact : null,
                 isActive ? styles.segmentButtonTextActive : null,
               ]}
             >
@@ -804,6 +813,7 @@ export default function HistoryTimelineView({
   userRole,
 }: HistoryTimelineViewProps) {
   const { width } = useWindowDimensions();
+  const isCompactTimeline = width < 520;
   const [timelineZoom, setTimelineZoom] = useState<TimelineZoomId>("years");
   const [timelineScrollX, setTimelineScrollX] = useState(0);
   const contentWidth = getTimelineContentWidth(width, timelineZoom);
@@ -1279,13 +1289,23 @@ export default function HistoryTimelineView({
 
   return (
     <View style={styles.container}>
-      <View style={styles.headingRow}>
-        <View>
+      <View
+        style={[
+          styles.headingRow,
+          isCompactTimeline ? styles.headingRowCompact : null,
+        ]}
+      >
+        <View style={styles.headingTitleBlock}>
           <Text style={styles.eyebrow}>History View</Text>
           <Text style={styles.title}>Biblical Timeline</Text>
         </View>
 
-        <View style={styles.headerActions}>
+        <View
+          style={[
+            styles.headerActions,
+            isCompactTimeline ? styles.headerActionsCompact : null,
+          ]}
+        >
           {canManageTimeline ? (
             <Pressable
               accessibilityLabel={
@@ -1336,15 +1356,32 @@ export default function HistoryTimelineView({
         </View>
       </View>
 
-      <View style={styles.timelineToolbar}>
+      <View
+        style={[
+          styles.timelineToolbar,
+          isCompactTimeline ? styles.timelineToolbarCompact : null,
+        ]}
+      >
         <Text style={styles.toolbarLabel}>Scale</Text>
         <SegmentedSelector
           value={timelineZoom}
-          options={TIMELINE_ZOOM_LEVELS.map((zoomLevel) => ({
-            label: zoomLevel.label,
-            value: zoomLevel.id,
-          }))}
+          options={TIMELINE_ZOOM_LEVELS.map((zoomLevel) => {
+            const compactLabels: Record<TimelineZoomId, string> = {
+              millennia: "Mil",
+              years: "Yr",
+              months: "Mo",
+              days: "Day",
+            };
+
+            return {
+              label: isCompactTimeline
+                ? compactLabels[zoomLevel.id]
+                : zoomLevel.label,
+              value: zoomLevel.id,
+            };
+          })}
           onChange={handleTimelineZoomChange}
+          compact={isCompactTimeline}
         />
       </View>
 
@@ -1776,12 +1813,23 @@ const styles = StyleSheet.create({
     gap: 12,
     marginBottom: 12,
   },
+  headingRowCompact: {
+    flexDirection: "column",
+  },
+  headingTitleBlock: {
+    minWidth: 0,
+  },
   headerActions: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-end",
     gap: 8,
     flexShrink: 0,
+  },
+  headerActionsCompact: {
+    alignSelf: "stretch",
+    justifyContent: "flex-start",
+    flexWrap: "wrap",
   },
   eyebrow: {
     fontSize: 12,
@@ -1849,6 +1897,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-end",
     gap: 10,
+  },
+  timelineToolbarCompact: {
+    justifyContent: "flex-start",
+    flexWrap: "wrap",
   },
   toolbarLabel: {
     fontSize: 12,
@@ -2246,6 +2298,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#e5e7eb",
     flexDirection: "row",
   },
+  segmentedControlCompact: {
+    flexShrink: 1,
+  },
   segmentButton: {
     flex: 1,
     minWidth: 82,
@@ -2254,6 +2309,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 8,
   },
+  segmentButtonCompact: {
+    minWidth: 52,
+    paddingHorizontal: 6,
+  },
   segmentButtonActive: {
     backgroundColor: "#ffffff",
   },
@@ -2261,6 +2320,9 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "900",
     color: "#4b5563",
+  },
+  segmentButtonTextCompact: {
+    fontSize: 12,
   },
   segmentButtonTextActive: {
     color: "#081a33",
