@@ -1096,6 +1096,7 @@ function CommandStickyHeader({
               flexDirection: "row",
               alignItems: "center",
               gap: 8,
+              overflow: "hidden",
             }}
           >
             <TextInput
@@ -1107,6 +1108,7 @@ function CommandStickyHeader({
               autoCorrect={false}
               style={{
                 flex: 1,
+                minWidth: 0,
                 minHeight: 40,
                 color: "#0f172a",
                 fontSize: 14,
@@ -1116,6 +1118,7 @@ function CommandStickyHeader({
 
             <View
               style={{
+                width: isCompactHeader ? 122 : undefined,
                 minHeight: 34,
                 borderRadius: 999,
                 overflow: "hidden",
@@ -1129,6 +1132,7 @@ function CommandStickyHeader({
                 disabled={isSelectingRandom}
                 style={({ pressed }) => [
                   {
+                    flex: 1,
                     paddingHorizontal: 11,
                     alignItems: "center",
                     justifyContent: "center",
@@ -1160,6 +1164,7 @@ function CommandStickyHeader({
                 disabled={isSelectingPending}
                 style={({ pressed }) => [
                   {
+                    flex: 1,
                     paddingHorizontal: 11,
                     alignItems: "center",
                     justifyContent: "center",
