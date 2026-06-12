@@ -84,32 +84,6 @@
   },
   {
     "year": 2026,
-    "month": 3,
-    "day": 21,
-    "notice": {
-      "year": 2026,
-      "month": 3,
-      "day": 21,
-      "title": "Sabbat at Apa's",
-      "access": "public"
-    },
-    "hasContent": false
-  },
-  {
-    "year": 2026,
-    "month": 3,
-    "day": 14,
-    "notice": {
-      "year": 2026,
-      "month": 3,
-      "day": 14,
-      "title": "Shabbat at Nate and Jordyn's",
-      "access": "public"
-    },
-    "hasContent": false
-  },
-  {
-    "year": 2026,
     "month": 4,
     "day": 25,
     "notice": {
@@ -198,5 +172,38 @@
       "access": "public"
     },
     "hasContent": false
+  },
+  {
+    "year": 2026,
+    "month": 3,
+    "day": 21,
+    "notice": {
+      "year": 2026,
+      "month": 3,
+      "day": 21,
+      "title": "Shabbat at Apa's",
+      "access": "public"
+    },
+    "hasContent": true
+  },
+  {
+    "year": 2026,
+    "month": 3,
+    "day": 14,
+    "notice": {
+      "year": 2026,
+      "month": 3,
+      "day": 14,
+      "title": "Shabbat at Nate and Jordyn's",
+      "access": "public"
+    },
+    "hasContent": false
+  },
+  {
+    "year": 2026,
+    "month": 1,
+    "day": 12,
+    "notice": null,
+    "hasContent": true
   }
 ]
