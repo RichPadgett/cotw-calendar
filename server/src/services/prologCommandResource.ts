@@ -178,7 +178,7 @@ function mergeApprovedContributions(command: CommandResourceDetail) {
   return {
     ...command,
     requirements: [
-      ...(command.requirement ? [command.requirement] : []),
+      ...(command.requirements ?? []),
       ...requirementContributions,
     ],
     studyNotes: [

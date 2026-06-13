@@ -123,6 +123,7 @@ command_detail_json(Command, json([
     key=Command,
     title=Title,
     requirement=Requirement,
+    requirements=Requirements,
     reminderText=ReminderText,
     categories=Categories,
     facts=Facts,
@@ -137,7 +138,8 @@ command_detail_json(Command, json([
 ])) :-
     command(Command),
     command_title(Command, Title),
-    one_or_null(command_requirement(Command), Requirement),
+    one_or_null(normal_obedience(Command), Requirement),
+    findall(RequirementItem, command_requirement(Command, RequirementItem), Requirements),
     one_or_null(reminder_text(Command), ReminderText),
     setof_or_empty(Category, command_category(Command, Category), Categories),
     setof_or_empty(Fact, command_fact(Command, Fact), Facts),

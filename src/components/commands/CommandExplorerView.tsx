@@ -353,11 +353,13 @@ export default function CommandExplorerView({
         status,
         ...(commandKey ? { commandKey } : {}),
         ...(status === "approved" ? { promoted: "false" } : {}),
+        _: String(Date.now()),
       });
 
       const response = await fetch(
         apiUrl(`/command-resources/contributions?${query.toString()}`),
         {
+          cache: "no-store",
           headers: {
             Authorization: `Bearer ${adminToken}`,
           },
@@ -794,6 +796,12 @@ export default function CommandExplorerView({
       ) {
         await selectCommand(moderatedContribution.commandKey);
       }
+
+      if (action === "approve") {
+        setReviewMode("approved");
+        setReviewIndex(0);
+        await loadReviewContributions("approved");
+      }
     } catch (error) {
       console.log("Failed to moderate command contribution", error);
       setContributionMessage("Contribution review action failed.");
@@ -1116,11 +1124,7 @@ function CommandDetail({
   const commandTitle = command.title
     ? formatCommandTitle(command.title, references)
     : formatKey(command.key);
-  const requirementText = command.requirement;
-  const requirementItems = (
-    command.requirements ??
-    (requirementText ? [requirementText] : [])
-  ).filter(
+  const requirementItems = (command.requirements ?? []).filter(
     (item) => item.trim().toLowerCase() !== commandTitle.trim().toLowerCase()
   );
 
@@ -1150,10 +1154,10 @@ function CommandDetail({
       </View>
 
       <DetailList
-        title="Requirements"
+        title="Obedience Requirements"
         contributionType="requirement"
         items={requirementItems}
-        emptyText="No specific requirements."
+        emptyText="No specific obedience requirements."
         canContribute={canContribute}
         contributionDraft={contributionDraft}
         contributionMessage={contributionMessage}
@@ -2325,7 +2329,7 @@ function formatContributionMode(mode: CommandContributionMode) {
 function getContributionTypeGuidance(type: CommandContributionType) {
   const guidance: Record<CommandContributionType, string> = {
     requirement:
-      "Requirements describe what must be true, available, or in place to properly obey this command.",
+      "Obedience requirements describe what must be true, available, or in place to properly obey this command.",
     study_note:
       "Study notes add Torah context, cross-reference awareness, or practical framing without adding man-made rules.",
     story_reference:

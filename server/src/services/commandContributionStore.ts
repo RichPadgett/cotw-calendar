@@ -8,8 +8,9 @@ import fs from "fs";
 import path from "path";
 
 const CONTRIBUTION_GROUP_CODE = "church-of-the-word";
-const CONTENT_ROOT = path.join(process.cwd(), "content", "groups");
-const PROLOG_COMMANDS_ROOT = path.join(process.cwd(), "prolog", "commands");
+const SERVER_ROOT = path.resolve(__dirname, "../..");
+const CONTENT_ROOT = path.join(SERVER_ROOT, "content", "groups");
+const PROLOG_COMMANDS_ROOT = path.join(SERVER_ROOT, "prolog", "commands");
 const safeAtomPattern = /^[a-z][a-z0-9_]*$/;
 const usernamePattern = /^[a-z0-9_-]{2,32}$/;
 const contributionPath = path.join(
@@ -384,7 +385,7 @@ function appendPrologFact(commandKey: string, prologFact: string) {
     lines.splice(insertIndex, 0, prologFact);
     fs.writeFileSync(filePath, lines.join("\n"), "utf-8");
 
-    return path.relative(process.cwd(), filePath);
+    return path.relative(SERVER_ROOT, filePath);
   }
 
   throw new Error("Could not find the Prolog command file for this command.");
@@ -413,7 +414,7 @@ function removePrologFact(commandKey: string, prologFact: string) {
     lines.splice(targetIndex, 1);
     fs.writeFileSync(filePath, lines.join("\n"), "utf-8");
 
-    return path.relative(process.cwd(), filePath);
+    return path.relative(SERVER_ROOT, filePath);
   }
 
   throw new Error("Could not find the Prolog fact targeted for removal.");
@@ -426,7 +427,7 @@ function buildRemovalPrologFact(contribution: CommandContribution) {
 
   switch (contribution.type) {
     case "requirement":
-      return `normal_obedience(${contribution.commandKey}, ${toPrologString(
+      return `command_requirement(${contribution.commandKey}, ${toPrologString(
         contribution.target.currentText
       )}).`;
     case "study_note":
@@ -499,7 +500,7 @@ function buildPrologFact(
 ) {
   switch (contribution.type) {
     case "requirement":
-      return `normal_obedience(${contribution.commandKey}, ${toPrologString(
+      return `command_requirement(${contribution.commandKey}, ${toPrologString(
         getOfficialText(official, "requirementText")
       )}).`;
     case "study_note":
