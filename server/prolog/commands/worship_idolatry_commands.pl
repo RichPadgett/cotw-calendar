@@ -201,6 +201,7 @@ concerns(do_not_make_idols_for_yourselves, reject_idolatry).
 scripture_reference(do_not_make_idols_for_yourselves, 'Leviticus 19:4').
 story_reference(do_not_make_idols_for_yourselves, 'Exodus 32:1-8', 'Israel makes the golden calf and turns aside quickly from the commanded way.').
 study_note(do_not_make_idols_for_yourselves, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not make idols for yourselves.').
+clarification_note(do_not_make_idols_for_yourselves, 'Exodus 20:4 may relate to this verse in that we should not make any image of things in heaven above, earth below or waters under the earth. Since the preceding verse is about not having Gods before YHWH, An assumption is that these graven images are forbidden for worship.').
 
 % Command: do_not_make_pillars_for_worship
 command(do_not_make_pillars_for_worship).

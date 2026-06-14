@@ -3,8 +3,29 @@
   "month": 3,
   "day": 28,
   "title": "Month 3 Day 28",
-  "notes": "",
-  "scriptureReadings": [],
+  "notes": "This teaching centers on 1 Corinthians 13 as the “more excellent way,” showing that spiritual gifts without love are worthless. It beautifully connects the Greatest Commandment with the traits of divine love (patient, kind, not self-seeking, etc.) and traces love’s first mention in Scripture through Abraham’s willingness to sacrifice Isaac on Mount Moriah — a profound type of the Father offering Yeshua, the Lamb of God. The study highlights obedience as Yahweh’s love language, the provision of the Lamb on the same mountain where Yeshua was later crucified, and how true love is manifested through self-sacrifice, keeping commands, and loving one another as Yeshua loved us.",
+  "scriptureReadings": [
+    {
+      "label": "Greater Way is Love",
+      "reference": "1 Corinthians 13",
+      "url": "https://www.blueletterbible.org/kjv/1co/13/1/s_1075001"
+    },
+    {
+      "label": "Father Loves Yeshua, Yeshua Loves Us",
+      "reference": "",
+      "url": "https://www.blueletterbible.org/kjv/jhn/15/1/s_1012001"
+    },
+    {
+      "label": "His Love Manifested in Us, Loving Others & Sharing Him",
+      "reference": "1 John 4",
+      "url": "https://www.blueletterbible.org/kjv/1jo/4/1/s_1163001"
+    },
+    {
+      "label": "Isaac Offered on Same Location as Yeshua, Land of Moriah",
+      "reference": "Genesis 22",
+      "url": "https://www.blueletterbible.org/kjv/gen/22/1/s_22001"
+    }
+  ],
   "sections": [
     {
       "title": "Notices",
@@ -22,7 +43,14 @@
     {
       "title": "Files / Links / Media",
       "displayStyle": "default",
-      "items": []
+      "items": [
+        {
+          "label": "The More Excellent Way: Love, Sacrifice & Obedience",
+          "type": "external-link",
+          "access": "public",
+          "url": "https://open.spotify.com/episode/4X2rRyqj2aj4shLdPYtcJ1"
+        }
+      ]
     }
   ]
 }

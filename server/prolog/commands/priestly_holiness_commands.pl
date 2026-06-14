@@ -198,6 +198,7 @@ concerns(make_the_incense_altar, priestly_holiness).
 scripture_reference(make_the_incense_altar, 'Exodus 30:1-10').
 story_reference(make_the_incense_altar, 'Exodus 37:25-29', 'The incense altar, anointing oil, and incense are made.').
 study_note(make_the_incense_altar, 'This command belongs to priestly and sanctuary service, where access, offerings, portions, and holiness are ordered by Torah: Make the incense altar.').
+command_requirement(make_the_incense_altar, 'Tabernacle Builders').
 
 % Command: do_not_offer_strange_incense_on_the_incense_altar
 command(do_not_offer_strange_incense_on_the_incense_altar).
@@ -222,6 +223,7 @@ normal_obedience(make_the_bronze_laver_for_washing, 'Make the bronze laver for w
 concerns(make_the_bronze_laver_for_washing, priestly_holiness).
 scripture_reference(make_the_bronze_laver_for_washing, 'Exodus 30:17-21').
 study_note(make_the_bronze_laver_for_washing, 'This command belongs to priestly and sanctuary service, where access, offerings, portions, and holiness are ordered by Torah: Make the bronze laver for washing.').
+normal_obedience(make_the_bronze_laver_for_washing, 'Tabernacle Builders').
 
 % Command: priests_must_wash_hands_and_feet_before_service
 command(priests_must_wash_hands_and_feet_before_service).
@@ -399,6 +401,7 @@ concerns(do_not_eat_blood_2, priestly_holiness).
 scripture_reference(do_not_eat_blood_2, 'Leviticus 7:26').
 scripture_reference(do_not_eat_blood_2, '17:10-14').
 study_note(do_not_eat_blood_2, 'This command belongs to priestly and sanctuary service, where access, offerings, portions, and holiness are ordered by Torah: Do not eat blood.').
+command_requirement(do_not_eat_blood_2, 'Israel').
 
 % Command: the_high_priest_must_not_enter_the_most_holy_place_at_any_time_but_according_t
 command(the_high_priest_must_not_enter_the_most_holy_place_at_any_time_but_according_t).

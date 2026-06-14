@@ -148,6 +148,7 @@ scripture_reference(do_not_show_partiality_in_judgment, 'Leviticus 19:15').
 scripture_reference(do_not_show_partiality_in_judgment, 'Deuteronomy 1:17').
 story_reference(do_not_show_partiality_in_judgment, '2 Chronicles 19:7', 'Jehoshaphat warns that with YHWH there is no injustice, partiality, or taking bribes.').
 study_note(do_not_show_partiality_in_judgment, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Do not show partiality in judgment.').
+command_requirement(do_not_show_partiality_in_judgment, 'Israel').
 
 % Command: do_not_fear_man_in_judgment
 command(do_not_fear_man_in_judgment).

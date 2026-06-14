@@ -97,19 +97,6 @@
   },
   {
     "year": 2026,
-    "month": 3,
-    "day": 28,
-    "notice": {
-      "year": 2026,
-      "month": 3,
-      "day": 28,
-      "title": "Shabbat at Tommy and Wendy's",
-      "access": "public"
-    },
-    "hasContent": false
-  },
-  {
-    "year": 2026,
     "month": 5,
     "day": 9,
     "notice": {
@@ -204,6 +191,19 @@
     "month": 1,
     "day": 12,
     "notice": null,
+    "hasContent": true
+  },
+  {
+    "year": 2026,
+    "month": 3,
+    "day": 28,
+    "notice": {
+      "year": 2026,
+      "month": 3,
+      "day": 28,
+      "title": "Shabbat at Tommy and Wendy's",
+      "access": "public"
+    },
     "hasContent": true
   }
 ]

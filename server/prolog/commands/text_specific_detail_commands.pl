@@ -171,7 +171,6 @@ study_note(allow_servant_to_choose_lifelong_service, 'The command is tied to a v
 % Command: do_not_rule_over_servant_ruthlessly
 command(do_not_rule_over_servant_ruthlessly).
 command_title(do_not_rule_over_servant_ruthlessly, 'Lev 25:43 - Do not rule over a servant ruthlessly.').
-normal_obedience(do_not_rule_over_servant_ruthlessly, 'Do not rule over your brother with harshness.').
 concerns(do_not_rule_over_servant_ruthlessly, servant_release_mercy).
 scripture_reference(do_not_rule_over_servant_ruthlessly, 'Leviticus 25:39-43').
 study_note(do_not_rule_over_servant_ruthlessly, 'The command limits treatment of an impoverished brother serving in the household.').

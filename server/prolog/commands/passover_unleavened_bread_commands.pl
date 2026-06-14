@@ -335,6 +335,7 @@ normal_obedience(do_not_break_a_bone_of_second_passover, 'Do not break a bone of
 concerns(do_not_break_a_bone_of_second_passover, passover_memorial).
 scripture_reference(do_not_break_a_bone_of_second_passover, 'Numbers 9:12').
 study_note(do_not_break_a_bone_of_second_passover, 'This command preserves Passover as a memorial of deliverance and keeps its details tied to the written Torah: Do not break a bone of second Passover.').
+command_requirement(do_not_break_a_bone_of_second_passover, 'Israel').
 
 % Command: remove_leaven_by_the_first_day
 command(remove_leaven_by_the_first_day).

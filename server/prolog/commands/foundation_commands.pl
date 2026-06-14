@@ -192,6 +192,7 @@ normal_obedience(observe_the_day_of_atonement_from_evening_to_evening, 'Observe 
 concerns(observe_the_day_of_atonement_from_evening_to_evening, appointed_times).
 scripture_reference(observe_the_day_of_atonement_from_evening_to_evening, 'Leviticus 23:32').
 study_note(observe_the_day_of_atonement_from_evening_to_evening, 'This command anchors appointed time practice in the dates and rhythms given by Torah: Observe the Day of Atonement from evening to evening.').
+clarification_note(observe_the_day_of_atonement_from_evening_to_evening, 'Day of Atonement begins on the evening of the 9th all the way to the evening of the 10th. This fortifies that the biblical day begins at dawn as it is still the 9th when it is evening.').
 
 % Command: take_fruit_of_splendid_trees_and_branches_for_booths
 command(take_fruit_of_splendid_trees_and_branches_for_booths).
