@@ -236,7 +236,12 @@ export default function CommandExplorerView({
       .map((group) => ({
         ...group,
         commands: group.commands.filter((item) =>
-          [item.title, item.key, group.key, ...(item.categories ?? [])]
+          [
+            item.title,
+            item.key,
+            group.key,
+            ...(item.categories ?? []),
+          ]
             .join(" ")
             .toLowerCase()
             .includes(normalizedSearch)
@@ -1156,6 +1161,7 @@ function CommandDetail({
       <DetailList
         title="Obedience Requirements"
         contributionType="requirement"
+        helpText={getContributionTypeGuidance("requirement")}
         items={requirementItems}
         emptyText="No specific obedience requirements."
         canContribute={canContribute}
@@ -1171,6 +1177,7 @@ function CommandDetail({
       <DetailList
         title="Study Notes"
         contributionType="study_note"
+        helpText={getContributionTypeGuidance("study_note")}
         items={command.studyNotes ?? []}
         emptyText="No study notes."
         canContribute={canContribute}
@@ -1211,6 +1218,7 @@ function CommandDetail({
       <DetailList
         title="Translation Notes"
         contributionType="translation_note"
+        helpText={getContributionTypeGuidance("translation_note")}
         items={command.translationNotes ?? []}
         emptyText="No translation notes."
         canContribute={canContribute}
@@ -1226,6 +1234,7 @@ function CommandDetail({
       <DetailList
         title="Clarification"
         contributionType="clarification_note"
+        helpText={getContributionTypeGuidance("clarification_note")}
         items={command.clarificationNotes ?? []}
         emptyText="No clarification notes."
         canContribute={canContribute}
@@ -1343,6 +1352,10 @@ function SourceTermList({
           });
         }}
       />
+
+      <Text style={styles.sectionHelpText}>
+        {getContributionTypeGuidance("source_term")}
+      </Text>
 
       {items.length === 0 ? (
         <Text style={styles.mutedText}>No source terms.</Text>
@@ -1551,6 +1564,7 @@ function DetailTags({
 function DetailList({
   title,
   contributionType,
+  helpText,
   items,
   emptyText,
   canContribute = false,
@@ -1564,6 +1578,7 @@ function DetailList({
 }: {
   title: string;
   contributionType?: CommandContributionType;
+  helpText?: string;
   items: string[];
   emptyText: string;
   canContribute?: boolean;
@@ -1609,6 +1624,10 @@ function DetailList({
       ) : (
         <SectionTitle title={title} />
       )}
+
+      {helpText ? (
+        <Text style={styles.sectionHelpText}>{helpText}</Text>
+      ) : null}
 
       {items.length === 0 ? (
         <Text style={styles.mutedText}>{emptyText}</Text>
