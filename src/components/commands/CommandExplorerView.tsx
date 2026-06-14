@@ -193,7 +193,6 @@ export default function CommandExplorerView({
     null
   );
   const [command, setCommand] = useState<CommandResource | null>(null);
-  const [isMobileListOpen, setIsMobileListOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [isSelectingRandom, setIsSelectingRandom] = useState(false);
   const [isSelectingPending, setIsSelectingPending] = useState(false);
@@ -262,12 +261,6 @@ export default function CommandExplorerView({
   const selectedCommandIndex = selectedCommandKey
     ? visibleCommands.findIndex((item) => item.key === selectedCommandKey)
     : -1;
-
-  useEffect(() => {
-    if (!normalizedSearch || usesSplitPane) return;
-
-    setIsMobileListOpen(true);
-  }, [normalizedSearch, usesSplitPane]);
 
   useEffect(() => {
     if (randomRequestId <= 0) return;
@@ -419,11 +412,49 @@ export default function CommandExplorerView({
     }
   }
 
-  async function selectCommand(commandKey: string, categoryKey?: string) {
+  function measureSelectedCommandSoon() {
+    if (usesSplitPane) return;
+
+    shouldCenterSelectedCommandRef.current = true;
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        measureSelectedCommand();
+      });
+    });
+  }
+
+  function measureSelectedCommand() {
+    if (!shouldCenterSelectedCommandRef.current) return;
+
+    shouldCenterSelectedCommandRef.current = false;
+    selectedCommandRef.current?.measure?.(
+      (
+        _x: number,
+        _y: number,
+        _width: number,
+        height: number,
+        _pageX: number,
+        pageY: number
+      ) => {
+        if (typeof pageY !== "number" || typeof height !== "number") return;
+
+        onMobileSelectedCommandLayout?.({ pageY, height });
+      }
+    );
+  }
+
+  async function selectCommand(
+    commandKey: string,
+    categoryKey?: string,
+    options: { centerOnMobile?: boolean; preloadedCommand?: CommandResource } = {}
+  ) {
     try {
       setSelectedCommandKey(commandKey);
       setCommand(null);
       setErrorMessage(null);
+      setContributionDraft(null);
+      setContributionMessage(null);
 
       if (categoryKey) {
         setExpandedCategories((current) => ({
@@ -432,19 +463,25 @@ export default function CommandExplorerView({
         }));
       }
 
-      const response = await fetch(apiUrl(`/command-resources/${commandKey}`));
+      const data = options.preloadedCommand
+        ? options.preloadedCommand
+        : await (async () => {
+            const response = await fetch(
+              apiUrl(`/command-resources/${commandKey}`)
+            );
 
-      if (!response.ok) {
-        throw new Error("Failed to load command resource.");
-      }
+            if (!response.ok) {
+              throw new Error("Failed to load command resource.");
+            }
 
-      const data: CommandResource = await response.json();
+            return (await response.json()) as CommandResource;
+          })();
       setCommand(data);
       onSelectedCommandChange?.(data);
       await loadVisiblePendingContributions(commandKey);
 
-      if (!usesSplitPane) {
-        collapseMobileList();
+      if (options.centerOnMobile) {
+        measureSelectedCommandSoon();
       }
     } catch (error) {
       console.log("Failed to select command resource", error);
@@ -472,22 +509,11 @@ export default function CommandExplorerView({
         return;
       }
 
-      setCommand(data.command);
-      setSelectedCommandKey(data.command.key);
-      onSelectedCommandChange?.(data.command);
-      await loadVisiblePendingContributions(data.command.key);
-
-      if (!usesSplitPane) {
-        collapseMobileList();
-      }
-
       const firstCategory = data.command.categories?.[0];
-      if (firstCategory) {
-        setExpandedCategories((current) => ({
-          ...current,
-          [firstCategory]: true,
-        }));
-      }
+      await selectCommand(data.command.key, firstCategory, {
+        centerOnMobile: true,
+        preloadedCommand: data.command,
+      });
     } catch (error) {
       console.log("Failed to select random command resource", error);
       setErrorMessage("A random command resource could not be loaded.");
@@ -531,7 +557,9 @@ export default function CommandExplorerView({
         group.commands.some((item) => item.key === contribution.commandKey)
       )?.key;
 
-      await selectCommand(contribution.commandKey, categoryKey);
+      await selectCommand(contribution.commandKey, categoryKey, {
+        centerOnMobile: true,
+      });
     } catch (error) {
       console.log("Failed to browse pending command contributions", error);
       setErrorMessage("Pending command suggestions could not be loaded.");
@@ -551,52 +579,43 @@ export default function CommandExplorerView({
     const previousCommand = visibleCommands[selectedCommandIndex - 1];
     if (!previousCommand) return;
 
-    selectCommand(previousCommand.key, previousCommand.categories?.[0]);
+    selectCommand(previousCommand.key, previousCommand.categories?.[0], {
+      centerOnMobile: true,
+    });
   }
 
   function selectNextCommand() {
     const nextCommand = visibleCommands[selectedCommandIndex + 1];
     if (!nextCommand) return;
 
-    selectCommand(nextCommand.key, nextCommand.categories?.[0]);
+    selectCommand(nextCommand.key, nextCommand.categories?.[0], {
+      centerOnMobile: true,
+    });
   }
 
-  function collapseMobileList() {
-    if (!isMobileListOpen) return;
-
-    setIsMobileListOpen(false);
+  function collapseCommandSelection() {
+    setSelectedCommandKey(null);
+    setCommand(null);
+    setContributionDraft(null);
+    setContributionMessage(null);
+    onSelectedCommandChange?.(null);
   }
 
-  function toggleMobileList() {
-    if (isMobileListOpen) {
-      collapseMobileList();
+  function handleCommandListPress(item: CommandSummary, categoryKey: string) {
+    if (!usesSplitPane && item.key === selectedCommandKey && command) {
+      collapseCommandSelection();
       return;
     }
 
-    shouldCenterSelectedCommandRef.current = true;
-    setIsMobileListOpen(true);
+    selectCommand(item.key, categoryKey);
   }
 
   function handleListPaneLayout() {
     if (!shouldCenterSelectedCommandRef.current) return;
 
-    shouldCenterSelectedCommandRef.current = false;
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        selectedCommandRef.current?.measure?.(
-          (
-            _x: number,
-            _y: number,
-            _width: number,
-            height: number,
-            _pageX: number,
-            pageY: number
-          ) => {
-            if (typeof pageY !== "number" || typeof height !== "number") return;
-
-            onMobileSelectedCommandLayout?.({ pageY, height });
-          }
-        );
+        measureSelectedCommand();
       });
     });
   }
@@ -860,8 +879,6 @@ export default function CommandExplorerView({
     }
   }
 
-  const shouldShowMobileListToggle = !usesSplitPane && Boolean(command);
-  const shouldShowListPane = usesSplitPane || !command || isMobileListOpen;
   const desktopPaneHeight = Math.max(420, height - 285);
   const commandPendingContributions = command
     ? pendingContributions.filter((item) => item.commandKey === command.key)
@@ -869,165 +886,166 @@ export default function CommandExplorerView({
   const reviewContribution = canModerateContributions
     ? pendingContributions[reviewIndex] ?? null
     : null;
+  const renderCommandStudyContent = () => {
+    if (!command) {
+      return <Text style={styles.mutedText}>Select a command.</Text>;
+    }
+
+    return (
+      <View style={{ gap: 16 }}>
+        {canModerateContributions ? (
+          <AdminReviewPanel
+            contribution={reviewContribution}
+            reviewMode={reviewMode}
+            currentIndex={reviewIndex}
+            totalCount={pendingContributions.length}
+            onChangeReviewMode={(mode) => {
+              setReviewMode(mode);
+              setReviewIndex(0);
+            }}
+            onPrevious={() =>
+              setReviewIndex((current) => Math.max(0, current - 1))
+            }
+            onNext={() =>
+              setReviewIndex((current) =>
+                Math.min(pendingContributions.length - 1, current + 1)
+              )
+            }
+            onOpenCommand={(commandKey) => selectCommand(commandKey)}
+            onApprove={(contributionId) =>
+              moderateContribution(contributionId, "approve")
+            }
+            onReject={(contributionId) =>
+              moderateContribution(contributionId, "reject")
+            }
+            onPromote={promoteContribution}
+          />
+        ) : null}
+
+        <CommandDetail
+          command={command}
+          bibleVersion={bibleVersion}
+          canContribute={canContribute}
+          contributionDraft={contributionDraft}
+          contributionMessage={contributionMessage}
+          contributorUsername={contributorUsername}
+          isSubmittingContribution={isSubmittingContribution}
+          pendingContributions={commandPendingContributions}
+          onOpenContribution={openContributionDraft}
+          onChangeContributionDraft={setContributionDraft}
+          onCancelContribution={() => setContributionDraft(null)}
+          onSubmitContribution={submitContribution}
+          onWithdrawContribution={withdrawContribution}
+        />
+      </View>
+    );
+  };
 
   return (
     <View style={{ gap: 14 }}>
       <View style={[styles.studyGrid, usesSplitPane && styles.studyGridSplit]}>
-        <View style={[styles.detailPanel, usesSplitPane && styles.detailPaneSplit]}>
+        {usesSplitPane ? (
+          <View style={[styles.detailPanel, styles.detailPaneSplit]}>
+            <PaneScroll
+              enabled
+              height={desktopPaneHeight}
+              scrollStyle={styles.detailPaneScroll}
+              contentContainerStyle={[
+                styles.detailPaneContent,
+                styles.detailPaneContentSplit,
+              ]}
+            >
+              {renderCommandStudyContent()}
+            </PaneScroll>
+          </View>
+        ) : null}
+
+        {!usesSplitPane && !command ? (
+          <Text style={styles.mutedText}>Select a command.</Text>
+        ) : null}
+
+        {!usesSplitPane && command ? (
+          <Text style={styles.mobileInlineHint}>
+            Tap the selected command again to collapse it.
+          </Text>
+        ) : null}
+
+        <View
+          onLayout={handleListPaneLayout}
+          style={[styles.listPane, usesSplitPane && styles.listPaneSplit]}
+        >
           <PaneScroll
             enabled={usesSplitPane}
             height={desktopPaneHeight}
-            scrollStyle={styles.detailPaneScroll}
-            contentContainerStyle={[
-              styles.detailPaneContent,
-              usesSplitPane && styles.detailPaneContentSplit,
-            ]}
+            contentContainerStyle={styles.listPaneContent}
           >
-            {command ? (
-              <View style={{ gap: 16 }}>
-                {canModerateContributions ? (
-                  <AdminReviewPanel
-                    contribution={reviewContribution}
-                    reviewMode={reviewMode}
-                    currentIndex={reviewIndex}
-                    totalCount={pendingContributions.length}
-                    onChangeReviewMode={(mode) => {
-                      setReviewMode(mode);
-                      setReviewIndex(0);
-                    }}
-                    onPrevious={() =>
-                      setReviewIndex((current) => Math.max(0, current - 1))
-                    }
-                    onNext={() =>
-                      setReviewIndex((current) =>
-                        Math.min(pendingContributions.length - 1, current + 1)
-                      )
-                    }
-                    onOpenCommand={(commandKey) => selectCommand(commandKey)}
-                    onApprove={(contributionId) =>
-                      moderateContribution(contributionId, "approve")
-                    }
-                    onReject={(contributionId) =>
-                      moderateContribution(contributionId, "reject")
-                    }
-                    onPromote={promoteContribution}
-                  />
-                ) : null}
-
-                <CommandDetail
-                  command={command}
-                  bibleVersion={bibleVersion}
-                  canContribute={canContribute}
-                  contributionDraft={contributionDraft}
-                  contributionMessage={contributionMessage}
-                  contributorUsername={contributorUsername}
-                  isSubmittingContribution={isSubmittingContribution}
-                  pendingContributions={commandPendingContributions}
-                  onOpenContribution={openContributionDraft}
-                  onChangeContributionDraft={setContributionDraft}
-                  onCancelContribution={() => setContributionDraft(null)}
-                  onSubmitContribution={submitContribution}
-                  onWithdrawContribution={withdrawContribution}
-                />
+            {errorMessage && (
+              <View style={styles.errorPanel}>
+                <Text style={styles.errorText}>{errorMessage}</Text>
               </View>
+            )}
+
+            {isLoading ? (
+              <Text style={styles.mutedText}>Loading commands...</Text>
+            ) : visibleGroups.length === 0 ? (
+              <Text style={styles.mutedText}>No commands found.</Text>
             ) : (
-              <Text style={styles.mutedText}>Select a command.</Text>
+              visibleGroups.map((group) => {
+                const isExpanded =
+                  Boolean(expandedCategories[group.key]) ||
+                  Boolean(normalizedSearch);
+
+                return (
+                  <View key={group.key} style={styles.categorySection}>
+                    <Pressable
+                      onPress={() => toggleCategory(group.key)}
+                      style={({ pressed }) => [
+                        styles.categoryHeader,
+                        pressed && { backgroundColor: "#eef2f7" },
+                      ]}
+                    >
+                      <Text style={styles.categoryTitle}>
+                        {formatKey(group.key)}
+                      </Text>
+                      <Text style={styles.categoryCount}>
+                        {group.commands.length}
+                      </Text>
+                    </Pressable>
+
+                    {isExpanded && (
+                      <View style={styles.commandList}>
+                        {group.commands.map((item) => (
+                          <CommandListItem
+                            key={`${group.key}-${item.key}`}
+                            item={item}
+                            isSelected={item.key === selectedCommandKey}
+                            inlineContent={
+                              !usesSplitPane &&
+                              item.key === selectedCommandKey &&
+                              command
+                                ? renderCommandStudyContent()
+                                : null
+                            }
+                            itemRef={
+                              item.key === selectedCommandKey
+                                ? (node) => {
+                                    selectedCommandRef.current = node;
+                                  }
+                                : undefined
+                            }
+                            onPress={() =>
+                              handleCommandListPress(item, group.key)
+                            }
+                          />
+                        ))}
+                      </View>
+                    )}
+                  </View>
+                );
+              })
             )}
           </PaneScroll>
         </View>
-
-        {shouldShowMobileListToggle && (
-          <Pressable
-            onPress={toggleMobileList}
-            style={({ pressed }) => [
-              styles.mobileListToggle,
-              pressed && { backgroundColor: "#e2e8f0" },
-            ]}
-          >
-            <View style={{ flex: 1 }}>
-              <Text style={styles.mobileListToggleTitle}>
-                {isMobileListOpen ? "Hide command list" : "Browse commands"}
-              </Text>
-              <Text style={styles.mobileListToggleMeta}>
-                {categoryGroups.length} categories - {commandCount} entries
-              </Text>
-            </View>
-
-            <Text style={styles.mobileListToggleIcon}>
-              {isMobileListOpen ? "-" : "+"}
-            </Text>
-          </Pressable>
-        )}
-
-        {shouldShowListPane && (
-          <View
-            onLayout={handleListPaneLayout}
-            style={[styles.listPane, usesSplitPane && styles.listPaneSplit]}
-          >
-            <PaneScroll
-              enabled={usesSplitPane}
-              height={desktopPaneHeight}
-              contentContainerStyle={styles.listPaneContent}
-            >
-              {errorMessage && (
-                <View style={styles.errorPanel}>
-                  <Text style={styles.errorText}>{errorMessage}</Text>
-                </View>
-              )}
-
-              {isLoading ? (
-                <Text style={styles.mutedText}>Loading commands...</Text>
-              ) : visibleGroups.length === 0 ? (
-                <Text style={styles.mutedText}>No commands found.</Text>
-              ) : (
-                visibleGroups.map((group) => {
-                  const isExpanded =
-                    Boolean(expandedCategories[group.key]) ||
-                    Boolean(normalizedSearch);
-
-                  return (
-                    <View key={group.key} style={styles.categorySection}>
-                      <Pressable
-                        onPress={() => toggleCategory(group.key)}
-                        style={({ pressed }) => [
-                          styles.categoryHeader,
-                          pressed && { backgroundColor: "#eef2f7" },
-                        ]}
-                      >
-                        <Text style={styles.categoryTitle}>
-                          {formatKey(group.key)}
-                        </Text>
-                        <Text style={styles.categoryCount}>
-                          {group.commands.length}
-                        </Text>
-                      </Pressable>
-
-                      {isExpanded && (
-                        <View style={styles.commandList}>
-                          {group.commands.map((item) => (
-                            <CommandListItem
-                              key={`${group.key}-${item.key}`}
-                              item={item}
-                              isSelected={item.key === selectedCommandKey}
-                              itemRef={
-                                item.key === selectedCommandKey
-                                  ? (node) => {
-                                      selectedCommandRef.current = node;
-                                    }
-                                  : undefined
-                              }
-                              onPress={() => selectCommand(item.key, group.key)}
-                            />
-                          ))}
-                        </View>
-                      )}
-                    </View>
-                  );
-                })
-              )}
-            </PaneScroll>
-          </View>
-        )}
 
       </View>
     </View>
@@ -1067,25 +1085,38 @@ function CommandListItem({
   item,
   itemRef,
   isSelected,
+  inlineContent,
   onPress,
 }: {
   item: CommandSummary;
   itemRef?: (node: any) => void;
   isSelected: boolean;
+  inlineContent?: ReactNode;
   onPress: () => void;
 }) {
   return (
-    <Pressable
-      ref={itemRef}
-      onPress={onPress}
-      style={({ pressed }) => [
-        styles.commandItem,
-        isSelected && styles.commandItemSelected,
-        pressed && { opacity: 0.86 },
+    <View
+      style={[
+        styles.commandItemShell,
+        isSelected && styles.commandItemShellSelected,
       ]}
     >
-      <Text style={styles.commandTitle}>{item.title}</Text>
-    </Pressable>
+      <Pressable
+        ref={itemRef}
+        onPress={onPress}
+        style={({ pressed }) => [
+          styles.commandItem,
+          isSelected && styles.commandItemSelected,
+          pressed && { opacity: 0.86 },
+        ]}
+      >
+        <Text style={styles.commandTitle}>{item.title}</Text>
+      </Pressable>
+
+      {inlineContent ? (
+        <View style={styles.commandInlineDetail}>{inlineContent}</View>
+      ) : null}
+    </View>
   );
 }
 
@@ -1132,6 +1163,8 @@ function CommandDetail({
   const requirementItems = (command.requirements ?? []).filter(
     (item) => item.trim().toLowerCase() !== commandTitle.trim().toLowerCase()
   );
+  const getPendingContributionsByType = (type: CommandContributionType) =>
+    pendingContributions.filter((item) => item.type === type);
 
   return (
     <View style={{ gap: 16 }}>
@@ -1167,11 +1200,14 @@ function CommandDetail({
         canContribute={canContribute}
         contributionDraft={contributionDraft}
         contributionMessage={contributionMessage}
+        pendingContributions={getPendingContributionsByType("requirement")}
+        contributorUsername={contributorUsername}
         isSubmittingContribution={isSubmittingContribution}
         onOpenContribution={onOpenContribution}
         onChangeContributionDraft={onChangeContributionDraft}
         onCancelContribution={onCancelContribution}
         onSubmitContribution={onSubmitContribution}
+        onWithdrawContribution={onWithdrawContribution}
       />
 
       <DetailList
@@ -1183,11 +1219,14 @@ function CommandDetail({
         canContribute={canContribute}
         contributionDraft={contributionDraft}
         contributionMessage={contributionMessage}
+        pendingContributions={getPendingContributionsByType("study_note")}
+        contributorUsername={contributorUsername}
         isSubmittingContribution={isSubmittingContribution}
         onOpenContribution={onOpenContribution}
         onChangeContributionDraft={onChangeContributionDraft}
         onCancelContribution={onCancelContribution}
         onSubmitContribution={onSubmitContribution}
+        onWithdrawContribution={onWithdrawContribution}
       />
 
       <StoryReferenceList
@@ -1196,11 +1235,14 @@ function CommandDetail({
         canContribute={canContribute}
         contributionDraft={contributionDraft}
         contributionMessage={contributionMessage}
+        pendingContributions={getPendingContributionsByType("story_reference")}
+        contributorUsername={contributorUsername}
         isSubmittingContribution={isSubmittingContribution}
         onOpenContribution={onOpenContribution}
         onChangeContributionDraft={onChangeContributionDraft}
         onCancelContribution={onCancelContribution}
         onSubmitContribution={onSubmitContribution}
+        onWithdrawContribution={onWithdrawContribution}
       />
 
       <SourceTermList
@@ -1208,11 +1250,14 @@ function CommandDetail({
         canContribute={canContribute}
         contributionDraft={contributionDraft}
         contributionMessage={contributionMessage}
+        pendingContributions={getPendingContributionsByType("source_term")}
+        contributorUsername={contributorUsername}
         isSubmittingContribution={isSubmittingContribution}
         onOpenContribution={onOpenContribution}
         onChangeContributionDraft={onChangeContributionDraft}
         onCancelContribution={onCancelContribution}
         onSubmitContribution={onSubmitContribution}
+        onWithdrawContribution={onWithdrawContribution}
       />
 
       <DetailList
@@ -1224,11 +1269,14 @@ function CommandDetail({
         canContribute={canContribute}
         contributionDraft={contributionDraft}
         contributionMessage={contributionMessage}
+        pendingContributions={getPendingContributionsByType("translation_note")}
+        contributorUsername={contributorUsername}
         isSubmittingContribution={isSubmittingContribution}
         onOpenContribution={onOpenContribution}
         onChangeContributionDraft={onChangeContributionDraft}
         onCancelContribution={onCancelContribution}
         onSubmitContribution={onSubmitContribution}
+        onWithdrawContribution={onWithdrawContribution}
       />
 
       <DetailList
@@ -1240,17 +1288,16 @@ function CommandDetail({
         canContribute={canContribute}
         contributionDraft={contributionDraft}
         contributionMessage={contributionMessage}
+        pendingContributions={getPendingContributionsByType(
+          "clarification_note"
+        )}
+        contributorUsername={contributorUsername}
         isSubmittingContribution={isSubmittingContribution}
         onOpenContribution={onOpenContribution}
         onChangeContributionDraft={onChangeContributionDraft}
         onCancelContribution={onCancelContribution}
         onSubmitContribution={onSubmitContribution}
-      />
-
-      <PendingContributionList
-        items={pendingContributions}
-        username={contributorUsername}
-        onWithdraw={onWithdrawContribution}
+        onWithdrawContribution={onWithdrawContribution}
       />
 
       <DetailTags
@@ -1307,16 +1354,21 @@ function SourceTermList({
   canContribute,
   contributionDraft,
   contributionMessage,
+  pendingContributions,
+  contributorUsername,
   isSubmittingContribution,
   onOpenContribution,
   onChangeContributionDraft,
   onCancelContribution,
   onSubmitContribution,
+  onWithdrawContribution,
 }: {
   items: SourceTerm[];
   canContribute: boolean;
   contributionDraft: ContributionDraft | null;
   contributionMessage: string | null;
+  pendingContributions: PendingContribution[];
+  contributorUsername: string;
   isSubmittingContribution: boolean;
   onOpenContribution: (params: {
     mode: CommandContributionMode;
@@ -1329,6 +1381,7 @@ function SourceTermList({
   onChangeContributionDraft: (draft: ContributionDraft) => void;
   onCancelContribution: () => void;
   onSubmitContribution: () => void;
+  onWithdrawContribution: (contributionId: string) => void;
 }) {
   const title = "Source Terms";
   const ownsDraft = contributionDraft?.type === "source_term";
@@ -1412,6 +1465,12 @@ function SourceTermList({
       {ownsDraft && contributionMessage ? (
         <Text style={styles.contributionMessage}>{contributionMessage}</Text>
       ) : null}
+
+      <PendingContributionList
+        items={pendingContributions}
+        username={contributorUsername}
+        onWithdraw={onWithdrawContribution}
+      />
     </View>
   );
 }
@@ -1422,17 +1481,22 @@ function StoryReferenceList({
   canContribute,
   contributionDraft,
   contributionMessage,
+  pendingContributions,
+  contributorUsername,
   isSubmittingContribution,
   onOpenContribution,
   onChangeContributionDraft,
   onCancelContribution,
   onSubmitContribution,
+  onWithdrawContribution,
 }: {
   items: StoryReference[];
   bibleVersion: BibleVersion;
   canContribute: boolean;
   contributionDraft: ContributionDraft | null;
   contributionMessage: string | null;
+  pendingContributions: PendingContribution[];
+  contributorUsername: string;
   isSubmittingContribution: boolean;
   onOpenContribution: (params: {
     mode: CommandContributionMode;
@@ -1445,6 +1509,7 @@ function StoryReferenceList({
   onChangeContributionDraft: (draft: ContributionDraft) => void;
   onCancelContribution: () => void;
   onSubmitContribution: () => void;
+  onWithdrawContribution: (contributionId: string) => void;
 }) {
   const title = "Seen In Scripture";
   const ownsDraft = contributionDraft?.type === "story_reference";
@@ -1529,6 +1594,12 @@ function StoryReferenceList({
       {ownsDraft && contributionMessage ? (
         <Text style={styles.contributionMessage}>{contributionMessage}</Text>
       ) : null}
+
+      <PendingContributionList
+        items={pendingContributions}
+        username={contributorUsername}
+        onWithdraw={onWithdrawContribution}
+      />
     </View>
   );
 }
@@ -1570,11 +1641,14 @@ function DetailList({
   canContribute = false,
   contributionDraft,
   contributionMessage,
+  pendingContributions = [],
+  contributorUsername = "",
   isSubmittingContribution = false,
   onOpenContribution,
   onChangeContributionDraft,
   onCancelContribution,
   onSubmitContribution,
+  onWithdrawContribution,
 }: {
   title: string;
   contributionType?: CommandContributionType;
@@ -1584,6 +1658,8 @@ function DetailList({
   canContribute?: boolean;
   contributionDraft?: ContributionDraft | null;
   contributionMessage?: string | null;
+  pendingContributions?: PendingContribution[];
+  contributorUsername?: string;
   isSubmittingContribution?: boolean;
   onOpenContribution?: (params: {
     mode: CommandContributionMode;
@@ -1595,6 +1671,7 @@ function DetailList({
   onChangeContributionDraft?: (draft: ContributionDraft) => void;
   onCancelContribution?: () => void;
   onSubmitContribution?: () => void;
+  onWithdrawContribution?: (contributionId: string) => void;
 }) {
   const canEditSection =
     canContribute && Boolean(contributionType) && Boolean(onOpenContribution);
@@ -1679,6 +1756,14 @@ function DetailList({
 
       {ownsDraft && contributionMessage ? (
         <Text style={styles.contributionMessage}>{contributionMessage}</Text>
+      ) : null}
+
+      {onWithdrawContribution ? (
+        <PendingContributionList
+          items={pendingContributions}
+          username={contributorUsername}
+          onWithdraw={onWithdrawContribution}
+        />
       ) : null}
     </View>
   );
@@ -2492,38 +2577,12 @@ const styles = {
     flex: 0.42,
     minWidth: 250,
   },
-  mobileListToggle: {
-    minHeight: 56,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#cbd5e1",
-    backgroundColor: "#f8fafc",
-    flexDirection: "row" as const,
-    alignItems: "center" as const,
-    justifyContent: "space-between" as const,
-    gap: 12,
-  },
-  mobileListToggleTitle: {
-    fontSize: 14,
-    lineHeight: 18,
-    fontWeight: "900" as const,
-    color: "#0f172a",
-  },
-  mobileListToggleMeta: {
-    marginTop: 2,
+  mobileInlineHint: {
+    paddingHorizontal: 4,
     fontSize: 12,
-    lineHeight: 16,
+    lineHeight: 17,
+    fontWeight: "700" as const,
     color: "#64748b",
-  },
-  mobileListToggleIcon: {
-    minWidth: 48,
-    textAlign: "right" as const,
-    fontSize: 12,
-    fontWeight: "900" as const,
-    color: "#0f766e",
-    textTransform: "uppercase" as const,
   },
   detailPanel: {
     padding: 16,
@@ -2591,6 +2650,13 @@ const styles = {
     padding: 8,
     gap: 8,
   },
+  commandItemShell: {
+    borderRadius: 8,
+    overflow: "hidden" as const,
+  },
+  commandItemShellSelected: {
+    backgroundColor: "#f0f9ff",
+  },
   commandItem: {
     padding: 10,
     borderRadius: 8,
@@ -2607,6 +2673,14 @@ const styles = {
     lineHeight: 18,
     fontWeight: "900" as const,
     color: "#111827",
+  },
+  commandInlineDetail: {
+    marginTop: 8,
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: "#fffdf2",
+    borderWidth: 1,
+    borderColor: "#f3e6b3",
   },
   commandSummaryBlock: {
     gap: 8,
