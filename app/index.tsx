@@ -52,6 +52,9 @@ const DEFAULT_YEAR_VIEW_TOP_OFFSET = 685;
 const MONTH_TITLE_BEHIND_HEADER_OFFSET = 32;
 const COMMAND_CONTRIBUTOR_USERNAME_STORAGE_KEY =
   "commandContributorUsername";
+const COMMAND_BIBLE_VERSION_STORAGE_KEY = "commandBibleVersion";
+const COMMAND_SEARCH_TEXT_STORAGE_KEY = "commandSearchText";
+const ACTIVE_TAB_STORAGE_KEY = "activeAppTab";
 
 type AppTab = "calendar" | "timeline" | "commands";
 const BIBLE_VERSIONS: BibleVersion[] = [
@@ -107,6 +110,7 @@ export default function HomeScreen() {
     isSelectingRandom: false,
     isSelectingPending: false,
   });
+  const hasLoadedPersistedAppStateRef = useRef(false);
 
   const [yearNotices, setYearNotices] = useState<any[]>([]);
   const [selectedNode, setSelectedNode] = useState<CalendarNode | null>(null);
@@ -267,20 +271,47 @@ export default function HomeScreen() {
   }, [config.enochYear, groupCode, hasEnteredApp]);
 
   useEffect(() => {
-    async function loadSavedContributorUsername() {
-      const savedUsername = await AsyncStorage.getItem(
-        COMMAND_CONTRIBUTOR_USERNAME_STORAGE_KEY
-      );
+    async function loadSavedCommandStudyState() {
+      const [savedUsername, savedBibleVersion, savedSearchText, savedTab] =
+        await Promise.all([
+          AsyncStorage.getItem(COMMAND_CONTRIBUTOR_USERNAME_STORAGE_KEY),
+          AsyncStorage.getItem(COMMAND_BIBLE_VERSION_STORAGE_KEY),
+          AsyncStorage.getItem(COMMAND_SEARCH_TEXT_STORAGE_KEY),
+          AsyncStorage.getItem(ACTIVE_TAB_STORAGE_KEY),
+        ]);
 
       if (savedUsername) {
         setCommandContributorUsername(normalizeContributorUsername(savedUsername));
       }
+
+      if (
+        savedBibleVersion &&
+        BIBLE_VERSIONS.includes(savedBibleVersion as BibleVersion)
+      ) {
+        setSelectedBibleVersion(savedBibleVersion as BibleVersion);
+      }
+
+      if (savedSearchText) {
+        setCommandSearchText(savedSearchText);
+      }
+
+      if (
+        savedTab === "calendar" ||
+        savedTab === "timeline" ||
+        savedTab === "commands"
+      ) {
+        setActiveTab(savedTab);
+      }
+
+      hasLoadedPersistedAppStateRef.current = true;
     }
 
-    loadSavedContributorUsername();
+    loadSavedCommandStudyState();
   }, []);
 
   useEffect(() => {
+    if (!hasLoadedPersistedAppStateRef.current) return;
+
     const normalizedUsername = normalizeContributorUsername(
       commandContributorUsername
     );
@@ -295,6 +326,34 @@ export default function HomeScreen() {
 
     AsyncStorage.removeItem(COMMAND_CONTRIBUTOR_USERNAME_STORAGE_KEY);
   }, [commandContributorUsername]);
+
+  useEffect(() => {
+    if (!hasLoadedPersistedAppStateRef.current) return;
+
+    AsyncStorage.setItem(
+      COMMAND_BIBLE_VERSION_STORAGE_KEY,
+      selectedBibleVersion
+    );
+  }, [selectedBibleVersion]);
+
+  useEffect(() => {
+    if (!hasLoadedPersistedAppStateRef.current) return;
+
+    const trimmedSearchText = commandSearchText.trim();
+
+    if (trimmedSearchText) {
+      AsyncStorage.setItem(COMMAND_SEARCH_TEXT_STORAGE_KEY, commandSearchText);
+      return;
+    }
+
+    AsyncStorage.removeItem(COMMAND_SEARCH_TEXT_STORAGE_KEY);
+  }, [commandSearchText]);
+
+  useEffect(() => {
+    if (!hasLoadedPersistedAppStateRef.current) return;
+
+    AsyncStorage.setItem(ACTIVE_TAB_STORAGE_KEY, activeTab);
+  }, [activeTab]);
 
   useEffect(() => {
     if (!hasEnteredApp) return;

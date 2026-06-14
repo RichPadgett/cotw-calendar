@@ -17,6 +17,8 @@ import {
 } from "react-native";
 import type { StyleProp, ViewStyle } from "react-native";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { apiUrl } from "../../config/api";
 
 type CommandSummary = {
@@ -141,6 +143,7 @@ type ContributionsResponse = {
 };
 
 const CONTRIBUTION_GROUP_CODE = "church-of-the-word";
+const SELECTED_COMMAND_STORAGE_KEY = "commandStudySelectedCommandKey";
 
 type Props = {
   bibleVersion: BibleVersion;
@@ -314,9 +317,28 @@ export default function CommandExplorerView({
       const groups = await loadGroupedCommands();
       const firstGroup = groups[0];
       const firstCommand = firstGroup?.commands[0];
+      const savedCommandKey = await AsyncStorage.getItem(
+        SELECTED_COMMAND_STORAGE_KEY
+      );
+      const savedCommandGroup = savedCommandKey
+        ? groups.find((group) =>
+            group.commands.some((item) => item.key === savedCommandKey)
+          )
+        : null;
 
       setCategoryGroups(groups);
-      setExpandedCategories(firstGroup ? { [firstGroup.key]: true } : {});
+      setExpandedCategories(
+        savedCommandGroup
+          ? { [savedCommandGroup.key]: true }
+          : firstGroup
+          ? { [firstGroup.key]: true }
+          : {}
+      );
+
+      if (savedCommandKey && savedCommandGroup) {
+        await selectCommand(savedCommandKey, savedCommandGroup.key);
+        return;
+      }
 
       if (firstCommand) {
         await selectCommand(firstCommand.key, firstGroup.key);
@@ -455,6 +477,7 @@ export default function CommandExplorerView({
       setErrorMessage(null);
       setContributionDraft(null);
       setContributionMessage(null);
+      AsyncStorage.setItem(SELECTED_COMMAND_STORAGE_KEY, commandKey);
 
       if (categoryKey) {
         setExpandedCategories((current) => ({
@@ -598,6 +621,7 @@ export default function CommandExplorerView({
     setCommand(null);
     setContributionDraft(null);
     setContributionMessage(null);
+    AsyncStorage.removeItem(SELECTED_COMMAND_STORAGE_KEY);
     onSelectedCommandChange?.(null);
   }
 
