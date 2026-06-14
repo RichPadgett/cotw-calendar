@@ -22,7 +22,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import AppHeader from "../src/components/calendar/AppHeader";
 import DayDetailModal from "../src/components/calendar/DayDetailModal";
-import HistoryTimelineView from "../src/components/calendar/HistoryTimelineView";
+import HistoryTimelineView, {
+  formatHistoricalDate,
+  getRangeLabel,
+} from "../src/components/calendar/HistoryTimelineView";
 import YearView from "../src/components/calendar/YearView";
 import YearWheelView from "../src/components/calendar/YearWheelView";
 import CommandExplorerView, {
@@ -39,6 +42,8 @@ import { CalendarNode } from "../src/models/calendar";
 
 import type { DayContent } from "../src/types/calendarContent";
 import type { PerpetualMarker } from "../src/types/perpetualMarkers";
+import type { TimelineOccurrence } from "../src/data/historyTimeline";
+import { HISTORY_TIMELINE_RANGE } from "../src/data/historyTimeline";
 import { API_BASE_URL } from "../src/config/api";
 import { formatGroupLabel, getAppDateId } from "../src/utils/appDay";
 
@@ -90,6 +95,12 @@ export default function HomeScreen() {
     useState("");
   const [commandRandomRequestId, setCommandRandomRequestId] = useState(0);
   const [commandPendingRequestId, setCommandPendingRequestId] = useState(0);
+  const [selectedTimelineOccurrence, setSelectedTimelineOccurrence] =
+    useState<TimelineOccurrence | null>(null);
+  const [isTimelineEditMode, setIsTimelineEditMode] = useState(false);
+  const [timelineAddRequestId, setTimelineAddRequestId] = useState(0);
+  const [timelineEditRequestId, setTimelineEditRequestId] = useState(0);
+  const [isSavingTimeline, setIsSavingTimeline] = useState(false);
   const [commandResourceStats, setCommandResourceStats] = useState({
     categoryCount: 0,
     commandCount: 0,
@@ -131,7 +142,11 @@ export default function HomeScreen() {
 
   const nodes = buildEnochYear(config);
   const groupLabel = formatGroupLabel(groupCode);
-  const isTimelineVisible = userRole === "admin" && Boolean(adminToken);
+  const canManageTimeline =
+    userRole === "admin" &&
+    groupCode === "church-of-the-word" &&
+    Boolean(adminToken);
+  const isTimelineVisible = canManageTimeline;
   const todayNode = nodes.find((node) => {
     return node.gregorianDate === todayDateId;
   });
@@ -693,6 +708,26 @@ export default function HomeScreen() {
             />
           )}
 
+          {activeTab === "timeline" && isTimelineVisible && (
+            <TimelineStickyHeader
+              selectedOccurrence={selectedTimelineOccurrence}
+              canManageTimeline={canManageTimeline}
+              isEditMode={isTimelineEditMode}
+              isSavingTimeline={isSavingTimeline}
+              groupLabel={groupLabel}
+              userRole={userRole}
+              onToggleEditMode={() =>
+                setIsTimelineEditMode((isEditing) => !isEditing)
+              }
+              onRequestAdd={() => {
+                setTimelineAddRequestId((id) => id + 1);
+              }}
+              onRequestEdit={() => {
+                setTimelineEditRequestId((id) => id + 1);
+              }}
+            />
+          )}
+
           {activeTab === "commands" && (
             <CommandStickyHeader
               command={selectedCommandHeader}
@@ -704,6 +739,8 @@ export default function HomeScreen() {
               commandCount={commandResourceStats.commandCount}
               isSelectingRandom={commandResourceStats.isSelectingRandom}
               isSelectingPending={commandResourceStats.isSelectingPending}
+              groupLabel={groupLabel}
+              userRole={userRole}
               onChangeBibleVersion={setSelectedBibleVersion}
               onChangeSearchText={setCommandSearchText}
               onChangeContributorUsername={setCommandContributorUsername}
@@ -751,6 +788,12 @@ export default function HomeScreen() {
             adminToken={adminToken}
             groupCode={groupCode}
             userRole={userRole}
+            selectedOccurrence={selectedTimelineOccurrence}
+            isEditMode={isTimelineEditMode}
+            addRequestId={timelineAddRequestId}
+            editRequestId={timelineEditRequestId}
+            onSelectedOccurrenceChange={setSelectedTimelineOccurrence}
+            onSavingChange={setIsSavingTimeline}
           />
         )}
 
@@ -862,6 +905,360 @@ function TabSelector({
   );
 }
 
+function TimelineStickyHeader({
+  selectedOccurrence,
+  canManageTimeline,
+  isEditMode,
+  isSavingTimeline,
+  groupLabel,
+  userRole,
+  onToggleEditMode,
+  onRequestAdd,
+  onRequestEdit,
+}: {
+  selectedOccurrence: TimelineOccurrence | null;
+  canManageTimeline: boolean;
+  isEditMode: boolean;
+  isSavingTimeline: boolean;
+  groupLabel: string;
+  userRole: "member" | "admin";
+  onToggleEditMode: () => void;
+  onRequestAdd: () => void;
+  onRequestEdit: () => void;
+}) {
+  return (
+    <View
+      style={{
+        padding: 16,
+        borderRadius: 20,
+        backgroundColor: "#f9fafb",
+        borderWidth: 1,
+        borderColor: "#e5e7eb",
+      }}
+    >
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          gap: 12,
+        }}
+      >
+        <View style={{ flex: 1, minWidth: 0 }}>
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.72}
+            style={{
+              fontSize: 34,
+              fontWeight: "900",
+              color: "#081a33",
+              letterSpacing: 4.5,
+            }}
+          >
+            HISTORY
+          </Text>
+
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.75}
+            style={{
+              marginTop: -2,
+              fontSize: 18,
+              fontWeight: "800",
+              color: "#081a33",
+              letterSpacing: 2.5,
+              textTransform: "uppercase",
+            }}
+          >
+            Timeline Study
+          </Text>
+
+          <HeaderIdentityBadges groupLabel={groupLabel} userRole={userRole} />
+        </View>
+
+        {canManageTimeline ? (
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 8,
+              flexShrink: 0,
+            }}
+          >
+            <Pressable
+              accessibilityLabel={
+                isEditMode
+                  ? "Turn timeline edit mode off"
+                  : "Turn timeline edit mode on"
+              }
+              onPress={onToggleEditMode}
+              style={({ pressed }) => [
+                {
+                  width: 36,
+                  height: 36,
+                  borderRadius: 18,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: isEditMode ? "#081a33" : "#e5e7eb",
+                },
+                pressed && { opacity: 0.78 },
+              ]}
+            >
+              <MaterialIcons
+                name={isEditMode ? "edit" : "edit-off"}
+                size={20}
+                color={isEditMode ? "#ffffff" : "#374151"}
+              />
+            </Pressable>
+
+            <Pressable
+              accessibilityLabel="Add timeline entry"
+              onPress={onRequestAdd}
+              style={({ pressed }) => [
+                {
+                  width: 36,
+                  height: 36,
+                  borderRadius: 18,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "#081a33",
+                },
+                pressed && { opacity: 0.78 },
+              ]}
+            >
+              <MaterialIcons name="add" size={24} color="#ffffff" />
+            </Pressable>
+          </View>
+        ) : null}
+      </View>
+
+      <View
+        style={{
+          marginTop: 16,
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 12,
+        }}
+      >
+        <View
+          style={{
+            width: 56,
+            height: 56,
+            borderRadius: 28,
+            backgroundColor: "#eff6ff",
+            borderWidth: 1,
+            borderColor: "#bfdbfe",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <MaterialIcons name="timeline" size={30} color="#1d4ed8" />
+        </View>
+
+        <View style={{ flex: 1, minWidth: 0 }}>
+          <Text
+            numberOfLines={1}
+            style={{
+              fontSize: 18,
+              lineHeight: 23,
+              fontWeight: "900",
+              color: "#081a33",
+            }}
+          >
+            {selectedOccurrence?.title ?? "Select a timeline entry"}
+          </Text>
+
+          <Text
+            numberOfLines={2}
+            style={{
+              marginTop: 3,
+              fontSize: 12,
+              lineHeight: 16,
+              fontWeight: "700",
+              color: "#64748b",
+            }}
+          >
+            {selectedOccurrence?.summary ??
+              (isSavingTimeline
+                ? "Saving timeline..."
+                : HISTORY_TIMELINE_RANGE.label)}
+          </Text>
+        </View>
+
+        {selectedOccurrence && canManageTimeline ? (
+          <Pressable
+            accessibilityLabel={`Edit ${selectedOccurrence.title}`}
+            onPress={onRequestEdit}
+            style={({ pressed }) => [
+              {
+                width: 36,
+                height: 36,
+                borderRadius: 18,
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "#e0f2fe",
+              },
+              pressed && { opacity: 0.78 },
+            ]}
+          >
+            <MaterialIcons name="edit" size={20} color="#075985" />
+          </Pressable>
+        ) : null}
+      </View>
+
+      {selectedOccurrence ? (
+        <View style={{ marginTop: 12, gap: 8 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              flexWrap: "wrap",
+              gap: 8,
+            }}
+          >
+            {selectedOccurrence.exactDate ? (
+              <TimelineHeaderPill
+                icon="event"
+                label={
+                  selectedOccurrence.exactDate.label ??
+                  selectedOccurrence.exactDate.enochDate.label
+                }
+              />
+            ) : null}
+
+            {selectedOccurrence.timeRange ? (
+              <TimelineHeaderPill
+                icon="timeline"
+                label={getRangeLabel(selectedOccurrence)}
+              />
+            ) : null}
+
+            {selectedOccurrence.exactDate?.gregorianDate ? (
+              <TimelineHeaderPill
+                icon="calendar-today"
+                label={formatHistoricalDate(
+                  selectedOccurrence.exactDate.gregorianDate
+                )}
+              />
+            ) : null}
+          </View>
+
+          {selectedOccurrence.notes?.trim() ? (
+            <Text
+              numberOfLines={3}
+              style={{
+                fontSize: 12,
+                lineHeight: 17,
+                fontWeight: "600",
+                color: "#4b5563",
+              }}
+            >
+              {selectedOccurrence.notes}
+            </Text>
+          ) : null}
+        </View>
+      ) : null}
+    </View>
+  );
+}
+
+function TimelineHeaderPill({
+  icon,
+  label,
+}: {
+  icon: keyof typeof MaterialIcons.glyphMap;
+  label?: string;
+}) {
+  if (!label) return null;
+
+  return (
+    <View
+      style={{
+        maxWidth: "100%",
+        minHeight: 28,
+        paddingHorizontal: 9,
+        paddingVertical: 5,
+        borderRadius: 999,
+        borderWidth: 1,
+        borderColor: "#bfdbfe",
+        backgroundColor: "#eff6ff",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 5,
+      }}
+    >
+      <MaterialIcons name={icon} size={14} color="#1d4ed8" />
+      <Text
+        numberOfLines={1}
+        style={{
+          flexShrink: 1,
+          fontSize: 11,
+          lineHeight: 14,
+          fontWeight: "900",
+          color: "#1e3a8a",
+        }}
+      >
+        {label}
+      </Text>
+    </View>
+  );
+}
+
+function HeaderIdentityBadges({
+  groupLabel,
+  userRole,
+}: {
+  groupLabel: string;
+  userRole: "member" | "admin";
+}) {
+  return (
+    <View
+      style={{
+        marginTop: 10,
+        flexDirection: "row",
+        flexWrap: "wrap",
+        alignItems: "center",
+        gap: 8,
+      }}
+    >
+      <Text
+        numberOfLines={1}
+        style={{
+          paddingHorizontal: 10,
+          paddingVertical: 6,
+          borderRadius: 999,
+          backgroundColor: "#eef2ff",
+          borderWidth: 1,
+          borderColor: "#c7d2fe",
+          fontSize: 12,
+          fontWeight: "900",
+          color: "#312e81",
+        }}
+      >
+        {groupLabel}
+      </Text>
+
+      <Text
+        style={{
+          paddingHorizontal: 10,
+          paddingVertical: 6,
+          borderRadius: 999,
+          backgroundColor: userRole === "admin" ? "#ecfdf5" : "#f8fafc",
+          borderWidth: 1,
+          borderColor: userRole === "admin" ? "#bbf7d0" : "#e2e8f0",
+          fontSize: 12,
+          fontWeight: "900",
+          color: userRole === "admin" ? "#166534" : "#475569",
+          textTransform: "capitalize",
+        }}
+      >
+        {userRole}
+      </Text>
+    </View>
+  );
+}
+
 function CommandStickyHeader({
   command,
   navigation,
@@ -872,6 +1269,8 @@ function CommandStickyHeader({
   commandCount,
   isSelectingRandom,
   isSelectingPending,
+  groupLabel,
+  userRole,
   onChangeBibleVersion,
   onChangeSearchText,
   onChangeContributorUsername,
@@ -888,6 +1287,8 @@ function CommandStickyHeader({
   commandCount: number;
   isSelectingRandom: boolean;
   isSelectingPending: boolean;
+  groupLabel: string;
+  userRole: "member" | "admin";
   onChangeBibleVersion: (version: BibleVersion) => void;
   onChangeSearchText: (text: string) => void;
   onChangeContributorUsername: (username: string) => void;
@@ -952,6 +1353,8 @@ function CommandStickyHeader({
           >
             Command Study
           </Text>
+
+          <HeaderIdentityBadges groupLabel={groupLabel} userRole={userRole} />
         </View>
 
         <View

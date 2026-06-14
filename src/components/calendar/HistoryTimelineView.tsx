@@ -380,7 +380,7 @@ function getVisibleTimelineAxisTicks(params: {
   return ticks;
 }
 
-function formatHistoricalDate(date: HistoricalDate) {
+export function formatHistoricalDate(date: HistoricalDate) {
   const dateParts =
     date.month && date.day ? ` ${String(date.month)}/${String(date.day)}` : "";
 
@@ -406,7 +406,7 @@ function getResolvedRangeEnd(occurrence: TimelineOccurrence) {
   return Math.max(HISTORY_TIMELINE_RANGE.startYear, endYear);
 }
 
-function getRangeLabel(occurrence: TimelineOccurrence) {
+export function getRangeLabel(occurrence: TimelineOccurrence) {
   if (!occurrence.timeRange) return "";
   if (occurrence.timeRange.label) return occurrence.timeRange.label;
 
@@ -801,6 +801,12 @@ type HistoryTimelineViewProps = {
   adminToken: string;
   groupCode: string;
   userRole: "member" | "admin";
+  selectedOccurrence: TimelineOccurrence | null;
+  isEditMode: boolean;
+  addRequestId: number;
+  editRequestId: number;
+  onSelectedOccurrenceChange: (occurrence: TimelineOccurrence | null) => void;
+  onSavingChange: (isSaving: boolean) => void;
 };
 
 /**
@@ -811,6 +817,12 @@ export default function HistoryTimelineView({
   adminToken,
   groupCode,
   userRole,
+  selectedOccurrence,
+  isEditMode,
+  addRequestId,
+  editRequestId,
+  onSelectedOccurrenceChange,
+  onSavingChange,
 }: HistoryTimelineViewProps) {
   const { width } = useWindowDimensions();
   const isCompactTimeline = width < 520;
@@ -828,9 +840,6 @@ export default function HistoryTimelineView({
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [editingOccurrence, setEditingOccurrence] =
     useState<TimelineOccurrence | null>(null);
-  const [selectedOccurrence, setSelectedOccurrence] =
-    useState<TimelineOccurrence | null>(null);
-  const [isEditMode, setIsEditMode] = useState(false);
   const [isSavingTimeline, setIsSavingTimeline] = useState(false);
   const [formState, setFormState] =
     useState<TimelineEntryFormState>(DEFAULT_FORM_STATE);
@@ -853,7 +862,9 @@ export default function HistoryTimelineView({
 
     async function loadTimelineOccurrences() {
       try {
-        const response = await fetch(apiUrl("/timeline/occurrences"));
+        const response = await fetch(apiUrl("/timeline/occurrences"), {
+          cache: "no-store",
+        });
 
         if (!response.ok) {
           throw new Error("Failed to load timeline occurrences.");
@@ -876,6 +887,22 @@ export default function HistoryTimelineView({
     };
   }, []);
 
+  useEffect(() => {
+    onSavingChange(isSavingTimeline);
+  }, [isSavingTimeline, onSavingChange]);
+
+  useEffect(() => {
+    if (addRequestId > 0) {
+      handleAddTimelineEntry();
+    }
+  }, [addRequestId]);
+
+  useEffect(() => {
+    if (editRequestId > 0 && selectedOccurrence) {
+      editTimelineEntry(selectedOccurrence);
+    }
+  }, [editRequestId]);
+
   async function saveTimelineOccurrences(
     nextOccurrences: TimelineOccurrence[]
   ) {
@@ -897,6 +924,7 @@ export default function HistoryTimelineView({
 
       const response = await fetch(apiUrl("/timeline/occurrences"), {
         method: "POST",
+        cache: "no-store",
         headers,
         body: JSON.stringify(nextOccurrences),
       });
@@ -993,10 +1021,6 @@ export default function HistoryTimelineView({
     setFormState(DEFAULT_FORM_STATE);
   }
 
-  function closeDetailModal() {
-    setSelectedOccurrence(null);
-  }
-
   function handleTimelineScroll(
     event: NativeSyntheticEvent<NativeScrollEvent>
   ) {
@@ -1028,14 +1052,22 @@ export default function HistoryTimelineView({
 
   function handleSelectOccurrence(occurrence: TimelineOccurrence) {
     if (isEditMode && canManageTimeline) {
-      setSelectedOccurrence(null);
+      onSelectedOccurrenceChange(null);
       setEditingOccurrence(occurrence);
       setFormState(getFormStateFromOccurrence(occurrence));
       setIsAddModalVisible(true);
       return;
     }
 
-    setSelectedOccurrence(occurrence);
+    onSelectedOccurrenceChange(occurrence);
+  }
+
+  function editTimelineEntry(occurrence: TimelineOccurrence) {
+    if (!canManageTimeline) return;
+
+    setEditingOccurrence(occurrence);
+    setFormState(getFormStateFromOccurrence(occurrence));
+    setIsAddModalVisible(true);
   }
 
   function getOccurrenceCenterX(occurrence: TimelineOccurrence) {
@@ -1108,7 +1140,7 @@ export default function HistoryTimelineView({
     );
 
     setTimelineOccurrences(nextOccurrences);
-    setSelectedOccurrence(null);
+    onSelectedOccurrenceChange(null);
     setEditingOccurrence(null);
     setIsAddModalVisible(false);
     void saveTimelineOccurrences(nextOccurrences);
@@ -1291,73 +1323,6 @@ export default function HistoryTimelineView({
     <View style={styles.container}>
       <View
         style={[
-          styles.headingRow,
-          isCompactTimeline ? styles.headingRowCompact : null,
-        ]}
-      >
-        <View style={styles.headingTitleBlock}>
-          <Text style={styles.eyebrow}>History View</Text>
-          <Text style={styles.title}>Biblical Timeline</Text>
-        </View>
-
-        <View
-          style={[
-            styles.headerActions,
-            isCompactTimeline ? styles.headerActionsCompact : null,
-          ]}
-        >
-          {canManageTimeline ? (
-            <Pressable
-              accessibilityLabel={
-                isEditMode
-                  ? "Turn timeline edit mode off"
-                  : "Turn timeline edit mode on"
-              }
-              onPress={() => setIsEditMode((value) => !value)}
-              style={[
-                styles.editToggleButton,
-                isEditMode ? styles.editToggleButtonActive : null,
-              ]}
-            >
-              <MaterialIcons
-                name={isEditMode ? "edit" : "edit-off"}
-                size={18}
-                color={isEditMode ? "#ffffff" : "#374151"}
-              />
-              <Text
-                style={[
-                  styles.editToggleText,
-                  isEditMode ? styles.editToggleTextActive : null,
-                ]}
-              >
-                Edit
-              </Text>
-            </Pressable>
-          ) : null}
-
-          <View style={styles.rangeBadge}>
-            <Text style={styles.rangeBadgeText}>
-              {isSavingTimeline ? "Saving..." : HISTORY_TIMELINE_RANGE.label}
-            </Text>
-          </View>
-
-          {canManageTimeline ? (
-            <Pressable
-              accessibilityLabel="Add timeline entry"
-              onPress={handleAddTimelineEntry}
-              style={({ pressed }) => [
-                styles.addButton,
-                pressed ? styles.addButtonPressed : null,
-              ]}
-            >
-              <MaterialIcons name="add" size={22} color="#ffffff" />
-            </Pressable>
-          ) : null}
-        </View>
-      </View>
-
-      <View
-        style={[
           styles.timelineToolbar,
           isCompactTimeline ? styles.timelineToolbarCompact : null,
         ]}
@@ -1480,99 +1445,6 @@ export default function HistoryTimelineView({
           })}
         </View>
       </ScrollView>
-
-      <Modal
-        animationType="fade"
-        transparent
-        visible={Boolean(selectedOccurrence)}
-        onRequestClose={closeDetailModal}
-      >
-        <View style={styles.modalBackdrop}>
-          <View style={styles.detailPanel}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>
-                {selectedOccurrence?.title ?? "Timeline Entry"}
-              </Text>
-              <Pressable
-                accessibilityLabel="Close timeline entry details"
-                onPress={closeDetailModal}
-                style={styles.modalIconButton}
-              >
-                <MaterialIcons name="close" size={22} color="#374151" />
-              </Pressable>
-            </View>
-
-            <ScrollView contentContainerStyle={styles.detailContent}>
-              {selectedOccurrence?.summary ? (
-                <Text style={styles.detailSummary}>
-                  {selectedOccurrence.summary}
-                </Text>
-              ) : null}
-
-              {selectedOccurrence?.exactDate ? (
-                <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>Exact Date</Text>
-                  <Text style={styles.detailText}>
-                    {selectedOccurrence.exactDate.label ??
-                      selectedOccurrence.exactDate.enochDate.label}
-                  </Text>
-                </View>
-              ) : null}
-
-              {selectedOccurrence?.timeRange ? (
-                <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>Range</Text>
-                  <Text style={styles.detailText}>
-                    {getRangeLabel(selectedOccurrence)}
-                  </Text>
-                </View>
-              ) : null}
-
-              {selectedOccurrence?.exactDate?.gregorianDate ? (
-                <View style={styles.detailRow}>
-                  <Text style={styles.detailLabel}>Gregorian Date</Text>
-                  <Text style={styles.detailText}>
-                    {formatHistoricalDate(
-                      selectedOccurrence.exactDate.gregorianDate
-                    )}
-                  </Text>
-                </View>
-              ) : null}
-
-              <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Notes</Text>
-                <Text style={styles.detailText}>
-                  {selectedOccurrence?.notes?.trim() ||
-                    "No notes have been added for this entry."}
-                </Text>
-              </View>
-            </ScrollView>
-
-            <View style={styles.modalFooter}>
-              {isEditMode && canManageTimeline ? (
-                <Pressable
-                  onPress={() => {
-                    if (selectedOccurrence) {
-                      confirmDeleteTimelineEntry(selectedOccurrence);
-                    }
-                  }}
-                  style={styles.deleteEntryButton}
-                >
-                  <MaterialIcons
-                    name="delete-outline"
-                    size={18}
-                    color="#991b1b"
-                  />
-                  <Text style={styles.deleteEntryButtonText}>Delete</Text>
-                </Pressable>
-              ) : null}
-              <Pressable onPress={closeDetailModal} style={styles.saveButton}>
-                <Text style={styles.saveButtonText}>Done</Text>
-              </Pressable>
-            </View>
-          </View>
-        </View>
-      </Modal>
 
       <Modal
         animationType="slide"
@@ -1805,91 +1677,6 @@ const styles = StyleSheet.create({
     borderColor: "#e5e7eb",
     borderRadius: 20,
     backgroundColor: "#f9fafb",
-  },
-  headingRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    gap: 12,
-    marginBottom: 12,
-  },
-  headingRowCompact: {
-    flexDirection: "column",
-  },
-  headingTitleBlock: {
-    minWidth: 0,
-  },
-  headerActions: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-end",
-    gap: 8,
-    flexShrink: 0,
-  },
-  headerActionsCompact: {
-    alignSelf: "stretch",
-    justifyContent: "flex-start",
-    flexWrap: "wrap",
-  },
-  eyebrow: {
-    fontSize: 12,
-    fontWeight: "800",
-    color: "#6b7280",
-    textTransform: "uppercase",
-  },
-  title: {
-    marginTop: 2,
-    fontSize: 24,
-    fontWeight: "900",
-    color: "#081a33",
-  },
-  rangeBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 999,
-    backgroundColor: "#ffffff",
-    borderWidth: 1,
-    borderColor: "#d1d5db",
-  },
-  rangeBadgeText: {
-    fontSize: 11,
-    fontWeight: "800",
-    color: "#374151",
-  },
-  addButton: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#081a33",
-  },
-  addButtonPressed: {
-    opacity: 0.75,
-  },
-  editToggleButton: {
-    minHeight: 38,
-    paddingHorizontal: 10,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: "#d1d5db",
-    backgroundColor: "#ffffff",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 5,
-  },
-  editToggleButtonActive: {
-    borderColor: "#081a33",
-    backgroundColor: "#081a33",
-  },
-  editToggleText: {
-    fontSize: 12,
-    fontWeight: "900",
-    color: "#374151",
-  },
-  editToggleTextActive: {
-    color: "#ffffff",
   },
   timelineToolbar: {
     marginBottom: 10,
@@ -2181,12 +1968,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     overflow: "hidden",
   },
-  detailPanel: {
-    maxHeight: "80%",
-    borderRadius: 12,
-    backgroundColor: "#ffffff",
-    overflow: "hidden",
-  },
   modalHeader: {
     minHeight: 56,
     paddingHorizontal: 16,
@@ -2214,31 +1995,6 @@ const styles = StyleSheet.create({
     paddingTop: 18,
     paddingBottom: 24,
     gap: 18,
-  },
-  detailContent: {
-    padding: 16,
-    gap: 12,
-  },
-  detailSummary: {
-    fontSize: 15,
-    lineHeight: 21,
-    fontWeight: "700",
-    color: "#374151",
-  },
-  detailRow: {
-    gap: 4,
-  },
-  detailLabel: {
-    fontSize: 12,
-    fontWeight: "900",
-    color: "#6b7280",
-    textTransform: "uppercase",
-  },
-  detailText: {
-    fontSize: 14,
-    lineHeight: 20,
-    fontWeight: "700",
-    color: "#111827",
   },
   formSection: {
     gap: 16,

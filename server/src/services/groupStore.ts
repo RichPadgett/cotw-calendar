@@ -2,7 +2,8 @@ import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 
-const GROUPS_ROOT = path.join(process.cwd(), "content", "groups");
+const SERVER_ROOT = path.resolve(__dirname, "../..");
+const GROUPS_ROOT = path.join(SERVER_ROOT, "content", "groups");
 
 export type GroupRole = "member" | "admin";
 

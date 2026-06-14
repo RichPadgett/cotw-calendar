@@ -13,6 +13,11 @@ import { requireAdminTokenForGroup } from "../middleware/requireAdminToken";
 const router = Router();
 const TIMELINE_ADMIN_GROUP = "church-of-the-word";
 
+router.use((_req, res, next) => {
+  res.set("Cache-Control", "no-store");
+  next();
+});
+
 router.get("/occurrences", (_req, res) => {
   try {
     res.json(getTimelineOccurrences());

@@ -6,7 +6,8 @@
 import fs from "fs";
 import path from "path";
 
-const SYSTEM_ROOT = path.join(process.cwd(), "content", "system");
+const SERVER_ROOT = path.resolve(__dirname, "../..");
+const SYSTEM_ROOT = path.join(SERVER_ROOT, "content", "system");
 const TIMELINE_OCCURRENCES_PATH = path.join(
   SYSTEM_ROOT,
   "timelineOccurrences.json"
