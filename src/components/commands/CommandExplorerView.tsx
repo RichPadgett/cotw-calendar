@@ -7,6 +7,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import {
   Linking,
+  Modal,
   Platform,
   Pressable,
   ScrollView,
@@ -107,6 +108,18 @@ type PendingContribution = {
   promotedBy?: string;
   prologFact?: string;
   prologFile?: string;
+  votes?: CommandContributionVote[];
+};
+
+type CommandContributionVote = {
+  id: string;
+  type: "support" | "concern";
+  reason?: string;
+  createdAt: string;
+  createdBy: string;
+  resolvedAt?: string;
+  resolvedBy?: string;
+  resolutionNote?: string;
 };
 
 type ContributionDraft = {
@@ -161,6 +174,8 @@ type Props = {
     commandCount: number;
     isSelectingRandom: boolean;
     isSelectingPending: boolean;
+    pendingContributionCount: number;
+    pendingConcernCount: number;
   }) => void;
   onMobileSelectedCommandLayout?: (layout: {
     pageY: number;
@@ -205,6 +220,18 @@ export default function CommandExplorerView({
   const [pendingContributions, setPendingContributions] = useState<
     PendingContribution[]
   >([]);
+  const [voteContributions, setVoteContributions] = useState<
+    PendingContribution[]
+  >([]);
+  const [voteIndex, setVoteIndex] = useState(0);
+  const [isVoteTasksOpen, setIsVoteTasksOpen] = useState(false);
+  const [voteDraft, setVoteDraft] = useState<{
+    contribution: PendingContribution;
+    type: "support" | "concern";
+    reason: string;
+  } | null>(null);
+  const [voteMessage, setVoteMessage] = useState<string | null>(null);
+  const [isSubmittingVote, setIsSubmittingVote] = useState(false);
   const [reviewIndex, setReviewIndex] = useState(0);
   const [reviewMode, setReviewMode] = useState<"pending" | "approved">(
     "pending"
@@ -228,6 +255,15 @@ export default function CommandExplorerView({
 
     loadReviewContributions(reviewMode);
   }, [adminToken, userRole, reviewMode]);
+
+  useEffect(() => {
+    if (!canContribute) {
+      setVoteContributions([]);
+      return;
+    }
+
+    loadVoteContributions();
+  }, [canContribute]);
 
   const normalizedSearch = searchText.trim().toLowerCase();
 
@@ -274,6 +310,7 @@ export default function CommandExplorerView({
   useEffect(() => {
     if (pendingRequestId <= 0) return;
 
+    setIsVoteTasksOpen(true);
     selectPendingContributionCommand();
   }, [pendingRequestId]);
 
@@ -295,17 +332,26 @@ export default function CommandExplorerView({
   }, [onNavigationStateChange, selectedCommandIndex, visibleCommands]);
 
   useEffect(() => {
+    const pendingConcernCount = voteContributions.reduce(
+      (total, contribution) =>
+        total + getContributionVoteCounts(contribution).concern,
+      0
+    );
+
     onResourceStatsChange?.({
       categoryCount: categoryGroups.length,
       commandCount,
       isSelectingRandom,
       isSelectingPending,
+      pendingContributionCount: voteContributions.length,
+      pendingConcernCount,
     });
   }, [
     categoryGroups.length,
     commandCount,
     isSelectingRandom,
     isSelectingPending,
+    voteContributions,
     onResourceStatsChange,
   ]);
 
@@ -431,6 +477,32 @@ export default function CommandExplorerView({
       });
     } catch (error) {
       console.log("Failed to load visible command contributions", error);
+    }
+  }
+
+  async function loadVoteContributions() {
+    try {
+      const response = await fetch(
+        apiUrl(`/command-resources/contributions/visible?_=${Date.now()}`),
+        {
+          cache: "no-store",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to load vote tasks.");
+      }
+
+      const data: ContributionsResponse = await response.json();
+      const contributions = data.contributions.filter(
+        (item) => item.status === "pending"
+      );
+      setVoteContributions(contributions);
+      setVoteIndex((current) =>
+        Math.min(current, Math.max(0, contributions.length - 1))
+      );
+    } catch (error) {
+      console.log("Failed to load command vote tasks", error);
     }
   }
 
@@ -572,9 +644,12 @@ export default function CommandExplorerView({
 
       setPendingContributions(contributions);
 
-      const contribution =
-        contributions[pendingBrowseIndexRef.current % contributions.length];
+      const nextPendingIndex =
+        pendingBrowseIndexRef.current % contributions.length;
+      const contribution = contributions[nextPendingIndex];
       pendingBrowseIndexRef.current += 1;
+      setVoteContributions(contributions);
+      setVoteIndex(nextPendingIndex);
 
       const categoryKey = categoryGroups.find((group) =>
         group.commands.some((item) => item.key === contribution.commandKey)
@@ -738,6 +813,7 @@ export default function CommandExplorerView({
       const data: { contribution: PendingContribution } =
         await response.json();
       setPendingContributions((current) => [data.contribution, ...current]);
+      setVoteContributions((current) => [data.contribution, ...current]);
       setContributionDraft(null);
       setContributionMessage("Contribution saved for review.");
     } catch (error) {
@@ -789,10 +865,128 @@ export default function CommandExplorerView({
       setPendingContributions((current) =>
         current.filter((item) => item.id !== contributionId)
       );
+      setReviewIndex((current) =>
+        Math.min(current, Math.max(0, pendingContributions.length - 2))
+      );
+      setVoteContributions((current) =>
+        current.filter((item) => item.id !== contributionId)
+      );
       setContributionMessage("Contribution withdrawn.");
     } catch (error) {
       console.log("Failed to withdraw command contribution", error);
       setContributionMessage("Contribution could not be withdrawn.");
+    }
+  }
+
+  function updateContributionEverywhere(updatedContribution: PendingContribution) {
+    setPendingContributions((current) =>
+      current.map((item) =>
+        item.id === updatedContribution.id ? updatedContribution : item
+      )
+    );
+    setVoteContributions((current) =>
+      current.map((item) =>
+        item.id === updatedContribution.id ? updatedContribution : item
+      )
+    );
+  }
+
+  async function submitContributionVote() {
+    if (!voteDraft || !canContribute) return;
+
+    const username = normalizeContributorUsername(contributorUsername);
+    const reason = voteDraft.reason.trim();
+
+    if (!username) {
+      setVoteMessage("Add a lowercase username before voting.");
+      return;
+    }
+
+    if (voteDraft.type === "concern" && !reason) {
+      setVoteMessage("Add a short note for the concern.");
+      return;
+    }
+
+    try {
+      setIsSubmittingVote(true);
+      setVoteMessage(null);
+
+      const response = await fetch(
+        apiUrl(
+          `/command-resources/contributions/${voteDraft.contribution.id}/votes?groupCode=${encodeURIComponent(
+            CONTRIBUTION_GROUP_CODE
+          )}`
+        ),
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(adminToken ? { Authorization: `Bearer ${adminToken}` } : {}),
+          },
+          body: JSON.stringify({
+            groupCode: CONTRIBUTION_GROUP_CODE,
+            type: voteDraft.type,
+            reason: reason || undefined,
+            createdBy: username,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Vote could not be submitted.");
+      }
+
+      const data: { contribution: PendingContribution } =
+        await response.json();
+      updateContributionEverywhere(data.contribution);
+      setVoteDraft(null);
+      setVoteMessage("Vote saved.");
+    } catch (error) {
+      console.log("Failed to submit command contribution vote", error);
+      setVoteMessage("Vote could not be saved.");
+    } finally {
+      setIsSubmittingVote(false);
+    }
+  }
+
+  async function resolveContributionConcern(
+    contributionId: string,
+    voteId: string
+  ) {
+    if (!canModerateContributions) return;
+
+    try {
+      setVoteMessage(null);
+
+      const response = await fetch(
+        apiUrl(
+          `/command-resources/contributions/${contributionId}/votes/${voteId}/resolve`
+        ),
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${adminToken}`,
+          },
+          body: JSON.stringify({
+            resolvedBy:
+              normalizeContributorUsername(contributorUsername) || "admin",
+            resolutionNote: "Resolved by admin review.",
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Concern could not be resolved.");
+      }
+
+      const data: { contribution: PendingContribution } =
+        await response.json();
+      updateContributionEverywhere(data.contribution);
+      setVoteMessage("Concern resolved.");
+    } catch (error) {
+      console.log("Failed to resolve command contribution concern", error);
+      setVoteMessage("Concern could not be resolved.");
     }
   }
 
@@ -830,6 +1024,9 @@ export default function CommandExplorerView({
       setPendingContributions((current) =>
         current.filter((item) => item.id !== contributionId)
       );
+      setVoteContributions((current) =>
+        current.filter((item) => item.id !== contributionId)
+      );
 
       setContributionMessage(
         action === "approve"
@@ -843,12 +1040,6 @@ export default function CommandExplorerView({
         moderatedContribution.commandKey === command?.key
       ) {
         await selectCommand(moderatedContribution.commandKey);
-      }
-
-      if (action === "approve") {
-        setReviewMode("approved");
-        setReviewIndex(0);
-        await loadReviewContributions("approved");
       }
     } catch (error) {
       console.log("Failed to moderate command contribution", error);
@@ -910,6 +1101,7 @@ export default function CommandExplorerView({
   const reviewContribution = canModerateContributions
     ? pendingContributions[reviewIndex] ?? null
     : null;
+  const voteContribution = voteContributions[voteIndex] ?? null;
   const renderCommandStudyContent = () => {
     if (!command) {
       return <Text style={styles.mutedText}>Select a command.</Text>;
@@ -917,6 +1109,35 @@ export default function CommandExplorerView({
 
     return (
       <View style={{ gap: 16 }}>
+        {canContribute ? (
+          <VoteTasksPanel
+            isOpen={isVoteTasksOpen}
+            contribution={voteContribution}
+            currentIndex={voteIndex}
+            totalCount={voteContributions.length}
+            username={contributorUsername}
+            canModerate={canModerateContributions}
+            message={voteMessage}
+            voteDraft={voteDraft}
+            isSubmittingVote={isSubmittingVote}
+            onToggle={() => setIsVoteTasksOpen((value) => !value)}
+            onPrevious={() => setVoteIndex((current) => Math.max(0, current - 1))}
+            onNext={() =>
+              setVoteIndex((current) =>
+                Math.min(voteContributions.length - 1, current + 1)
+              )
+            }
+            onOpenCommand={(commandKey) => selectCommand(commandKey)}
+            onOpenVote={(contribution, type) =>
+              setVoteDraft({ contribution, type, reason: "" })
+            }
+            onChangeVoteDraft={setVoteDraft}
+            onCloseVote={() => setVoteDraft(null)}
+            onSubmitVote={submitContributionVote}
+            onResolveConcern={resolveContributionConcern}
+          />
+        ) : null}
+
         {canModerateContributions ? (
           <AdminReviewPanel
             contribution={reviewContribution}
@@ -943,6 +1164,7 @@ export default function CommandExplorerView({
               moderateContribution(contributionId, "reject")
             }
             onPromote={promoteContribution}
+            onResolveConcern={resolveContributionConcern}
           />
         ) : null}
 
@@ -1797,6 +2019,189 @@ function SectionTitle({ title }: { title: string }) {
   return <Text style={styles.sectionTitle}>{title}</Text>;
 }
 
+function VoteTasksPanel({
+  isOpen,
+  contribution,
+  currentIndex,
+  totalCount,
+  username,
+  canModerate,
+  message,
+  voteDraft,
+  isSubmittingVote,
+  onToggle,
+  onPrevious,
+  onNext,
+  onOpenCommand,
+  onOpenVote,
+  onChangeVoteDraft,
+  onCloseVote,
+  onSubmitVote,
+  onResolveConcern,
+}: {
+  isOpen: boolean;
+  contribution: PendingContribution | null;
+  currentIndex: number;
+  totalCount: number;
+  username: string;
+  canModerate: boolean;
+  message: string | null;
+  voteDraft: {
+    contribution: PendingContribution;
+    type: "support" | "concern";
+    reason: string;
+  } | null;
+  isSubmittingVote: boolean;
+  onToggle: () => void;
+  onPrevious: () => void;
+  onNext: () => void;
+  onOpenCommand: (commandKey: string) => void;
+  onOpenVote: (
+    contribution: PendingContribution,
+    type: "support" | "concern"
+  ) => void;
+  onChangeVoteDraft: (
+    draft: {
+      contribution: PendingContribution;
+      type: "support" | "concern";
+      reason: string;
+    } | null
+  ) => void;
+  onCloseVote: () => void;
+  onSubmitVote: () => void;
+  onResolveConcern: (contributionId: string, voteId: string) => void;
+}) {
+  const normalizedUsername = normalizeContributorUsername(username);
+  const existingVote = contribution?.votes?.find(
+    (vote) => vote.createdBy === normalizedUsername && !vote.resolvedAt
+  );
+  const voteCounts = getContributionVoteCounts(contribution);
+
+  return (
+    <View style={styles.voteTasksPanel}>
+      <Pressable
+        onPress={onToggle}
+        style={({ pressed }) => [
+          styles.voteTasksHeader,
+          pressed && { opacity: 0.78 },
+        ]}
+      >
+        <View style={{ flex: 1 }}>
+          <Text style={styles.voteTasksTitle}>Vote Tasks</Text>
+          <Text style={styles.voteTasksSubtitle}>
+            Optional community feedback for suggestions under review.
+          </Text>
+        </View>
+
+        <View style={styles.voteSummaryRow}>
+          <Text style={styles.voteSummaryText}>+{voteCounts.support}</Text>
+          <Text style={styles.voteConcernText}>!{voteCounts.concern}</Text>
+          <Text style={styles.voteTasksToggle}>{isOpen ? "-" : "+"}</Text>
+        </View>
+      </Pressable>
+
+      {isOpen ? (
+        <View style={styles.voteTasksBody}>
+          {!contribution ? (
+            <Text style={styles.mutedText}>No pending suggestions to vote on.</Text>
+          ) : (
+            <>
+              <View style={styles.adminReviewHeader}>
+                <Text style={styles.adminReviewMeta}>
+                  {currentIndex + 1} of {totalCount} - {formatKey(contribution.commandKey)}
+                </Text>
+
+                <View style={styles.adminReviewStepControls}>
+                  <Pressable
+                    onPress={onPrevious}
+                    disabled={currentIndex <= 0}
+                    style={({ pressed }) => [
+                      styles.adminReviewIconButton,
+                      currentIndex <= 0 && { opacity: 0.38 },
+                      pressed && { opacity: 0.78 },
+                    ]}
+                  >
+                    <Text style={styles.adminReviewIconText}>‹</Text>
+                  </Pressable>
+
+                  <Pressable
+                    onPress={onNext}
+                    disabled={currentIndex >= totalCount - 1}
+                    style={({ pressed }) => [
+                      styles.adminReviewIconButton,
+                      currentIndex >= totalCount - 1 && { opacity: 0.38 },
+                      pressed && { opacity: 0.78 },
+                    ]}
+                  >
+                    <Text style={styles.adminReviewIconText}>›</Text>
+                  </Pressable>
+                </View>
+              </View>
+
+              <ContributionReviewCard contribution={contribution} />
+
+              <VoteBreakdown
+                contribution={contribution}
+                canModerate={canModerate}
+                onResolveConcern={onResolveConcern}
+              />
+
+              {existingVote ? (
+                <Text style={styles.voteExistingText}>
+                  Your current vote:{" "}
+                  {existingVote.type === "support" ? "support" : "concern"}
+                </Text>
+              ) : null}
+
+              <View style={styles.adminReviewActions}>
+                <Pressable
+                  onPress={() => onOpenCommand(contribution.commandKey)}
+                  style={({ pressed }) => [
+                    styles.adminReviewSecondaryButton,
+                    pressed && { opacity: 0.78 },
+                  ]}
+                >
+                  <Text style={styles.adminReviewSecondaryText}>Open Command</Text>
+                </Pressable>
+
+                <Pressable
+                  onPress={() => onOpenVote(contribution, "concern")}
+                  style={({ pressed }) => [
+                    styles.voteConcernButton,
+                    pressed && { opacity: 0.78 },
+                  ]}
+                >
+                  <Text style={styles.adminReviewActionText}>! Concern</Text>
+                </Pressable>
+
+                <Pressable
+                  onPress={() => onOpenVote(contribution, "support")}
+                  style={({ pressed }) => [
+                    styles.adminReviewApproveButton,
+                    pressed && { opacity: 0.78 },
+                  ]}
+                >
+                  <Text style={styles.adminReviewActionText}>+ Support</Text>
+                </Pressable>
+              </View>
+            </>
+          )}
+
+          {message ? <Text style={styles.contributionMessage}>{message}</Text> : null}
+        </View>
+      ) : null}
+
+      <VoteModal
+        draft={voteDraft}
+        isSubmitting={isSubmittingVote}
+        onChange={onChangeVoteDraft}
+        onClose={onCloseVote}
+        onSubmit={onSubmitVote}
+      />
+    </View>
+  );
+}
+
 function AdminReviewPanel({
   contribution,
   reviewMode,
@@ -1809,6 +2214,7 @@ function AdminReviewPanel({
   onApprove,
   onReject,
   onPromote,
+  onResolveConcern,
 }: {
   contribution: PendingContribution | null;
   reviewMode: "pending" | "approved";
@@ -1821,11 +2227,13 @@ function AdminReviewPanel({
   onApprove: (contributionId: string) => void;
   onReject: (contributionId: string) => void;
   onPromote: (contributionId: string, official: PromotionDraft) => void;
+  onResolveConcern: (contributionId: string, voteId: string) => void;
 }) {
   const [draft, setDraft] = useState<PromotionDraft>(
     createEmptyPromotionDraft()
   );
   const isRemovalSuggestion = contribution?.mode === "suggest_remove";
+  const unresolvedConcernCount = getContributionVoteCounts(contribution).concern;
 
   useEffect(() => {
     setDraft(createPromotionDraft(contribution));
@@ -1887,33 +2295,13 @@ function AdminReviewPanel({
         </View>
       </View>
 
-      <View style={styles.adminReviewBody}>
-        <Text style={styles.pendingContributionBadge}>Under review</Text>
-        <Text style={styles.pendingContributionTitle}>
-          {formatContributionMode(contribution.mode)} - {formatKey(contribution.type)}
-        </Text>
-        {contribution.createdBy ? (
-          <Text style={styles.pendingContributionByline}>
-            @{contribution.createdBy}
-          </Text>
-        ) : null}
-        {contribution.target?.currentText ? (
-          <View style={styles.contributionTargetBlock}>
-            <Text style={styles.contributionTargetLabel}>Current</Text>
-            <Text style={styles.contributionTargetText}>
-              {contribution.target.currentText}
-            </Text>
-          </View>
-        ) : null}
-        <Text style={styles.pendingContributionText}>
-          {contribution.suggestedText ?? contribution.text}
-        </Text>
-        {contribution.reason ? (
-          <Text style={styles.pendingContributionReason}>
-            {contribution.reason}
-          </Text>
-        ) : null}
-      </View>
+      <ContributionReviewCard contribution={contribution} />
+
+      <VoteBreakdown
+        contribution={contribution}
+        canModerate
+        onResolveConcern={onResolveConcern}
+      />
 
       {reviewMode === "approved" && !isRemovalSuggestion ? (
         <PromotionForm
@@ -1949,8 +2337,10 @@ function AdminReviewPanel({
 
             <Pressable
               onPress={() => onApprove(contribution.id)}
+              disabled={unresolvedConcernCount > 0}
               style={({ pressed }) => [
                 styles.adminReviewApproveButton,
+                unresolvedConcernCount > 0 && { opacity: 0.42 },
                 pressed && { opacity: 0.78 },
               ]}
             >
@@ -2011,6 +2401,200 @@ function AdminReviewModeToggle({
         );
       })}
     </View>
+  );
+}
+
+function ContributionReviewCard({
+  contribution,
+}: {
+  contribution: PendingContribution;
+}) {
+  return (
+    <View style={styles.adminReviewBody}>
+      <Text style={styles.pendingContributionBadge}>Under review</Text>
+      <Text style={styles.pendingContributionTitle}>
+        {formatContributionMode(contribution.mode)} - {formatKey(contribution.type)}
+      </Text>
+      {contribution.createdBy ? (
+        <Text style={styles.pendingContributionByline}>
+          @{contribution.createdBy}
+        </Text>
+      ) : null}
+      {contribution.target?.currentText ? (
+        <View style={styles.contributionTargetBlock}>
+          <Text style={styles.contributionTargetLabel}>Current</Text>
+          <Text style={styles.contributionTargetText}>
+            {contribution.target.currentText}
+          </Text>
+        </View>
+      ) : null}
+      <Text style={styles.pendingContributionText}>
+        {contribution.suggestedText ?? contribution.text}
+      </Text>
+      {contribution.reason ? (
+        <Text style={styles.pendingContributionReason}>
+          {contribution.reason}
+        </Text>
+      ) : null}
+    </View>
+  );
+}
+
+function VoteBreakdown({
+  contribution,
+  canModerate,
+  onResolveConcern,
+}: {
+  contribution: PendingContribution;
+  canModerate: boolean;
+  onResolveConcern: (contributionId: string, voteId: string) => void;
+}) {
+  const counts = getContributionVoteCounts(contribution);
+  const concerns = (contribution.votes ?? []).filter(
+    (vote) => vote.type === "concern" && !vote.resolvedAt
+  );
+
+  return (
+    <View style={styles.voteBreakdown}>
+      <View style={styles.voteSummaryRow}>
+        <Text style={styles.voteSummaryText}>+{counts.support} support</Text>
+        <Text style={styles.voteConcernText}>!{counts.concern} concern</Text>
+      </View>
+
+      {concerns.length > 0 ? (
+        <View style={styles.voteConcernList}>
+          {concerns.map((vote) => (
+            <View key={vote.id} style={styles.voteConcernItem}>
+              <Text style={styles.pendingContributionByline}>
+                @{vote.createdBy}
+              </Text>
+              {vote.reason ? (
+                <Text style={styles.pendingContributionReason}>
+                  {vote.reason}
+                </Text>
+              ) : null}
+              {canModerate ? (
+                <Pressable
+                  onPress={() => onResolveConcern(contribution.id, vote.id)}
+                  style={({ pressed }) => [
+                    styles.pendingContributionWithdrawButton,
+                    pressed && { opacity: 0.78 },
+                  ]}
+                >
+                  <Text style={styles.pendingContributionWithdrawText}>
+                    Resolve Concern
+                  </Text>
+                </Pressable>
+              ) : null}
+            </View>
+          ))}
+        </View>
+      ) : null}
+    </View>
+  );
+}
+
+function VoteModal({
+  draft,
+  isSubmitting,
+  onChange,
+  onClose,
+  onSubmit,
+}: {
+  draft: {
+    contribution: PendingContribution;
+    type: "support" | "concern";
+    reason: string;
+  } | null;
+  isSubmitting: boolean;
+  onChange: (
+    draft: {
+      contribution: PendingContribution;
+      type: "support" | "concern";
+      reason: string;
+    } | null
+  ) => void;
+  onClose: () => void;
+  onSubmit: () => void;
+}) {
+  return (
+    <Modal visible={Boolean(draft)} transparent animationType="fade">
+      <View style={styles.voteModalBackdrop}>
+        <View style={styles.voteModalCard}>
+          <Text style={styles.voteModalTitle}>Community Review</Text>
+          <Text style={styles.voteModalText}>
+            Your vote helps the group decide whether this suggestion is ready.
+          </Text>
+
+          <View style={styles.voteModalChoiceRow}>
+            <Pressable
+              onPress={() =>
+                draft && onChange({ ...draft, type: "support", reason: "" })
+              }
+              style={[
+                styles.voteModalChoice,
+                draft?.type === "support" && styles.voteModalChoiceActive,
+              ]}
+            >
+              <Text style={styles.voteModalChoiceText}>+ Support</Text>
+              <Text style={styles.voteModalChoiceHelp}>
+                This looks helpful and ready.
+              </Text>
+            </Pressable>
+
+            <Pressable
+              onPress={() => draft && onChange({ ...draft, type: "concern" })}
+              style={[
+                styles.voteModalChoice,
+                draft?.type === "concern" && styles.voteModalConcernActive,
+              ]}
+            >
+              <Text style={styles.voteModalChoiceText}>! Concern</Text>
+              <Text style={styles.voteModalChoiceHelp}>
+                Something should be checked first.
+              </Text>
+            </Pressable>
+          </View>
+
+          {draft?.type === "concern" ? (
+            <TextInput
+              value={draft.reason}
+              onChangeText={(reason) => onChange({ ...draft, reason })}
+              placeholder="What should be checked?"
+              placeholderTextColor="#94a3b8"
+              multiline
+              style={[styles.contributionInput, styles.contributionReasonInput]}
+            />
+          ) : null}
+
+          <View style={styles.adminReviewActions}>
+            <Pressable
+              onPress={onClose}
+              style={({ pressed }) => [
+                styles.adminReviewSecondaryButton,
+                pressed && { opacity: 0.78 },
+              ]}
+            >
+              <Text style={styles.adminReviewSecondaryText}>Cancel</Text>
+            </Pressable>
+
+            <Pressable
+              onPress={onSubmit}
+              disabled={isSubmitting}
+              style={({ pressed }) => [
+                styles.adminReviewApproveButton,
+                isSubmitting && { opacity: 0.65 },
+                pressed && { opacity: 0.78 },
+              ]}
+            >
+              <Text style={styles.adminReviewActionText}>
+                {isSubmitting ? "Saving..." : "Submit Vote"}
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+      </View>
+    </Modal>
   );
 }
 
@@ -2538,6 +3122,17 @@ function getPromotionTextField(
   return fields[type];
 }
 
+function getContributionVoteCounts(contribution: PendingContribution | null) {
+  const activeVotes = (contribution?.votes ?? []).filter(
+    (vote) => !vote.resolvedAt
+  );
+
+  return {
+    support: activeVotes.filter((vote) => vote.type === "support").length,
+    concern: activeVotes.filter((vote) => vote.type === "concern").length,
+  };
+}
+
 function normalizeContributorUsername(username: string) {
   const normalized = username.trim().toLowerCase();
 
@@ -2755,6 +3350,161 @@ const styles = {
     backgroundColor: "#f0fdfa",
     borderWidth: 1,
     borderColor: "#99f6e4",
+  },
+  voteTasksPanel: {
+    gap: 0,
+    borderRadius: 8,
+    backgroundColor: "#f8fafc",
+    borderWidth: 1,
+    borderColor: "#cbd5e1",
+    overflow: "hidden" as const,
+  },
+  voteTasksHeader: {
+    minHeight: 52,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "space-between" as const,
+    gap: 10,
+    backgroundColor: "#ffffff",
+  },
+  voteTasksTitle: {
+    fontSize: 14,
+    lineHeight: 19,
+    fontWeight: "900" as const,
+    color: "#1e293b",
+  },
+  voteTasksSubtitle: {
+    marginTop: 1,
+    fontSize: 12,
+    lineHeight: 16,
+    color: "#64748b",
+  },
+  voteTasksToggle: {
+    minWidth: 24,
+    textAlign: "center" as const,
+    fontSize: 18,
+    lineHeight: 22,
+    fontWeight: "900" as const,
+    color: "#334155",
+  },
+  voteTasksBody: {
+    gap: 10,
+    padding: 12,
+    borderTopWidth: 1,
+    borderTopColor: "#e2e8f0",
+  },
+  voteSummaryRow: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    flexWrap: "wrap" as const,
+    gap: 8,
+  },
+  voteSummaryText: {
+    fontSize: 12,
+    lineHeight: 17,
+    fontWeight: "900" as const,
+    color: "#0f766e",
+  },
+  voteConcernText: {
+    fontSize: 12,
+    lineHeight: 17,
+    fontWeight: "900" as const,
+    color: "#b45309",
+  },
+  voteExistingText: {
+    fontSize: 12,
+    lineHeight: 17,
+    fontWeight: "800" as const,
+    color: "#64748b",
+  },
+  voteConcernButton: {
+    minHeight: 34,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    backgroundColor: "#b45309",
+  },
+  voteBreakdown: {
+    gap: 8,
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: "#fffbeb",
+    borderWidth: 1,
+    borderColor: "#fde68a",
+  },
+  voteConcernList: {
+    gap: 7,
+  },
+  voteConcernItem: {
+    gap: 4,
+    paddingTop: 7,
+    borderTopWidth: 1,
+    borderTopColor: "#fde68a",
+  },
+  voteModalBackdrop: {
+    flex: 1,
+    padding: 18,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    backgroundColor: "rgba(15,23,42,0.38)",
+  },
+  voteModalCard: {
+    width: "100%" as const,
+    maxWidth: 520,
+    gap: 12,
+    padding: 16,
+    borderRadius: 8,
+    backgroundColor: "#ffffff",
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+  },
+  voteModalTitle: {
+    fontSize: 18,
+    lineHeight: 23,
+    fontWeight: "900" as const,
+    color: "#0f172a",
+  },
+  voteModalText: {
+    fontSize: 13,
+    lineHeight: 19,
+    color: "#475569",
+  },
+  voteModalChoiceRow: {
+    flexDirection: "row" as const,
+    flexWrap: "wrap" as const,
+    gap: 8,
+  },
+  voteModalChoice: {
+    flex: 1,
+    minWidth: 180,
+    gap: 3,
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#cbd5e1",
+    backgroundColor: "#f8fafc",
+  },
+  voteModalChoiceActive: {
+    borderColor: "#0f766e",
+    backgroundColor: "#ecfdf5",
+  },
+  voteModalConcernActive: {
+    borderColor: "#b45309",
+    backgroundColor: "#fffbeb",
+  },
+  voteModalChoiceText: {
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: "900" as const,
+    color: "#1e293b",
+  },
+  voteModalChoiceHelp: {
+    fontSize: 12,
+    lineHeight: 17,
+    color: "#64748b",
   },
   adminReviewHeader: {
     flexDirection: "row" as const,

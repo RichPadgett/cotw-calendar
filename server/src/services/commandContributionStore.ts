@@ -53,6 +53,19 @@ export type CommandContributionTarget = {
   currentValue?: unknown;
 };
 
+export type CommandContributionVoteType = "support" | "concern";
+
+export type CommandContributionVote = {
+  id: string;
+  type: CommandContributionVoteType;
+  reason?: string;
+  createdAt: string;
+  createdBy: string;
+  resolvedAt?: string;
+  resolvedBy?: string;
+  resolutionNote?: string;
+};
+
 export type CommandContribution = {
   id: string;
   groupCode: typeof CONTRIBUTION_GROUP_CODE;
@@ -74,6 +87,7 @@ export type CommandContribution = {
   promotedBy?: string;
   prologFact?: string;
   prologFile?: string;
+  votes?: CommandContributionVote[];
 };
 
 type ContributionFile = {
@@ -249,12 +263,130 @@ export function approveCommandContribution(id: string, updatedBy?: string) {
   const contribution = findContribution(file, id);
   const username = updatedBy ? normalizeUsername(updatedBy) : undefined;
   const now = new Date().toISOString();
+  const unresolvedConcerns = getUnresolvedConcernVotes(contribution);
+
+  if (unresolvedConcerns.length > 0) {
+    throw new Error(
+      "This suggestion has unresolved community concerns and cannot be approved yet."
+    );
+  }
 
   contribution.status = "approved";
   contribution.updatedBy = username;
   contribution.approvedBy = username;
   contribution.approvedAt = now;
   contribution.updatedAt = now;
+
+  writeContributionFile(file);
+
+  return contribution;
+}
+
+export function voteOnCommandContribution(params: {
+  id: string;
+  type: string;
+  createdBy: string;
+  reason?: string;
+}) {
+  const voteType = normalizeVoteType(params.type);
+  const createdBy = normalizeUsername(params.createdBy);
+  const reason = normalizeOptionalText(params.reason);
+
+  if (voteType === "concern" && !reason) {
+    throw new Error("A concern vote requires a short reason.");
+  }
+
+  const file = readContributionFile();
+  const contribution = findContribution(file, params.id);
+
+  if (contribution.status !== "pending") {
+    throw new Error("Only pending suggestions can receive community votes.");
+  }
+
+  const now = new Date().toISOString();
+  const votes = contribution.votes ?? [];
+
+  votes.forEach((vote) => {
+    if (
+      vote.createdBy === createdBy &&
+      vote.type === "concern" &&
+      !vote.resolvedAt
+    ) {
+      vote.resolvedAt = now;
+      vote.resolvedBy = createdBy;
+      vote.resolutionNote =
+        voteType === "support"
+          ? "Changed vote to support."
+          : "Replaced by a newer concern.";
+    }
+  });
+
+  const existingSupport = votes.find(
+    (vote) => vote.createdBy === createdBy && vote.type === "support"
+  );
+
+  if (voteType === "support" && existingSupport) {
+    existingSupport.createdAt = now;
+  } else if (voteType === "concern") {
+    contribution.votes = [
+      ...votes.filter(
+        (vote) => !(vote.createdBy === createdBy && vote.type === "support")
+      ),
+      {
+        id: crypto.randomUUID(),
+        type: voteType,
+        reason,
+        createdAt: now,
+        createdBy,
+      },
+    ];
+  } else {
+    contribution.votes = [
+      ...votes,
+      {
+        id: crypto.randomUUID(),
+        type: voteType,
+        createdAt: now,
+        createdBy,
+      },
+    ];
+  }
+
+  contribution.updatedAt = now;
+  contribution.updatedBy = createdBy;
+
+  writeContributionFile(file);
+
+  return contribution;
+}
+
+export function resolveCommandContributionVote(params: {
+  id: string;
+  voteId: string;
+  resolvedBy: string;
+  resolutionNote?: string;
+}) {
+  const resolvedBy = normalizeUsername(params.resolvedBy);
+  const file = readContributionFile();
+  const contribution = findContribution(file, params.id);
+  const vote = (contribution.votes ?? []).find(
+    (item) => item.id === params.voteId
+  );
+
+  if (!vote) {
+    throw new Error("Community vote not found.");
+  }
+
+  if (vote.type !== "concern") {
+    throw new Error("Only concern votes need to be resolved.");
+  }
+
+  const now = new Date().toISOString();
+  vote.resolvedAt = now;
+  vote.resolvedBy = resolvedBy;
+  vote.resolutionNote = normalizeOptionalText(params.resolutionNote);
+  contribution.updatedAt = now;
+  contribution.updatedBy = resolvedBy;
 
   writeContributionFile(file);
 
@@ -618,6 +750,22 @@ function normalizeContributionStatus(value: string): CommandContributionStatus {
   }
 
   return status;
+}
+
+function normalizeVoteType(value: string): CommandContributionVoteType {
+  const type = value.trim() as CommandContributionVoteType;
+
+  if (type !== "support" && type !== "concern") {
+    throw new Error("Vote type must be support or concern.");
+  }
+
+  return type;
+}
+
+function getUnresolvedConcernVotes(contribution: CommandContribution) {
+  return (contribution.votes ?? []).filter(
+    (vote) => vote.type === "concern" && !vote.resolvedAt
+  );
 }
 
 function normalizeContributionTarget(

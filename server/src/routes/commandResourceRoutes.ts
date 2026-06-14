@@ -18,7 +18,9 @@ import {
   listCommandContributions,
   promoteCommandContribution,
   rejectCommandContribution,
+  resolveCommandContributionVote,
   updateCommandContribution,
+  voteOnCommandContribution,
   withdrawCommandContribution,
 } from "../services/commandContributionStore";
 import {
@@ -316,6 +318,44 @@ router.post(
           getRouteParam(req.params.contributionId),
           getRequestText(req.body.updatedBy) || undefined
         ),
+      });
+    } catch (error) {
+      handleContributionError(res, error);
+    }
+  }
+);
+
+router.post(
+  "/contributions/:contributionId/votes",
+  requireContributionMember,
+  (req, res) => {
+    try {
+      res.status(201).json({
+        contribution: voteOnCommandContribution({
+          id: getRouteParam(req.params.contributionId),
+          type: getRequestText(req.body.type),
+          reason: getRequestText(req.body.reason) || undefined,
+          createdBy: getRequestText(req.body.createdBy),
+        }),
+      });
+    } catch (error) {
+      handleContributionError(res, error);
+    }
+  }
+);
+
+router.post(
+  "/contributions/:contributionId/votes/:voteId/resolve",
+  requireCommandContributionAdmin,
+  (req, res) => {
+    try {
+      res.json({
+        contribution: resolveCommandContributionVote({
+          id: getRouteParam(req.params.contributionId),
+          voteId: getRouteParam(req.params.voteId),
+          resolvedBy: getRequestText(req.body.resolvedBy),
+          resolutionNote: getRequestText(req.body.resolutionNote) || undefined,
+        }),
       });
     } catch (error) {
       handleContributionError(res, error);

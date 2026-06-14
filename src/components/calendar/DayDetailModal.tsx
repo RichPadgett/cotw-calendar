@@ -80,6 +80,7 @@ export default function DayDetailModal({
   const [markerSourceUrl, setMarkerSourceUrl] = useState("");
   const [markerSaveMessage, setMarkerSaveMessage] = useState("");
   const [isSavingMarker, setIsSavingMarker] = useState(false);
+  const [editingMarkerId, setEditingMarkerId] = useState<string | null>(null);
   const [contentDeleteMessage, setContentDeleteMessage] = useState("");
   const [isDeletingContent, setIsDeletingContent] = useState(false);
 
@@ -232,10 +233,12 @@ export default function DayDetailModal({
    */
   function closeModal() {
     setSelectedMarker(null);
+    resetMarkerForm();
     onClose();
   }
 
   function resetMarkerForm() {
+    setEditingMarkerId(null);
     setMarkerTitle("");
     setMarkerShortName("");
     setMarkerColor("#2563eb");
@@ -265,6 +268,40 @@ export default function DayDetailModal({
     return isHexColor ? trimmedColor : DEFAULT_MARKER_COLOR;
   }
 
+  function fillMarkerForm(marker: PerpetualMarker) {
+    setEditingMarkerId(marker.id);
+    setMarkerTitle(marker.title ?? "");
+    setMarkerShortName(marker.shortName ?? "");
+    setMarkerColor(getMarkerColor(marker.color));
+    setMarkerNotes(marker.notes ?? "");
+    setMarkerSourceLabel(marker.sourceLabel ?? "");
+    setMarkerSourceUrl(marker.sourceUrl ?? "");
+    setMarkerSaveMessage("");
+  }
+
+  function applyMarkerFormFields(marker: PerpetualMarker): PerpetualMarker {
+    const title = markerTitle.trim();
+    const shortName = markerShortName.trim();
+    const nextMarker: PerpetualMarker = {
+      ...marker,
+      title,
+      shortName,
+      color: getMarkerColor(markerColor),
+    };
+
+    delete nextMarker.notes;
+    delete nextMarker.sourceLabel;
+    delete nextMarker.sourceUrl;
+
+    if (markerNotes.trim()) nextMarker.notes = markerNotes.trim();
+    if (markerSourceLabel.trim()) {
+      nextMarker.sourceLabel = markerSourceLabel.trim();
+    }
+    if (markerSourceUrl.trim()) nextMarker.sourceUrl = markerSourceUrl.trim();
+
+    return nextMarker;
+  }
+
   /**
    * Builds a new perpetual marker for the selected day placement.
    * Month days, gate days, and intercalary weeks use different fields in the marker file.
@@ -279,16 +316,12 @@ export default function DayDetailModal({
 
     if (!title || !shortName) return null;
 
-    const marker: PerpetualMarker = {
+    const marker = applyMarkerFormFields({
       id: createMarkerId(title),
       title,
       shortName,
       color: getMarkerColor(markerColor),
-    };
-
-    if (markerNotes.trim()) marker.notes = markerNotes.trim();
-    if (markerSourceLabel.trim()) marker.sourceLabel = markerSourceLabel.trim();
-    if (markerSourceUrl.trim()) marker.sourceUrl = markerSourceUrl.trim();
+    });
 
     if (enoch.isSabbathWeek) {
       marker.intercalaryWeek = true;
@@ -327,6 +360,40 @@ export default function DayDetailModal({
     }
   }
 
+  async function updatePerpetualMarker() {
+    const editingMarker = perpetualMarkers.find(
+      (marker) => marker.id === editingMarkerId
+    );
+    const title = markerTitle.trim();
+    const shortName = markerShortName.trim();
+
+    if (!editingMarker || !title || !shortName) {
+      setMarkerSaveMessage("Title and short name are required.");
+      return;
+    }
+
+    const updatedMarker = applyMarkerFormFields(editingMarker);
+
+    try {
+      setIsSavingMarker(true);
+      setMarkerSaveMessage("");
+
+      await onSavePerpetualMarkers(
+        perpetualMarkers.map((marker) =>
+          marker.id === editingMarker.id ? updatedMarker : marker
+        )
+      );
+      setSelectedMarker(updatedMarker);
+      resetMarkerForm();
+      setMarkerSaveMessage("Perpetual marker updated.");
+    } catch (error) {
+      console.log("Failed to update perpetual marker", error);
+      setMarkerSaveMessage("Unable to update marker.");
+    } finally {
+      setIsSavingMarker(false);
+    }
+  }
+
   async function deletePerpetualMarker(markerId: string) {
     try {
       setIsSavingMarker(true);
@@ -338,6 +405,9 @@ export default function DayDetailModal({
 
       if (selectedMarker?.id === markerId) {
         setSelectedMarker(null);
+      }
+      if (editingMarkerId === markerId) {
+        resetMarkerForm();
       }
 
       setMarkerSaveMessage("Perpetual marker deleted.");
@@ -441,7 +511,23 @@ export default function DayDetailModal({
             >
               {canEditPerpetualMarkers && (
                 <View style={[styles.card, styles.adminCard]}>
-                  <Text style={styles.cardTitle}>Perpetual Marker</Text>
+                  <View style={styles.formTitleRow}>
+                    <Text style={styles.cardTitle}>
+                      {editingMarkerId
+                        ? "Edit Perpetual Marker"
+                        : "Perpetual Marker"}
+                    </Text>
+
+                    {editingMarkerId ? (
+                      <Pressable
+                        onPress={resetMarkerForm}
+                        disabled={isSavingMarker}
+                        style={styles.secondaryButton}
+                      >
+                        <Text style={styles.secondaryButtonText}>Cancel</Text>
+                      </Pressable>
+                    ) : null}
+                  </View>
 
                   <TextInput
                     value={markerTitle}
@@ -489,7 +575,9 @@ export default function DayDetailModal({
                   />
 
                   <Pressable
-                    onPress={addPerpetualMarker}
+                    onPress={
+                      editingMarkerId ? updatePerpetualMarker : addPerpetualMarker
+                    }
                     disabled={isSavingMarker}
                     style={[
                       styles.primaryButton,
@@ -497,7 +585,11 @@ export default function DayDetailModal({
                     ]}
                   >
                     <Text style={styles.primaryButtonText}>
-                      {isSavingMarker ? "Saving..." : "Add Marker"}
+                      {isSavingMarker
+                        ? "Saving..."
+                        : editingMarkerId
+                          ? "Update Marker"
+                          : "Add Marker"}
                     </Text>
                   </Pressable>
 
@@ -581,13 +673,31 @@ export default function DayDetailModal({
                     ) : null}
 
                     {canEditPerpetualMarkers ? (
-                      <Pressable
-                        onPress={() => deletePerpetualMarker(marker.id)}
-                        disabled={isSavingMarker}
-                        style={styles.inversePillButton}
-                      >
-                        <Text style={styles.inversePillButtonText}>Delete</Text>
-                      </Pressable>
+                      <View style={styles.markerAdminActions}>
+                        <Pressable
+                          onPress={() => fillMarkerForm(marker)}
+                          disabled={isSavingMarker}
+                          style={[
+                            styles.inversePillButton,
+                            editingMarkerId === marker.id &&
+                              styles.inversePillButtonActive,
+                          ]}
+                        >
+                          <Text style={styles.inversePillButtonText}>
+                            {editingMarkerId === marker.id ? "Editing" : "Edit"}
+                          </Text>
+                        </Pressable>
+
+                        <Pressable
+                          onPress={() => deletePerpetualMarker(marker.id)}
+                          disabled={isSavingMarker}
+                          style={styles.inversePillButton}
+                        >
+                          <Text style={styles.inversePillButtonText}>
+                            Delete
+                          </Text>
+                        </Pressable>
+                      </View>
                     ) : null}
                   </View>
                 );
@@ -938,6 +1048,13 @@ const styles = StyleSheet.create({
     color: "#111827",
   },
 
+  formTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 10,
+  },
+
   itemTitle: {
     fontSize: 15,
     fontWeight: "900",
@@ -1031,6 +1148,21 @@ const styles = StyleSheet.create({
     fontWeight: "900",
   },
 
+  secondaryButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#bfdbfe",
+    backgroundColor: "#ffffff",
+  },
+
+  secondaryButtonText: {
+    color: "#1d4ed8",
+    fontSize: 12,
+    fontWeight: "900",
+  },
+
   destructiveButton: {
     alignSelf: "flex-start",
     marginTop: 10,
@@ -1113,10 +1245,20 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.22)",
   },
 
+  inversePillButtonActive: {
+    backgroundColor: "rgba(255,255,255,0.38)",
+  },
+
   inversePillButtonText: {
     color: "#ffffff",
     fontSize: 11,
     fontWeight: "900",
+  },
+
+  markerAdminActions: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
   },
 
   disabledButton: {

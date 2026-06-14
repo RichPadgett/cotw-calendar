@@ -109,6 +109,8 @@ export default function HomeScreen() {
     commandCount: 0,
     isSelectingRandom: false,
     isSelectingPending: false,
+    pendingContributionCount: 0,
+    pendingConcernCount: 0,
   });
   const hasLoadedPersistedAppStateRef = useRef(false);
 
@@ -632,13 +634,17 @@ export default function HomeScreen() {
     commandCount: number;
     isSelectingRandom: boolean;
     isSelectingPending: boolean;
+    pendingContributionCount: number;
+    pendingConcernCount: number;
   }) {
     setCommandResourceStats((current) => {
       if (
         current.categoryCount === stats.categoryCount &&
         current.commandCount === stats.commandCount &&
         current.isSelectingRandom === stats.isSelectingRandom &&
-        current.isSelectingPending === stats.isSelectingPending
+        current.isSelectingPending === stats.isSelectingPending &&
+        current.pendingContributionCount === stats.pendingContributionCount &&
+        current.pendingConcernCount === stats.pendingConcernCount
       ) {
         return current;
       }
@@ -797,6 +803,10 @@ export default function HomeScreen() {
               commandCount={commandResourceStats.commandCount}
               isSelectingRandom={commandResourceStats.isSelectingRandom}
               isSelectingPending={commandResourceStats.isSelectingPending}
+              pendingContributionCount={
+                commandResourceStats.pendingContributionCount
+              }
+              pendingConcernCount={commandResourceStats.pendingConcernCount}
               groupLabel={groupLabel}
               userRole={userRole}
               onChangeBibleVersion={setSelectedBibleVersion}
@@ -1327,6 +1337,8 @@ function CommandStickyHeader({
   commandCount,
   isSelectingRandom,
   isSelectingPending,
+  pendingContributionCount,
+  pendingConcernCount,
   groupLabel,
   userRole,
   onChangeBibleVersion,
@@ -1345,6 +1357,8 @@ function CommandStickyHeader({
   commandCount: number;
   isSelectingRandom: boolean;
   isSelectingPending: boolean;
+  pendingContributionCount: number;
+  pendingConcernCount: number;
   groupLabel: string;
   userRole: "member" | "admin";
   onChangeBibleVersion: (version: BibleVersion) => void;
@@ -1365,6 +1379,13 @@ function CommandStickyHeader({
     : null;
   const categoryIcon = getCommandCategoryIcon(commandCategory);
   const canContribute = isValidContributorUsername(contributorUsername);
+  const hasPendingContributions = pendingContributionCount > 0;
+  const hasPendingConcerns = pendingConcernCount > 0;
+  const pendingButtonColor = hasPendingConcerns
+    ? "#b45309"
+    : hasPendingContributions
+    ? "#0e7490"
+    : "transparent";
   const canUseMobileHeaderOverride = isCompactHeader && Boolean(command);
   const isCompactStudyMode =
     canUseMobileHeaderOverride && !isMobileHeaderExpanded;
@@ -1744,9 +1765,16 @@ function CommandStickyHeader({
                     paddingHorizontal: 11,
                     alignItems: "center",
                     justifyContent: "center",
+                    backgroundColor: pendingButtonColor,
                     opacity: isSelectingPending ? 0.65 : 1,
                   },
-                  pressed && { backgroundColor: "#115e59" },
+                  pressed && {
+                    backgroundColor: hasPendingConcerns
+                      ? "#92400e"
+                      : hasPendingContributions
+                      ? "#155e75"
+                      : "#115e59",
+                  },
                 ]}
               >
                 <Text
@@ -1756,7 +1784,11 @@ function CommandStickyHeader({
                     color: "#ffffff",
                   }}
                 >
-                  {isSelectingPending ? "..." : "Pending"}
+                  {isSelectingPending
+                    ? "..."
+                    : hasPendingContributions
+                    ? `Pending ${Math.min(pendingContributionCount, 99)}`
+                    : "Pending"}
                 </Text>
               </Pressable>
             </View>
