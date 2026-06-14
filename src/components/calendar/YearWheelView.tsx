@@ -67,6 +67,8 @@ const GATE_DOTS = [
 ];
 
 const FRACTIONAL_MARKER_SPACING = (Math.PI * 2 * 0.34) / 364;
+const WHEEL_DRAG_THRESHOLD = 8;
+const VERTICAL_SCROLL_BIAS = 1.18;
 
 type WheelMarkerEntry = {
   id: string;
@@ -390,6 +392,7 @@ export default function YearWheelView({
   const interactionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null
   );
+  const wheelTouchStartRef = useRef<{ x: number; y: number } | null>(null);
   const months = Array.from({ length: 12 }, (_, index) => index + 1);
   const activeTodayDateId = todayDateId ?? getAppDateId();
 
@@ -520,6 +523,57 @@ export default function YearWheelView({
     selectNearestWheelMarker(event);
   }
 
+  function rememberWheelTouchStart(event: GestureResponderEvent) {
+    wheelTouchStartRef.current = {
+      x: event.nativeEvent.pageX,
+      y: event.nativeEvent.pageY,
+    };
+  }
+
+  function shouldUseWheelGesture(event: GestureResponderEvent) {
+    const start = wheelTouchStartRef.current;
+
+    if (!start) {
+      return false;
+    }
+
+    const deltaX = event.nativeEvent.pageX - start.x;
+    const deltaY = event.nativeEvent.pageY - start.y;
+    const absX = Math.abs(deltaX);
+    const absY = Math.abs(deltaY);
+
+    if (absX < WHEEL_DRAG_THRESHOLD && absY < WHEEL_DRAG_THRESHOLD) {
+      return false;
+    }
+
+    return absY <= absX * VERTICAL_SCROLL_BIAS;
+  }
+
+  function handleWheelTouchEnd(event: GestureResponderEvent) {
+    const start = wheelTouchStartRef.current;
+    wheelTouchStartRef.current = null;
+
+    if (!start) {
+      hideWheelMagnifierSoon();
+      return;
+    }
+
+    const deltaX = event.nativeEvent.pageX - start.x;
+    const deltaY = event.nativeEvent.pageY - start.y;
+    const movedDistance = Math.hypot(deltaX, deltaY);
+
+    if (movedDistance < WHEEL_DRAG_THRESHOLD) {
+      showWheelMagnifier(event);
+    }
+
+    hideWheelMagnifierSoon();
+  }
+
+  function cancelWheelTouch() {
+    wheelTouchStartRef.current = null;
+    hideWheelMagnifierSoon();
+  }
+
   function hideWheelMagnifierSoon() {
     if (interactionTimeoutRef.current) {
       clearTimeout(interactionTimeoutRef.current);
@@ -552,7 +606,7 @@ export default function YearWheelView({
           userSelect: "none",
           WebkitUserSelect: "none",
           WebkitTouchCallout: "none",
-          touchAction: "none",
+          touchAction: "pan-y",
         } as any,
       ]}
     >
@@ -699,11 +753,14 @@ export default function YearWheelView({
           />
 
           <View
-            onStartShouldSetResponder={() => true}
-            onMoveShouldSetResponder={() => true}
+            onTouchStart={rememberWheelTouchStart}
+            onTouchEnd={handleWheelTouchEnd}
+            onTouchCancel={cancelWheelTouch}
+            onStartShouldSetResponder={() => false}
+            onMoveShouldSetResponder={shouldUseWheelGesture}
             onResponderGrant={showWheelMagnifier}
             onResponderMove={showWheelMagnifier}
-            onResponderRelease={hideWheelMagnifierSoon}
+            onResponderRelease={handleWheelTouchEnd}
             onResponderTerminate={hideWheelMagnifierSoon}
             style={{
               position: "absolute",
