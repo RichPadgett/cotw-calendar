@@ -69,6 +69,7 @@ const GATE_DOTS = [
 
 const FRACTIONAL_MARKER_SPACING = (Math.PI * 2 * 0.34) / 364;
 const WHEEL_DRAG_THRESHOLD = 8;
+const WHEEL_INTERACTION_RADIUS = SIZE / 2;
 
 type WheelMarkerEntry = {
   id: string;
@@ -503,7 +504,12 @@ export default function YearWheelView({
 
     const distanceFromCenter = Math.hypot(x - CENTER, y - CENTER);
 
-    if (distanceFromCenter < CENTER_BADGE_SIZE / 2) return;
+    if (
+      distanceFromCenter < CENTER_BADGE_SIZE / 2 ||
+      distanceFromCenter > WHEEL_INTERACTION_RADIUS
+    ) {
+      return;
+    }
 
     const touchAngle = Math.atan2(y - CENTER, x - CENTER);
     const nearestEntry = wheelMarkerEntries
@@ -551,6 +557,7 @@ export default function YearWheelView({
     }
 
     if (typeof x !== "number" || typeof y !== "number") return;
+    if (!isWheelInteractionPoint(x, y)) return;
 
     showWheelMagnifierAt(x, y);
     hideWheelMagnifierSoon(220);
@@ -571,18 +578,35 @@ export default function YearWheelView({
   }
 
   function rememberWheelTouchStart(event: GestureResponderEvent) {
+    if (
+      !isWheelInteractionPoint(
+        event.nativeEvent.locationX,
+        event.nativeEvent.locationY
+      )
+    ) {
+      wheelTouchStartRef.current = null;
+      return;
+    }
+
     wheelTouchStartRef.current = {
       x: event.nativeEvent.pageX,
       y: event.nativeEvent.pageY,
     };
   }
 
-  function shouldStartWheelResponder() {
-    return true;
+  function isWheelInteractionPoint(x: number, y: number) {
+    return Math.hypot(x - CENTER, y - CENTER) <= WHEEL_INTERACTION_RADIUS;
+  }
+
+  function shouldStartWheelResponder(event: GestureResponderEvent) {
+    return isWheelInteractionPoint(
+      event.nativeEvent.locationX,
+      event.nativeEvent.locationY
+    );
   }
 
   function shouldUseWheelGesture() {
-    return true;
+    return Boolean(wheelTouchStartRef.current);
   }
 
   function handleWheelTouchEnd(event: GestureResponderEvent) {
