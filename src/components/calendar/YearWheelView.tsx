@@ -9,6 +9,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   GestureResponderEvent,
   Image,
+  Platform,
   Pressable,
   Text,
   View,
@@ -492,13 +493,20 @@ export default function YearWheelView({
   function selectNearestWheelMarker(event: GestureResponderEvent) {
     if (wheelMarkerEntries.length === 0) return;
 
-    const touchX = event.nativeEvent.locationX;
-    const touchY = event.nativeEvent.locationY;
-    const distanceFromCenter = Math.hypot(touchX - CENTER, touchY - CENTER);
+    selectNearestWheelMarkerAt(
+      event.nativeEvent.locationX,
+      event.nativeEvent.locationY
+    );
+  }
+
+  function selectNearestWheelMarkerAt(x: number, y: number) {
+    if (wheelMarkerEntries.length === 0) return;
+
+    const distanceFromCenter = Math.hypot(x - CENTER, y - CENTER);
 
     if (distanceFromCenter < CENTER_BADGE_SIZE / 2) return;
 
-    const touchAngle = Math.atan2(touchY - CENTER, touchX - CENTER);
+    const touchAngle = Math.atan2(y - CENTER, x - CENTER);
     const nearestEntry = wheelMarkerEntries
       .map((entry) => {
         return {
@@ -513,14 +521,54 @@ export default function YearWheelView({
     }
   }
 
+  function handleWheelMouseClick(event: {
+    nativeEvent?: {
+      offsetX?: number;
+      offsetY?: number;
+      layerX?: number;
+      layerY?: number;
+      clientX?: number;
+      clientY?: number;
+    };
+    currentTarget?: {
+      getBoundingClientRect?: () => { left: number; top: number };
+    };
+  }) {
+    const nativeEvent = event.nativeEvent ?? {};
+    let x = nativeEvent.offsetX ?? nativeEvent.layerX;
+    let y = nativeEvent.offsetY ?? nativeEvent.layerY;
+
+    if (
+      (typeof x !== "number" || typeof y !== "number") &&
+      typeof nativeEvent.clientX === "number" &&
+      typeof nativeEvent.clientY === "number"
+    ) {
+      const rect = event.currentTarget?.getBoundingClientRect?.();
+
+      if (rect) {
+        x = nativeEvent.clientX - rect.left;
+        y = nativeEvent.clientY - rect.top;
+      }
+    }
+
+    if (typeof x !== "number" || typeof y !== "number") return;
+
+    showWheelMagnifierAt(x, y);
+    hideWheelMagnifierSoon();
+  }
+
   function showWheelMagnifier(event: GestureResponderEvent) {
+    showWheelMagnifierAt(event.nativeEvent.locationX, event.nativeEvent.locationY);
+  }
+
+  function showWheelMagnifierAt(x: number, y: number) {
     if (interactionTimeoutRef.current) {
       clearTimeout(interactionTimeoutRef.current);
     }
 
     setIsWheelInteracting(true);
     onInteractionChange?.(true);
-    selectNearestWheelMarker(event);
+    selectNearestWheelMarkerAt(x, y);
   }
 
   function rememberWheelTouchStart(event: GestureResponderEvent) {
@@ -528,6 +576,18 @@ export default function YearWheelView({
       x: event.nativeEvent.pageX,
       y: event.nativeEvent.pageY,
     };
+  }
+
+  function isDesktopPointerEvent(event: GestureResponderEvent) {
+    const nativeEvent = event.nativeEvent as GestureResponderEvent["nativeEvent"] & {
+      pointerType?: string;
+    };
+
+    return Platform.OS === "web" && nativeEvent.pointerType === "mouse";
+  }
+
+  function shouldStartWheelResponder(event: GestureResponderEvent) {
+    return isDesktopPointerEvent(event);
   }
 
   function shouldUseWheelGesture(event: GestureResponderEvent) {
@@ -756,12 +816,15 @@ export default function YearWheelView({
             onTouchStart={rememberWheelTouchStart}
             onTouchEnd={handleWheelTouchEnd}
             onTouchCancel={cancelWheelTouch}
-            onStartShouldSetResponder={() => false}
+            onStartShouldSetResponder={shouldStartWheelResponder}
             onMoveShouldSetResponder={shouldUseWheelGesture}
             onResponderGrant={showWheelMagnifier}
             onResponderMove={showWheelMagnifier}
             onResponderRelease={handleWheelTouchEnd}
             onResponderTerminate={hideWheelMagnifierSoon}
+            {...(Platform.OS === "web"
+              ? ({ onClick: handleWheelMouseClick } as any)
+              : {})}
             style={{
               position: "absolute",
               left: 0,
