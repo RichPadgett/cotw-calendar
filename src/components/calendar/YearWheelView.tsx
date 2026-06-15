@@ -69,7 +69,6 @@ const GATE_DOTS = [
 
 const FRACTIONAL_MARKER_SPACING = (Math.PI * 2 * 0.34) / 364;
 const WHEEL_DRAG_THRESHOLD = 8;
-const VERTICAL_SCROLL_BIAS = 1.18;
 
 type WheelMarkerEntry = {
   id: string;
@@ -554,7 +553,7 @@ export default function YearWheelView({
     if (typeof x !== "number" || typeof y !== "number") return;
 
     showWheelMagnifierAt(x, y);
-    hideWheelMagnifierSoon();
+    hideWheelMagnifierSoon(220);
   }
 
   function showWheelMagnifier(event: GestureResponderEvent) {
@@ -578,35 +577,12 @@ export default function YearWheelView({
     };
   }
 
-  function isDesktopPointerEvent(event: GestureResponderEvent) {
-    const nativeEvent = event.nativeEvent as GestureResponderEvent["nativeEvent"] & {
-      pointerType?: string;
-    };
-
-    return Platform.OS === "web" && nativeEvent.pointerType === "mouse";
+  function shouldStartWheelResponder() {
+    return true;
   }
 
-  function shouldStartWheelResponder(event: GestureResponderEvent) {
-    return isDesktopPointerEvent(event);
-  }
-
-  function shouldUseWheelGesture(event: GestureResponderEvent) {
-    const start = wheelTouchStartRef.current;
-
-    if (!start) {
-      return false;
-    }
-
-    const deltaX = event.nativeEvent.pageX - start.x;
-    const deltaY = event.nativeEvent.pageY - start.y;
-    const absX = Math.abs(deltaX);
-    const absY = Math.abs(deltaY);
-
-    if (absX < WHEEL_DRAG_THRESHOLD && absY < WHEEL_DRAG_THRESHOLD) {
-      return false;
-    }
-
-    return absY <= absX * VERTICAL_SCROLL_BIAS;
+  function shouldUseWheelGesture() {
+    return true;
   }
 
   function handleWheelTouchEnd(event: GestureResponderEvent) {
@@ -634,7 +610,7 @@ export default function YearWheelView({
     hideWheelMagnifierSoon();
   }
 
-  function hideWheelMagnifierSoon() {
+  function hideWheelMagnifierSoon(delay = 900) {
     if (interactionTimeoutRef.current) {
       clearTimeout(interactionTimeoutRef.current);
     }
@@ -642,7 +618,7 @@ export default function YearWheelView({
     interactionTimeoutRef.current = setTimeout(() => {
       setIsWheelInteracting(false);
       onInteractionChange?.(false);
-    }, 900);
+    }, delay);
   }
 
   useEffect(() => {
