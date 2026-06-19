@@ -6,7 +6,10 @@
 
 // Dependencies
 import { Router } from "express";
-import { getCalendarDayContent } from "../services/calendarContentStore";
+import {
+  getCalendarDayContent,
+  getLatestShabbatTeaching,
+} from "../services/calendarContentStore";
 import { getNoticeIndex } from "../services/calendarNoticeIndex";
 import {
   getPerpetualMarkers,
@@ -62,6 +65,25 @@ router.get("/perpetual-markers/checksum", (_req, res) => {
   res.json({
     checksum: getPerpetualMarkersChecksum(),
   });
+});
+
+/**
+ * API endpoint: returns the latest posted Shabbat teaching for the active group.
+ * Used by the app header to fill the Spotify player from saved calendar content.
+ */
+router.get("/latest-shabbat-teaching", (req, res) => {
+  try {
+    const groupCode = getGroupCode(req);
+    const teaching = getLatestShabbatTeaching(groupCode);
+
+    res.json(teaching);
+  } catch (error) {
+    console.log("Failed to load latest Shabbat teaching", error);
+
+    res.status(500).json({
+      error: "Failed to load latest Shabbat teaching.",
+    });
+  }
 });
 
 /**

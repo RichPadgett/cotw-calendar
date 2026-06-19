@@ -26,6 +26,7 @@ import HistoryTimelineView, {
   formatHistoricalDate,
   getRangeLabel,
 } from "../src/components/calendar/HistoryTimelineView";
+import LatestShabbatTeachingPlayer from "../src/components/calendar/LatestShabbatTeachingPlayer";
 import YearView from "../src/components/calendar/YearView";
 import YearWheelView from "../src/components/calendar/YearWheelView";
 import CommandExplorerView, {
@@ -747,6 +748,8 @@ export default function HomeScreen() {
             onChangeTab={setActiveTab}
           />
 
+          <LatestShabbatTeachingPlayer groupCode={groupCode} />
+
           {activeTab === "calendar" && (
             <AppHeader
               month={currentMonth}
@@ -928,7 +931,7 @@ function TabSelector({
   return (
     <View
       style={{
-        marginBottom: 12,
+        marginBottom: 8,
         flexDirection: "row",
         gap: 6,
         padding: 4,
