@@ -54,6 +54,8 @@ scripture_reference(daily_offerings, 'Numbers 28:1-8').
 story_reference(daily_offerings, '1 Chronicles 16:39-40', 'David appoints priests to offer burnt offerings continually morning and evening.').
 story_reference(daily_offerings, 'Ezra 3:3-5', 'The returned exiles offer burnt offerings morning and evening.').
 study_note(daily_offerings, 'The daily offering command shows the regular rhythm around the sanctuary service.').
+command_requirement(daily_offerings, 'Temple or Tabernacle').
+command_requirement(daily_offerings, 'Priests').
 
 % Command: sabbath_offerings
 command(sabbath_offerings).
@@ -73,6 +75,9 @@ scripture_reference(monthly_offerings, 'Numbers 28:11-15').
 story_reference(monthly_offerings, '2 Chronicles 8:12-13', 'Solomon offers according to the appointed order for new moons.').
 story_reference(monthly_offerings, 'Ezra 3:5', 'The returned exiles offer for new moons and appointed feasts.').
 study_note(monthly_offerings, 'The new month offerings mark month-level appointed rhythm.').
+command_requirement(monthly_offerings, 'Priests').
+command_requirement(monthly_offerings, 'Temple or Tabernacle').
+story_reference(monthly_offerings, 'Romans 12:1 - I appeal to you therefore, brothers,fn by the mercies of God, to present your bodies as a living sacrifice, holy and acceptable to God, which is your spiritual worship.', 'Romans 12:1 - I appeal to you therefore, brothers,fn by the mercies of God, to present your bodies as a living sacrifice, holy and acceptable to God, which is your spiritual worship.').
 
 % Command: passover_unleavened_bread_offerings
 command(passover_unleavened_bread_offerings).

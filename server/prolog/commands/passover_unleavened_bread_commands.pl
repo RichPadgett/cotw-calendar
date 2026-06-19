@@ -69,7 +69,6 @@ normal_obedience(passover_lamb_without_blemish, 'Select and slaughter a lamb or 
 concerns(passover_lamb_without_blemish, passover_memorial).
 scripture_reference(passover_lamb_without_blemish, 'Exodus 12:3-6').
 story_reference(passover_lamb_without_blemish, '2 Chronicles 35:7-9', 'Josiah and the leaders provide lambs, kids, and bulls for the Passover offerings.').
-study_note(passover_lamb_without_blemish, 'The lamb command is central to the original Passover memorial.').
 
 % Command: eat_passover_with_unleavened_bread_and_bitter_herbs
 command(eat_passover_with_unleavened_bread_and_bitter_herbs).
@@ -197,7 +196,6 @@ command_title(choose_the_passover_lamb_on_the_tenth_day, 'Exodus 12:3 - Choose t
 normal_obedience(choose_the_passover_lamb_on_the_tenth_day, 'Choose the Passover lamb on the tenth day.').
 concerns(choose_the_passover_lamb_on_the_tenth_day, passover_memorial).
 scripture_reference(choose_the_passover_lamb_on_the_tenth_day, 'Exodus 12:3').
-study_note(choose_the_passover_lamb_on_the_tenth_day, 'This command preserves Passover as a memorial of deliverance and keeps its details tied to the written Torah: Choose the Passover lamb on the tenth day.').
 
 % Command: keep_the_passover_lamb_until_the_fourteenth_day
 command(keep_the_passover_lamb_until_the_fourteenth_day).
@@ -205,7 +203,6 @@ command_title(keep_the_passover_lamb_until_the_fourteenth_day, 'Exodus 12:6 - Ke
 normal_obedience(keep_the_passover_lamb_until_the_fourteenth_day, 'Keep the Passover lamb until the fourteenth day.').
 concerns(keep_the_passover_lamb_until_the_fourteenth_day, passover_memorial).
 scripture_reference(keep_the_passover_lamb_until_the_fourteenth_day, 'Exodus 12:6').
-study_note(keep_the_passover_lamb_until_the_fourteenth_day, 'This command preserves Passover as a memorial of deliverance and keeps its details tied to the written Torah: Keep the Passover lamb until the fourteenth day.').
 
 % Command: slaughter_the_passover_at_twilight_on_the_appointed_day
 command(slaughter_the_passover_at_twilight_on_the_appointed_day).
@@ -294,7 +291,6 @@ command_title(do_not_break_a_bone_of_the_passover_lamb, 'Exodus 12:46 - Do not b
 normal_obedience(do_not_break_a_bone_of_the_passover_lamb, 'Do not break a bone of the Passover lamb.').
 concerns(do_not_break_a_bone_of_the_passover_lamb, passover_memorial).
 scripture_reference(do_not_break_a_bone_of_the_passover_lamb, 'Exodus 12:46').
-study_note(do_not_break_a_bone_of_the_passover_lamb, 'This command preserves Passover as a memorial of deliverance and keeps its details tied to the written Torah: Do not break a bone of the Passover lamb.').
 
 % Command: eat_passover_in_one_house
 command(eat_passover_in_one_house).

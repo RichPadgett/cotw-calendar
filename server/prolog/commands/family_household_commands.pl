@@ -142,6 +142,7 @@ normal_obedience(do_not_strike_father_or_mother, 'Do not strike father or mother
 concerns(do_not_strike_father_or_mother, marriage_household_procedure).
 scripture_reference(do_not_strike_father_or_mother, 'Exodus 21:15').
 study_note(do_not_strike_father_or_mother, 'This command addresses a defined household, marriage, or servant case and keeps the procedure bounded by the Torah text: Do not strike father or mother.').
+source_term(do_not_strike_father_or_mother, hebrew, 'nāḵâ', 'to smite, strike, beat, scourge, clap, applaud, give a thrust; to smite, kill, slay (man or beast)').
 
 % Command: do_not_curse_father_or_mother
 command(do_not_curse_father_or_mother).
@@ -249,6 +250,7 @@ normal_obedience(do_not_take_your_father_s_wife, 'Do not take your father''s wif
 concerns(do_not_take_your_father_s_wife, marriage_household_procedure).
 scripture_reference(do_not_take_your_father_s_wife, 'Deuteronomy 22:30').
 study_note(do_not_take_your_father_s_wife, 'This command addresses a defined household, marriage, or servant case and keeps the procedure bounded by the Torah text: Do not take your father''s wife.').
+translation_note(do_not_take_your_father_s_wife, 'lāqaḥ - to take, get, fetch, lay hold of, seize, receive, acquire, buy, bring, marry, take a wife, snatch, take away ;  to take to or for a person, procure, get, take possession of, select, choose, take in marriage, receive, accept').
 
 % Command: do_not_remarry_a_former_wife_after_she_became_another_man_s_wife
 command(do_not_remarry_a_former_wife_after_she_became_another_man_s_wife).

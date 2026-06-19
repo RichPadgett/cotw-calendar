@@ -224,6 +224,7 @@ concerns(make_the_bronze_laver_for_washing, priestly_holiness).
 scripture_reference(make_the_bronze_laver_for_washing, 'Exodus 30:17-21').
 study_note(make_the_bronze_laver_for_washing, 'This command belongs to priestly and sanctuary service, where access, offerings, portions, and holiness are ordered by Torah: Make the bronze laver for washing.').
 normal_obedience(make_the_bronze_laver_for_washing, 'Tabernacle Builders').
+command_requirement(make_the_bronze_laver_for_washing, 'Tabernacle Builders').
 
 % Command: priests_must_wash_hands_and_feet_before_service
 command(priests_must_wash_hands_and_feet_before_service).
@@ -442,6 +443,8 @@ normal_obedience(do_not_offer_blemished_animals, 'Do not offer blemished animals
 concerns(do_not_offer_blemished_animals, priestly_holiness).
 scripture_reference(do_not_offer_blemished_animals, 'Leviticus 22:20-25').
 study_note(do_not_offer_blemished_animals, 'This command belongs to priestly and sanctuary service, where access, offerings, portions, and holiness are ordered by Torah: Do not offer blemished animals.').
+command_requirement(do_not_offer_blemished_animals, 'Priests').
+command_requirement(do_not_offer_blemished_animals, 'Tabernacle or Temple').
 
 % Command: do_not_slaughter_an_animal_and_its_young_on_the_same_day
 command(do_not_slaughter_an_animal_and_its_young_on_the_same_day).
@@ -482,6 +485,7 @@ normal_obedience(ordinary_priests_must_not_become_unclean_for_the_dead_except_cl
 concerns(ordinary_priests_must_not_become_unclean_for_the_dead_except_close_relatives, priestly_holiness).
 scripture_reference(ordinary_priests_must_not_become_unclean_for_the_dead_except_close_relatives, 'Leviticus 21:1-4').
 study_note(ordinary_priests_must_not_become_unclean_for_the_dead_except_close_relatives, 'This command belongs to priestly and sanctuary service, where access, offerings, portions, and holiness are ordered by Torah: Ordinary priests must not become unclean for the dead except close relatives.').
+command_requirement(ordinary_priests_must_not_become_unclean_for_the_dead_except_close_relatives, 'Priests').
 
 % Command: priests_must_not_marry_a_prostitute_profaned_woman_or_divorced_woman
 command(priests_must_not_marry_a_prostitute_profaned_woman_or_divorced_woman).
