@@ -84,7 +84,7 @@ export default function LatestShabbatTeachingPlayer({ groupCode }: Props) {
   }, [latestTeaching?.url]);
 
   const latestTeachingEmbed =
-    Platform.OS === "web" && latestTeachingEmbedUrl && !isCollapsed
+    Platform.OS === "web" && latestTeachingEmbedUrl
       ? createElement("iframe" as any, {
           title: latestTeaching?.title ?? "Latest Shabbat teaching",
           src: latestTeachingEmbedUrl,
@@ -180,35 +180,40 @@ export default function LatestShabbatTeachingPlayer({ groupCode }: Props) {
         </View>
       </Pressable>
 
-      {!isCollapsed
-        ? (latestTeachingEmbed ?? (
-            <Pressable
-              onPress={openLatestTeaching}
+      <View
+        style={{
+          height: isCollapsed ? 0 : undefined,
+          overflow: "hidden",
+        }}
+      >
+        {latestTeachingEmbed ?? (
+          <Pressable
+            onPress={openLatestTeaching}
+            style={{
+              minHeight: 78,
+              paddingHorizontal: 14,
+              paddingVertical: 12,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 12,
+            }}
+          >
+            <Text
               style={{
-                minHeight: 78,
-                paddingHorizontal: 14,
-                paddingVertical: 12,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: 12,
+                flex: 1,
+                fontSize: 11,
+                fontWeight: "700",
+                color: "#d1d5db",
               }}
             >
-              <Text
-                style={{
-                  flex: 1,
-                  fontSize: 11,
-                  fontWeight: "700",
-                  color: "#d1d5db",
-                }}
-              >
-                {`M${latestTeaching.month} D${latestTeaching.day} · ${latestTeaching.gregorianDate}`}
-              </Text>
+              {`M${latestTeaching.month} D${latestTeaching.day} · ${latestTeaching.gregorianDate}`}
+            </Text>
 
-              <MaterialIcons name="play-circle" size={34} color="#22c55e" />
-            </Pressable>
-          ))
-        : null}
+            <MaterialIcons name="play-circle" size={34} color="#22c55e" />
+          </Pressable>
+        )}
+      </View>
     </View>
   );
 }
