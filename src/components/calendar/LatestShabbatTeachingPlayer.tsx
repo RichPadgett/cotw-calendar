@@ -47,7 +47,7 @@ export default function LatestShabbatTeachingPlayer({ groupCode }: Props) {
     useState<LatestShabbatTeaching | null>(null);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const isWidePlayer = width >= 820;
-  const isCompactCollapsed = isCollapsed && width < 680;
+  const isCompactCollapsed = isCollapsed;
 
   useEffect(() => {
     let isMounted = true;
