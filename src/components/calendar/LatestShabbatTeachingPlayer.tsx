@@ -29,6 +29,7 @@ type LatestShabbatTeaching = {
 
 type Props = {
   groupCode: string;
+  collapseRequestId?: number;
 };
 
 function getSpotifyEmbedUrl(url: string): string | null {
@@ -41,7 +42,10 @@ function getSpotifyEmbedUrl(url: string): string | null {
   return `https://open.spotify.com/embed/episode/${match[1]}?utm_source=generator`;
 }
 
-export default function LatestShabbatTeachingPlayer({ groupCode }: Props) {
+export default function LatestShabbatTeachingPlayer({
+  groupCode,
+  collapseRequestId = 0,
+}: Props) {
   const { width } = useWindowDimensions();
   const [latestTeaching, setLatestTeaching] =
     useState<LatestShabbatTeaching | null>(null);
@@ -75,6 +79,12 @@ export default function LatestShabbatTeachingPlayer({ groupCode }: Props) {
       isMounted = false;
     };
   }, [groupCode]);
+
+  useEffect(() => {
+    if (collapseRequestId > 0) {
+      setIsCollapsed(true);
+    }
+  }, [collapseRequestId]);
 
   const latestTeachingEmbedUrl = useMemo(() => {
     if (!latestTeaching?.url) {

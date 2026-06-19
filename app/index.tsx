@@ -74,6 +74,7 @@ export default function HomeScreen() {
   const scrollViewRef = useRef<ScrollView>(null);
   const monthOffsetsRef = useRef<Record<number, number>>({});
   const currentScrollYRef = useRef(0);
+  const latestTeachingAutoCollapsedRef = useRef(false);
   const headerHeightRef = useRef(DEFAULT_STICKY_HEADER_OFFSET);
   const yearViewTopOffsetRef = useRef(DEFAULT_YEAR_VIEW_TOP_OFFSET);
 
@@ -99,6 +100,8 @@ export default function HomeScreen() {
     useState("");
   const [commandRandomRequestId, setCommandRandomRequestId] = useState(0);
   const [commandPendingRequestId, setCommandPendingRequestId] = useState(0);
+  const [latestTeachingCollapseRequestId, setLatestTeachingCollapseRequestId] =
+    useState(0);
   const [selectedTimelineOccurrence, setSelectedTimelineOccurrence] =
     useState<TimelineOccurrence | null>(null);
   const [isTimelineEditMode, setIsTimelineEditMode] = useState(false);
@@ -211,6 +214,11 @@ export default function HomeScreen() {
 
     setPerpetualMarkers(savedMarkers);
     setPerpetualMarkersChecksum(null);
+  }
+
+  function changeActiveTab(tab: AppTab) {
+    latestTeachingAutoCollapsedRef.current = false;
+    setActiveTab(tab);
   }
 
   function confirmChangeGroup() {
@@ -587,6 +595,11 @@ export default function HomeScreen() {
     const scrollY = event.nativeEvent.contentOffset.y;
     currentScrollYRef.current = scrollY;
 
+    if (!latestTeachingAutoCollapsedRef.current && scrollY > 12) {
+      latestTeachingAutoCollapsedRef.current = true;
+      setLatestTeachingCollapseRequestId((id) => id + 1);
+    }
+
     if (activeTab !== "calendar") return;
 
     const headerEdgeY = scrollY - getMonthHeaderScrollOffset();
@@ -745,10 +758,13 @@ export default function HomeScreen() {
           <TabSelector
             activeTab={activeTab}
             isTimelineVisible={isTimelineVisible}
-            onChangeTab={setActiveTab}
+            onChangeTab={changeActiveTab}
           />
 
-          <LatestShabbatTeachingPlayer groupCode={groupCode} />
+          <LatestShabbatTeachingPlayer
+            groupCode={groupCode}
+            collapseRequestId={latestTeachingCollapseRequestId}
+          />
 
           {activeTab === "calendar" && (
             <AppHeader
