@@ -47,6 +47,7 @@ export default function LatestShabbatTeachingPlayer({ groupCode }: Props) {
     useState<LatestShabbatTeaching | null>(null);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const isWidePlayer = width >= 820;
+  const isCompactCollapsed = isCollapsed && width < 680;
 
   useEffect(() => {
     let isMounted = true;
@@ -118,8 +119,8 @@ export default function LatestShabbatTeachingPlayer({ groupCode }: Props) {
     <View
       style={{
         marginTop: 0,
-        marginBottom: 12,
-        borderRadius: 14,
+        marginBottom: isCompactCollapsed ? 8 : 12,
+        borderRadius: isCompactCollapsed ? 10 : 14,
         overflow: "hidden",
         backgroundColor: "#111827",
         borderWidth: latestTeachingEmbed ? 0 : 1,
@@ -129,9 +130,9 @@ export default function LatestShabbatTeachingPlayer({ groupCode }: Props) {
       <Pressable
         onPress={() => setIsCollapsed((value) => !value)}
         style={{
-          minHeight: 44,
-          paddingHorizontal: 12,
-          paddingVertical: 9,
+          minHeight: isCompactCollapsed ? 26 : 44,
+          paddingHorizontal: isCompactCollapsed ? 10 : 12,
+          paddingVertical: isCompactCollapsed ? 4 : 9,
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-between",
@@ -143,26 +144,28 @@ export default function LatestShabbatTeachingPlayer({ groupCode }: Props) {
           <Text
             numberOfLines={1}
             style={{
-              fontSize: 11,
+              fontSize: isCompactCollapsed ? 10 : 11,
               fontWeight: "900",
               color: "#86efac",
               textTransform: "uppercase",
             }}
           >
-            Latest Shabbat Teaching
+            {isCompactCollapsed ? "Latest Teaching" : "Latest Shabbat Teaching"}
           </Text>
 
-          <Text
-            numberOfLines={1}
-            style={{
-              marginTop: 2,
-              fontSize: 13,
-              fontWeight: "900",
-              color: "#ffffff",
-            }}
-          >
-            {latestTeaching.title}
-          </Text>
+          {!isCompactCollapsed ? (
+            <Text
+              numberOfLines={1}
+              style={{
+                marginTop: 2,
+                fontSize: 13,
+                fontWeight: "900",
+                color: "#ffffff",
+              }}
+            >
+              {latestTeaching.title}
+            </Text>
+          ) : null}
         </View>
 
         <View
@@ -174,7 +177,7 @@ export default function LatestShabbatTeachingPlayer({ groupCode }: Props) {
         >
           <MaterialIcons
             name={isCollapsed ? "expand-more" : "expand-less"}
-            size={24}
+            size={isCompactCollapsed ? 18 : 24}
             color="#e5e7eb"
           />
         </View>
