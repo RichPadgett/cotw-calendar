@@ -12,6 +12,7 @@ import {
   Platform,
   Pressable,
   Text,
+  useWindowDimensions,
   View,
 } from "react-native";
 import ScrollIcon from "../../../assets/enoch/icons/scroll.png";
@@ -30,17 +31,11 @@ type Props = {
 };
 
 // Constants
-const SIZE = 320;
-const CENTER = SIZE / 2;
-
-const OUTER_RING_SIZE = SIZE + 42;
-const OUTER_CENTER = OUTER_RING_SIZE / 2;
-
-const MONTH_RING_INNER_RADIUS = SIZE / 2 - 42;
-const MONTH_LABEL_RADIUS = SIZE / 2 - 22;
+const BASE_SIZE = 320;
+const DESKTOP_BREAKPOINT = 1100;
+const DESKTOP_MIN_SIZE = BASE_SIZE * 2;
+const DESKTOP_MAX_SIZE = BASE_SIZE * 3;
 const CENTER_BADGE_SIZE = 104;
-const MARKER_INNER_RADIUS = CENTER_BADGE_SIZE / 2;
-const MARKER_OUTER_RADIUS = SIZE / 2 - 4;
 const TODAY_TICK_LENGTH = 18;
 const DAY_SHADE_HEIGHT = 1;
 const GATE_SHADE_HEIGHT = 3;
@@ -69,7 +64,29 @@ const GATE_DOTS = [
 
 const FRACTIONAL_MARKER_SPACING = (Math.PI * 2 * 0.34) / 364;
 const WHEEL_DRAG_THRESHOLD = 8;
-const WHEEL_INTERACTION_RADIUS = SIZE / 2;
+const getWheelMetrics = (viewportWidth: number) => {
+  const desktopTargetSize = Math.min(
+    DESKTOP_MAX_SIZE,
+    Math.max(DESKTOP_MIN_SIZE, Math.floor(viewportWidth * 0.62))
+  );
+  const size =
+    viewportWidth >= DESKTOP_BREAKPOINT ? desktopTargetSize : BASE_SIZE;
+  const center = size / 2;
+  const outerRingSize = size + 42;
+  const outerCenter = outerRingSize / 2;
+
+  return {
+    size,
+    center,
+    outerRingSize,
+    outerCenter,
+    monthRingInnerRadius: size / 2 - 42,
+    monthLabelRadius: size / 2 - 22,
+    markerInnerRadius: CENTER_BADGE_SIZE / 2,
+    markerOuterRadius: size / 2 - 4,
+    wheelInteractionRadius: size / 2,
+  };
+};
 
 type WheelMarkerEntry = {
   id: string;
@@ -386,6 +403,7 @@ export default function YearWheelView({
   onInteractionChange,
   todayDateId,
 }: Props) {
+  const { width: viewportWidth } = useWindowDimensions();
   const [selectedWheelMarkerId, setSelectedWheelMarkerId] = useState<
     string | null
   >(null);
@@ -476,6 +494,17 @@ export default function YearWheelView({
   const selectedWheelNode = selectedWheelEntry?.node;
   const selectedWheelColor = selectedWheelEntry?.color ?? "#3157a8";
   const selectedWheelLabel = selectedWheelEntry?.label;
+  const {
+    size: SIZE,
+    center: CENTER,
+    outerRingSize: OUTER_RING_SIZE,
+    outerCenter: OUTER_CENTER,
+    monthRingInnerRadius: MONTH_RING_INNER_RADIUS,
+    monthLabelRadius: MONTH_LABEL_RADIUS,
+    markerInnerRadius: MARKER_INNER_RADIUS,
+    markerOuterRadius: MARKER_OUTER_RADIUS,
+    wheelInteractionRadius: WHEEL_INTERACTION_RADIUS,
+  } = getWheelMetrics(viewportWidth);
 
   useEffect(() => {
     setSelectedWheelMarkerId((currentMarkerId) => {
@@ -564,7 +593,10 @@ export default function YearWheelView({
   }
 
   function showWheelMagnifier(event: GestureResponderEvent) {
-    showWheelMagnifierAt(event.nativeEvent.locationX, event.nativeEvent.locationY);
+    showWheelMagnifierAt(
+      event.nativeEvent.locationX,
+      event.nativeEvent.locationY
+    );
   }
 
   function showWheelMagnifierAt(x: number, y: number) {
