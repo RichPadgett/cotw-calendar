@@ -505,6 +505,7 @@ export default function YearWheelView({
     markerOuterRadius: MARKER_OUTER_RADIUS,
     wheelInteractionRadius: WHEEL_INTERACTION_RADIUS,
   } = getWheelMetrics(viewportWidth);
+  const magnifierScale = Math.min(1.35, Math.max(1, SIZE / BASE_SIZE / 2));
 
   useEffect(() => {
     setSelectedWheelMarkerId((currentMarkerId) => {
@@ -1135,24 +1136,24 @@ export default function YearWheelView({
               pointerEvents="none"
               style={{
                 position: "absolute",
-                left: 28,
-                right: 28,
-                bottom: 14,
-                minHeight: 50,
-                borderRadius: 12,
+                left: 28 * magnifierScale,
+                right: 28 * magnifierScale,
+                bottom: 14 * magnifierScale,
+                minHeight: 50 * magnifierScale,
+                borderRadius: 12 * magnifierScale,
                 borderWidth: 1,
                 borderColor: "#d1d5db",
                 backgroundColor: "#ffffffee",
-                paddingHorizontal: 10,
-                paddingVertical: 8,
+                paddingHorizontal: 10 * magnifierScale,
+                paddingVertical: 8 * magnifierScale,
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "center",
-                gap: 8,
+                gap: 8 * magnifierScale,
                 zIndex: 35,
                 shadowColor: "#111827",
                 shadowOpacity: 0.16,
-                shadowRadius: 8,
+                shadowRadius: 8 * magnifierScale,
                 shadowOffset: { width: 0, height: 3 },
               }}
             >
@@ -1163,15 +1164,15 @@ export default function YearWheelView({
                   <View
                     key={`magnifier-${entry.id}`}
                     style={{
-                      width: isSelected ? 46 : 34,
+                      width: (isSelected ? 46 : 34) * magnifierScale,
                       alignItems: "center",
-                      gap: 5,
+                      gap: 5 * magnifierScale,
                     }}
                   >
                     <View
                       style={{
-                        width: isSelected ? 38 : 26,
-                        height: isSelected ? 8 : 5,
+                        width: (isSelected ? 38 : 26) * magnifierScale,
+                        height: (isSelected ? 8 : 5) * magnifierScale,
                         borderRadius: 999,
                         backgroundColor: entry.color,
                         opacity: isSelected ? 1 : 0.55,
@@ -1182,8 +1183,8 @@ export default function YearWheelView({
                       adjustsFontSizeToFit
                       minimumFontScale={0.62}
                       style={{
-                        width: isSelected ? 46 : 34,
-                        fontSize: isSelected ? 9 : 7,
+                        width: (isSelected ? 46 : 34) * magnifierScale,
+                        fontSize: (isSelected ? 9 : 7) * magnifierScale,
                         fontWeight: isSelected ? "900" : "800",
                         color: isSelected ? entry.color : "#64748b",
                         textAlign: "center",
