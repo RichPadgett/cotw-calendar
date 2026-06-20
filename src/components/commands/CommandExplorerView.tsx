@@ -254,6 +254,10 @@ export default function CommandExplorerView({
       headers.set("X-COTW-Username", requestUsername);
     }
 
+    if (groupCode) {
+      headers.set("X-COTW-Group-Code", groupCode);
+    }
+
     return fetch(input, {
       ...init,
       headers,
