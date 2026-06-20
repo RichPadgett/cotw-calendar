@@ -25,6 +25,13 @@ type LatestShabbatTeaching = {
   title: string;
   url: string;
   provider: "spotify";
+  teachings?: LatestShabbatTeachingItem[];
+};
+
+type LatestShabbatTeachingItem = {
+  title: string;
+  url: string;
+  provider: "spotify";
 };
 
 type Props = {
@@ -51,6 +58,7 @@ export default function LatestShabbatTeachingPlayer({
   const { width } = useWindowDimensions();
   const [latestTeaching, setLatestTeaching] =
     useState<LatestShabbatTeaching | null>(null);
+  const [selectedTeachingIndex, setSelectedTeachingIndex] = useState(0);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const isWidePlayer = width >= 820;
   const isCompactCollapsed = isCollapsed;
@@ -75,6 +83,7 @@ export default function LatestShabbatTeachingPlayer({
       .then((teaching: LatestShabbatTeaching | null) => {
         if (isMounted) {
           setLatestTeaching(teaching);
+          setSelectedTeachingIndex(0);
         }
       })
       .catch(() => {
@@ -99,13 +108,35 @@ export default function LatestShabbatTeachingPlayer({
       return null;
     }
 
-    return getSpotifyEmbedUrl(latestTeaching.url);
-  }, [latestTeaching?.url]);
+    const selectedTeaching =
+      latestTeaching.teachings?.[selectedTeachingIndex] ?? latestTeaching;
+
+    return getSpotifyEmbedUrl(selectedTeaching.url);
+  }, [latestTeaching, selectedTeachingIndex]);
+  const teachingItems =
+    latestTeaching?.teachings && latestTeaching.teachings.length > 0
+      ? latestTeaching.teachings
+      : latestTeaching
+        ? [
+            {
+              title: latestTeaching.title,
+              url: latestTeaching.url,
+              provider: latestTeaching.provider,
+            },
+          ]
+        : [];
+  const selectedTeaching =
+    teachingItems[selectedTeachingIndex] ?? teachingItems[0] ?? null;
+  const hasMultipleTeachings = teachingItems.length > 1;
+  const selectedTeachingNumber =
+    teachingItems.length > 0
+      ? Math.min(selectedTeachingIndex + 1, teachingItems.length)
+      : 0;
 
   const latestTeachingEmbed =
     Platform.OS === "web" && latestTeachingEmbedUrl
       ? createElement("iframe" as any, {
-          title: latestTeaching?.title ?? "Latest Shabbat teaching",
+          title: selectedTeaching?.title ?? "Latest Shabbat teaching",
           src: latestTeachingEmbedUrl,
           width: "100%",
           height: isWidePlayer ? "352" : "152",
@@ -124,14 +155,26 @@ export default function LatestShabbatTeachingPlayer({
       : null;
 
   const openLatestTeaching = () => {
-    if (latestTeaching?.url) {
-      void Linking.openURL(latestTeaching.url);
+    if (selectedTeaching?.url) {
+      void Linking.openURL(selectedTeaching.url);
     }
   };
 
   if (!latestTeaching) {
     return null;
   }
+
+  const goToPreviousTeaching = () => {
+    setSelectedTeachingIndex((currentIndex) =>
+      currentIndex <= 0 ? teachingItems.length - 1 : currentIndex - 1
+    );
+  };
+
+  const goToNextTeaching = () => {
+    setSelectedTeachingIndex((currentIndex) =>
+      currentIndex >= teachingItems.length - 1 ? 0 : currentIndex + 1
+    );
+  };
 
   return (
     <View
@@ -181,7 +224,7 @@ export default function LatestShabbatTeachingPlayer({
                 color: "#ffffff",
               }}
             >
-              {latestTeaching.title}
+              {selectedTeaching?.title ?? latestTeaching.title}
             </Text>
           ) : null}
         </View>
@@ -193,6 +236,66 @@ export default function LatestShabbatTeachingPlayer({
             gap: 8,
           }}
         >
+          {hasMultipleTeachings && !isCompactCollapsed ? (
+            <>
+              <Pressable
+                onPress={(event) => {
+                  event.stopPropagation();
+                  goToPreviousTeaching();
+                }}
+                accessibilityRole="button"
+                accessibilityLabel="Previous teaching part"
+                style={({ pressed }) => [
+                  {
+                    width: 30,
+                    height: 30,
+                    borderRadius: 15,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: "#1f2937",
+                  },
+                  pressed && { opacity: 0.78 },
+                ]}
+              >
+                <MaterialIcons name="chevron-left" size={22} color="#e5e7eb" />
+              </Pressable>
+
+              <Text
+                style={{
+                  minWidth: 42,
+                  textAlign: "center",
+                  fontSize: 11,
+                  fontWeight: "900",
+                  color: "#d1d5db",
+                }}
+              >
+                {`${selectedTeachingNumber}/${teachingItems.length}`}
+              </Text>
+
+              <Pressable
+                onPress={(event) => {
+                  event.stopPropagation();
+                  goToNextTeaching();
+                }}
+                accessibilityRole="button"
+                accessibilityLabel="Next teaching part"
+                style={({ pressed }) => [
+                  {
+                    width: 30,
+                    height: 30,
+                    borderRadius: 15,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: "#1f2937",
+                  },
+                  pressed && { opacity: 0.78 },
+                ]}
+              >
+                <MaterialIcons name="chevron-right" size={22} color="#e5e7eb" />
+              </Pressable>
+            </>
+          ) : null}
+
           <MaterialIcons
             name={isCollapsed ? "expand-more" : "expand-less"}
             size={isCompactCollapsed ? 18 : 24}

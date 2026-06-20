@@ -29,6 +29,13 @@ export type LatestShabbatTeaching = {
   title: string;
   url: string;
   provider: "spotify";
+  teachings: LatestShabbatTeachingItem[];
+};
+
+export type LatestShabbatTeachingItem = {
+  title: string;
+  url: string;
+  provider: "spotify";
 };
 
 // Helpers
@@ -146,18 +153,10 @@ function isSpotifyItem(item: CalendarContentItem): boolean {
   return Boolean(item.url?.includes("open.spotify.com/episode"));
 }
 
-function getFirstSpotifyItem(
-  content: CalendarDayContent
-): CalendarContentItem | null {
-  for (const section of content.sections ?? []) {
-    const item = section.items.find(isSpotifyItem);
-
-    if (item) {
-      return item;
-    }
-  }
-
-  return null;
+function getSpotifyItems(content: CalendarDayContent): CalendarContentItem[] {
+  return (content.sections ?? []).flatMap((section) =>
+    section.items.filter(isSpotifyItem)
+  );
 }
 
 function readDayContentFile(filePath: string): CalendarDayContent | null {
@@ -265,9 +264,9 @@ export function getLatestShabbatTeaching(
           return null;
         }
 
-        const spotifyItem = getFirstSpotifyItem(content);
+        const spotifyItems = getSpotifyItems(content);
 
-        if (!spotifyItem?.url) {
+        if (spotifyItems.length === 0) {
           return null;
         }
 
@@ -283,14 +282,28 @@ export function getLatestShabbatTeaching(
           return null;
         }
 
+        const teachings = spotifyItems
+          .filter((item) => Boolean(item.url))
+          .map((item, index) => ({
+            title: item.label || `${content.title} Part ${index + 1}`,
+            url: item.url as string,
+            provider: "spotify" as const,
+          }));
+        const firstTeaching = teachings[0];
+
+        if (!firstTeaching) {
+          return null;
+        }
+
         return {
           enochYear: content.enochYear,
           month: content.month,
           day: content.day,
           gregorianDate,
-          title: spotifyItem.label || content.title,
-          url: spotifyItem.url,
+          title: firstTeaching.title || content.title,
+          url: firstTeaching.url,
           provider: "spotify" as const,
+          teachings,
         };
       })
       .filter((item): item is LatestShabbatTeaching => Boolean(item))
