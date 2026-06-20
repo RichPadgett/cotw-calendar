@@ -261,26 +261,24 @@ export default function AppHeader({
               </Pressable>
             ) : null}
 
-            {isHeaderCollapsed ? (
-              <Pressable
-                onPress={onChangeGroup}
-                accessibilityRole="button"
-                accessibilityLabel="Change calendar group"
-                style={({ pressed }) => [
-                  {
-                    width: 36,
-                    height: 36,
-                    borderRadius: 18,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor: "#f8fafc",
-                  },
-                  pressed && { opacity: 0.78 },
-                ]}
-              >
-                <MaterialIcons name="logout" size={22} color="#64748b" />
-              </Pressable>
-            ) : null}
+            <Pressable
+              onPress={onChangeGroup}
+              accessibilityRole="button"
+              accessibilityLabel="Change calendar group"
+              style={({ pressed }) => [
+                {
+                  width: 36,
+                  height: 36,
+                  borderRadius: 18,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "#f8fafc",
+                },
+                pressed && { opacity: 0.78 },
+              ]}
+            >
+              <MaterialIcons name="logout" size={22} color="#64748b" />
+            </Pressable>
 
             {/* Previous Month */}
 
@@ -582,23 +580,6 @@ export default function AppHeader({
             <Text>{month.paleoHebrew}</Text>
             */}
           </View>
-          <Pressable
-            onPress={onChangeGroup}
-            style={{
-              position: "absolute",
-              right: 24,
-              bottom: 24,
-
-              width: 42,
-              height: 42,
-              borderRadius: 21,
-
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <MaterialIcons name="logout" size={28} color="#6b7280" />
-          </Pressable>
         </View>
       ) : null}
 
