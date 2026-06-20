@@ -261,24 +261,26 @@ export default function AppHeader({
               </Pressable>
             ) : null}
 
-            <Pressable
-              onPress={onChangeGroup}
-              accessibilityRole="button"
-              accessibilityLabel="Change calendar group"
-              style={({ pressed }) => [
-                {
-                  width: 36,
-                  height: 36,
-                  borderRadius: 18,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  backgroundColor: "#f8fafc",
-                },
-                pressed && { opacity: 0.78 },
-              ]}
-            >
-              <MaterialIcons name="logout" size={22} color="#64748b" />
-            </Pressable>
+            {isHeaderCollapsed || !isCompactHeader ? (
+              <Pressable
+                onPress={onChangeGroup}
+                accessibilityRole="button"
+                accessibilityLabel="Change calendar group"
+                style={({ pressed }) => [
+                  {
+                    width: 36,
+                    height: 36,
+                    borderRadius: 18,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: "#f8fafc",
+                  },
+                  pressed && { opacity: 0.78 },
+                ]}
+              >
+                <MaterialIcons name="logout" size={22} color="#64748b" />
+              </Pressable>
+            ) : null}
 
             {/* Previous Month */}
 
@@ -420,6 +422,29 @@ export default function AppHeader({
             >
               {userRole}
             </Text>
+
+            {isCompactHeader ? (
+              <Pressable
+                onPress={onChangeGroup}
+                accessibilityRole="button"
+                accessibilityLabel="Change calendar group"
+                style={({ pressed }) => [
+                  {
+                    width: 34,
+                    height: 34,
+                    borderRadius: 17,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: "#f8fafc",
+                    borderWidth: 1,
+                    borderColor: "#e2e8f0",
+                  },
+                  pressed && { opacity: 0.78 },
+                ]}
+              >
+                <MaterialIcons name="logout" size={20} color="#64748b" />
+              </Pressable>
+            ) : null}
           </View>
         </>
       ) : null}
