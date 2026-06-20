@@ -20,7 +20,12 @@ function getQueryValue(value: unknown): string {
  */
 export function logApiRequest(req: Request, res: Response, next: NextFunction) {
   const startedAt = Date.now();
-  const groupCode = getQueryValue(req.query.groupCode).trim() || "public";
+  const groupCode =
+    getQueryValue(req.query.groupCode).trim() ||
+    getQueryValue((req.body as { groupCode?: unknown })?.groupCode).trim() ||
+    "public";
+  const username =
+    getQueryValue(req.headers["x-cotw-username"]).trim() || "anonymous";
   const hasAuthHeader = Boolean(req.headers.authorization);
   const contentType = req.headers["content-type"] ?? "none";
   const contentLength = req.headers["content-length"] ?? "unknown";
@@ -36,6 +41,7 @@ export function logApiRequest(req: Request, res: Response, next: NextFunction) {
         `status=${res.statusCode}`,
         `duration=${durationMs}ms`,
         `group=${groupCode}`,
+        `username=${username}`,
         `auth=${hasAuthHeader ? "present" : "missing"}`,
         `contentType=${contentType}`,
         `contentLength=${contentLength}`,

@@ -245,6 +245,20 @@ export default function CommandExplorerView({
   const canContribute =
     Boolean(normalizeContributorUsername(contributorUsername)) &&
     (groupCode === CONTRIBUTION_GROUP_CODE || canModerateContributions);
+  const requestUsername = normalizeContributorUsername(contributorUsername);
+
+  function commandFetch(input: RequestInfo | URL, init: RequestInit = {}) {
+    const headers = new Headers(init.headers);
+
+    if (requestUsername) {
+      headers.set("X-COTW-Username", requestUsername);
+    }
+
+    return fetch(input, {
+      ...init,
+      headers,
+    });
+  }
 
   useEffect(() => {
     loadCommandGroups();
@@ -398,7 +412,7 @@ export default function CommandExplorerView({
   }
 
   async function loadGroupedCommands() {
-    const listResponse = await fetch(apiUrl("/command-resources"));
+    const listResponse = await commandFetch(apiUrl("/command-resources"));
 
     if (!listResponse.ok) {
       throw new Error("Failed to load command resources.");
@@ -422,7 +436,7 @@ export default function CommandExplorerView({
         _: String(Date.now()),
       });
 
-      const response = await fetch(
+      const response = await commandFetch(
         apiUrl(`/command-resources/contributions?${query.toString()}`),
         {
           cache: "no-store",
@@ -456,7 +470,7 @@ export default function CommandExplorerView({
         status: "pending",
       });
 
-      const response = await fetch(
+      const response = await commandFetch(
         apiUrl(
           `/command-resources/${commandKey}/contributions?${query.toString()}`
         )
@@ -482,7 +496,7 @@ export default function CommandExplorerView({
 
   async function loadVoteContributions() {
     try {
-      const response = await fetch(
+      const response = await commandFetch(
         apiUrl(`/command-resources/contributions/visible?_=${Date.now()}`),
         {
           cache: "no-store",
@@ -561,7 +575,7 @@ export default function CommandExplorerView({
       const data = options.preloadedCommand
         ? options.preloadedCommand
         : await (async () => {
-            const response = await fetch(
+            const response = await commandFetch(
               apiUrl(`/command-resources/${commandKey}`)
             );
 
@@ -589,7 +603,7 @@ export default function CommandExplorerView({
       setIsSelectingRandom(true);
       setErrorMessage(null);
 
-      const response = await fetch(
+      const response = await commandFetch(
         apiUrl("/command-resources/random?facts=reminder_eligible,scripture_backed")
       );
 
@@ -624,7 +638,7 @@ export default function CommandExplorerView({
       setContributionMessage(null);
       setReviewMode("pending");
 
-      const response = await fetch(
+      const response = await commandFetch(
         apiUrl("/command-resources/contributions/visible")
       );
 
@@ -775,7 +789,7 @@ export default function CommandExplorerView({
       setIsSubmittingContribution(true);
       setContributionMessage(null);
 
-      const response = await fetch(
+      const response = await commandFetch(
         apiUrl(
           `/command-resources/${command.key}/contributions?groupCode=${encodeURIComponent(
             CONTRIBUTION_GROUP_CODE
@@ -839,7 +853,7 @@ export default function CommandExplorerView({
     try {
       setContributionMessage(null);
 
-      const response = await fetch(
+      const response = await commandFetch(
         apiUrl(
           `/command-resources/${command.key}/contributions/${contributionId}?groupCode=${encodeURIComponent(
             CONTRIBUTION_GROUP_CODE
@@ -911,7 +925,7 @@ export default function CommandExplorerView({
       setIsSubmittingVote(true);
       setVoteMessage(null);
 
-      const response = await fetch(
+      const response = await commandFetch(
         apiUrl(
           `/command-resources/contributions/${voteDraft.contribution.id}/votes?groupCode=${encodeURIComponent(
             CONTRIBUTION_GROUP_CODE
@@ -958,7 +972,7 @@ export default function CommandExplorerView({
     try {
       setVoteMessage(null);
 
-      const response = await fetch(
+      const response = await commandFetch(
         apiUrl(
           `/command-resources/contributions/${contributionId}/votes/${voteId}/resolve`
         ),
@@ -999,7 +1013,7 @@ export default function CommandExplorerView({
     try {
       setContributionMessage(null);
 
-      const response = await fetch(
+      const response = await commandFetch(
         apiUrl(`/command-resources/contributions/${contributionId}/${action}`),
         {
           method: "POST",
@@ -1056,7 +1070,7 @@ export default function CommandExplorerView({
     try {
       setContributionMessage(null);
 
-      const response = await fetch(
+      const response = await commandFetch(
         apiUrl(`/command-resources/contributions/${contributionId}/promote`),
         {
           method: "POST",

@@ -8,6 +8,7 @@ import {
   Alert,
   Image,
   ImageSourcePropType,
+  Modal,
   Platform,
   Pressable,
   ScrollView,
@@ -53,6 +54,8 @@ const DEFAULT_YEAR_VIEW_TOP_OFFSET = 685;
 const MONTH_TITLE_BEHIND_HEADER_OFFSET = 32;
 const COMMAND_CONTRIBUTOR_USERNAME_STORAGE_KEY =
   "commandContributorUsername";
+const DEVICE_USERNAME_PROMPT_DISMISSED_STORAGE_KEY =
+  "deviceUsernamePromptDismissed";
 const COMMAND_BIBLE_VERSION_STORAGE_KEY = "commandBibleVersion";
 const COMMAND_SEARCH_TEXT_STORAGE_KEY = "commandSearchText";
 const ACTIVE_TAB_STORAGE_KEY = "activeAppTab";
@@ -98,6 +101,9 @@ export default function HomeScreen() {
   const [commandSearchText, setCommandSearchText] = useState("");
   const [commandContributorUsername, setCommandContributorUsername] =
     useState("");
+  const [deviceUsernameDraft, setDeviceUsernameDraft] = useState("");
+  const [isDeviceUsernamePromptDismissed, setIsDeviceUsernamePromptDismissed] =
+    useState(false);
   const [commandRandomRequestId, setCommandRandomRequestId] = useState(0);
   const [commandPendingRequestId, setCommandPendingRequestId] = useState(0);
   const [latestTeachingCollapseRequestId, setLatestTeachingCollapseRequestId] =
@@ -194,7 +200,7 @@ export default function HomeScreen() {
    * The server endpoint overwrites the marker file, so callers must send the full next array.
    */
   async function savePerpetualMarkers(nextMarkers: PerpetualMarker[]) {
-    const response = await fetch(
+    const response = await appFetch(
       `${API_BASE_URL}/api/calendar/perpetual-markers`,
       {
         method: "POST",
@@ -256,7 +262,7 @@ export default function HomeScreen() {
    */
   async function loadYearNotices() {
     try {
-      const response = await fetch(
+      const response = await appFetch(
         `${API_BASE_URL}/api/calendar/${
           config.enochYear
         }/notices?groupCode=${encodeURIComponent(groupCode)}`
@@ -283,9 +289,16 @@ export default function HomeScreen() {
 
   useEffect(() => {
     async function loadSavedCommandStudyState() {
-      const [savedUsername, savedBibleVersion, savedSearchText, savedTab] =
+      const [
+        savedUsername,
+        savedUsernamePromptDismissed,
+        savedBibleVersion,
+        savedSearchText,
+        savedTab,
+      ] =
         await Promise.all([
           AsyncStorage.getItem(COMMAND_CONTRIBUTOR_USERNAME_STORAGE_KEY),
+          AsyncStorage.getItem(DEVICE_USERNAME_PROMPT_DISMISSED_STORAGE_KEY),
           AsyncStorage.getItem(COMMAND_BIBLE_VERSION_STORAGE_KEY),
           AsyncStorage.getItem(COMMAND_SEARCH_TEXT_STORAGE_KEY),
           AsyncStorage.getItem(ACTIVE_TAB_STORAGE_KEY),
@@ -293,6 +306,11 @@ export default function HomeScreen() {
 
       if (savedUsername) {
         setCommandContributorUsername(normalizeContributorUsername(savedUsername));
+        setDeviceUsernameDraft(normalizeContributorUsername(savedUsername));
+      }
+
+      if (savedUsernamePromptDismissed === "true") {
+        setIsDeviceUsernamePromptDismissed(true);
       }
 
       if (
@@ -337,6 +355,55 @@ export default function HomeScreen() {
 
     AsyncStorage.removeItem(COMMAND_CONTRIBUTOR_USERNAME_STORAGE_KEY);
   }, [commandContributorUsername]);
+
+  const shouldShowDeviceUsernamePrompt =
+    hasEnteredApp &&
+    hasLoadedPersistedAppStateRef.current &&
+    !commandContributorUsername &&
+    !isDeviceUsernamePromptDismissed;
+
+  async function saveDeviceUsername() {
+    const normalizedUsername = normalizeContributorUsername(deviceUsernameDraft);
+
+    if (!normalizedUsername) {
+      return;
+    }
+
+    await AsyncStorage.setItem(
+      COMMAND_CONTRIBUTOR_USERNAME_STORAGE_KEY,
+      normalizedUsername
+    );
+    await AsyncStorage.removeItem(DEVICE_USERNAME_PROMPT_DISMISSED_STORAGE_KEY);
+
+    setCommandContributorUsername(normalizedUsername);
+    setDeviceUsernameDraft(normalizedUsername);
+    setIsDeviceUsernamePromptDismissed(true);
+  }
+
+  function appFetch(input: RequestInfo | URL, init: RequestInit = {}) {
+    const headers = new Headers(init.headers);
+    const normalizedUsername = normalizeContributorUsername(
+      commandContributorUsername
+    );
+
+    if (normalizedUsername) {
+      headers.set("X-COTW-Username", normalizedUsername);
+    }
+
+    return fetch(input, {
+      ...init,
+      headers,
+    });
+  }
+
+  async function dismissDeviceUsernamePrompt() {
+    await AsyncStorage.setItem(
+      DEVICE_USERNAME_PROMPT_DISMISSED_STORAGE_KEY,
+      "true"
+    );
+
+    setIsDeviceUsernamePromptDismissed(true);
+  }
 
   useEffect(() => {
     if (!hasLoadedPersistedAppStateRef.current) return;
@@ -388,7 +455,7 @@ export default function HomeScreen() {
 
   async function loadPerpetualMarkers() {
     try {
-      const checksumResponse = await fetch(
+      const checksumResponse = await appFetch(
         `${API_BASE_URL}/api/calendar/perpetual-markers/checksum`
       );
 
@@ -403,7 +470,7 @@ export default function HomeScreen() {
         return;
       }
 
-      const markersResponse = await fetch(
+      const markersResponse = await appFetch(
         `${API_BASE_URL}/api/calendar/perpetual-markers`
       );
 
@@ -461,7 +528,7 @@ export default function HomeScreen() {
     if (!year || !month || !day) return;
 
     try {
-      const response = await fetch(
+      const response = await appFetch(
         `${API_BASE_URL}/api/calendar/${year}/${month}/${day}?groupCode=${encodeURIComponent(
           groupCode
         )}`
@@ -491,7 +558,7 @@ export default function HomeScreen() {
 
     if (!selectedDay) return;
 
-    const response = await fetch(
+    const response = await appFetch(
       `${API_BASE_URL}/api/admin/calendar/${selectedDay.year}/${selectedDay.month}/${selectedDay.day}/notes?groupCode=${encodeURIComponent(
         groupCode
       )}`,
@@ -520,7 +587,7 @@ export default function HomeScreen() {
 
     if (!selectedDay) return;
 
-    const response = await fetch(
+    const response = await appFetch(
       `${API_BASE_URL}/api/admin/calendar/${selectedDay.year}/${selectedDay.month}/${selectedDay.day}/notices/${index}?groupCode=${encodeURIComponent(
         groupCode
       )}`,
@@ -546,7 +613,7 @@ export default function HomeScreen() {
 
     if (!selectedDay) return;
 
-    const response = await fetch(
+    const response = await appFetch(
       `${API_BASE_URL}/api/admin/calendar/${selectedDay.year}/${selectedDay.month}/${selectedDay.day}/scripture-readings/${index}?groupCode=${encodeURIComponent(
         groupCode
       )}`,
@@ -830,7 +897,6 @@ export default function HomeScreen() {
               userRole={userRole}
               onChangeBibleVersion={setSelectedBibleVersion}
               onChangeSearchText={setCommandSearchText}
-              onChangeContributorUsername={setCommandContributorUsername}
               onShowContributionHelp={showCommandContributionHelp}
               onRequestRandom={() => {
                 setCommandRandomRequestId((id) => id + 1);
@@ -901,6 +967,138 @@ export default function HomeScreen() {
           />
         )}
       </ScrollView>
+
+      <Modal
+        visible={shouldShowDeviceUsernamePrompt}
+        transparent
+        animationType="fade"
+        onRequestClose={dismissDeviceUsernamePrompt}
+      >
+        <View
+          style={{
+            flex: 1,
+            padding: 24,
+            backgroundColor: "rgba(15,23,42,0.45)",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <View
+            style={{
+              width: "100%",
+              maxWidth: 420,
+              padding: 18,
+              borderRadius: 18,
+              backgroundColor: "#ffffff",
+              borderWidth: 1,
+              borderColor: "#e5e7eb",
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: "900",
+                color: "#081a33",
+              }}
+            >
+              Who is using this device?
+            </Text>
+
+            <Text
+              style={{
+                marginTop: 8,
+                fontSize: 14,
+                lineHeight: 20,
+                color: "#64748b",
+                fontWeight: "700",
+              }}
+            >
+              Optional. This helps Church of the Word understand adoption and
+              attribute command suggestions from this device.
+            </Text>
+
+            <TextInput
+              value={deviceUsernameDraft}
+              onChangeText={(value) =>
+                setDeviceUsernameDraft(normalizeContributorUsername(value))
+              }
+              placeholder="name or username"
+              placeholderTextColor="#94a3b8"
+              autoCapitalize="none"
+              autoCorrect={false}
+              style={{
+                marginTop: 16,
+                minHeight: 46,
+                paddingHorizontal: 14,
+                borderRadius: 14,
+                borderWidth: 1,
+                borderColor: "#cbd5e1",
+                color: "#0f172a",
+                fontSize: 15,
+                fontWeight: "800",
+              }}
+            />
+
+            <View
+              style={{
+                marginTop: 16,
+                flexDirection: "row",
+                justifyContent: "flex-end",
+                gap: 10,
+              }}
+            >
+              <Pressable
+                onPress={dismissDeviceUsernamePrompt}
+                style={{
+                  minHeight: 40,
+                  paddingHorizontal: 14,
+                  borderRadius: 999,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "#f1f5f9",
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 13,
+                    fontWeight: "900",
+                    color: "#475569",
+                  }}
+                >
+                  Not now
+                </Text>
+              </Pressable>
+
+              <Pressable
+                onPress={saveDeviceUsername}
+                disabled={!normalizeContributorUsername(deviceUsernameDraft)}
+                style={{
+                  minHeight: 40,
+                  paddingHorizontal: 14,
+                  borderRadius: 999,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: normalizeContributorUsername(
+                    deviceUsernameDraft
+                  )
+                    ? "#0f766e"
+                    : "#cbd5e1",
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 13,
+                    fontWeight: "900",
+                    color: "#ffffff",
+                  }}
+                >
+                  Save
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       {activeTab === "calendar" && (
         <DayDetailModal
@@ -1362,7 +1560,6 @@ function CommandStickyHeader({
   userRole,
   onChangeBibleVersion,
   onChangeSearchText,
-  onChangeContributorUsername,
   onShowContributionHelp,
   onRequestRandom,
   onRequestPending,
@@ -1382,7 +1579,6 @@ function CommandStickyHeader({
   userRole: "member" | "admin";
   onChangeBibleVersion: (version: BibleVersion) => void;
   onChangeSearchText: (text: string) => void;
-  onChangeContributorUsername: (username: string) => void;
   onShowContributionHelp: () => void;
   onRequestRandom: () => void;
   onRequestPending: () => void;
@@ -1397,7 +1593,6 @@ function CommandStickyHeader({
     ? formatCommandCategoryLabel(commandCategory)
     : null;
   const categoryIcon = getCommandCategoryIcon(commandCategory);
-  const canContribute = isValidContributorUsername(contributorUsername);
   const hasPendingContributions = pendingContributionCount > 0;
   const hasPendingConcerns = pendingConcernCount > 0;
   const pendingButtonColor = hasPendingConcerns
@@ -1823,58 +2018,6 @@ function CommandStickyHeader({
                 flexShrink: 0,
               }}
             >
-            <View
-              style={{
-                flex: isCompactHeader ? 1 : undefined,
-                minWidth: isCompactHeader ? 0 : 180,
-                minHeight: 38,
-                paddingLeft: 12,
-                paddingRight: 10,
-                borderRadius: 999,
-                backgroundColor: "#ffffff",
-                borderWidth: 1,
-                borderColor: canContribute ? "#99f6e4" : "#cbd5e1",
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 6,
-              }}
-            >
-              <MaterialIcons
-                name={canContribute ? "lock-open" : "lock-outline"}
-                size={18}
-                color={canContribute ? "#0f766e" : "#64748b"}
-              />
-
-              <TextInput
-                value={contributorUsername}
-                onChangeText={(value) =>
-                  onChangeContributorUsername(normalizeContributorUsername(value))
-                }
-                placeholder="username"
-                placeholderTextColor="#94a3b8"
-                autoCapitalize="none"
-                autoCorrect={false}
-                style={{
-                  flex: 1,
-                  minHeight: 36,
-                  color: "#0f172a",
-                  fontSize: 13,
-                  fontWeight: "800",
-                }}
-              />
-
-              <Text
-                style={{
-                  fontSize: 11,
-                  fontWeight: "900",
-                  color: canContribute ? "#0f766e" : "#64748b",
-                  textTransform: "uppercase",
-                }}
-              >
-                {canContribute ? "Unlocked" : "Locked"}
-              </Text>
-            </View>
-
             <Pressable
               onPress={() => setIsVersionMenuOpen((value) => !value)}
               style={({ pressed }) => [

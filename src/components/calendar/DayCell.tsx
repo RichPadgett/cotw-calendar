@@ -78,6 +78,7 @@ export function DayCell({
   ];
 
   const visibleEvents = displayEvents.slice(0, 2);
+  const useLargeEventBadges = viewportWidth >= 1100;
 
   const showScrollIcon = hasContent;
   const scrollIconSize = viewportWidth >= 900 ? 24 : 18;
@@ -242,9 +243,9 @@ export function DayCell({
                 key={event.id}
                 style={{
                   alignSelf: "flex-start",
-                  maxWidth: 52,
-                  paddingHorizontal: 5,
-                  paddingVertical: 2,
+                  maxWidth: useLargeEventBadges ? 112 : 52,
+                  paddingHorizontal: useLargeEventBadges ? 7 : 5,
+                  paddingVertical: useLargeEventBadges ? 3 : 2,
                   borderRadius: 999,
                   backgroundColor: event.color,
                 }}
@@ -254,12 +255,14 @@ export function DayCell({
                   adjustsFontSizeToFit
                   minimumFontScale={0.7}
                   style={{
-                    fontSize: 8,
-                    fontWeight: "700",
+                    fontSize: useLargeEventBadges ? 9 : 8,
+                    fontWeight: "800",
                     color: "white",
                   }}
                 >
-                  {event.shortName ?? event.englishName}
+                  {useLargeEventBadges
+                    ? event.englishName
+                    : event.shortName ?? event.englishName}
                 </Text>
               </View>
             ))}
