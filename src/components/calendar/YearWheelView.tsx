@@ -15,6 +15,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 import ScrollIcon from "../../../assets/enoch/icons/scroll.png";
 import { CalendarNode } from "../../models/calendar";
 import type { PerpetualMarker } from "../../types/perpetualMarkers";
@@ -33,8 +34,10 @@ type Props = {
 // Constants
 const BASE_SIZE = 320;
 const DESKTOP_BREAKPOINT = 1100;
-const DESKTOP_MIN_SIZE = BASE_SIZE * 2;
-const DESKTOP_MAX_SIZE = BASE_SIZE * 3;
+const DESKTOP_MIN_SIZE = 520;
+const DESKTOP_MAX_SIZE = 680;
+const WHEEL_ZOOM_STEPS = [0.85, 1, 1.15, 1.3, 1.5];
+const DEFAULT_WHEEL_ZOOM_INDEX = 1;
 const CENTER_BADGE_SIZE = 104;
 const TODAY_TICK_LENGTH = 18;
 const DAY_SHADE_HEIGHT = 1;
@@ -64,13 +67,15 @@ const GATE_DOTS = [
 
 const FRACTIONAL_MARKER_SPACING = (Math.PI * 2 * 0.34) / 364;
 const WHEEL_DRAG_THRESHOLD = 8;
-const getWheelMetrics = (viewportWidth: number) => {
+const getWheelMetrics = (viewportWidth: number, wheelScale: number) => {
   const desktopTargetSize = Math.min(
     DESKTOP_MAX_SIZE,
-    Math.max(DESKTOP_MIN_SIZE, Math.floor(viewportWidth * 0.62))
+    Math.max(DESKTOP_MIN_SIZE, Math.floor(viewportWidth * 0.45))
   );
   const size =
-    viewportWidth >= DESKTOP_BREAKPOINT ? desktopTargetSize : BASE_SIZE;
+    viewportWidth >= DESKTOP_BREAKPOINT
+      ? Math.floor(desktopTargetSize * wheelScale)
+      : BASE_SIZE;
   const center = size / 2;
   const outerRingSize = size + 42;
   const outerCenter = outerRingSize / 2;
@@ -408,6 +413,9 @@ export default function YearWheelView({
     string | null
   >(null);
   const [isWheelInteracting, setIsWheelInteracting] = useState(false);
+  const [wheelZoomIndex, setWheelZoomIndex] = useState(
+    DEFAULT_WHEEL_ZOOM_INDEX
+  );
   const interactionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null
   );
@@ -494,6 +502,8 @@ export default function YearWheelView({
   const selectedWheelNode = selectedWheelEntry?.node;
   const selectedWheelColor = selectedWheelEntry?.color ?? "#3157a8";
   const selectedWheelLabel = selectedWheelEntry?.label;
+  const canAdjustWheelZoom = viewportWidth >= DESKTOP_BREAKPOINT;
+  const wheelScale = WHEEL_ZOOM_STEPS[wheelZoomIndex] ?? 1;
   const {
     size: SIZE,
     center: CENTER,
@@ -504,8 +514,10 @@ export default function YearWheelView({
     markerInnerRadius: MARKER_INNER_RADIUS,
     markerOuterRadius: MARKER_OUTER_RADIUS,
     wheelInteractionRadius: WHEEL_INTERACTION_RADIUS,
-  } = getWheelMetrics(viewportWidth);
+  } = getWheelMetrics(viewportWidth, wheelScale);
   const magnifierScale = Math.min(1.35, Math.max(1, SIZE / BASE_SIZE / 2));
+  const canZoomOut = wheelZoomIndex > 0;
+  const canZoomIn = wheelZoomIndex < WHEEL_ZOOM_STEPS.length - 1;
 
   useEffect(() => {
     setSelectedWheelMarkerId((currentMarkerId) => {
@@ -703,6 +715,82 @@ export default function YearWheelView({
         } as any,
       ]}
     >
+      {canAdjustWheelZoom ? (
+        <View
+          style={{
+            marginBottom: 12,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
+          }}
+        >
+          <Pressable
+            onPress={() =>
+              setWheelZoomIndex((currentIndex) => Math.max(0, currentIndex - 1))
+            }
+            disabled={!canZoomOut}
+            accessibilityRole="button"
+            accessibilityLabel="Make year wheel smaller"
+            style={({ pressed }) => [
+              {
+                width: 34,
+                height: 34,
+                borderRadius: 17,
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "#f1f5f9",
+                borderWidth: 1,
+                borderColor: "#cbd5e1",
+                opacity: canZoomOut ? 1 : 0.42,
+              },
+              pressed && canZoomOut ? { backgroundColor: "#e2e8f0" } : null,
+            ]}
+          >
+            <MaterialIcons name="remove" size={20} color="#334155" />
+          </Pressable>
+
+          <Text
+            style={{
+              minWidth: 58,
+              textAlign: "center",
+              fontSize: 12,
+              fontWeight: "900",
+              color: "#475569",
+            }}
+          >
+            {Math.round(wheelScale * 100)}%
+          </Text>
+
+          <Pressable
+            onPress={() =>
+              setWheelZoomIndex((currentIndex) =>
+                Math.min(WHEEL_ZOOM_STEPS.length - 1, currentIndex + 1)
+              )
+            }
+            disabled={!canZoomIn}
+            accessibilityRole="button"
+            accessibilityLabel="Make year wheel larger"
+            style={({ pressed }) => [
+              {
+                width: 34,
+                height: 34,
+                borderRadius: 17,
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "#f1f5f9",
+                borderWidth: 1,
+                borderColor: "#cbd5e1",
+                opacity: canZoomIn ? 1 : 0.42,
+              },
+              pressed && canZoomIn ? { backgroundColor: "#e2e8f0" } : null,
+            ]}
+          >
+            <MaterialIcons name="add" size={20} color="#334155" />
+          </Pressable>
+        </View>
+      ) : null}
+
       <View
         style={{
           width: OUTER_RING_SIZE,
