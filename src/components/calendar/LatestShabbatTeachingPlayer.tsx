@@ -29,6 +29,7 @@ type LatestShabbatTeaching = {
 
 type Props = {
   groupCode: string;
+  username?: string;
   collapseRequestId?: number;
 };
 
@@ -44,6 +45,7 @@ function getSpotifyEmbedUrl(url: string): string | null {
 
 export default function LatestShabbatTeachingPlayer({
   groupCode,
+  username = "",
   collapseRequestId = 0,
 }: Props) {
   const { width } = useWindowDimensions();
@@ -61,7 +63,13 @@ export default function LatestShabbatTeachingPlayer({
         `/calendar/latest-shabbat-teaching?groupCode=${encodeURIComponent(
           groupCode
         )}`
-      )
+      ),
+      {
+        headers: {
+          ...(groupCode ? { "X-COTW-Group-Code": groupCode } : {}),
+          ...(username ? { "X-COTW-Username": username } : {}),
+        },
+      }
     )
       .then((response) => (response.ok ? response.json() : null))
       .then((teaching: LatestShabbatTeaching | null) => {
@@ -78,7 +86,7 @@ export default function LatestShabbatTeachingPlayer({
     return () => {
       isMounted = false;
     };
-  }, [groupCode]);
+  }, [groupCode, username]);
 
   useEffect(() => {
     if (collapseRequestId > 0) {

@@ -23,6 +23,7 @@ export function logApiRequest(req: Request, res: Response, next: NextFunction) {
   const groupCode =
     getQueryValue(req.query.groupCode).trim() ||
     getQueryValue((req.body as { groupCode?: unknown })?.groupCode).trim() ||
+    getQueryValue(req.headers["x-cotw-group-code"]).trim() ||
     "public";
   const username =
     getQueryValue(req.headers["x-cotw-username"]).trim() || "anonymous";

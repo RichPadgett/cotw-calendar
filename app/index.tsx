@@ -390,6 +390,10 @@ export default function HomeScreen() {
       headers.set("X-COTW-Username", normalizedUsername);
     }
 
+    if (groupCode) {
+      headers.set("X-COTW-Group-Code", groupCode);
+    }
+
     return fetch(input, {
       ...init,
       headers,
@@ -830,6 +834,7 @@ export default function HomeScreen() {
 
           <LatestShabbatTeachingPlayer
             groupCode={groupCode}
+            username={normalizeContributorUsername(commandContributorUsername)}
             collapseRequestId={latestTeachingCollapseRequestId}
           />
 
