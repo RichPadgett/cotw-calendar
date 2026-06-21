@@ -1218,16 +1218,19 @@ function TimelineStickyHeader({
   onRequestEdit: () => void;
 }) {
   const { width } = useWindowDimensions();
+  const [isMobileHeaderExpanded, setIsMobileHeaderExpanded] = useState(false);
   const [isDesktopHeaderCollapsed, setIsDesktopHeaderCollapsed] =
     useState(false);
   const isCompactHeader = width < 680;
-  const isHeaderCollapsed = !isCompactHeader && isDesktopHeaderCollapsed;
+  const isMobileCollapsedMode = isCompactHeader && !isMobileHeaderExpanded;
+  const isDesktopCollapsedMode = !isCompactHeader && isDesktopHeaderCollapsed;
+  const isHeaderCollapsed = isMobileCollapsedMode || isDesktopCollapsedMode;
 
   return (
     <View
       style={{
-        padding: isHeaderCollapsed ? 10 : 16,
-        borderRadius: isHeaderCollapsed ? 14 : 20,
+        padding: isDesktopCollapsedMode ? 10 : 16,
+        borderRadius: isDesktopCollapsedMode ? 14 : 20,
         backgroundColor: "#f9fafb",
         borderWidth: 1,
         borderColor: "#e5e7eb",
@@ -1551,6 +1554,46 @@ function TimelineStickyHeader({
             </Text>
           ) : null}
         </View>
+      ) : null}
+
+      {isCompactHeader ? (
+        <Pressable
+          onPress={() => setIsMobileHeaderExpanded((value) => !value)}
+          accessibilityRole="button"
+          accessibilityLabel={
+            isMobileHeaderExpanded
+              ? "Collapse timeline header"
+              : "Show full timeline header"
+          }
+          style={({ pressed }) => [
+            {
+              marginTop: 8,
+              minHeight: 14,
+              borderTopWidth: 1,
+              borderTopColor: "#e2e8f0",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 3,
+            },
+            pressed && { opacity: 0.72 },
+          ]}
+        >
+          <View
+            style={{
+              width: 34,
+              height: 3,
+              borderRadius: 999,
+              backgroundColor: "#cbd5e1",
+            }}
+          />
+
+          <MaterialIcons
+            name={isMobileHeaderExpanded ? "expand-less" : "expand-more"}
+            size={13}
+            color="#94a3b8"
+          />
+        </Pressable>
       ) : null}
     </View>
   );
