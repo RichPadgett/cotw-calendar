@@ -62,10 +62,14 @@ const COLOR_SWATCHES = [
   "#111827",
 ];
 const TIMELINE_ZOOM_LEVELS = [
+  { id: "years-10000", label: "10,000 Years", pixelsPerYear: 0.12 },
+  { id: "years-5000", label: "5,000 Years", pixelsPerYear: 0.22 },
   { id: "millennia", label: "Millennia", pixelsPerYear: 0.35 },
-  { id: "years", label: "Years", pixelsPerYear: 2 },
-  { id: "months", label: "Months", pixelsPerYear: 24 },
-  { id: "days", label: "Days", pixelsPerYear: 364 },
+  { id: "years-500", label: "500 Years", pixelsPerYear: 0.72 },
+  { id: "years-250", label: "250 Years", pixelsPerYear: 1.45 },
+  { id: "half-years", label: "6 Months", pixelsPerYear: 72 },
+  { id: "months", label: "Months", pixelsPerYear: 180 },
+  { id: "days", label: "Days", pixelsPerYear: 546 },
 ] as const;
 
 type TimelineZoomId = (typeof TIMELINE_ZOOM_LEVELS)[number]["id"];
@@ -231,7 +235,11 @@ function getEnochYearPosition(
   return getTimelineValuePosition(getEnochTimelineValue(params), width);
 }
 
-function getAxisYearInterval(visibleYearSpan: number) {
+function getAxisYearInterval(visibleYearSpan: number, zoomId?: TimelineZoomId) {
+  if (zoomId === "years-10000") return 1000;
+  if (zoomId === "years-5000") return 500;
+  if (zoomId === "years-500") return 100;
+  if (zoomId === "years-250") return 50;
   if (visibleYearSpan > 2500) return 1000;
   if (visibleYearSpan > 1000) return 500;
   if (visibleYearSpan > 250) return 100;
@@ -288,8 +296,13 @@ function getVisibleTimelineAxisTicks(params: {
     return ticks;
   }
 
-  if (params.zoomId === "years") {
-    const interval = getAxisYearInterval(visibleYearSpan);
+  if (
+    params.zoomId === "years-10000" ||
+    params.zoomId === "years-5000" ||
+    params.zoomId === "years-500" ||
+    params.zoomId === "years-250"
+  ) {
+    const interval = getAxisYearInterval(visibleYearSpan, params.zoomId);
     const firstYear = Math.max(
       HISTORY_TIMELINE_RANGE.startYear,
       Math.ceil(visibleStart / interval) * interval
@@ -331,6 +344,18 @@ function getVisibleTimelineAxisTicks(params: {
       x: getTimelineValuePosition(year, params.contentWidth),
       major: true,
     });
+
+    if (params.zoomId === "half-years") {
+      ticks.push({
+        key: `year-${year}-month-7`,
+        label: "M7",
+        x: getEnochYearPosition(
+          { enochYear: year, month: 7, day: 1 },
+          params.contentWidth
+        ),
+        major: false,
+      });
+    }
 
     if (params.zoomId === "months") {
       const monthStep = visibleYearSpan > 8 ? 3 : 1;
@@ -826,7 +851,7 @@ export default function HistoryTimelineView({
 }: HistoryTimelineViewProps) {
   const { width } = useWindowDimensions();
   const isCompactTimeline = width < 520;
-  const [timelineZoom, setTimelineZoom] = useState<TimelineZoomId>("years");
+  const [timelineZoom, setTimelineZoom] = useState<TimelineZoomId>("years-250");
   const [timelineScrollX, setTimelineScrollX] = useState(0);
   const contentWidth = getTimelineContentWidth(width, timelineZoom);
   const timelineScrollRef = useRef<ScrollView>(null);
@@ -1332,8 +1357,12 @@ export default function HistoryTimelineView({
           value={timelineZoom}
           options={TIMELINE_ZOOM_LEVELS.map((zoomLevel) => {
             const compactLabels: Record<TimelineZoomId, string> = {
+              "years-10000": "10k",
+              "years-5000": "5k",
               millennia: "Mil",
-              years: "Yr",
+              "years-500": "500",
+              "years-250": "250",
+              "half-years": "6m",
               months: "Mo",
               days: "Day",
             };
@@ -2056,6 +2085,7 @@ const styles = StyleSheet.create({
   },
   segmentedControlCompact: {
     flexShrink: 1,
+    flexWrap: "wrap",
   },
   segmentButton: {
     flex: 1,
@@ -2066,8 +2096,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   segmentButtonCompact: {
-    minWidth: 52,
-    paddingHorizontal: 6,
+    minWidth: 42,
+    paddingHorizontal: 5,
   },
   segmentButtonActive: {
     backgroundColor: "#ffffff",
@@ -2078,7 +2108,7 @@ const styles = StyleSheet.create({
     color: "#4b5563",
   },
   segmentButtonTextCompact: {
-    fontSize: 12,
+    fontSize: 11,
   },
   segmentButtonTextActive: {
     color: "#081a33",
