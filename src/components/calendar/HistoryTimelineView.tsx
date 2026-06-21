@@ -31,10 +31,12 @@ import {
 import { validateTimelineDate } from "../../engine/timelineValidation";
 import { apiUrl } from "../../config/api";
 
-const LANE_HEIGHT = 128;
+const BASE_LANE_HEIGHT = 128;
+const TIMELINE_LANE_COUNT = 3;
+const TIMELINE_LANE_HEIGHTS = [128, 160, 196, 236];
 const TRACK_TOP = 112;
-const TRACK_HEIGHT = LANE_HEIGHT * 3;
-const TIMELINE_SIDE_GUTTER = 140;
+const TRACK_HEIGHT = BASE_LANE_HEIGHT * TIMELINE_LANE_COUNT;
+const TIMELINE_SIDE_GUTTER = 40;
 const MIN_LABELED_BAR_WIDTH = 72;
 const MIN_NOTES_BAR_WIDTH = 112;
 const ENOCH_YEAR_DAYS = 364;
@@ -62,14 +64,54 @@ const COLOR_SWATCHES = [
   "#111827",
 ];
 const TIMELINE_ZOOM_LEVELS = [
-  { id: "years-10000", label: "10,000 Years", pixelsPerYear: 0.12 },
-  { id: "years-5000", label: "5,000 Years", pixelsPerYear: 0.22 },
-  { id: "millennia", label: "Millennia", pixelsPerYear: 0.35 },
-  { id: "years-500", label: "500 Years", pixelsPerYear: 0.72 },
-  { id: "years-250", label: "250 Years", pixelsPerYear: 1.45 },
-  { id: "half-years", label: "6 Months", pixelsPerYear: 72 },
-  { id: "months", label: "Months", pixelsPerYear: 180 },
-  { id: "days", label: "Days", pixelsPerYear: 546 },
+  {
+    id: "years-10000",
+    label: "10,000 Years",
+    pixelsPerYear: 0.12,
+    minViewportMultiplier: 1,
+  },
+  {
+    id: "years-5000",
+    label: "5,000 Years",
+    pixelsPerYear: 0.22,
+    minViewportMultiplier: 1.35,
+  },
+  {
+    id: "millennia",
+    label: "Millennia",
+    pixelsPerYear: 0.35,
+    minViewportMultiplier: 1.8,
+  },
+  {
+    id: "years-500",
+    label: "500 Years",
+    pixelsPerYear: 0.72,
+    minViewportMultiplier: 2.4,
+  },
+  {
+    id: "years-250",
+    label: "250 Years",
+    pixelsPerYear: 1.45,
+    minViewportMultiplier: 3.2,
+  },
+  {
+    id: "half-years",
+    label: "6 Months",
+    pixelsPerYear: 72,
+    minViewportMultiplier: 3.2,
+  },
+  {
+    id: "months",
+    label: "Months",
+    pixelsPerYear: 180,
+    minViewportMultiplier: 3.2,
+  },
+  {
+    id: "days",
+    label: "Days",
+    pixelsPerYear: 546,
+    minViewportMultiplier: 3.2,
+  },
 ] as const;
 
 type TimelineZoomId = (typeof TIMELINE_ZOOM_LEVELS)[number]["id"];
@@ -149,8 +191,8 @@ function getTimelineContentWidth(
     HISTORY_TIMELINE_RANGE.endYear - HISTORY_TIMELINE_RANGE.startYear;
 
   return Math.max(
-    1280,
-    viewportWidth * 3.2,
+    viewportWidth,
+    viewportWidth * zoomConfig.minViewportMultiplier,
     TIMELINE_SIDE_GUTTER * 2 + trackYearSpan * zoomConfig.pixelsPerYear
   );
 }
@@ -448,12 +490,15 @@ export function getRangeLabel(occurrence: TimelineOccurrence) {
   return `${startLabel} - ${endLabel}${gregorianLabel}`;
 }
 
-function getLaneFrame(occurrence: TimelineOccurrence) {
-  const laneTop = TRACK_TOP + occurrence.lane * LANE_HEIGHT;
+function getLaneFrame(
+  occurrence: TimelineOccurrence,
+  laneHeight = BASE_LANE_HEIGHT
+) {
+  const laneTop = TRACK_TOP + occurrence.lane * laneHeight;
   const lanePart = occurrence.lanePart ?? "both";
   const lanePadding = 10;
   const halfGap = 5;
-  const fullHeight = LANE_HEIGHT - lanePadding * 2 - 8;
+  const fullHeight = laneHeight - lanePadding * 2 - 8;
   const halfHeight = (fullHeight - halfGap) / 2;
 
   if (lanePart === "top") {
@@ -480,17 +525,19 @@ function TimelineRangeBar({
   occurrence,
   left,
   width,
+  laneHeight,
   onPress,
 }: {
   occurrence: TimelineOccurrence;
   left: number;
   width: number;
+  laneHeight: number;
   onPress: (occurrence: TimelineOccurrence) => void;
 }) {
   if (!occurrence.timeRange) return null;
 
   const barWidth = Math.max(18, width);
-  const laneFrame = getLaneFrame(occurrence);
+  const laneFrame = getLaneFrame(occurrence, laneHeight);
   const canShowLabels = barWidth >= MIN_LABELED_BAR_WIDTH;
   const canShowNotesButton =
     Boolean(occurrence.notes?.trim()) && barWidth >= MIN_NOTES_BAR_WIDTH;
@@ -535,16 +582,18 @@ function TimelineExactCard({
   occurrence,
   x,
   compact,
+  laneHeight,
   onPress,
 }: {
   occurrence: TimelineOccurrence;
   x: number;
   compact?: boolean;
+  laneHeight: number;
   onPress: (occurrence: TimelineOccurrence) => void;
 }) {
   if (!occurrence.exactDate) return null;
 
-  const laneFrame = getLaneFrame(occurrence);
+  const laneFrame = getLaneFrame(occurrence, laneHeight);
   const enochDateLabel = occurrence.exactDate.enochDate?.label;
   const validation = occurrence.exactDate.gregorianDate
     ? validateTimelineDate(
@@ -553,25 +602,7 @@ function TimelineExactCard({
       )
     : null;
 
-  if (compact) {
-    return (
-      <Pressable
-        accessibilityLabel={`Open ${occurrence.title}`}
-        onPress={() => onPress(occurrence)}
-        style={[
-          styles.exactPin,
-          {
-            top: laneFrame.top + laneFrame.height - 34,
-            left: x - 17,
-            backgroundColor: occurrence.color,
-            borderColor: "#ffffff",
-          },
-        ]}
-      >
-        <MaterialIcons name="event" size={15} color="#ffffff" />
-      </Pressable>
-    );
-  }
+  if (compact) return null;
 
   return (
     <Pressable
@@ -853,7 +884,20 @@ export default function HistoryTimelineView({
   const isCompactTimeline = width < 520;
   const [timelineZoom, setTimelineZoom] = useState<TimelineZoomId>("years-250");
   const [timelineScrollX, setTimelineScrollX] = useState(0);
+  const [laneHeightIndex, setLaneHeightIndex] = useState(0);
   const contentWidth = getTimelineContentWidth(width, timelineZoom);
+  const currentTimelineZoom = getTimelineZoomConfig(timelineZoom);
+  const currentTimelineZoomIndex = Math.max(
+    0,
+    TIMELINE_ZOOM_LEVELS.findIndex((zoomLevel) => zoomLevel.id === timelineZoom)
+  );
+  const timelineLaneHeight =
+    TIMELINE_LANE_HEIGHTS[laneHeightIndex] ?? BASE_LANE_HEIGHT;
+  const timelineTrackHeight = timelineLaneHeight * TIMELINE_LANE_COUNT;
+  const timelineAxisTop = TRACK_TOP + timelineTrackHeight + 8;
+  const canDecreaseLaneHeight = laneHeightIndex > 0;
+  const canIncreaseLaneHeight =
+    laneHeightIndex < TIMELINE_LANE_HEIGHTS.length - 1;
   const timelineScrollRef = useRef<ScrollView>(null);
   const canManageTimeline =
     userRole === "admin" &&
@@ -1073,6 +1117,23 @@ export default function HistoryTimelineView({
         animated: false,
       });
     }, 0);
+  }
+
+  function stepTimelineZoom(direction: -1 | 1) {
+    const nextZoomIndex =
+      (currentTimelineZoomIndex + direction + TIMELINE_ZOOM_LEVELS.length) %
+      TIMELINE_ZOOM_LEVELS.length;
+
+    handleTimelineZoomChange(TIMELINE_ZOOM_LEVELS[nextZoomIndex].id);
+  }
+
+  function stepLaneHeight(direction: -1 | 1) {
+    setLaneHeightIndex((currentIndex) =>
+      Math.max(
+        0,
+        Math.min(TIMELINE_LANE_HEIGHTS.length - 1, currentIndex + direction)
+      )
+    );
   }
 
   function handleSelectOccurrence(occurrence: TimelineOccurrence) {
@@ -1353,30 +1414,78 @@ export default function HistoryTimelineView({
         ]}
       >
         <Text style={styles.toolbarLabel}>Scale</Text>
-        <SegmentedSelector
-          value={timelineZoom}
-          options={TIMELINE_ZOOM_LEVELS.map((zoomLevel) => {
-            const compactLabels: Record<TimelineZoomId, string> = {
-              "years-10000": "10k",
-              "years-5000": "5k",
-              millennia: "Mil",
-              "years-500": "500",
-              "years-250": "250",
-              "half-years": "6m",
-              months: "Mo",
-              days: "Day",
-            };
+        <View style={styles.scaleStepper}>
+          <Pressable
+            onPress={() => stepTimelineZoom(-1)}
+            accessibilityRole="button"
+            accessibilityLabel="Previous timeline scale"
+            style={({ pressed }) => [
+              styles.scaleStepperButton,
+              pressed ? styles.scaleStepperButtonPressed : null,
+            ]}
+          >
+            <MaterialIcons name="chevron-left" size={22} color="#334155" />
+          </Pressable>
 
-            return {
-              label: isCompactTimeline
-                ? compactLabels[zoomLevel.id]
-                : zoomLevel.label,
-              value: zoomLevel.id,
-            };
-          })}
-          onChange={handleTimelineZoomChange}
-          compact={isCompactTimeline}
-        />
+          <Text numberOfLines={1} style={styles.scaleStepperLabel}>
+            {currentTimelineZoom.label}
+          </Text>
+
+          <Pressable
+            onPress={() => stepTimelineZoom(1)}
+            accessibilityRole="button"
+            accessibilityLabel="Next timeline scale"
+            style={({ pressed }) => [
+              styles.scaleStepperButton,
+              pressed ? styles.scaleStepperButtonPressed : null,
+            ]}
+          >
+            <MaterialIcons name="chevron-right" size={22} color="#334155" />
+          </Pressable>
+        </View>
+
+        <Text style={styles.toolbarLabel}>Height</Text>
+        <View style={styles.heightStepper}>
+          <Pressable
+            onPress={() => stepLaneHeight(-1)}
+            disabled={!canDecreaseLaneHeight}
+            accessibilityRole="button"
+            accessibilityLabel="Decrease timeline bar height"
+            style={({ pressed }) => [
+              styles.scaleStepperButton,
+              !canDecreaseLaneHeight ? styles.stepperButtonDisabled : null,
+              pressed && canDecreaseLaneHeight
+                ? styles.scaleStepperButtonPressed
+                : null,
+            ]}
+          >
+            <MaterialIcons
+              name="keyboard-arrow-down"
+              size={22}
+              color="#334155"
+            />
+          </Pressable>
+
+          <Text numberOfLines={1} style={styles.heightStepperLabel}>
+            {`${laneHeightIndex + 1}/${TIMELINE_LANE_HEIGHTS.length}`}
+          </Text>
+
+          <Pressable
+            onPress={() => stepLaneHeight(1)}
+            disabled={!canIncreaseLaneHeight}
+            accessibilityRole="button"
+            accessibilityLabel="Increase timeline bar height"
+            style={({ pressed }) => [
+              styles.scaleStepperButton,
+              !canIncreaseLaneHeight ? styles.stepperButtonDisabled : null,
+              pressed && canIncreaseLaneHeight
+                ? styles.scaleStepperButtonPressed
+                : null,
+            ]}
+          >
+            <MaterialIcons name="keyboard-arrow-up" size={22} color="#334155" />
+          </Pressable>
+        </View>
       </View>
 
       <ScrollView
@@ -1387,11 +1496,25 @@ export default function HistoryTimelineView({
         onScroll={handleTimelineScroll}
         contentContainerStyle={styles.scrollContent}
       >
-        <View style={[styles.timelineCanvas, { width: contentWidth }]}>
-          <View style={styles.axisLine} />
+        <View
+          style={[
+            styles.timelineCanvas,
+            {
+              width: contentWidth,
+              height: TRACK_TOP + timelineTrackHeight + 84,
+            },
+          ]}
+        >
+          <View style={[styles.axisLine, { top: timelineAxisTop }]} />
 
           {axisTicks.map((tick) => (
-            <View key={tick.key} style={[styles.axisMarker, { left: tick.x }]}>
+            <View
+              key={tick.key}
+              style={[
+                styles.axisMarker,
+                { left: tick.x, top: timelineAxisTop },
+              ]}
+            >
               <View
                 style={[
                   styles.axisTick,
@@ -1447,6 +1570,7 @@ export default function HistoryTimelineView({
                 occurrence={occurrence}
                 left={left}
                 width={right - left}
+                laneHeight={timelineLaneHeight}
                 onPress={handleSelectOccurrence}
               />
             );
@@ -1468,6 +1592,7 @@ export default function HistoryTimelineView({
                   contentWidth
                 )}
                 compact={Boolean(occurrence.timeRange)}
+                laneHeight={timelineLaneHeight}
                 onPress={handleSelectOccurrence}
               />
             );
@@ -1723,6 +1848,51 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     color: "#4b5563",
     textTransform: "uppercase",
+  },
+  scaleStepper: {
+    minHeight: 42,
+    borderRadius: 8,
+    backgroundColor: "#e5e7eb",
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 3,
+  },
+  scaleStepperButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 6,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  scaleStepperButtonPressed: {
+    backgroundColor: "#d1d5db",
+  },
+  scaleStepperLabel: {
+    minWidth: 128,
+    paddingHorizontal: 10,
+    fontSize: 13,
+    fontWeight: "900",
+    color: "#081a33",
+    textAlign: "center",
+  },
+  heightStepper: {
+    minHeight: 42,
+    borderRadius: 8,
+    backgroundColor: "#e5e7eb",
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 3,
+  },
+  heightStepperLabel: {
+    minWidth: 34,
+    paddingHorizontal: 6,
+    fontSize: 12,
+    fontWeight: "900",
+    color: "#081a33",
+    textAlign: "center",
+  },
+  stepperButtonDisabled: {
+    opacity: 0.38,
   },
   scrollContent: {
     paddingVertical: 4,

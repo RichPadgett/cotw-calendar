@@ -52,8 +52,7 @@ import { formatGroupLabel, getAppDateId } from "../src/utils/appDay";
 const DEFAULT_STICKY_HEADER_OFFSET = 220;
 const DEFAULT_YEAR_VIEW_TOP_OFFSET = 685;
 const MONTH_TITLE_BEHIND_HEADER_OFFSET = 32;
-const COMMAND_CONTRIBUTOR_USERNAME_STORAGE_KEY =
-  "commandContributorUsername";
+const COMMAND_CONTRIBUTOR_USERNAME_STORAGE_KEY = "commandContributorUsername";
 const DEVICE_USERNAME_PROMPT_DISMISSED_STORAGE_KEY =
   "deviceUsernamePromptDismissed";
 const COMMAND_BIBLE_VERSION_STORAGE_KEY = "commandBibleVersion";
@@ -295,17 +294,18 @@ export default function HomeScreen() {
         savedBibleVersion,
         savedSearchText,
         savedTab,
-      ] =
-        await Promise.all([
-          AsyncStorage.getItem(COMMAND_CONTRIBUTOR_USERNAME_STORAGE_KEY),
-          AsyncStorage.getItem(DEVICE_USERNAME_PROMPT_DISMISSED_STORAGE_KEY),
-          AsyncStorage.getItem(COMMAND_BIBLE_VERSION_STORAGE_KEY),
-          AsyncStorage.getItem(COMMAND_SEARCH_TEXT_STORAGE_KEY),
-          AsyncStorage.getItem(ACTIVE_TAB_STORAGE_KEY),
-        ]);
+      ] = await Promise.all([
+        AsyncStorage.getItem(COMMAND_CONTRIBUTOR_USERNAME_STORAGE_KEY),
+        AsyncStorage.getItem(DEVICE_USERNAME_PROMPT_DISMISSED_STORAGE_KEY),
+        AsyncStorage.getItem(COMMAND_BIBLE_VERSION_STORAGE_KEY),
+        AsyncStorage.getItem(COMMAND_SEARCH_TEXT_STORAGE_KEY),
+        AsyncStorage.getItem(ACTIVE_TAB_STORAGE_KEY),
+      ]);
 
       if (savedUsername) {
-        setCommandContributorUsername(normalizeContributorUsername(savedUsername));
+        setCommandContributorUsername(
+          normalizeContributorUsername(savedUsername)
+        );
         setDeviceUsernameDraft(normalizeContributorUsername(savedUsername));
       }
 
@@ -363,7 +363,8 @@ export default function HomeScreen() {
     !isDeviceUsernamePromptDismissed;
 
   async function saveDeviceUsername() {
-    const normalizedUsername = normalizeContributorUsername(deviceUsernameDraft);
+    const normalizedUsername =
+      normalizeContributorUsername(deviceUsernameDraft);
 
     if (!normalizedUsername) {
       return;
@@ -1216,11 +1217,17 @@ function TimelineStickyHeader({
   onRequestAdd: () => void;
   onRequestEdit: () => void;
 }) {
+  const { width } = useWindowDimensions();
+  const [isDesktopHeaderCollapsed, setIsDesktopHeaderCollapsed] =
+    useState(false);
+  const isCompactHeader = width < 680;
+  const isHeaderCollapsed = !isCompactHeader && isDesktopHeaderCollapsed;
+
   return (
     <View
       style={{
-        padding: 16,
-        borderRadius: 20,
+        padding: isHeaderCollapsed ? 10 : 16,
+        borderRadius: isHeaderCollapsed ? 14 : 20,
         backgroundColor: "#f9fafb",
         borderWidth: 1,
         borderColor: "#e5e7eb",
@@ -1230,60 +1237,124 @@ function TimelineStickyHeader({
         style={{
           flexDirection: "row",
           justifyContent: "space-between",
-          alignItems: "center",
-          gap: 12,
+          alignItems: isHeaderCollapsed ? "flex-start" : "center",
+          gap: isHeaderCollapsed ? 8 : 12,
         }}
       >
-        <View style={{ flex: 1, minWidth: 0 }}>
-          <Text
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={0.72}
-            style={{
-              fontSize: 34,
-              fontWeight: "900",
-              color: "#081a33",
-              letterSpacing: 4.5,
-            }}
-          >
-            HISTORY
-          </Text>
+        <View
+          style={{
+            flex: 1,
+            minWidth: 0,
+            flexDirection: isHeaderCollapsed ? "row" : "column",
+            alignItems: isHeaderCollapsed ? "center" : "stretch",
+            gap: isHeaderCollapsed ? 8 : 0,
+          }}
+        >
+          {isHeaderCollapsed ? (
+            <>
+              <View
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: 16,
+                  backgroundColor: "#eff6ff",
+                  borderWidth: 1,
+                  borderColor: "#bfdbfe",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <MaterialIcons name="timeline" size={20} color="#1d4ed8" />
+              </View>
 
-          <Text
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={0.75}
-            style={{
-              marginTop: -2,
-              fontSize: 18,
-              fontWeight: "800",
-              color: "#081a33",
-              letterSpacing: 2.5,
-              textTransform: "uppercase",
-            }}
-          >
-            Timeline Study
-          </Text>
+              <View style={{ flex: 1, minWidth: 0 }}>
+                <Text
+                  numberOfLines={1}
+                  style={{
+                    fontSize: 16,
+                    lineHeight: 21,
+                    fontWeight: "900",
+                    color: "#081a33",
+                  }}
+                >
+                  {selectedOccurrence?.title ?? "Timeline Study"}
+                </Text>
 
-          <HeaderIdentityBadges groupLabel={groupLabel} userRole={userRole} />
+                <Text
+                  numberOfLines={1}
+                  style={{
+                    marginTop: 2,
+                    fontSize: 12,
+                    lineHeight: 16,
+                    fontWeight: "700",
+                    color: "#64748b",
+                  }}
+                >
+                  {selectedOccurrence?.summary ??
+                    (isSavingTimeline
+                      ? "Saving timeline..."
+                      : HISTORY_TIMELINE_RANGE.label)}
+                </Text>
+              </View>
+            </>
+          ) : (
+            <>
+              <Text
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.72}
+                style={{
+                  fontSize: 34,
+                  fontWeight: "900",
+                  color: "#081a33",
+                  letterSpacing: 4.5,
+                }}
+              >
+                HISTORY
+              </Text>
+
+              <Text
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.75}
+                style={{
+                  marginTop: -2,
+                  fontSize: 18,
+                  fontWeight: "800",
+                  color: "#081a33",
+                  letterSpacing: 2.5,
+                  textTransform: "uppercase",
+                }}
+              >
+                Timeline Study
+              </Text>
+
+              <HeaderIdentityBadges
+                groupLabel={groupLabel}
+                userRole={userRole}
+              />
+            </>
+          )}
         </View>
 
-        {canManageTimeline ? (
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 8,
-              flexShrink: 0,
-            }}
-          >
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 8,
+            flexShrink: 0,
+          }}
+        >
+          {!isCompactHeader ? (
             <Pressable
+              onPress={() => setIsDesktopHeaderCollapsed((value) => !value)}
+              accessibilityRole="button"
               accessibilityLabel={
-                isEditMode
-                  ? "Turn timeline edit mode off"
-                  : "Turn timeline edit mode on"
+                isDesktopHeaderCollapsed
+                  ? "Expand timeline header"
+                  : "Collapse timeline header"
               }
-              onPress={onToggleEditMode}
               style={({ pressed }) => [
                 {
                   width: 36,
@@ -1291,21 +1362,127 @@ function TimelineStickyHeader({
                   borderRadius: 18,
                   alignItems: "center",
                   justifyContent: "center",
-                  backgroundColor: isEditMode ? "#081a33" : "#e5e7eb",
+                  backgroundColor: "#f1f5f9",
                 },
                 pressed && { opacity: 0.78 },
               ]}
             >
               <MaterialIcons
-                name={isEditMode ? "edit" : "edit-off"}
-                size={20}
-                color={isEditMode ? "#ffffff" : "#374151"}
+                name={isDesktopHeaderCollapsed ? "unfold-more" : "unfold-less"}
+                size={22}
+                color="#334155"
               />
             </Pressable>
+          ) : null}
 
+          {canManageTimeline ? (
+            <>
+              <Pressable
+                accessibilityLabel={
+                  isEditMode
+                    ? "Turn timeline edit mode off"
+                    : "Turn timeline edit mode on"
+                }
+                onPress={onToggleEditMode}
+                style={({ pressed }) => [
+                  {
+                    width: 36,
+                    height: 36,
+                    borderRadius: 18,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: isEditMode ? "#081a33" : "#e5e7eb",
+                  },
+                  pressed && { opacity: 0.78 },
+                ]}
+              >
+                <MaterialIcons
+                  name={isEditMode ? "edit" : "edit-off"}
+                  size={20}
+                  color={isEditMode ? "#ffffff" : "#374151"}
+                />
+              </Pressable>
+
+              <Pressable
+                accessibilityLabel="Add timeline entry"
+                onPress={onRequestAdd}
+                style={({ pressed }) => [
+                  {
+                    width: 36,
+                    height: 36,
+                    borderRadius: 18,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: "#081a33",
+                  },
+                  pressed && { opacity: 0.78 },
+                ]}
+              >
+                <MaterialIcons name="add" size={24} color="#ffffff" />
+              </Pressable>
+            </>
+          ) : null}
+        </View>
+      </View>
+
+      {!isHeaderCollapsed ? (
+        <View
+          style={{
+            marginTop: 16,
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 12,
+          }}
+        >
+          <View
+            style={{
+              width: 56,
+              height: 56,
+              borderRadius: 28,
+              backgroundColor: "#eff6ff",
+              borderWidth: 1,
+              borderColor: "#bfdbfe",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <MaterialIcons name="timeline" size={30} color="#1d4ed8" />
+          </View>
+
+          <View style={{ flex: 1, minWidth: 0 }}>
+            <Text
+              numberOfLines={1}
+              style={{
+                fontSize: 18,
+                lineHeight: 23,
+                fontWeight: "900",
+                color: "#081a33",
+              }}
+            >
+              {selectedOccurrence?.title ?? "Select a timeline entry"}
+            </Text>
+
+            <Text
+              numberOfLines={2}
+              style={{
+                marginTop: 3,
+                fontSize: 12,
+                lineHeight: 16,
+                fontWeight: "700",
+                color: "#64748b",
+              }}
+            >
+              {selectedOccurrence?.summary ??
+                (isSavingTimeline
+                  ? "Saving timeline..."
+                  : HISTORY_TIMELINE_RANGE.label)}
+            </Text>
+          </View>
+
+          {selectedOccurrence && canManageTimeline ? (
             <Pressable
-              accessibilityLabel="Add timeline entry"
-              onPress={onRequestAdd}
+              accessibilityLabel={`Edit ${selectedOccurrence.title}`}
+              onPress={onRequestEdit}
               style={({ pressed }) => [
                 {
                   width: 36,
@@ -1313,92 +1490,18 @@ function TimelineStickyHeader({
                   borderRadius: 18,
                   alignItems: "center",
                   justifyContent: "center",
-                  backgroundColor: "#081a33",
+                  backgroundColor: "#e0f2fe",
                 },
                 pressed && { opacity: 0.78 },
               ]}
             >
-              <MaterialIcons name="add" size={24} color="#ffffff" />
+              <MaterialIcons name="edit" size={20} color="#075985" />
             </Pressable>
-          </View>
-        ) : null}
-      </View>
-
-      <View
-        style={{
-          marginTop: 16,
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 12,
-        }}
-      >
-        <View
-          style={{
-            width: 56,
-            height: 56,
-            borderRadius: 28,
-            backgroundColor: "#eff6ff",
-            borderWidth: 1,
-            borderColor: "#bfdbfe",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <MaterialIcons name="timeline" size={30} color="#1d4ed8" />
+          ) : null}
         </View>
+      ) : null}
 
-        <View style={{ flex: 1, minWidth: 0 }}>
-          <Text
-            numberOfLines={1}
-            style={{
-              fontSize: 18,
-              lineHeight: 23,
-              fontWeight: "900",
-              color: "#081a33",
-            }}
-          >
-            {selectedOccurrence?.title ?? "Select a timeline entry"}
-          </Text>
-
-          <Text
-            numberOfLines={2}
-            style={{
-              marginTop: 3,
-              fontSize: 12,
-              lineHeight: 16,
-              fontWeight: "700",
-              color: "#64748b",
-            }}
-          >
-            {selectedOccurrence?.summary ??
-              (isSavingTimeline
-                ? "Saving timeline..."
-                : HISTORY_TIMELINE_RANGE.label)}
-          </Text>
-        </View>
-
-        {selectedOccurrence && canManageTimeline ? (
-          <Pressable
-            accessibilityLabel={`Edit ${selectedOccurrence.title}`}
-            onPress={onRequestEdit}
-            style={({ pressed }) => [
-              {
-                width: 36,
-                height: 36,
-                borderRadius: 18,
-                alignItems: "center",
-                justifyContent: "center",
-                backgroundColor: "#e0f2fe",
-              },
-              pressed && { opacity: 0.78 },
-            ]}
-          >
-            <MaterialIcons name="edit" size={20} color="#075985" />
-          </Pressable>
-        ) : null}
-      </View>
-
-      {selectedOccurrence ? (
+      {selectedOccurrence && !isHeaderCollapsed ? (
         <View style={{ marginTop: 12, gap: 8 }}>
           <View
             style={{
@@ -1591,7 +1694,8 @@ function CommandStickyHeader({
   const { width } = useWindowDimensions();
   const [isVersionMenuOpen, setIsVersionMenuOpen] = useState(false);
   const [isMobileHeaderExpanded, setIsMobileHeaderExpanded] = useState(false);
-  const [isDesktopHeaderCollapsed, setIsDesktopHeaderCollapsed] = useState(false);
+  const [isDesktopHeaderCollapsed, setIsDesktopHeaderCollapsed] =
+    useState(false);
   const isCompactHeader = width < 680;
   const commandCategory = command?.categories?.[0] ?? null;
   const categoryLabel = commandCategory
@@ -1603,8 +1707,8 @@ function CommandStickyHeader({
   const pendingButtonColor = hasPendingConcerns
     ? "#b45309"
     : hasPendingContributions
-    ? "#0e7490"
-    : "transparent";
+      ? "#0e7490"
+      : "transparent";
   const canUseMobileHeaderOverride = isCompactHeader && Boolean(command);
   const isCompactStudyMode =
     canUseMobileHeaderOverride && !isMobileHeaderExpanded;
@@ -1713,7 +1817,10 @@ function CommandStickyHeader({
                 Command Study
               </Text>
 
-              <HeaderIdentityBadges groupLabel={groupLabel} userRole={userRole} />
+              <HeaderIdentityBadges
+                groupLabel={groupLabel}
+                userRole={userRole}
+              />
             </>
           )}
         </View>
@@ -1747,9 +1854,7 @@ function CommandStickyHeader({
               ]}
             >
               <MaterialIcons
-                name={
-                  isDesktopHeaderCollapsed ? "unfold-more" : "unfold-less"
-                }
+                name={isDesktopHeaderCollapsed ? "unfold-more" : "unfold-less"}
                 size={22}
                 color="#334155"
               />
@@ -1991,8 +2096,8 @@ function CommandStickyHeader({
                     backgroundColor: hasPendingConcerns
                       ? "#92400e"
                       : hasPendingContributions
-                      ? "#155e75"
-                      : "#115e59",
+                        ? "#155e75"
+                        : "#115e59",
                   },
                 ]}
               >
@@ -2006,8 +2111,8 @@ function CommandStickyHeader({
                   {isSelectingPending
                     ? "..."
                     : hasPendingContributions
-                    ? `Pending ${Math.min(pendingContributionCount, 99)}`
-                    : "Pending"}
+                      ? `Pending ${Math.min(pendingContributionCount, 99)}`
+                      : "Pending"}
                 </Text>
               </Pressable>
             </View>
@@ -2023,52 +2128,54 @@ function CommandStickyHeader({
                 flexShrink: 0,
               }}
             >
-            <Pressable
-              onPress={() => setIsVersionMenuOpen((value) => !value)}
-              style={({ pressed }) => [
-                {
-                  width: isCompactHeader ? 116 : undefined,
-                  minHeight: 38,
-                  paddingHorizontal: 12,
-                  borderRadius: 999,
-                  borderWidth: 1,
-                  borderColor: "#cbd5e1",
-                  backgroundColor: "#ffffff",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: isCompactHeader ? "space-between" : "center",
-                  gap: 6,
-                },
-                pressed && { backgroundColor: "#f1f5f9" },
-              ]}
-            >
-              <Text
-                style={{
-                  fontSize: 12,
-                  fontWeight: "900",
-                  color: "#64748b",
-                  textTransform: "uppercase",
-                }}
+              <Pressable
+                onPress={() => setIsVersionMenuOpen((value) => !value)}
+                style={({ pressed }) => [
+                  {
+                    width: isCompactHeader ? 116 : undefined,
+                    minHeight: 38,
+                    paddingHorizontal: 12,
+                    borderRadius: 999,
+                    borderWidth: 1,
+                    borderColor: "#cbd5e1",
+                    backgroundColor: "#ffffff",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: isCompactHeader
+                      ? "space-between"
+                      : "center",
+                    gap: 6,
+                  },
+                  pressed && { backgroundColor: "#f1f5f9" },
+                ]}
               >
-                Bible
-              </Text>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    fontWeight: "900",
+                    color: "#64748b",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Bible
+                </Text>
 
-              <Text
-                style={{
-                  fontSize: 14,
-                  fontWeight: "900",
-                  color: "#081a33",
-                }}
-              >
-                {selectedBibleVersion}
-              </Text>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: "900",
+                    color: "#081a33",
+                  }}
+                >
+                  {selectedBibleVersion}
+                </Text>
 
-              <MaterialIcons
-                name={isVersionMenuOpen ? "expand-less" : "expand-more"}
-                size={20}
-                color="#475569"
-              />
-            </Pressable>
+                <MaterialIcons
+                  name={isVersionMenuOpen ? "expand-less" : "expand-more"}
+                  size={20}
+                  color="#475569"
+                />
+              </Pressable>
             </View>
           ) : null}
         </View>
