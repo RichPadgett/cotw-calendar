@@ -158,5 +158,32 @@
     "month": 4,
     "day": 1,
     "notes": "In Jubilees 3:33, it states:\n\n“And on the new moon of the fourth month Adam and his wife went forth from the Garden of Eden"
+  },
+  {
+    "id": "adam-enters-garden-1782043678776",
+    "title": "Adam Enters Garden",
+    "shortName": "Adam Garden",
+    "color": "#2f3cbb",
+    "month": 2,
+    "day": 17,
+    "notes": "Jubilees 3:9:\n\n“And after Adam had completed forty days in the land where he had been created, we brought him into the Garden of Eden to till and keep it, but his wife they brought in on the eightieth day, and after this she entered into the Garden of Eden.”\n\nJubilees then gives the date in the next portion of the passage:\n\n“And for this reason the commandment is written on the heavenly tablets in regard to her that gives birth: ‘If she bears a male, she shall remain in her uncleanness forty days…’ And after Adam had completed forty days, he entered the Garden on the seventeenth day of the second month, and Eve entered on the eightieth day after her creation."
+  },
+  {
+    "id": "eve-deceived-by-satan-1782043728447",
+    "title": "Eve Deceived By Satan",
+    "shortName": "Eve Deceived",
+    "color": "#2553fc",
+    "month": 2,
+    "day": 17,
+    "notes": "\"And at the close of the seven years, which he had completed there, seven years exactly, and in the second month, on the seventeenth day of the month, the serpent came and approached the woman…”\n— Book of Jubilees 3:17"
+  },
+  {
+    "id": "noah-enters-ark-1782044559632",
+    "title": "Noah Enters Ark",
+    "shortName": "Noah Enters Ark",
+    "color": "#f7cce1",
+    "notes": "Jubilees 5:23:\n\n“And he entered in the sixth hundredth year of his life, in the second month, on the seventeenth day of the month, into the ark, and all that we brought to him, into the ark, and the Lord closed it from without on the seventeenth evening.”\n\nGenesis 7:11\n“In the six hundredth year of Noah’s life, in the second month, the seventeenth day of the month, the same day were all the fountains of the great deep broken up",
+    "month": 2,
+    "day": 17
   }
 ]
