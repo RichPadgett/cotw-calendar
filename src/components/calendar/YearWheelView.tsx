@@ -65,6 +65,37 @@ const GATE_DOTS = [
   { label: "Winter Gate", angle: Math.PI / 2, color: "#38bdf8" },
 ];
 
+const SOLAR_GATE_DATES = [
+  {
+    id: "spring-equinox",
+    label: "Spring Equinox",
+    monthDay: "03-20",
+    color: "#22c55e",
+    transitionDays: 3,
+  },
+  {
+    id: "summer-solstice",
+    label: "Summer Solstice",
+    monthDay: "06-21",
+    color: "#f59e0b",
+    transitionDays: 3,
+  },
+  {
+    id: "fall-equinox",
+    label: "Fall Equinox",
+    monthDay: "09-22",
+    color: "#dc2626",
+    transitionDays: 3,
+  },
+  {
+    id: "winter-solstice",
+    label: "Winter Solstice",
+    monthDay: "12-21",
+    color: "#0ea5e9",
+    transitionDays: 3,
+  },
+] as const;
+
 const FRACTIONAL_MARKER_SPACING = (Math.PI * 2 * 0.34) / 364;
 const WHEEL_DRAG_THRESHOLD = 8;
 const getWheelMetrics = (viewportWidth: number, wheelScale: number) => {
@@ -231,6 +262,28 @@ function buildWheelMarkerEntries(
   });
 }
 
+function buildSolarGateEntries(nodes: CalendarNode[]) {
+  return SOLAR_GATE_DATES.flatMap((solarGate) => {
+    const node = nodes.find((item) => {
+      return item.gregorianDate.slice(5) === solarGate.monthDay;
+    });
+    const dayOfYear = node?.enoch?.dayOfYear;
+
+    if (!dayOfYear) {
+      return [];
+    }
+
+    return [
+      {
+        ...solarGate,
+        node,
+        dayOfYear,
+        angle: getAngleForDay(dayOfYear),
+      },
+    ];
+  });
+}
+
 /**
  * Measures the shortest angle between two wheel positions.
  * This keeps sliding selection smooth around the 0/364 day boundary.
@@ -311,6 +364,25 @@ function LegendDot({ color, label }: { color: string; label: string }) {
           height: 8,
           backgroundColor: color,
           borderRadius: 6,
+        }}
+      />
+
+      <Text style={{ fontSize: 12, color: "#374151", fontWeight: "600" }}>
+        {label}
+      </Text>
+    </View>
+  );
+}
+
+function LegendSolarGate({ color, label }: { color: string; label: string }) {
+  return (
+    <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+      <View
+        style={{
+          width: 18,
+          height: 8,
+          borderRadius: 2,
+          backgroundColor: color,
         }}
       />
 
@@ -429,6 +501,9 @@ export default function YearWheelView({
   const wheelMarkerEntries = useMemo(() => {
     return buildWheelMarkerEntries(nodes, perpetualMarkers);
   }, [nodes, perpetualMarkers]);
+  const solarGateEntries = useMemo(() => {
+    return buildSolarGateEntries(nodes);
+  }, [nodes]);
   const todayMarkerEntry = wheelMarkerEntries.find(
     (entry) => entry.node.id === todayNode?.id
   );
@@ -828,6 +903,50 @@ export default function YearWheelView({
                 borderWidth: 2,
                 borderColor: "#ffffff",
                 zIndex: 30,
+              }}
+            />
+          );
+        })}
+
+        {solarGateEntries.map((solarGate) => {
+          const radius = OUTER_RING_SIZE / 2 - 22;
+          const point = getCirclePoint(
+            OUTER_CENTER,
+            OUTER_CENTER,
+            radius,
+            solarGate.angle
+          );
+          const markerWidth = Math.max(
+            18,
+            (Math.PI * 2 * radius * solarGate.transitionDays) / 364
+          );
+          const markerHeight = 8;
+
+          return (
+            <View
+              key={solarGate.id}
+              accessibilityLabel={solarGate.label}
+              style={{
+                position: "absolute",
+                left: point.x - markerWidth / 2,
+                top: point.y - markerHeight / 2,
+                width: markerWidth,
+                height: markerHeight,
+                borderRadius: 2,
+                backgroundColor: solarGate.color,
+                borderWidth: 1,
+                borderColor: "#ffffff",
+                zIndex: 35,
+                transform: [
+                  {
+                    rotate: `${solarGate.angle + Math.PI / 2}rad`,
+                  },
+                ],
+                transformOrigin: "center center" as any,
+                shadowColor: solarGate.color,
+                shadowOpacity: 0.24,
+                shadowRadius: 3,
+                shadowOffset: { width: 0, height: 1 },
               }}
             />
           );
@@ -1307,6 +1426,13 @@ export default function YearWheelView({
         <LegendDot color="#facc15" label="Summer Gate" />
         <LegendDot color="#fb923c" label="Fall Gate" />
         <LegendDot color="#38bdf8" label="Winter Gate" />
+        {SOLAR_GATE_DATES.map((solarGate) => (
+          <LegendSolarGate
+            key={solarGate.id}
+            color={solarGate.color}
+            label={solarGate.label}
+          />
+        ))}
         <LegendRest color="#ca8a04" label="High Sabbath" />
         <LegendRest color="#2563eb" label="Sabbath" />
         <LegendNotice label="Day Notice" />
