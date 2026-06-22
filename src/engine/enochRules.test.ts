@@ -6,6 +6,7 @@
 
 import { CalendarNode } from "../models/calendar";
 import { buildEnochYear } from "./buildEnochYear";
+import { getEnochYearStartDate } from "./enochYear";
 import { applyEnochOverlay } from "./enochRules";
 
 /**
@@ -118,6 +119,26 @@ describe("applyEnochOverlay", () => {
       },
       day: 1,
       quarter: 2,
+      isIntercalary: false,
+    });
+  });
+
+  it("keeps month 9 day 1 when the Enoch year crosses daylight saving time", () => {
+    const year = buildEnochYear({
+      enochYear: 2044,
+      startsOnGregorianDate: getEnochYearStartDate(2044),
+    });
+
+    const node = year.find(
+      (item) => item.enoch?.month?.number === 9 && item.enoch?.day === 1
+    );
+
+    expect(node?.enoch).toMatchObject({
+      dayOfYear: 243,
+      month: {
+        number: 9,
+      },
+      day: 1,
       isIntercalary: false,
     });
   });

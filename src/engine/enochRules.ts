@@ -319,11 +319,11 @@ function capitalize(value: string): string {
 */
 
 /**
- * Parses a YYYY-MM-DD string as a local midday Date.
- * This date helper avoids timezone rollback when comparing calendar-only values.
+ * Parses a YYYY-MM-DD string as a UTC date.
+ * This date helper avoids daylight-saving drift when comparing calendar-only values.
  */
 function parseDateOnly(value: string): Date {
   const [year, month, day] = value.split("-").map(Number);
 
-  return new Date(year, month - 1, day);
+  return new Date(Date.UTC(year, month - 1, day));
 }
