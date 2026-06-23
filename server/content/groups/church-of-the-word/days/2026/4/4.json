@@ -91,6 +91,18 @@
           "type": "external-link",
           "access": "public",
           "url": "https://open.spotify.com/episode/0aST1ognp1WS7hbdqFKkXV?si=YFtphpJMS_OQz-bnc9LQrA"
+        },
+        {
+          "label": "Acts of Pilate timeline to help us ID Tower of Babel.pdf",
+          "type": "pdf",
+          "access": "public",
+          "url": "/api/files/groups/church-of-the-word/files/2026/4/4/1782246081472-Acts_of_Pilate_timeline_to_help_us_ID_Tower_of_Babel.pdf"
+        },
+        {
+          "label": "Gilgal PDF for Recordings.pdf",
+          "type": "pdf",
+          "access": "public",
+          "url": "/api/files/groups/church-of-the-word/files/2026/4/4/1782246107888-Gilgal_PDF_for_Recordings.pdf"
         }
       ]
     }
