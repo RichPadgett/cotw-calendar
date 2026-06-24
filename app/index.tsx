@@ -4,6 +4,7 @@
  */
 
 import { useEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import {
   Alert,
   Image,
@@ -39,6 +40,12 @@ import WelcomeScreen from "../src/components/onboarding/WelcomeScreen";
 
 import { buildEnochYear } from "../src/engine/buildEnochYear";
 import { getEnochYearStartDate } from "../src/engine/enochYear";
+import { getCourseSpeed } from "../src/engine/partTime/courseSpeed";
+import {
+  getDayPartsForEnochDay,
+  getNightPartsForEnochDay,
+  getSeasonFromEnochDay,
+} from "../src/engine/partTime/partCurve";
 import { useGroupSession } from "../src/hooks/useGroupSession";
 import { CalendarNode } from "../src/models/calendar";
 
@@ -59,7 +66,7 @@ const COMMAND_BIBLE_VERSION_STORAGE_KEY = "commandBibleVersion";
 const COMMAND_SEARCH_TEXT_STORAGE_KEY = "commandSearchText";
 const ACTIVE_TAB_STORAGE_KEY = "activeAppTab";
 
-type AppTab = "calendar" | "timeline" | "commands";
+type AppTab = "calendar" | "timeline" | "models" | "commands";
 const BIBLE_VERSIONS: BibleVersion[] = [
   "KJV",
   "NKJV",
@@ -162,6 +169,7 @@ export default function HomeScreen() {
     groupCode === "church-of-the-word" &&
     Boolean(adminToken);
   const isTimelineVisible = canManageTimeline;
+  const canViewModelLab = canManageTimeline;
   const todayNode = nodes.find((node) => {
     return node.gregorianDate === todayDateId;
   });
@@ -221,11 +229,13 @@ export default function HomeScreen() {
     setPerpetualMarkersChecksum(null);
   }
 
+  /** change active tab. */
   function changeActiveTab(tab: AppTab) {
     latestTeachingAutoCollapsedRef.current = false;
     setActiveTab(tab);
   }
 
+  /** confirm change group. */
   function confirmChangeGroup() {
     if (Platform.OS === "web" && typeof window.confirm === "function") {
       const confirmed = window.confirm(
@@ -287,6 +297,7 @@ export default function HomeScreen() {
   }, [config.enochYear, groupCode, hasEnteredApp]);
 
   useEffect(() => {
+    /** load saved command study state. */
     async function loadSavedCommandStudyState() {
       const [
         savedUsername,
@@ -327,7 +338,8 @@ export default function HomeScreen() {
       if (
         savedTab === "calendar" ||
         savedTab === "timeline" ||
-        savedTab === "commands"
+        savedTab === "commands" ||
+        savedTab === "models"
       ) {
         setActiveTab(savedTab);
       }
@@ -362,6 +374,7 @@ export default function HomeScreen() {
     !commandContributorUsername &&
     !isDeviceUsernamePromptDismissed;
 
+  /** save device username. */
   async function saveDeviceUsername() {
     const normalizedUsername =
       normalizeContributorUsername(deviceUsernameDraft);
@@ -381,6 +394,7 @@ export default function HomeScreen() {
     setIsDeviceUsernamePromptDismissed(true);
   }
 
+  /** app fetch. */
   function appFetch(input: RequestInfo | URL, init: RequestInit = {}) {
     const headers = new Headers(init.headers);
     const normalizedUsername = normalizeContributorUsername(
@@ -401,6 +415,7 @@ export default function HomeScreen() {
     });
   }
 
+  /** dismiss device username prompt. */
   async function dismissDeviceUsernamePrompt() {
     await AsyncStorage.setItem(
       DEVICE_USERNAME_PROMPT_DISMISSED_STORAGE_KEY,
@@ -445,10 +460,15 @@ export default function HomeScreen() {
   }, [hasEnteredApp, perpetualMarkersChecksum]);
 
   useEffect(() => {
+    if (!hasLoadedGroupCode) return;
+
     if (activeTab === "timeline" && !isTimelineVisible) {
       setActiveTab("calendar");
     }
-  }, [activeTab, isTimelineVisible]);
+    if (activeTab === "models" && !canViewModelLab) {
+      setActiveTab("calendar");
+    }
+  }, [activeTab, canViewModelLab, hasLoadedGroupCode, isTimelineVisible]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -458,6 +478,7 @@ export default function HomeScreen() {
     return () => clearInterval(intervalId);
   }, []);
 
+  /** load perpetual markers. */
   async function loadPerpetualMarkers() {
     try {
       const checksumResponse = await appFetch(
@@ -522,6 +543,7 @@ export default function HomeScreen() {
     );
   }
 
+  /** open day. */
   async function openDay(node: CalendarNode) {
     setSelectedNode(node);
     setDayContent(null);
@@ -548,6 +570,7 @@ export default function HomeScreen() {
     }
   }
 
+  /** get selected day parts. */
   function getSelectedDayParts() {
     const year = selectedNode?.enoch?.year;
     const month = selectedNode?.enoch?.month?.number;
@@ -558,6 +581,7 @@ export default function HomeScreen() {
     return { year, month, day };
   }
 
+  /** delete day notes. */
   async function deleteDayNotes() {
     const selectedDay = getSelectedDayParts();
 
@@ -613,6 +637,7 @@ export default function HomeScreen() {
     await loadYearNotices();
   }
 
+  /** delete scripture reading. */
   async function deleteScriptureReading(index: number) {
     const selectedDay = getSelectedDayParts();
 
@@ -638,23 +663,28 @@ export default function HomeScreen() {
     setDayContent(savedContent);
   }
 
+  /** close day. */
   function closeDay() {
     setSelectedNode(null);
     setDayContent(null);
   }
 
+  /** handle month layout. */
   function handleMonthLayout(monthNumber: number, y: number) {
     monthOffsetsRef.current[monthNumber] = y;
   }
 
+  /** handle header layout. */
   function handleHeaderLayout(height: number) {
     headerHeightRef.current = height;
   }
 
+  /** handle year view layout. */
   function handleYearViewLayout(y: number) {
     yearViewTopOffsetRef.current = y;
   }
 
+  /** get month header scroll offset. */
   function getMonthHeaderScrollOffset() {
     return (
       yearViewTopOffsetRef.current -
@@ -663,6 +693,7 @@ export default function HomeScreen() {
     );
   }
 
+  /** handle scroll. */
   function handleScroll(event: any) {
     const scrollY = event.nativeEvent.contentOffset.y;
     currentScrollYRef.current = scrollY;
@@ -688,6 +719,7 @@ export default function HomeScreen() {
     setActiveMonthNumber(null);
   }
 
+  /** scroll to month. */
   function scrollToMonth(monthNumber: number) {
     const y = monthOffsetsRef.current[monthNumber];
 
@@ -701,6 +733,7 @@ export default function HomeScreen() {
     setActiveMonthNumber(monthNumber);
   }
 
+  /** center mobile selected command. */
   function centerMobileSelectedCommand({
     pageY,
   }: {
@@ -715,6 +748,7 @@ export default function HomeScreen() {
     });
   }
 
+  /** handle command resource stats change. */
   function handleCommandResourceStatsChange(stats: {
     categoryCount: number;
     commandCount: number;
@@ -739,6 +773,7 @@ export default function HomeScreen() {
     });
   }
 
+  /** show command contribution help. */
   function showCommandContributionHelp() {
     const message =
       "Command Study can be improved by Church of the Word contributors. You can add new study data, suggest edits to existing information, or suggest that an item be removed. Contributions are saved for review before they become part of the command study resources.\n\nRequirements describe what must be true, available, or in place to properly obey a command.\n\nStudy Notes add Torah context, cross-reference awareness, or practical framing without adding man-made rules.\n\nSource Terms capture original-language words and how they affect understanding.\n\nTranslation Notes explain wording differences, ambiguity, or translation choices.\n\nClarification helps prevent misunderstanding by naming a focused correction, boundary, or distinction.";
@@ -751,6 +786,7 @@ export default function HomeScreen() {
     Alert.alert("Community Contributions", message);
   }
 
+  /** go previous year. */
   function goPreviousYear() {
     setYearTransition({ direction: "previous", id: Date.now() });
     setVisibleEnochYear((year) => year - 1);
@@ -759,6 +795,7 @@ export default function HomeScreen() {
     scrollViewRef.current?.scrollTo({ y: 0, animated: true });
   }
 
+  /** go next year. */
   function goNextYear() {
     setYearTransition({ direction: "next", id: Date.now() });
     setVisibleEnochYear((year) => year + 1);
@@ -767,6 +804,7 @@ export default function HomeScreen() {
     scrollViewRef.current?.scrollTo({ y: 0, animated: true });
   }
 
+  /** go to previous day. */
   function goToPreviousDay() {
     if (!selectedNode) return;
 
@@ -778,6 +816,7 @@ export default function HomeScreen() {
     }
   }
 
+  /** go to next day. */
   function goToNextDay() {
     if (!selectedNode) return;
 
@@ -830,6 +869,7 @@ export default function HomeScreen() {
           <TabSelector
             activeTab={activeTab}
             isTimelineVisible={isTimelineVisible}
+            isModelLabVisible={canViewModelLab}
             onChangeTab={changeActiveTab}
           />
 
@@ -912,6 +952,10 @@ export default function HomeScreen() {
               }}
             />
           )}
+
+          {activeTab === "models" && canViewModelLab && (
+            <ModelLabStickyHeader groupLabel={groupLabel} userRole={userRole} />
+          )}
         </View>
 
         {activeTab === "calendar" && (
@@ -970,6 +1014,17 @@ export default function HomeScreen() {
             onNavigationStateChange={setCommandNavigation}
             onResourceStatsChange={handleCommandResourceStatsChange}
             onMobileSelectedCommandLayout={centerMobileSelectedCommand}
+          />
+        )}
+
+        {activeTab === "models" && canViewModelLab && (
+          <ModelComparisonView
+            nodes={nodes}
+            notices={yearNotices}
+            perpetualMarkers={perpetualMarkers}
+            todayDateId={todayDateId}
+            onPressDay={openDay}
+            onPressMonth={scrollToMonth}
           />
         )}
       </ScrollView>
@@ -1131,19 +1186,25 @@ export default function HomeScreen() {
   );
 }
 
+/** tab selector. */
 function TabSelector({
   activeTab,
   isTimelineVisible,
+  isModelLabVisible,
   onChangeTab,
 }: {
   activeTab: AppTab;
   isTimelineVisible: boolean;
+  isModelLabVisible: boolean;
   onChangeTab: (tab: AppTab) => void;
 }) {
   const tabs: { id: AppTab; label: string }[] = [
     { id: "calendar", label: "Calendar" },
     ...(isTimelineVisible
       ? [{ id: "timeline" as const, label: "Timeline" }]
+      : []),
+    ...(isModelLabVisible
+      ? [{ id: "models" as const, label: "Models" }]
       : []),
     { id: "commands", label: "Commands" },
   ];
@@ -1196,6 +1257,299 @@ function TabSelector({
   );
 }
 
+/** model lab sticky header. */
+function ModelLabStickyHeader({
+  groupLabel,
+  userRole,
+}: {
+  groupLabel: string;
+  userRole: "member" | "admin";
+}) {
+  return (
+    <View
+      style={{
+        padding: 16,
+        borderRadius: 20,
+        backgroundColor: "#f9fafb",
+        borderWidth: 1,
+        borderColor: "#e5e7eb",
+      }}
+    >
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          gap: 12,
+        }}
+      >
+        <View style={{ flex: 1, minWidth: 0 }}>
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.72}
+            style={{
+              fontSize: 34,
+              fontWeight: "900",
+              color: "#081a33",
+              letterSpacing: 4.5,
+            }}
+          >
+            ENOCH
+          </Text>
+
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.75}
+            style={{
+              marginTop: -2,
+              fontSize: 18,
+              fontWeight: "800",
+              color: "#081a33",
+              letterSpacing: 2.5,
+              textTransform: "uppercase",
+            }}
+          >
+            Model Lab
+          </Text>
+
+          <HeaderIdentityBadges groupLabel={groupLabel} userRole={userRole} />
+        </View>
+
+        <View
+          style={{
+            width: 56,
+            height: 56,
+            borderRadius: 28,
+            backgroundColor: "#fefce8",
+            borderWidth: 1,
+            borderColor: "#fde68a",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <MaterialIcons name="science" size={30} color="#a16207" />
+        </View>
+      </View>
+    </View>
+  );
+}
+
+/** model comparison view. */
+function ModelComparisonView({
+  nodes,
+  notices,
+  perpetualMarkers,
+  todayDateId,
+  onPressDay,
+  onPressMonth,
+}: {
+  nodes: CalendarNode[];
+  notices: any[];
+  perpetualMarkers: PerpetualMarker[];
+  todayDateId: string;
+  onPressDay: (node: CalendarNode) => void;
+  onPressMonth: (monthNumber: number) => void;
+}) {
+  const { width } = useWindowDimensions();
+  const isSplit = width >= 980;
+  const todayNode = nodes.find((node) => node.gregorianDate === todayDateId);
+  const enochDay = todayNode?.enoch?.dayOfYear ?? 1;
+  const dayParts = getDayPartsForEnochDay(enochDay);
+  const nightParts = getNightPartsForEnochDay(enochDay);
+  const season = getSeasonFromEnochDay(enochDay);
+  const courseSpeed = getCourseSpeed(enochDay);
+
+  return (
+    <View
+      style={{
+        gap: 14,
+        flexDirection: isSplit ? "row" : "column",
+        alignItems: "flex-start",
+      }}
+    >
+      <ModelPanel title="Existing Enoch Model" subtitle="Current production calendar">
+        <YearWheelView
+          nodes={nodes}
+          perpetualMarkers={perpetualMarkers}
+          todayDateId={todayDateId}
+          onPressMonth={onPressMonth}
+          onPressDay={onPressDay}
+        />
+
+        <YearView
+          nodes={nodes}
+          notices={notices}
+          perpetualMarkers={perpetualMarkers}
+          todayDateId={todayDateId}
+          onPressDay={onPressDay}
+        />
+      </ModelPanel>
+
+      <ModelPanel
+        title="Part Time Model"
+        subtitle="Theoretical 18-part day/night course model"
+      >
+        <View
+          style={{
+            gap: 10,
+            padding: 12,
+            borderRadius: 8,
+            borderWidth: 1,
+            borderColor: "#fde68a",
+            backgroundColor: "#fffbeb",
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 18,
+              lineHeight: 24,
+              fontWeight: "900",
+              color: "#713f12",
+              textTransform: "capitalize",
+            }}
+          >
+            {season} course
+          </Text>
+
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+            <ModelStat label="Enoch Day" value={String(enochDay)} />
+            <ModelStat label="Day Parts" value={String(dayParts)} />
+            <ModelStat label="Night Parts" value={String(nightParts)} />
+            <ModelStat label="Course Speed" value={courseSpeed} />
+          </View>
+
+          <Text
+            style={{
+              fontSize: 13,
+              lineHeight: 19,
+              color: "#854d0e",
+            }}
+          >
+            This model uses 18 total parts per Enoch day and interpolates
+            daylight/night portions through the year. Jerusalem solar data will
+            be used as the modern timestamp translation layer.
+          </Text>
+        </View>
+
+        <YearWheelView
+          nodes={nodes}
+          perpetualMarkers={perpetualMarkers}
+          todayDateId={todayDateId}
+          onPressMonth={onPressMonth}
+          onPressDay={onPressDay}
+        />
+
+        <YearView
+          nodes={nodes}
+          notices={notices}
+          perpetualMarkers={perpetualMarkers}
+          todayDateId={todayDateId}
+          onPressDay={onPressDay}
+        />
+      </ModelPanel>
+    </View>
+  );
+}
+
+/** model panel. */
+function ModelPanel({
+  title,
+  subtitle,
+  children,
+}: {
+  title: string;
+  subtitle: string;
+  children: ReactNode;
+}) {
+  return (
+    <View
+      style={{
+        flex: 1,
+        width: "100%",
+        minWidth: 0,
+        gap: 12,
+        padding: 12,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: "#e5e7eb",
+        backgroundColor: "#ffffff",
+      }}
+    >
+      <View>
+        <Text
+          style={{
+            fontSize: 18,
+            lineHeight: 24,
+            fontWeight: "900",
+            color: "#081a33",
+          }}
+        >
+          {title}
+        </Text>
+        <Text
+          style={{
+            marginTop: 2,
+            fontSize: 12,
+            lineHeight: 17,
+            fontWeight: "700",
+            color: "#64748b",
+          }}
+        >
+          {subtitle}
+        </Text>
+      </View>
+
+      {children}
+    </View>
+  );
+}
+
+/** model stat. */
+function ModelStat({ label, value }: { label: string; value: string }) {
+  return (
+    <View
+      style={{
+        minWidth: 110,
+        flex: 1,
+        padding: 10,
+        borderRadius: 8,
+        backgroundColor: "#ffffff",
+        borderWidth: 1,
+        borderColor: "#fde68a",
+      }}
+    >
+      <Text
+        style={{
+          fontSize: 11,
+          lineHeight: 15,
+          fontWeight: "900",
+          color: "#a16207",
+          textTransform: "uppercase",
+        }}
+      >
+        {label}
+      </Text>
+      <Text
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        style={{
+          marginTop: 4,
+          fontSize: 18,
+          lineHeight: 23,
+          fontWeight: "900",
+          color: "#111827",
+          textTransform: "capitalize",
+        }}
+      >
+        {value}
+      </Text>
+    </View>
+  );
+}
+
+/** timeline sticky header. */
 function TimelineStickyHeader({
   selectedOccurrence,
   canManageTimeline,
@@ -1599,6 +1953,7 @@ function TimelineStickyHeader({
   );
 }
 
+/** timeline header pill. */
 function TimelineHeaderPill({
   icon,
   label,
@@ -1641,6 +1996,7 @@ function TimelineHeaderPill({
   );
 }
 
+/** header identity badges. */
 function HeaderIdentityBadges({
   groupLabel,
   userRole,
@@ -1695,6 +2051,7 @@ function HeaderIdentityBadges({
   );
 }
 
+/** command sticky header. */
 function CommandStickyHeader({
   command,
   navigation,
@@ -2342,24 +2699,29 @@ const commandCategoryIcons: Record<string, ImageSourcePropType> = {
   worship_idolatry: require("../assets/command/icons/worship_idolatry.png"),
 };
 
+/** get command category icon. */
 function getCommandCategoryIcon(category: string | null) {
   if (!category) return null;
 
   return commandCategoryIcons[category] ?? null;
 }
 
+/** format command category label. */
 function formatCommandCategoryLabel(category: string) {
   return category.replace(/_/g, " ");
 }
 
+/** check whether valid contributor username. */
 function isValidContributorUsername(username: string) {
   return /^[a-z0-9_-]{2,32}$/.test(normalizeContributorUsername(username));
 }
 
+/** normalize contributor username. */
 function normalizeContributorUsername(username: string) {
   return username.trim().toLowerCase().replace(/\s/g, "");
 }
 
+/** timeline placeholder. */
 function TimelinePlaceholder() {
   return (
     <View
