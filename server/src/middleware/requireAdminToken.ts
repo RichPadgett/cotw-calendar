@@ -1,6 +1,12 @@
+/*
+ * File: server/src/middleware/requireAdminToken.ts
+ * Purpose: Express middleware for API request handling.
+ */
+
 import { NextFunction, Request, Response } from "express";
 import { verifyAdminToken } from "../services/groupStore";
 
+/** get bearer token. */
 function getBearerToken(req: Request) {
   const authHeader = req.headers.authorization ?? "";
 
@@ -9,6 +15,7 @@ function getBearerToken(req: Request) {
     : "";
 }
 
+/** require admin token. */
 export function requireAdminToken(
   req: Request,
   res: Response,
@@ -42,6 +49,7 @@ export function requireAdminToken(
   next();
 }
 
+/** require admin token for group. */
 export function requireAdminTokenForGroup(requiredGroupCode: string) {
   return function requireFixedGroupAdminToken(
     req: Request,

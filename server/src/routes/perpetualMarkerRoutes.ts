@@ -1,3 +1,8 @@
+/*
+ * File: server/src/routes/perpetualMarkerRoutes.ts
+ * Purpose: Express API route module.
+ */
+
 import { Router } from "express";
 import {
   getPerpetualMarkers,

@@ -73,10 +73,12 @@ function getHistoryFolder(
   return path.join(CONTENT_ROOT, groupCode, "history", year, month, day);
 }
 
+/** positive modulo. */
 function positiveModulo(value: number, divisor: number): number {
   return ((value % divisor) + divisor) % divisor;
 }
 
+/** check whether sabbath week before enoch year. */
 function hasSabbathWeekBeforeEnochYear(targetYear: number): boolean {
   return (
     positiveModulo(
@@ -86,10 +88,12 @@ function hasSabbathWeekBeforeEnochYear(targetYear: number): boolean {
   );
 }
 
+/** get enoch year length. */
 function getEnochYearLength(year: number): number {
   return hasSabbathWeekBeforeEnochYear(year + 1) ? 371 : 364;
 }
 
+/** add days. */
 function addDays(dateString: string, days: number): string {
   const [year, month, day] = dateString.split("-").map(Number);
   const date = new Date(Date.UTC(year, month - 1, day));
@@ -103,6 +107,7 @@ function addDays(dateString: string, days: number): string {
   return `${nextYear}-${nextMonth}-${nextDay}`;
 }
 
+/** get enoch year start date. */
 function getEnochYearStartDate(targetYear: number): string {
   let currentStartDate = BASE_START_DATE;
 
@@ -117,6 +122,7 @@ function getEnochYearStartDate(targetYear: number): string {
   return currentStartDate;
 }
 
+/** get enoch day of year. */
 function getEnochDayOfYear(month: number, day: number): number {
   const quarter = Math.floor((month - 1) / 3);
   const monthInQuarter = (month - 1) % 3;
@@ -124,6 +130,7 @@ function getEnochDayOfYear(month: number, day: number): number {
   return quarter * 91 + monthInQuarter * 30 + day;
 }
 
+/** get gregorian date for enoch date. */
 function getGregorianDateForEnochDate(
   enochYear: number,
   month: number,
@@ -135,6 +142,7 @@ function getGregorianDateForEnochDate(
   return addDays(startDate, dayOfYear - 1);
 }
 
+/** format date only. */
 function formatDateOnly(date: Date): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -143,22 +151,26 @@ function formatDateOnly(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
+/** check whether saturday. */
 function isSaturday(dateString: string): boolean {
   const [year, month, day] = dateString.split("-").map(Number);
 
   return new Date(Date.UTC(year, month - 1, day)).getUTCDay() === 6;
 }
 
+/** check whether spotify item. */
 function isSpotifyItem(item: CalendarContentItem): boolean {
   return Boolean(item.url?.includes("open.spotify.com/episode"));
 }
 
+/** get spotify items. */
 function getSpotifyItems(content: CalendarDayContent): CalendarContentItem[] {
   return (content.sections ?? []).flatMap((section) =>
     section.items.filter(isSpotifyItem)
   );
 }
 
+/** read day content file. */
 function readDayContentFile(filePath: string): CalendarDayContent | null {
   try {
     return JSON.parse(fs.readFileSync(filePath, "utf-8"));
@@ -169,6 +181,7 @@ function readDayContentFile(filePath: string): CalendarDayContent | null {
   }
 }
 
+/** walk json files. */
 function walkJsonFiles(folderPath: string): string[] {
   if (!fs.existsSync(folderPath)) {
     return [];

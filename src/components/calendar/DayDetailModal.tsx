@@ -119,10 +119,12 @@ export default function DayDetailModal({
     Linking.openURL(getOpenUrl(url));
   }
 
+  /** check whether url. */
   function isUrl(value?: string): boolean {
     return /^https?:\/\//i.test(value?.trim() ?? "");
   }
 
+  /** check whether openable url. */
   function isOpenableUrl(value?: string): boolean {
     const trimmedValue = value?.trim() ?? "";
 
@@ -133,6 +135,7 @@ export default function DayDetailModal({
     );
   }
 
+  /** get open url. */
   function getOpenUrl(url: string): string {
     const trimmedUrl = url.trim();
 
@@ -151,6 +154,7 @@ export default function DayDetailModal({
     return trimmedUrl;
   }
 
+  /** get link variant. */
   function getLinkVariant(
     url?: string
   ): "spotify" | "maps" | "zoom" | "default" {
@@ -171,6 +175,7 @@ export default function DayDetailModal({
     return "default";
   }
 
+  /** get notice details. */
   function getNoticeDetails(item: DayContentItem): string {
     if (item.details?.trim()) {
       return item.details.trim();
@@ -179,10 +184,12 @@ export default function DayDetailModal({
     return isOpenableUrl(item.url) ? "" : (item.url?.trim() ?? "");
   }
 
+  /** get notice url. */
   function getNoticeUrl(item: DayContentItem): string | undefined {
     return isOpenableUrl(item.url) ? item.url : undefined;
   }
 
+  /** render open link button. */
   function renderOpenLinkButton(url: string, label = "Open") {
     const linkVariant = getLinkVariant(url);
     const isBrandedLink = linkVariant !== "default";
@@ -237,6 +244,7 @@ export default function DayDetailModal({
     onClose();
   }
 
+  /** reset marker form. */
   function resetMarkerForm() {
     setEditingMarkerId(null);
     setMarkerTitle("");
@@ -247,6 +255,7 @@ export default function DayDetailModal({
     setMarkerSourceUrl("");
   }
 
+  /** create marker id. */
   function createMarkerId(title: string) {
     const slug = title
       .trim()
@@ -268,6 +277,7 @@ export default function DayDetailModal({
     return isHexColor ? trimmedColor : DEFAULT_MARKER_COLOR;
   }
 
+  /** fill marker form. */
   function fillMarkerForm(marker: PerpetualMarker) {
     setEditingMarkerId(marker.id);
     setMarkerTitle(marker.title ?? "");
@@ -279,6 +289,7 @@ export default function DayDetailModal({
     setMarkerSaveMessage("");
   }
 
+  /** apply marker form fields. */
   function applyMarkerFormFields(marker: PerpetualMarker): PerpetualMarker {
     const title = markerTitle.trim();
     const shortName = markerShortName.trim();
@@ -337,6 +348,7 @@ export default function DayDetailModal({
     return marker;
   }
 
+  /** add perpetual marker. */
   async function addPerpetualMarker() {
     const marker = buildMarkerForSelectedDay();
 
@@ -360,6 +372,7 @@ export default function DayDetailModal({
     }
   }
 
+  /** update perpetual marker. */
   async function updatePerpetualMarker() {
     const editingMarker = perpetualMarkers.find(
       (marker) => marker.id === editingMarkerId
@@ -394,6 +407,7 @@ export default function DayDetailModal({
     }
   }
 
+  /** delete perpetual marker. */
   async function deletePerpetualMarker(markerId: string) {
     try {
       setIsSavingMarker(true);
@@ -419,6 +433,7 @@ export default function DayDetailModal({
     }
   }
 
+  /** delete day notes. */
   async function deleteDayNotes() {
     try {
       setIsDeletingContent(true);
@@ -453,6 +468,7 @@ export default function DayDetailModal({
     }
   }
 
+  /** delete scripture reading. */
   async function deleteScriptureReading(index: number) {
     try {
       setIsDeletingContent(true);

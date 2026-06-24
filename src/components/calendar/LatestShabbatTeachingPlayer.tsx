@@ -40,6 +40,7 @@ type Props = {
   collapseRequestId?: number;
 };
 
+/** get spotify embed url. */
 function getSpotifyEmbedUrl(url: string): string | null {
   const match = url.match(/open\.spotify\.com\/episode\/([^?]+)/);
 

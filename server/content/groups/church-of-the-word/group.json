@@ -56,6 +56,11 @@
       "tokenHash": "8f6cf662e7293e90058297e9f51884a84deac7b91b2e1455ab363496be4ebedf",
       "createdAt": "2026-06-22T01:47:13.605Z",
       "deviceName": "Web Browser"
+    },
+    {
+      "tokenHash": "2f2e6d6aa99370d68bdcd49398d3f60ca59f0c5acb46439a9f794083a77648a3",
+      "createdAt": "2026-06-23T19:39:23.745Z",
+      "deviceName": "Web Browser"
     }
   ]
 }

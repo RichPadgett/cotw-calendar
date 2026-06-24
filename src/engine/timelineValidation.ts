@@ -31,10 +31,12 @@ export type TimelineDateValidation = {
   };
 };
 
+/** check whether month and day. */
 function hasMonthAndDay(date: HistoricalDate) {
   return typeof date.month === "number" && typeof date.day === "number";
 }
 
+/** to gregorian date id. */
 function toGregorianDateId(date: HistoricalDate) {
   if (!hasMonthAndDay(date)) return null;
 
@@ -44,11 +46,13 @@ function toGregorianDateId(date: HistoricalDate) {
   return `${String(date.year).padStart(4, "0")}-${month}-${day}`;
 }
 
+/** get expected enoch year. */
 function getExpectedEnochYear(date: HistoricalDate) {
   if (date.era === "BC") return null;
   return date.year;
 }
 
+/** find gregorian node. */
 function findGregorianNode(date: HistoricalDate): CalendarNode | null {
   const gregorianDate = toGregorianDateId(date);
   const expectedEnochYear = getExpectedEnochYear(date);
@@ -72,6 +76,7 @@ function findGregorianNode(date: HistoricalDate): CalendarNode | null {
   return null;
 }
 
+/** format computed label. */
 function formatComputedLabel(node: CalendarNode) {
   const enoch = node.enoch;
 
@@ -86,6 +91,7 @@ function formatComputedLabel(node: CalendarNode) {
   return `Enoch Year ${enoch.year} Day ${enoch.dayOfYear}`;
 }
 
+/** reference matches node. */
 function referenceMatchesNode(
   reference: EnochDateReference,
   node: CalendarNode
@@ -104,6 +110,7 @@ function referenceMatchesNode(
   return checks.every(Boolean);
 }
 
+/** validate timeline date. */
 export function validateTimelineDate(
   date: HistoricalDate,
   reference?: EnochDateReference

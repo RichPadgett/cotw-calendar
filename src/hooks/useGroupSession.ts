@@ -1,3 +1,8 @@
+/*
+ * File: src/hooks/useGroupSession.ts
+ * Purpose: React hook for app theme, device state, or group session behavior.
+ */
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 
@@ -9,6 +14,7 @@ const ADMIN_TOKEN_STORAGE_KEY = "adminToken";
 
 export type UserRole = "member" | "admin";
 
+/** use group session. */
 export function useGroupSession() {
   const [hasEnteredApp, setHasEnteredApp] = useState(false);
   const [hasLoadedGroupCode, setHasLoadedGroupCode] = useState(false);
@@ -24,6 +30,7 @@ export function useGroupSession() {
     typeof window !== "undefined" ? "Web Browser" : "Mobile App";
 
   useEffect(() => {
+    /** load saved session. */
     async function loadSavedSession() {
       try {
         const savedGroupCode = await AsyncStorage.getItem(
@@ -61,6 +68,7 @@ export function useGroupSession() {
     loadSavedSession();
   }, []);
 
+  /** join group. */
   async function joinGroup() {
     setWelcomeError("");
 
@@ -112,6 +120,7 @@ export function useGroupSession() {
     console.log("join role", data.role);
   }
 
+  /** change group. */
   async function changeGroup() {
     // Clear the saved token when changing groups so admin access cannot leak between sessions.
     await AsyncStorage.removeItem(GROUP_CODE_STORAGE_KEY);

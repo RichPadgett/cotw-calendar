@@ -13,6 +13,7 @@ const TIMELINE_OCCURRENCES_PATH = path.join(
   "timelineOccurrences.json"
 );
 
+/** get timeline occurrences. */
 export function getTimelineOccurrences() {
   if (!fs.existsSync(TIMELINE_OCCURRENCES_PATH)) {
     return [];
@@ -21,6 +22,7 @@ export function getTimelineOccurrences() {
   return JSON.parse(fs.readFileSync(TIMELINE_OCCURRENCES_PATH, "utf-8"));
 }
 
+/** save timeline occurrences. */
 export function saveTimelineOccurrences(occurrences: unknown[]) {
   fs.mkdirSync(SYSTEM_ROOT, { recursive: true });
 

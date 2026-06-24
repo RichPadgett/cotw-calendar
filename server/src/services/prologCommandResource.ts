@@ -44,12 +44,14 @@ type RandomCommandResourceResponse = {
   command: CommandResourceDetail | null;
 };
 
+/** assert safe atom. */
 export function assertSafeAtom(value: string, fieldName: string): void {
   if (!safeAtomPattern.test(value)) {
     throw new Error(`${fieldName} must be a lowercase Prolog atom key.`);
   }
 }
 
+/** list command resources. */
 export async function listCommandResources(
   filters: CommandResourceFilters = {}
 ) {
@@ -80,6 +82,7 @@ export async function listCommandResources(
   return runPrologJson("api_commands_json");
 }
 
+/** get command resource. */
 export async function getCommandResource(commandKey: string) {
   assertSafeAtom(commandKey, "commandKey");
 
@@ -90,30 +93,37 @@ export async function getCommandResource(commandKey: string) {
   return mergeApprovedContributions(command);
 }
 
+/** get command resource categories. */
 export async function getCommandResourceCategories() {
   return runPrologJson("api_command_categories_json");
 }
 
+/** get command resources grouped by category. */
 export async function getCommandResourcesGroupedByCategory() {
   return runPrologJson("api_commands_grouped_by_category_json");
 }
 
+/** get random command resource category. */
 export async function getRandomCommandResourceCategory() {
   return runPrologJson("api_random_category_json");
 }
 
+/** get random command resource in random category. */
 export async function getRandomCommandResourceInRandomCategory() {
   return runPrologJson("api_random_command_in_random_category_json");
 }
 
+/** get command resource facts. */
 export async function getCommandResourceFacts() {
   return runPrologJson("api_command_facts_json");
 }
 
+/** get command resource applicability. */
 export async function getCommandResourceApplicability() {
   return runPrologJson("api_command_applicability_json");
 }
 
+/** get random command resource. */
 export async function getRandomCommandResource(
   filters: CommandResourceFilters = {}
 ) {
@@ -158,6 +168,7 @@ export async function getRandomCommandResource(
   );
 }
 
+/** merge random command response. */
 function mergeRandomCommandResponse(response: RandomCommandResourceResponse) {
   if (!response.command) {
     return response;
@@ -169,6 +180,7 @@ function mergeRandomCommandResponse(response: RandomCommandResourceResponse) {
   };
 }
 
+/** merge approved contributions. */
 function mergeApprovedContributions(command: CommandResourceDetail) {
   const contributions = listApprovedCommandContributions(command.key);
   const requirementContributions = contributions
@@ -220,6 +232,7 @@ function mergeApprovedContributions(command: CommandResourceDetail) {
   };
 }
 
+/** parse community story reference. */
 function parseCommunityStoryReference(text: string) {
   const [reference, ...labelParts] = text.split(/\s*:\s+/);
   const label = labelParts.join(": ").trim();
@@ -230,10 +243,12 @@ function parseCommunityStoryReference(text: string) {
   };
 }
 
+/** to prolog list. */
 function toPrologList(values: string[]) {
   return `[${values.join(",")}]`;
 }
 
+/** run prolog json. */
 async function runPrologJson<T>(goal: string): Promise<T> {
   const { stdout, stderr } = await execFileAsync("swipl", [
     "-q",

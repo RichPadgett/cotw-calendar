@@ -40,6 +40,7 @@ const requireCommandContributionAdmin = requireAdminTokenForGroup(
   getContributionGroupCode()
 );
 
+/** get catalog filters. */
 function getCatalogFilters(req: { query: Record<string, unknown> }) {
   return {
     category:
@@ -57,14 +58,17 @@ function getCatalogFilters(req: { query: Record<string, unknown> }) {
   };
 }
 
+/** get request text. */
 function getRequestText(value: unknown) {
   return typeof value === "string" ? value : "";
 }
 
+/** get route param. */
 function getRouteParam(value: string | string[]) {
   return Array.isArray(value) ? value[0] : value;
 }
 
+/** get contribution status. */
 function getContributionStatus(
   value: unknown
 ): CommandContributionStatus | "all" {
@@ -79,6 +83,7 @@ function getContributionStatus(
     : "approved";
 }
 
+/** handle contribution error. */
 function handleContributionError(res: Response, error: unknown) {
   res.status(400).json({
     error:
@@ -88,6 +93,7 @@ function handleContributionError(res: Response, error: unknown) {
   });
 }
 
+/** require contribution member. */
 function requireContributionMember(
   req: Request,
   res: Response,

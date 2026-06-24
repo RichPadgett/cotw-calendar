@@ -94,10 +94,12 @@ type ContributionFile = {
   contributions: CommandContribution[];
 };
 
+/** get contribution group code. */
 export function getContributionGroupCode() {
   return CONTRIBUTION_GROUP_CODE;
 }
 
+/** list command contributions. */
 export function listCommandContributions(params: {
   commandKey?: string;
   status?: CommandContributionStatus | "all";
@@ -134,6 +136,7 @@ export function listCommandContributions(params: {
   });
 }
 
+/** list approved command contributions. */
 export function listApprovedCommandContributions(commandKey: string) {
   return listCommandContributions({
     commandKey,
@@ -142,6 +145,7 @@ export function listApprovedCommandContributions(commandKey: string) {
   });
 }
 
+/** create command contribution. */
 export function createCommandContribution(params: {
   commandKey: string;
   mode?: string;
@@ -193,6 +197,7 @@ export function createCommandContribution(params: {
   return contribution;
 }
 
+/** update command contribution. */
 export function updateCommandContribution(
   id: string,
   params: {
@@ -258,6 +263,7 @@ export function updateCommandContribution(
   return contribution;
 }
 
+/** approve command contribution. */
 export function approveCommandContribution(id: string, updatedBy?: string) {
   const file = readContributionFile();
   const contribution = findContribution(file, id);
@@ -282,6 +288,7 @@ export function approveCommandContribution(id: string, updatedBy?: string) {
   return contribution;
 }
 
+/** vote on command contribution. */
 export function voteOnCommandContribution(params: {
   id: string;
   type: string;
@@ -360,6 +367,7 @@ export function voteOnCommandContribution(params: {
   return contribution;
 }
 
+/** resolve command contribution vote. */
 export function resolveCommandContributionVote(params: {
   id: string;
   voteId: string;
@@ -393,6 +401,7 @@ export function resolveCommandContributionVote(params: {
   return contribution;
 }
 
+/** reject command contribution. */
 export function rejectCommandContribution(id: string, updatedBy?: string) {
   return updateCommandContribution(id, {
     status: "rejected",
@@ -400,6 +409,7 @@ export function rejectCommandContribution(id: string, updatedBy?: string) {
   });
 }
 
+/** delete command contribution. */
 export function deleteCommandContribution(id: string, updatedBy?: string) {
   return updateCommandContribution(id, {
     status: "deleted",
@@ -407,6 +417,7 @@ export function deleteCommandContribution(id: string, updatedBy?: string) {
   });
 }
 
+/** withdraw command contribution. */
 export function withdrawCommandContribution(params: {
   id: string;
   commandKey: string;
@@ -438,6 +449,7 @@ export function withdrawCommandContribution(params: {
   return contribution;
 }
 
+/** promote command contribution. */
 export function promoteCommandContribution(params: {
   id: string;
   promotedBy: string;
@@ -477,6 +489,7 @@ export function promoteCommandContribution(params: {
   return contribution;
 }
 
+/** read contribution file. */
 function readContributionFile(): ContributionFile {
   if (!fs.existsSync(contributionPath)) {
     return { contributions: [] };
@@ -491,11 +504,13 @@ function readContributionFile(): ContributionFile {
   };
 }
 
+/** write contribution file. */
 function writeContributionFile(file: ContributionFile) {
   fs.mkdirSync(path.dirname(contributionPath), { recursive: true });
   fs.writeFileSync(contributionPath, JSON.stringify(file, null, 2), "utf-8");
 }
 
+/** append prolog fact. */
 function appendPrologFact(commandKey: string, prologFact: string) {
   const commandFiles = fs
     .readdirSync(PROLOG_COMMANDS_ROOT)
@@ -523,6 +538,7 @@ function appendPrologFact(commandKey: string, prologFact: string) {
   throw new Error("Could not find the Prolog command file for this command.");
 }
 
+/** remove prolog fact. */
 function removePrologFact(commandKey: string, prologFact: string) {
   const commandFiles = fs
     .readdirSync(PROLOG_COMMANDS_ROOT)
@@ -552,6 +568,7 @@ function removePrologFact(commandKey: string, prologFact: string) {
   throw new Error("Could not find the Prolog fact targeted for removal.");
 }
 
+/** build removal prolog fact. */
 function buildRemovalPrologFact(contribution: CommandContribution) {
   if (!contribution.target?.currentText) {
     throw new Error("Removal suggestions require a current target.");
@@ -583,6 +600,7 @@ function buildRemovalPrologFact(contribution: CommandContribution) {
   }
 }
 
+/** build source term removal fact. */
 function buildSourceTermRemovalFact(contribution: CommandContribution) {
   const sourceTerm =
     typeof contribution.target?.currentValue === "object" &&
@@ -606,6 +624,7 @@ function buildSourceTermRemovalFact(contribution: CommandContribution) {
   )}).`;
 }
 
+/** build story reference removal fact. */
 function buildStoryReferenceRemovalFact(contribution: CommandContribution) {
   const storyReference =
     typeof contribution.target?.currentValue === "object" &&
@@ -626,6 +645,7 @@ function buildStoryReferenceRemovalFact(contribution: CommandContribution) {
   )}, ${toPrologString(storyReference.label.trim())}).`;
 }
 
+/** build prolog fact. */
 function buildPrologFact(
   contribution: CommandContribution,
   official: Record<string, unknown>
@@ -662,6 +682,7 @@ function buildPrologFact(
   }
 }
 
+/** get official text. */
 function getOfficialText(official: Record<string, unknown>, fieldName: string) {
   const value = official[fieldName];
 
@@ -672,6 +693,7 @@ function getOfficialText(official: Record<string, unknown>, fieldName: string) {
   return value.trim();
 }
 
+/** normalize source language. */
 function normalizeSourceLanguage(value: unknown) {
   if (typeof value !== "string") {
     throw new Error("language is required.");
@@ -686,14 +708,17 @@ function normalizeSourceLanguage(value: unknown) {
   return language;
 }
 
+/** to prolog atom or string. */
 function toPrologAtomOrString(value: string) {
   return safeAtomPattern.test(value) ? value : toPrologString(value);
 }
 
+/** to prolog string. */
 function toPrologString(value: string) {
   return `'${value.replace(/'/g, "''")}'`;
 }
 
+/** find contribution. */
 function findContribution(file: ContributionFile, id: string) {
   const contribution = file.contributions.find((item) => item.id === id);
 
@@ -704,18 +729,21 @@ function findContribution(file: ContributionFile, id: string) {
   return contribution;
 }
 
+/** normalize command key. */
 function normalizeCommandKey(value: string) {
   const commandKey = value.trim();
   assertSafeAtom(commandKey, "commandKey");
   return commandKey;
 }
 
+/** assert safe atom. */
 function assertSafeAtom(value: string, fieldName: string): void {
   if (!safeAtomPattern.test(value)) {
     throw new Error(`${fieldName} must be a lowercase Prolog atom key.`);
   }
 }
 
+/** normalize contribution type. */
 function normalizeContributionType(value: string): CommandContributionType {
   const type = value.trim() as CommandContributionType;
 
@@ -728,6 +756,7 @@ function normalizeContributionType(value: string): CommandContributionType {
   return type;
 }
 
+/** normalize contribution mode. */
 function normalizeContributionMode(value: string): CommandContributionMode {
   const mode = value.trim() as CommandContributionMode;
 
@@ -740,6 +769,7 @@ function normalizeContributionMode(value: string): CommandContributionMode {
   return mode;
 }
 
+/** normalize contribution status. */
 function normalizeContributionStatus(value: string): CommandContributionStatus {
   const status = value.trim() as CommandContributionStatus;
 
@@ -752,6 +782,7 @@ function normalizeContributionStatus(value: string): CommandContributionStatus {
   return status;
 }
 
+/** normalize vote type. */
 function normalizeVoteType(value: string): CommandContributionVoteType {
   const type = value.trim() as CommandContributionVoteType;
 
@@ -762,12 +793,14 @@ function normalizeVoteType(value: string): CommandContributionVoteType {
   return type;
 }
 
+/** get unresolved concern votes. */
 function getUnresolvedConcernVotes(contribution: CommandContribution) {
   return (contribution.votes ?? []).filter(
     (vote) => vote.type === "concern" && !vote.resolvedAt
   );
 }
 
+/** normalize contribution target. */
 function normalizeContributionTarget(
   value: unknown
 ): CommandContributionTarget | undefined {
@@ -795,6 +828,7 @@ function normalizeContributionTarget(
   };
 }
 
+/** normalize contribution text. */
 function normalizeContributionText(value: string) {
   const text = value.trim();
 
@@ -809,12 +843,14 @@ function normalizeContributionText(value: string) {
   return text;
 }
 
+/** normalize optional text. */
 function normalizeOptionalText(value?: string) {
   const text = value?.trim();
 
   return text || undefined;
 }
 
+/** normalize username. */
 function normalizeUsername(value?: string) {
   const username = value?.trim() ?? "";
 

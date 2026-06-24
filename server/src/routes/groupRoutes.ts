@@ -1,3 +1,8 @@
+/*
+ * File: server/src/routes/groupRoutes.ts
+ * Purpose: Express API route module.
+ */
+
 import { Router } from "express";
 import { joinOrCreateGroup } from "../services/groupStore";
 

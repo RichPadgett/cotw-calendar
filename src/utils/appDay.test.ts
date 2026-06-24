@@ -1,3 +1,8 @@
+/*
+ * File: src/utils/appDay.test.ts
+ * Purpose: Automated test coverage for nearby app or engine behavior.
+ */
+
 import { formatGroupLabel, getAppDateId } from "./appDay";
 
 describe("app day helpers", () => {

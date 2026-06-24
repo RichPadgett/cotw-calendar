@@ -66,10 +66,12 @@ const emptyMediaRow: ContentRow = {
   access: "public",
 };
 
+/** get editable rows. */
 function getEditableRows<T>(rows: T[], emptyRow: T): T[] {
   return rows.length > 0 ? rows : [emptyRow];
 }
 
+/** get content type. */
 function getContentType(type?: string): ContentRow["type"] {
   const allowedTypes: ContentRow["type"][] = [
     "external-link",
@@ -84,6 +86,7 @@ function getContentType(type?: string): ContentRow["type"] {
     : "external-link";
 }
 
+/** get access level. */
 function getAccessLevel(access?: string): AccessLevel {
   const allowedAccess: AccessLevel[] = ["public", "members", "code-required"];
 
@@ -92,6 +95,7 @@ function getAccessLevel(access?: string): AccessLevel {
     : "public";
 }
 
+/** check whether openable url. */
 function isOpenableUrl(value?: string): boolean {
   const trimmedValue = value?.trim() ?? "";
 
@@ -102,6 +106,7 @@ function isOpenableUrl(value?: string): boolean {
   );
 }
 
+/** get open url. */
 function getOpenUrl(url: string): string {
   const trimmedUrl = url.trim();
 
@@ -120,6 +125,7 @@ function getOpenUrl(url: string): string {
   return trimmedUrl;
 }
 
+/** get content row. */
 function getContentRow(item: DayContentItem): ContentRow {
   return {
     label: item.label ?? "",
@@ -130,6 +136,7 @@ function getContentRow(item: DayContentItem): ContentRow {
   };
 }
 
+/** get notice row. */
 function getNoticeRow(item: DayContentItem): ContentRow {
   const row = getContentRow(item);
   const legacyDetails = row.url && !isOpenableUrl(row.url) ? row.url : "";
@@ -142,6 +149,7 @@ function getNoticeRow(item: DayContentItem): ContentRow {
   };
 }
 
+/** get notice payload. */
 function getNoticePayload(row: ContentRow) {
   const details = row.details.trim();
   const url = row.url.trim();
@@ -155,6 +163,7 @@ function getNoticePayload(row: ContentRow) {
   };
 }
 
+/** get media payload. */
 function getMediaPayload(row: ContentRow) {
   const label = row.label.trim();
   const url = row.url.trim();
@@ -167,6 +176,7 @@ function getMediaPayload(row: ContentRow) {
   };
 }
 
+/** check whether empty media row. */
 function isEmptyMediaRow(row: ContentRow): boolean {
   return !row.label.trim() && !row.url.trim();
 }

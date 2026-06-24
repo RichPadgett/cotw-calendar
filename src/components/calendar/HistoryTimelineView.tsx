@@ -162,6 +162,7 @@ const DEFAULT_FORM_STATE: TimelineEntryFormState = {
   rangeDurationDays: "",
 };
 
+/** parse optional number. */
 function parseOptionalNumber(value: string) {
   const trimmed = value.trim();
   if (!trimmed) return undefined;
@@ -170,11 +171,13 @@ function parseOptionalNumber(value: string) {
   return Number.isFinite(parsed) ? parsed : undefined;
 }
 
+/** parse required number. */
 function parseRequiredNumber(value: string) {
   const parsed = parseOptionalNumber(value);
   return typeof parsed === "number" ? parsed : null;
 }
 
+/** get timeline zoom config. */
 function getTimelineZoomConfig(zoomId: TimelineZoomId) {
   return (
     TIMELINE_ZOOM_LEVELS.find((zoomLevel) => zoomLevel.id === zoomId) ??
@@ -182,6 +185,7 @@ function getTimelineZoomConfig(zoomId: TimelineZoomId) {
   );
 }
 
+/** get timeline content width. */
 function getTimelineContentWidth(
   viewportWidth: number,
   zoomId: TimelineZoomId
@@ -197,10 +201,12 @@ function getTimelineContentWidth(
   );
 }
 
+/** check whether sabbath week year. */
 function isSabbathWeekYear(enochYear: number) {
   return enochYear > 0 && enochYear % SABBATH_WEEK_CYCLE_YEARS === 0;
 }
 
+/** get timeline year span. */
 function getTimelineYearSpan(durationDays: number, enochYear?: number) {
   if (!enochYear) return durationDays / AVERAGE_ENOCH_YEAR_DAYS;
 
@@ -222,6 +228,7 @@ function getTimelineYearSpan(durationDays: number, enochYear?: number) {
   return yearSpan;
 }
 
+/** get enoch day of year. */
 function getEnochDayOfYear(month: number, day: number) {
   const safeMonth = Math.max(1, Math.min(12, month));
   const safeDay = Math.max(1, Math.min(30, day));
@@ -229,6 +236,7 @@ function getEnochDayOfYear(month: number, day: number) {
   return (safeMonth - 1) * 30 + safeDay;
 }
 
+/** get enoch timeline value. */
 function getEnochTimelineValue(params: {
   enochYear: number;
   month?: number;
@@ -244,6 +252,7 @@ function getEnochTimelineValue(params: {
   );
 }
 
+/** get timeline value position. */
 function getTimelineValuePosition(value: number, width: number) {
   const trackWidth = Math.max(1, width - TIMELINE_SIDE_GUTTER * 2);
   const progress =
@@ -256,6 +265,7 @@ function getTimelineValuePosition(value: number, width: number) {
   );
 }
 
+/** get timeline value from position. */
 function getTimelineValueFromPosition(x: number, width: number) {
   const trackWidth = Math.max(1, width - TIMELINE_SIDE_GUTTER * 2);
   const progress = Math.max(
@@ -270,6 +280,7 @@ function getTimelineValueFromPosition(x: number, width: number) {
   );
 }
 
+/** get enoch year position. */
 function getEnochYearPosition(
   params: { enochYear: number; month?: number; day?: number },
   width: number
@@ -277,6 +288,7 @@ function getEnochYearPosition(
   return getTimelineValuePosition(getEnochTimelineValue(params), width);
 }
 
+/** get axis year interval. */
 function getAxisYearInterval(visibleYearSpan: number, zoomId?: TimelineZoomId) {
   if (zoomId === "years-10000") return 1000;
   if (zoomId === "years-5000") return 500;
@@ -291,6 +303,7 @@ function getAxisYearInterval(visibleYearSpan: number, zoomId?: TimelineZoomId) {
   return 1;
 }
 
+/** get visible timeline axis ticks. */
 function getVisibleTimelineAxisTicks(params: {
   zoomId: TimelineZoomId;
   scrollX: number;
@@ -447,6 +460,7 @@ function getVisibleTimelineAxisTicks(params: {
   return ticks;
 }
 
+/** format historical date. */
 export function formatHistoricalDate(date: HistoricalDate) {
   const dateParts =
     date.month && date.day ? ` ${String(date.month)}/${String(date.day)}` : "";
@@ -456,6 +470,7 @@ export function formatHistoricalDate(date: HistoricalDate) {
     : `AD ${date.year}${dateParts}`;
 }
 
+/** get resolved range end. */
 function getResolvedRangeEnd(occurrence: TimelineOccurrence) {
   if (!occurrence.timeRange) return null;
   const { start } = occurrence.timeRange;
@@ -473,6 +488,7 @@ function getResolvedRangeEnd(occurrence: TimelineOccurrence) {
   return Math.max(HISTORY_TIMELINE_RANGE.startYear, endYear);
 }
 
+/** get range label. */
 export function getRangeLabel(occurrence: TimelineOccurrence) {
   if (!occurrence.timeRange) return "";
   if (occurrence.timeRange.label) return occurrence.timeRange.label;
@@ -490,6 +506,7 @@ export function getRangeLabel(occurrence: TimelineOccurrence) {
   return `${startLabel} - ${endLabel}${gregorianLabel}`;
 }
 
+/** get lane frame. */
 function getLaneFrame(
   occurrence: TimelineOccurrence,
   laneHeight = BASE_LANE_HEIGHT
@@ -521,6 +538,7 @@ function getLaneFrame(
   };
 }
 
+/** timeline range bar. */
 function TimelineRangeBar({
   occurrence,
   left,
@@ -578,6 +596,7 @@ function TimelineRangeBar({
   );
 }
 
+/** timeline exact card. */
 function TimelineExactCard({
   occurrence,
   x,
@@ -646,6 +665,7 @@ function TimelineExactCard({
   );
 }
 
+/** era toggle. */
 function EraToggle({
   value,
   onChange,
@@ -679,6 +699,7 @@ function EraToggle({
   );
 }
 
+/** segmented selector. */
 function SegmentedSelector<TValue extends string>({
   value,
   options,
@@ -726,6 +747,7 @@ function SegmentedSelector<TValue extends string>({
   );
 }
 
+/** form field. */
 function FormField({
   label,
   value,
@@ -759,14 +781,17 @@ function FormField({
   );
 }
 
+/** normalize hex color. */
 function normalizeHexColor(value: string) {
   return /^#[0-9a-fA-F]{6}$/.test(value.trim()) ? value.trim() : "#2563eb";
 }
 
+/** stringify optional number. */
 function stringifyOptionalNumber(value?: number) {
   return typeof value === "number" ? String(value) : "";
 }
 
+/** color field. */
 function ColorField({
   value,
   onChangeText,
@@ -836,6 +861,7 @@ function ColorField({
   );
 }
 
+/** section toggle. */
 function SectionToggle({
   label,
   value,
@@ -929,6 +955,7 @@ export default function HistoryTimelineView({
   useEffect(() => {
     let isMounted = true;
 
+    /** load timeline occurrences. */
     async function loadTimelineOccurrences() {
       try {
         const response = await fetch(apiUrl("/timeline/occurrences"), {
@@ -972,6 +999,7 @@ export default function HistoryTimelineView({
     }
   }, [editRequestId]);
 
+  /** save timeline occurrences. */
   async function saveTimelineOccurrences(
     nextOccurrences: TimelineOccurrence[]
   ) {
@@ -1018,10 +1046,12 @@ export default function HistoryTimelineView({
     }
   }
 
+  /** update form. */
   function updateForm(nextValues: Partial<TimelineEntryFormState>) {
     setFormState((current) => ({ ...current, ...nextValues }));
   }
 
+  /** get form state from occurrence. */
   function getFormStateFromOccurrence(
     occurrence: TimelineOccurrence
   ): TimelineEntryFormState {
@@ -1070,6 +1100,7 @@ export default function HistoryTimelineView({
     };
   }
 
+  /** handle add timeline entry. */
   function handleAddTimelineEntry() {
     if (!canManageTimeline) {
       Alert.alert(
@@ -1084,18 +1115,21 @@ export default function HistoryTimelineView({
     setIsAddModalVisible(true);
   }
 
+  /** close add modal. */
   function closeAddModal() {
     setIsAddModalVisible(false);
     setEditingOccurrence(null);
     setFormState(DEFAULT_FORM_STATE);
   }
 
+  /** handle timeline scroll. */
   function handleTimelineScroll(
     event: NativeSyntheticEvent<NativeScrollEvent>
   ) {
     setTimelineScrollX(event.nativeEvent.contentOffset.x);
   }
 
+  /** handle timeline zoom change. */
   function handleTimelineZoomChange(nextZoom: TimelineZoomId) {
     const currentCenterValue = getTimelineValueFromPosition(
       timelineScrollX + width / 2,
@@ -1119,6 +1153,7 @@ export default function HistoryTimelineView({
     }, 0);
   }
 
+  /** step timeline zoom. */
   function stepTimelineZoom(direction: -1 | 1) {
     const nextZoomIndex =
       (currentTimelineZoomIndex + direction + TIMELINE_ZOOM_LEVELS.length) %
@@ -1127,6 +1162,7 @@ export default function HistoryTimelineView({
     handleTimelineZoomChange(TIMELINE_ZOOM_LEVELS[nextZoomIndex].id);
   }
 
+  /** step lane height. */
   function stepLaneHeight(direction: -1 | 1) {
     setLaneHeightIndex((currentIndex) =>
       Math.max(
@@ -1136,6 +1172,7 @@ export default function HistoryTimelineView({
     );
   }
 
+  /** handle select occurrence. */
   function handleSelectOccurrence(occurrence: TimelineOccurrence) {
     if (isEditMode && canManageTimeline) {
       onSelectedOccurrenceChange(null);
@@ -1148,6 +1185,7 @@ export default function HistoryTimelineView({
     onSelectedOccurrenceChange(occurrence);
   }
 
+  /** edit timeline entry. */
   function editTimelineEntry(occurrence: TimelineOccurrence) {
     if (!canManageTimeline) return;
 
@@ -1156,6 +1194,7 @@ export default function HistoryTimelineView({
     setIsAddModalVisible(true);
   }
 
+  /** get occurrence center x. */
   function getOccurrenceCenterX(occurrence: TimelineOccurrence) {
     if (occurrence.exactDate) {
       return getEnochYearPosition(
@@ -1193,6 +1232,7 @@ export default function HistoryTimelineView({
     return null;
   }
 
+  /** center timeline on occurrence. */
   function centerTimelineOnOccurrence(occurrence: TimelineOccurrence) {
     const centerX = getOccurrenceCenterX(occurrence);
     if (centerX === null) return;
@@ -1212,6 +1252,7 @@ export default function HistoryTimelineView({
     }, 120);
   }
 
+  /** delete timeline entry. */
   function deleteTimelineEntry(occurrenceId: string) {
     if (!canManageTimeline) {
       Alert.alert(
@@ -1232,6 +1273,7 @@ export default function HistoryTimelineView({
     void saveTimelineOccurrences(nextOccurrences);
   }
 
+  /** confirm delete timeline entry. */
   function confirmDeleteTimelineEntry(occurrence: TimelineOccurrence) {
     if (typeof window !== "undefined" && typeof window.confirm === "function") {
       const confirmed = window.confirm(
@@ -1259,6 +1301,7 @@ export default function HistoryTimelineView({
     );
   }
 
+  /** save timeline entry. */
   function saveTimelineEntry() {
     if (!canManageTimeline) {
       Alert.alert(

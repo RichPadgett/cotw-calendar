@@ -1,3 +1,8 @@
+/*
+ * File: scripts/reset-project.js
+ * Purpose: JavaScript configuration or utility script.
+ */
+
 #!/usr/bin/env node
 
 /**

@@ -247,6 +247,7 @@ export default function CommandExplorerView({
     (groupCode === CONTRIBUTION_GROUP_CODE || canModerateContributions);
   const requestUsername = normalizeContributorUsername(contributorUsername);
 
+  /** command fetch. */
   function commandFetch(input: RequestInfo | URL, init: RequestInit = {}) {
     const headers = new Headers(init.headers);
 
@@ -373,6 +374,7 @@ export default function CommandExplorerView({
     onResourceStatsChange,
   ]);
 
+  /** load command groups. */
   async function loadCommandGroups() {
     try {
       setIsLoading(true);
@@ -415,6 +417,7 @@ export default function CommandExplorerView({
     }
   }
 
+  /** load grouped commands. */
   async function loadGroupedCommands() {
     const listResponse = await commandFetch(apiUrl("/command-resources"));
 
@@ -426,6 +429,7 @@ export default function CommandExplorerView({
     return groupCommandsByCategory(data.commands);
   }
 
+  /** load review contributions. */
   async function loadReviewContributions(
     status: "pending" | "approved",
     commandKey?: string
@@ -468,6 +472,7 @@ export default function CommandExplorerView({
     }
   }
 
+  /** load visible pending contributions. */
   async function loadVisiblePendingContributions(commandKey: string) {
     try {
       const query = new URLSearchParams({
@@ -498,6 +503,7 @@ export default function CommandExplorerView({
     }
   }
 
+  /** load vote contributions. */
   async function loadVoteContributions() {
     try {
       const response = await commandFetch(
@@ -524,6 +530,7 @@ export default function CommandExplorerView({
     }
   }
 
+  /** measure selected command soon. */
   function measureSelectedCommandSoon() {
     if (usesSplitPane) return;
 
@@ -536,6 +543,7 @@ export default function CommandExplorerView({
     });
   }
 
+  /** measure selected command. */
   function measureSelectedCommand() {
     if (!shouldCenterSelectedCommandRef.current) return;
 
@@ -556,6 +564,7 @@ export default function CommandExplorerView({
     );
   }
 
+  /** select command. */
   async function selectCommand(
     commandKey: string,
     categoryKey?: string,
@@ -602,6 +611,7 @@ export default function CommandExplorerView({
     }
   }
 
+  /** select random command. */
   async function selectRandomCommand() {
     try {
       setIsSelectingRandom(true);
@@ -635,6 +645,7 @@ export default function CommandExplorerView({
     }
   }
 
+  /** select pending contribution command. */
   async function selectPendingContributionCommand() {
     try {
       setIsSelectingPending(true);
@@ -684,6 +695,7 @@ export default function CommandExplorerView({
     }
   }
 
+  /** toggle category. */
   function toggleCategory(categoryKey: string) {
     setExpandedCategories((current) => ({
       ...current,
@@ -691,6 +703,7 @@ export default function CommandExplorerView({
     }));
   }
 
+  /** select previous command. */
   function selectPreviousCommand() {
     const previousCommand = visibleCommands[selectedCommandIndex - 1];
     if (!previousCommand) return;
@@ -700,6 +713,7 @@ export default function CommandExplorerView({
     });
   }
 
+  /** select next command. */
   function selectNextCommand() {
     const nextCommand = visibleCommands[selectedCommandIndex + 1];
     if (!nextCommand) return;
@@ -709,6 +723,7 @@ export default function CommandExplorerView({
     });
   }
 
+  /** collapse command selection. */
   function collapseCommandSelection() {
     setSelectedCommandKey(null);
     setCommand(null);
@@ -718,6 +733,7 @@ export default function CommandExplorerView({
     onSelectedCommandChange?.(null);
   }
 
+  /** handle command list press. */
   function handleCommandListPress(item: CommandSummary, categoryKey: string) {
     if (!usesSplitPane && item.key === selectedCommandKey && command) {
       collapseCommandSelection();
@@ -727,6 +743,7 @@ export default function CommandExplorerView({
     selectCommand(item.key, categoryKey);
   }
 
+  /** handle list pane layout. */
   function handleListPaneLayout() {
     if (!shouldCenterSelectedCommandRef.current) return;
 
@@ -737,6 +754,7 @@ export default function CommandExplorerView({
     });
   }
 
+  /** open contribution draft. */
   function openContributionDraft(params: {
     mode: CommandContributionMode;
     type: CommandContributionType;
@@ -765,6 +783,7 @@ export default function CommandExplorerView({
     });
   }
 
+  /** submit contribution. */
   async function submitContribution() {
     if (!command || !contributionDraft || !canContribute) return;
 
@@ -842,6 +861,7 @@ export default function CommandExplorerView({
     }
   }
 
+  /** withdraw contribution. */
   async function withdrawContribution(contributionId: string) {
     if (!command || !canContribute) return;
 
@@ -896,6 +916,7 @@ export default function CommandExplorerView({
     }
   }
 
+  /** update contribution everywhere. */
   function updateContributionEverywhere(updatedContribution: PendingContribution) {
     setPendingContributions((current) =>
       current.map((item) =>
@@ -909,6 +930,7 @@ export default function CommandExplorerView({
     );
   }
 
+  /** submit contribution vote. */
   async function submitContributionVote() {
     if (!voteDraft || !canContribute) return;
 
@@ -967,6 +989,7 @@ export default function CommandExplorerView({
     }
   }
 
+  /** resolve contribution concern. */
   async function resolveContributionConcern(
     contributionId: string,
     voteId: string
@@ -1008,6 +1031,7 @@ export default function CommandExplorerView({
     }
   }
 
+  /** moderate contribution. */
   async function moderateContribution(
     contributionId: string,
     action: "approve" | "reject"
@@ -1065,6 +1089,7 @@ export default function CommandExplorerView({
     }
   }
 
+  /** promote contribution. */
   async function promoteContribution(
     contributionId: string,
     official: PromotionDraft
@@ -1316,6 +1341,7 @@ export default function CommandExplorerView({
   );
 }
 
+/** pane scroll. */
 function PaneScroll({
   children,
   contentContainerStyle,
@@ -1345,6 +1371,7 @@ function PaneScroll({
   );
 }
 
+/** command list item. */
 function CommandListItem({
   item,
   itemRef,
@@ -1384,6 +1411,7 @@ function CommandListItem({
   );
 }
 
+/** command detail. */
 function CommandDetail({
   command,
   bibleVersion,
@@ -1585,6 +1613,7 @@ function CommandDetail({
   );
 }
 
+/** scripture reference pill. */
 function ScriptureReferencePill({
   reference,
   bibleVersion,
@@ -1613,6 +1642,7 @@ function ScriptureReferencePill({
   );
 }
 
+/** source term list. */
 function SourceTermList({
   items,
   canContribute,
@@ -1739,6 +1769,7 @@ function SourceTermList({
   );
 }
 
+/** story reference list. */
 function StoryReferenceList({
   items,
   bibleVersion,
@@ -1868,6 +1899,7 @@ function StoryReferenceList({
   );
 }
 
+/** detail tags. */
 function DetailTags({
   title,
   items,
@@ -1896,6 +1928,7 @@ function DetailTags({
   );
 }
 
+/** detail list. */
 function DetailList({
   title,
   contributionType,
@@ -2033,10 +2066,12 @@ function DetailList({
   );
 }
 
+/** section title. */
 function SectionTitle({ title }: { title: string }) {
   return <Text style={styles.sectionTitle}>{title}</Text>;
 }
 
+/** vote tasks panel. */
 function VoteTasksPanel({
   isOpen,
   contribution,
@@ -2220,6 +2255,7 @@ function VoteTasksPanel({
   );
 }
 
+/** admin review panel. */
 function AdminReviewPanel({
   contribution,
   reviewMode,
@@ -2385,6 +2421,7 @@ function AdminReviewPanel({
   );
 }
 
+/** admin review mode toggle. */
 function AdminReviewModeToggle({
   reviewMode,
   onChangeReviewMode,
@@ -2422,6 +2459,7 @@ function AdminReviewModeToggle({
   );
 }
 
+/** contribution review card. */
 function ContributionReviewCard({
   contribution,
 }: {
@@ -2458,6 +2496,7 @@ function ContributionReviewCard({
   );
 }
 
+/** vote breakdown. */
 function VoteBreakdown({
   contribution,
   canModerate,
@@ -2512,6 +2551,7 @@ function VoteBreakdown({
   );
 }
 
+/** vote modal. */
 function VoteModal({
   draft,
   isSubmitting,
@@ -2616,6 +2656,7 @@ function VoteModal({
   );
 }
 
+/** promotion form. */
 function PromotionForm({
   contribution,
   draft,
@@ -2704,6 +2745,7 @@ function PromotionForm({
   );
 }
 
+/** editable section title. */
 function EditableSectionTitle({
   title,
   canContribute,
@@ -2737,6 +2779,7 @@ function EditableSectionTitle({
   );
 }
 
+/** contribution actions. */
 function ContributionActions({
   onEdit,
   onRemove,
@@ -2769,6 +2812,7 @@ function ContributionActions({
   );
 }
 
+/** contribution form. */
 function ContributionForm({
   draft,
   isSubmitting,
@@ -2847,6 +2891,7 @@ function ContributionForm({
   );
 }
 
+/** pending contribution list. */
 function PendingContributionList({
   items,
   username,
@@ -2900,6 +2945,7 @@ function PendingContributionList({
   );
 }
 
+/** format command title. */
 function formatCommandTitle(title: string, references: string[]) {
   const matchingReference = references.find((reference) =>
     title.toLowerCase().startsWith(reference.toLowerCase())
@@ -2915,6 +2961,7 @@ function formatCommandTitle(title: string, references: string[]) {
   );
 }
 
+/** get blue letter bible url. */
 function getBlueLetterBibleUrl(reference: string, bibleVersion: BibleVersion) {
   const parsed = parseScriptureReference(reference);
   if (!parsed) return null;
@@ -2922,6 +2969,7 @@ function getBlueLetterBibleUrl(reference: string, bibleVersion: BibleVersion) {
   return `https://www.blueletterbible.org/${bibleVersion.toLowerCase()}/${parsed.book}/${parsed.chapter}/${parsed.verse}/`;
 }
 
+/** parse scripture reference. */
 function parseScriptureReference(reference: string) {
   const normalizedReference = reference.trim().replace(/\s+/g, " ");
   const match = normalizedReference.match(/^(.+?)\s+(\d+)(?::(\d+))?/);
@@ -2937,6 +2985,7 @@ function parseScriptureReference(reference: string) {
   };
 }
 
+/** get blue letter bible book slug. */
 function getBlueLetterBibleBookSlug(book: string) {
   const key = book.toLowerCase().replace(/\./g, "").trim();
 
@@ -3046,16 +3095,19 @@ function getBlueLetterBibleBookSlug(book: string) {
   return bookSlugs[key] ?? null;
 }
 
+/** format key. */
 function formatKey(value: string) {
   return value.replace(/_/g, " ");
 }
 
+/** format contribution mode. */
 function formatContributionMode(mode: CommandContributionMode) {
   if (mode === "suggest_edit") return "Suggest edit";
   if (mode === "suggest_remove") return "Suggest remove";
   return "Add";
 }
 
+/** get contribution type guidance. */
 function getContributionTypeGuidance(type: CommandContributionType) {
   const guidance: Record<CommandContributionType, string> = {
     requirement:
@@ -3075,6 +3127,7 @@ function getContributionTypeGuidance(type: CommandContributionType) {
   return guidance[type];
 }
 
+/** create empty promotion draft. */
 function createEmptyPromotionDraft(): PromotionDraft {
   return {
     language: "hebrew",
@@ -3089,6 +3142,7 @@ function createEmptyPromotionDraft(): PromotionDraft {
   };
 }
 
+/** create promotion draft. */
 function createPromotionDraft(
   contribution: PendingContribution | null
 ): PromotionDraft {
@@ -3124,6 +3178,7 @@ function createPromotionDraft(
   };
 }
 
+/** get promotion text field. */
 function getPromotionTextField(
   type: Exclude<CommandContributionType, "source_term" | "story_reference">
 ) {
@@ -3140,6 +3195,7 @@ function getPromotionTextField(
   return fields[type];
 }
 
+/** get contribution vote counts. */
 function getContributionVoteCounts(contribution: PendingContribution | null) {
   const activeVotes = (contribution?.votes ?? []).filter(
     (vote) => !vote.resolvedAt
@@ -3151,6 +3207,7 @@ function getContributionVoteCounts(contribution: PendingContribution | null) {
   };
 }
 
+/** normalize contributor username. */
 function normalizeContributorUsername(username: string) {
   const normalized = username.trim().toLowerCase();
 
@@ -3161,6 +3218,7 @@ function normalizeContributorUsername(username: string) {
   return normalized;
 }
 
+/** group commands by category. */
 function groupCommandsByCategory(commands: CommandSummary[]) {
   const groupsByKey = new Map<string, CommandSummary[]>();
 

@@ -13,6 +13,7 @@ import {
 
 const router = Router();
 
+/** get query string. */
 function getQueryString(value: unknown): string {
   if (Array.isArray(value)) {
     return String(value[0] ?? "");
@@ -21,6 +22,7 @@ function getQueryString(value: unknown): string {
   return String(value ?? "");
 }
 
+/** get group code. */
 function getGroupCode(req: Request): string {
   return getQueryString(req.query.groupCode).trim() || "public";
 }

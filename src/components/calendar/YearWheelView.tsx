@@ -143,6 +143,7 @@ function getAngleForDay(dayOfYear: number) {
   return -((dayOfYear - 1) / 364) * Math.PI * 2;
 }
 
+/** get perpetual markers for node. */
 function getPerpetualMarkersForNode(
   node: CalendarNode,
   perpetualMarkers: PerpetualMarker[]
@@ -167,6 +168,7 @@ function getPerpetualMarkersForNode(
   });
 }
 
+/** get event marker color. */
 function getEventMarkerColor(eventType: string) {
   switch (eventType) {
     case "weekly-sabbath":
@@ -184,6 +186,7 @@ function getEventMarkerColor(eventType: string) {
   }
 }
 
+/** get event marker type. */
 function getEventMarkerType(eventType: string): WheelMarkerEntry["markerType"] {
   switch (eventType) {
     case "weekly-sabbath":
@@ -201,6 +204,7 @@ function getEventMarkerType(eventType: string): WheelMarkerEntry["markerType"] {
   }
 }
 
+/** build wheel marker entries. */
 function buildWheelMarkerEntries(
   nodes: CalendarNode[],
   perpetualMarkers: PerpetualMarker[]
@@ -262,6 +266,7 @@ function buildWheelMarkerEntries(
   });
 }
 
+/** build solar gate entries. */
 function buildSolarGateEntries(nodes: CalendarNode[]) {
   return SOLAR_GATE_DATES.flatMap((solarGate) => {
     const node = nodes.find((item) => {
@@ -297,6 +302,7 @@ function getAngularDistance(firstAngle: number, secondAngle: number) {
   );
 }
 
+/** get circle point. */
 function getCirclePoint(
   centerX: number,
   centerY: number,
@@ -309,6 +315,7 @@ function getCirclePoint(
   };
 }
 
+/** get circle segment. */
 function getCircleSegment(
   centerX: number,
   centerY: number,
@@ -374,6 +381,7 @@ function LegendDot({ color, label }: { color: string; label: string }) {
   );
 }
 
+/** legend solar gate. */
 function LegendSolarGate({ color, label }: { color: string; label: string }) {
   return (
     <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
@@ -393,6 +401,7 @@ function LegendSolarGate({ color, label }: { color: string; label: string }) {
   );
 }
 
+/** legend notice. */
 function LegendNotice({ label }: { label: string }) {
   return (
     <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
@@ -425,6 +434,7 @@ function LegendNotice({ label }: { label: string }) {
   );
 }
 
+/** legend scroll. */
 function LegendScroll({ label }: { label: string }) {
   return (
     <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
@@ -607,6 +617,7 @@ export default function YearWheelView({
     });
   }, [todayMarkerEntry?.id, wheelMarkerEntries]);
 
+  /** select nearest wheel marker. */
   function selectNearestWheelMarker(event: GestureResponderEvent) {
     if (wheelMarkerEntries.length === 0) return;
 
@@ -616,6 +627,7 @@ export default function YearWheelView({
     );
   }
 
+  /** select nearest wheel marker at. */
   function selectNearestWheelMarkerAt(x: number, y: number) {
     if (wheelMarkerEntries.length === 0) return;
 
@@ -643,6 +655,7 @@ export default function YearWheelView({
     }
   }
 
+  /** handle wheel mouse click. */
   function handleWheelMouseClick(event: {
     nativeEvent?: {
       offsetX?: number;
@@ -680,6 +693,7 @@ export default function YearWheelView({
     hideWheelMagnifierSoon(220);
   }
 
+  /** show wheel magnifier. */
   function showWheelMagnifier(event: GestureResponderEvent) {
     showWheelMagnifierAt(
       event.nativeEvent.locationX,
@@ -687,6 +701,7 @@ export default function YearWheelView({
     );
   }
 
+  /** show wheel magnifier at. */
   function showWheelMagnifierAt(x: number, y: number) {
     if (interactionTimeoutRef.current) {
       clearTimeout(interactionTimeoutRef.current);
@@ -697,6 +712,7 @@ export default function YearWheelView({
     selectNearestWheelMarkerAt(x, y);
   }
 
+  /** remember wheel touch start. */
   function rememberWheelTouchStart(event: GestureResponderEvent) {
     if (
       !isWheelInteractionPoint(
@@ -714,10 +730,12 @@ export default function YearWheelView({
     };
   }
 
+  /** check whether wheel interaction point. */
   function isWheelInteractionPoint(x: number, y: number) {
     return Math.hypot(x - CENTER, y - CENTER) <= WHEEL_INTERACTION_RADIUS;
   }
 
+  /** should start wheel responder. */
   function shouldStartWheelResponder(event: GestureResponderEvent) {
     return isWheelInteractionPoint(
       event.nativeEvent.locationX,
@@ -725,10 +743,12 @@ export default function YearWheelView({
     );
   }
 
+  /** should use wheel gesture. */
   function shouldUseWheelGesture() {
     return Boolean(wheelTouchStartRef.current);
   }
 
+  /** handle wheel touch end. */
   function handleWheelTouchEnd(event: GestureResponderEvent) {
     const start = wheelTouchStartRef.current;
     wheelTouchStartRef.current = null;
@@ -749,11 +769,13 @@ export default function YearWheelView({
     hideWheelMagnifierSoon();
   }
 
+  /** cancel wheel touch. */
   function cancelWheelTouch() {
     wheelTouchStartRef.current = null;
     hideWheelMagnifierSoon();
   }
 
+  /** hide wheel magnifier soon. */
   function hideWheelMagnifierSoon(delay = 900) {
     if (interactionTimeoutRef.current) {
       clearTimeout(interactionTimeoutRef.current);

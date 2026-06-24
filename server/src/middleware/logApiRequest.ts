@@ -6,6 +6,7 @@
 
 import { NextFunction, Request, Response } from "express";
 
+/** get query value. */
 function getQueryValue(value: unknown): string {
   if (Array.isArray(value)) {
     return String(value[0] ?? "");

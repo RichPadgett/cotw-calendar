@@ -18,6 +18,7 @@ api_commands_json :-
     findall(CommandJson, command_summary_json(CommandJson), Commands),
     json_write(current_output, json([commands=Commands])).
 
+% Defines api commands by category json.
 api_commands_by_category_json(Category) :-
     findall(CommandJson, (
         command_category(Command, Category),
@@ -25,6 +26,7 @@ api_commands_by_category_json(Category) :-
     ), Commands),
     json_write(current_output, json([commands=Commands])).
 
+% Defines api commands by fact json.
 api_commands_by_fact_json(Fact) :-
     findall(CommandJson, (
         command_fact(Command, Fact),
@@ -32,6 +34,7 @@ api_commands_by_fact_json(Fact) :-
     ), Commands),
     json_write(current_output, json([commands=Commands])).
 
+% Defines api commands by facts json.
 api_commands_by_facts_json(Facts) :-
     findall(CommandJson, (
         command_has_all_facts(Command, Facts),
@@ -39,6 +42,7 @@ api_commands_by_facts_json(Facts) :-
     ), Commands),
     json_write(current_output, json([commands=Commands])).
 
+% Defines api commands by applicability json.
 api_commands_by_applicability_json(Applicability) :-
     findall(CommandJson, (
         applies_if(Command, Applicability),
@@ -58,18 +62,22 @@ api_random_command_json :-
     findall(Command, command(Command), Commands),
     random_command_json(Commands).
 
+% Defines api random command by category json.
 api_random_command_by_category_json(Category) :-
     findall(Command, command_category(Command, Category), Commands),
     random_command_json(Commands).
 
+% Defines api random command by fact json.
 api_random_command_by_fact_json(Fact) :-
     findall(Command, command_fact(Command, Fact), Commands),
     random_command_json(Commands).
 
+% Defines api random command by facts json.
 api_random_command_by_facts_json(Facts) :-
     findall(Command, command_has_all_facts(Command, Facts), Commands),
     random_command_json(Commands).
 
+% Defines api random command by applicability json.
 api_random_command_by_applicability_json(Applicability) :-
     findall(Command, applies_if(Command, Applicability), Commands),
     random_command_json(Commands).
@@ -82,6 +90,7 @@ api_random_command_in_random_category_json :-
     setof_or_empty(Category, Command^command_category(Command, Category), Categories),
     random_command_in_random_category_json(Categories).
 
+% Defines command summary json.
 command_summary_json(json([
     key=Command,
     title=Title,
@@ -94,6 +103,7 @@ command_summary_json(json([
         categories=Categories
     ])).
 
+% Defines command summary json for.
 command_summary_json_for(Command, json([
     key=Command,
     title=Title,
@@ -102,6 +112,7 @@ command_summary_json_for(Command, json([
     command_title(Command, Title),
     setof_or_empty(Category, command_category(Command, Category), Categories).
 
+% Defines commands for category json.
 commands_for_category_json(Category, json([
     key=Category,
     commands=Commands
@@ -119,6 +130,7 @@ api_command_json(Command) :-
     command_detail_json(Command, CommandJson),
     json_write(current_output, CommandJson).
 
+% Defines command detail json.
 command_detail_json(Command, json([
     key=Command,
     title=Title,
@@ -183,39 +195,49 @@ one_or_null(GoalTemplate, Value) :-
     call(GoalTemplate, Value),
     !.
 
+% Defines one or null.
 one_or_null(_, @(null)).
 
+% Defines setof or empty.
 setof_or_empty(Value, Goal, Values) :-
     setof(Value, Goal, Values),
     !.
 
+% Defines setof or empty.
 setof_or_empty(_, _, []).
 
+% Defines command has all facts.
 command_has_all_facts(Command, Facts) :-
     command(Command),
     forall(member(Fact, Facts), command_fact(Command, Fact)).
 
+% Defines random command json.
 random_command_json([]) :-
     json_write(current_output, json([command= @(null)])).
 
+% Defines random command json.
 random_command_json(Commands) :-
     random_member(Command, Commands),
     command_detail_json(Command, CommandJson),
     json_write(current_output, json([command=CommandJson])).
 
+% Defines random category json.
 random_category_json([]) :-
     json_write(current_output, json([category= @(null)])).
 
+% Defines random category json.
 random_category_json(Categories) :-
     random_member(Category, Categories),
     json_write(current_output, json([category=Category])).
 
+% Defines random command in random category json.
 random_command_in_random_category_json([]) :-
     json_write(current_output, json([
         category= @(null),
         command= @(null)
     ])).
 
+% Defines random command in random category json.
 random_command_in_random_category_json(Categories) :-
     random_member(Category, Categories),
     findall(Command, command_category(Command, Category), Commands),

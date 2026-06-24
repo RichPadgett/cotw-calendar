@@ -22,6 +22,7 @@ const ENV_API_ORIGIN =
   process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
 const LOCAL_WEB_API_ORIGIN = "http://localhost:3001";
 
+/** get api origin. */
 function getApiOrigin() {
   if (typeof window !== "undefined") {
     const hostname = window.location?.hostname;

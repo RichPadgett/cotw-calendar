@@ -1,3 +1,8 @@
+/*
+ * File: server/src/services/groupStore.ts
+ * Purpose: Server-side storage, persistence, or integration service.
+ */
+
 import crypto from "crypto";
 import fs from "fs";
 import path from "path";
@@ -27,34 +32,42 @@ export type JoinOrCreateGroupResult = {
   adminToken?: string;
 };
 
+/** normalize group code. */
 function normalizeGroupCode(value: string) {
   return value.trim().toLowerCase();
 }
 
+/** check whether h value. */
 function hashValue(value: string) {
   return crypto.createHash("sha256").update(value.trim()).digest("hex");
 }
 
+/** check whether h admin code. */
 function hashAdminCode(adminCode: string) {
   return hashValue(adminCode);
 }
 
+/** check whether h token. */
 function hashToken(token: string) {
   return hashValue(token);
 }
 
+/** create admin token. */
 function createAdminToken() {
   return crypto.randomBytes(32).toString("hex");
 }
 
+/** get group folder. */
 function getGroupFolder(groupCode: string) {
   return path.join(GROUPS_ROOT, groupCode);
 }
 
+/** get group meta path. */
 function getGroupMetaPath(groupCode: string) {
   return path.join(getGroupFolder(groupCode), "group.json");
 }
 
+/** save group. */
 function saveGroup(group: GroupRecord) {
   const groupFolder = getGroupFolder(group.groupCode);
 
@@ -67,6 +80,7 @@ function saveGroup(group: GroupRecord) {
   );
 }
 
+/** check whether sue admin token. */
 function issueAdminToken(group: GroupRecord, deviceName?: string) {
   const adminToken = createAdminToken();
 
@@ -84,12 +98,14 @@ function issueAdminToken(group: GroupRecord, deviceName?: string) {
   return adminToken;
 }
 
+/** group exists. */
 export function groupExists(groupCode: string) {
   const normalizedGroupCode = normalizeGroupCode(groupCode);
 
   return fs.existsSync(getGroupMetaPath(normalizedGroupCode));
 }
 
+/** get group. */
 export function getGroup(groupCode: string): GroupRecord | null {
   const normalizedGroupCode = normalizeGroupCode(groupCode);
   const groupPath = getGroupMetaPath(normalizedGroupCode);
@@ -101,6 +117,7 @@ export function getGroup(groupCode: string): GroupRecord | null {
   return JSON.parse(fs.readFileSync(groupPath, "utf-8"));
 }
 
+/** join or create group. */
 export function joinOrCreateGroup(params: {
   groupCode: string;
   adminCode?: string;
@@ -183,6 +200,7 @@ export function joinOrCreateGroup(params: {
   };
 }
 
+/** verify admin token. */
 export function verifyAdminToken(params: {
   groupCode: string;
   token?: string;

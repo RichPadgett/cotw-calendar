@@ -5,6 +5,7 @@
 
 export const APP_DAY_ROLLOVER_HOUR = 6;
 
+/** format local date id. */
 export function formatLocalDateId(date: Date): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -13,6 +14,7 @@ export function formatLocalDateId(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
+/** get app date id. */
 export function getAppDateId(now = new Date()): string {
   const appDate = new Date(now);
 
@@ -23,6 +25,7 @@ export function getAppDateId(now = new Date()): string {
   return formatLocalDateId(appDate);
 }
 
+/** format group label. */
 export function formatGroupLabel(groupCode: string): string {
   const normalizedGroupCode = groupCode.trim();
 
