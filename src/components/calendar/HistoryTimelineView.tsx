@@ -625,6 +625,8 @@ function TimelineRangeBar({
   width,
   laneHeight,
   isHovered,
+  timelineScrollX,
+  viewportWidth,
   onPress,
   onHoverIn,
   onHoverOut,
@@ -634,6 +636,8 @@ function TimelineRangeBar({
   width: number;
   laneHeight: number;
   isHovered: boolean;
+  timelineScrollX: number;
+  viewportWidth: number;
   onPress: (occurrence: TimelineOccurrence) => void;
   onHoverIn?: (occurrence: TimelineOccurrence) => void;
   onHoverOut?: (occurrence: TimelineOccurrence) => void;
@@ -644,6 +648,17 @@ function TimelineRangeBar({
   const laneFrame = getLaneFrame(occurrence, laneHeight);
   const iconName = occurrence.iconName?.trim();
   const canShowHoverIcon = isHovered && Boolean(iconName) && barWidth >= 34;
+  const iconSize = 24;
+  const iconInset = 6;
+  const maxIconLeft = Math.max(iconInset, barWidth - iconSize - iconInset);
+  const isBarEndOffscreen = left + barWidth > timelineScrollX + viewportWidth;
+  const preferredIconLeft = isBarEndOffscreen
+    ? timelineScrollX - left + iconInset
+    : maxIconLeft;
+  const hoverIconLeft = Math.max(
+    iconInset,
+    Math.min(maxIconLeft, preferredIconLeft)
+  );
 
   return (
     <Pressable
@@ -665,7 +680,7 @@ function TimelineRangeBar({
       ]}
     >
       {canShowHoverIcon ? (
-        <View style={styles.timelineBarHoverIcon}>
+        <View style={[styles.timelineBarHoverIcon, { left: hoverIconLeft }]}>
           <MaterialIcons
             name={iconName as any}
             size={16}
@@ -813,7 +828,7 @@ function TimelineExactCard({
       ]}
     >
       {canShowHoverIcon ? (
-        <View style={styles.timelineBarHoverIcon}>
+        <View style={[styles.timelineBarHoverIcon, { right: 6 }]}>
           <MaterialIcons
             name={iconName as any}
             size={16}
@@ -2035,6 +2050,8 @@ export default function HistoryTimelineView({
                 width={right - left}
                 laneHeight={timelineLaneHeight}
                 isHovered={activeHoverOccurrence?.id === occurrence.id}
+                timelineScrollX={timelineScrollX}
+                viewportWidth={width}
                 onPress={handleSelectOccurrence}
                 onHoverIn={handleTimelineEntryHoverIn}
                 onHoverOut={handleTimelineEntryHoverOut}
@@ -2638,7 +2655,6 @@ const styles = StyleSheet.create({
   timelineBarHoverIcon: {
     position: "absolute",
     top: 6,
-    right: 6,
     width: 24,
     height: 24,
     borderRadius: 12,
