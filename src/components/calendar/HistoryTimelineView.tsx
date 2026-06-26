@@ -33,7 +33,7 @@ import { apiUrl } from "../../config/api";
 
 const BASE_LANE_HEIGHT = 128;
 const TIMELINE_LANE_COUNT = 3;
-const TIMELINE_LANE_HEIGHTS = [128, 160, 196, 236];
+const TIMELINE_LANE_HEIGHTS = [96, 128, 160, 196, 236, 288];
 const TRACK_TOP = 112;
 const TRACK_HEIGHT = BASE_LANE_HEIGHT * TIMELINE_LANE_COUNT;
 const TIMELINE_SIDE_GUTTER = 40;
@@ -538,7 +538,6 @@ function TimelineRangeBar({
 
   const barWidth = Math.max(18, width);
   const laneFrame = getLaneFrame(occurrence, laneHeight);
-  const canShowLabels = barWidth >= MIN_LABELED_BAR_WIDTH;
   const canShowNotesButton =
     Boolean(occurrence.notes?.trim()) && barWidth >= MIN_NOTES_BAR_WIDTH;
 
@@ -558,22 +557,57 @@ function TimelineRangeBar({
         },
       ]}
     >
-      {canShowLabels ? (
-        <>
-          <Text numberOfLines={2} style={styles.verticalBarTitle}>
-            {occurrence.title}
-          </Text>
-          <Text numberOfLines={1} style={styles.verticalBarLabel}>
-            {getRangeLabel(occurrence)}
-          </Text>
-        </>
-      ) : null}
       {canShowNotesButton ? (
         <View style={styles.barNotesButton}>
           <MaterialIcons name="notes" size={12} color="#ffffff" />
           <Text style={styles.barNotesButtonText}>Notes</Text>
         </View>
       ) : null}
+    </Pressable>
+  );
+}
+
+function TimelineRangeLabelOverlay({
+  occurrence,
+  left,
+  width,
+  laneHeight,
+  onPress,
+}: {
+  occurrence: TimelineOccurrence;
+  left: number;
+  width: number;
+  laneHeight: number;
+  onPress: (occurrence: TimelineOccurrence) => void;
+}) {
+  if (!occurrence.timeRange) return null;
+
+  const barWidth = Math.max(18, width);
+  if (barWidth < MIN_LABELED_BAR_WIDTH) return null;
+
+  const laneFrame = getLaneFrame(occurrence, laneHeight);
+  const labelWidth = Math.max(132, Math.min(barWidth, 280));
+
+  return (
+    <Pressable
+      accessibilityLabel={`Open ${occurrence.title}`}
+      onPress={() => onPress(occurrence)}
+      style={[
+        styles.timelineRangeLabelOverlay,
+        {
+          top: laneFrame.top + 6,
+          left,
+          width: labelWidth,
+          borderColor: occurrence.color,
+        },
+      ]}
+    >
+      <Text numberOfLines={2} style={styles.verticalBarTitle}>
+        {occurrence.title}
+      </Text>
+      <Text numberOfLines={1} style={styles.verticalBarLabel}>
+        {getRangeLabel(occurrence)}
+      </Text>
     </Pressable>
   );
 }
@@ -1597,6 +1631,38 @@ export default function HistoryTimelineView({
               />
             );
           })}
+
+          {visibleOccurrences.map((occurrence) => {
+            if (!occurrence.timeRange) return null;
+
+            const rangeEnd = getResolvedRangeEnd(occurrence);
+            const { start } = occurrence.timeRange;
+            if (!rangeEnd) return null;
+
+            const left = getEnochYearPosition(
+              {
+                enochYear: start.enochYear,
+                month: start.enochMonth,
+                day: start.enochDay,
+              },
+              contentWidth
+            );
+            const right = getEnochYearPosition(
+              { enochYear: rangeEnd },
+              contentWidth
+            );
+
+            return (
+              <TimelineRangeLabelOverlay
+                key={`${occurrence.id}-range-label`}
+                occurrence={occurrence}
+                left={left}
+                width={right - left}
+                laneHeight={timelineLaneHeight}
+                onPress={handleSelectOccurrence}
+              />
+            );
+          })}
         </View>
       </ScrollView>
 
@@ -1999,6 +2065,20 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     justifyContent: "flex-end",
     overflow: "hidden",
+  },
+  timelineRangeLabelOverlay: {
+    position: "absolute",
+    minHeight: 38,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    borderRadius: 8,
+    borderWidth: 1,
+    backgroundColor: "rgba(15, 23, 42, 0.88)",
+    shadowColor: "#000000",
+    shadowOpacity: 0.22,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
+    zIndex: 10,
   },
   exactPin: {
     position: "absolute",
