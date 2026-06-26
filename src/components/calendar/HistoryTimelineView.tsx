@@ -1275,7 +1275,12 @@ export default function HistoryTimelineView({
     useState(false);
   const [timelineLayoutY, setTimelineLayoutY] = useState(0);
   const [timelineViewportY, setTimelineViewportY] = useState(0);
-  const contentWidth = getTimelineContentWidth(width, timelineZoom);
+  const [timelineViewportWidth, setTimelineViewportWidth] = useState(0);
+  const effectiveTimelineViewportWidth = timelineViewportWidth || width;
+  const contentWidth = getTimelineContentWidth(
+    effectiveTimelineViewportWidth,
+    timelineZoom
+  );
   const currentTimelineZoom = getTimelineZoomConfig(timelineZoom);
   const timelineLaneHeight =
     TIMELINE_LANE_HEIGHTS[laneHeightIndex] ?? BASE_LANE_HEIGHT;
@@ -1290,14 +1295,6 @@ export default function HistoryTimelineView({
     16,
     Math.min(TIMELINE_SIDE_GUTTER, width - HOVER_PREVIEW_WIDTH - 16)
   );
-  const stickyTimelineToolbarStyle =
-    Platform.OS === "web"
-      ? ({
-          position: "sticky",
-          top: stickyHeaderHeight + 8,
-          zIndex: 40,
-        } as const)
-      : null;
   const canDecreaseLaneHeight = laneHeightIndex > 0;
   const canIncreaseLaneHeight =
     laneHeightIndex < TIMELINE_LANE_HEIGHTS.length - 1;
@@ -1343,10 +1340,15 @@ export default function HistoryTimelineView({
       getVisibleTimelineAxisTicks({
         zoomId: timelineZoom,
         scrollX: timelineScrollX,
-        viewportWidth: width,
+        viewportWidth: effectiveTimelineViewportWidth,
         contentWidth,
       }),
-    [contentWidth, timelineScrollX, timelineZoom, width]
+    [
+      contentWidth,
+      effectiveTimelineViewportWidth,
+      timelineScrollX,
+      timelineZoom,
+    ]
   );
 
   useEffect(() => {
@@ -1596,6 +1598,7 @@ export default function HistoryTimelineView({
 
   function handleTimelineViewportLayout(event: LayoutChangeEvent) {
     setTimelineViewportY(event.nativeEvent.layout.y);
+    setTimelineViewportWidth(event.nativeEvent.layout.width);
   }
 
   function handleTimelineEntryHoverIn(occurrence: TimelineOccurrence) {
@@ -1614,15 +1617,21 @@ export default function HistoryTimelineView({
 
   function handleTimelineZoomChange(nextZoom: TimelineZoomId) {
     const currentCenterValue = getTimelineValueFromPosition(
-      timelineScrollX + width / 2,
+      timelineScrollX + effectiveTimelineViewportWidth / 2,
       contentWidth
     );
-    const nextContentWidth = getTimelineContentWidth(width, nextZoom);
+    const nextContentWidth = getTimelineContentWidth(
+      effectiveTimelineViewportWidth,
+      nextZoom
+    );
     const nextCenterX = getTimelineValuePosition(
       currentCenterValue,
       nextContentWidth
     );
-    const nextScrollX = Math.max(0, nextCenterX - width / 2);
+    const nextScrollX = Math.max(
+      0,
+      nextCenterX - effectiveTimelineViewportWidth / 2
+    );
 
     onTimelineZoomChange(nextZoom);
     setTimelineScrollX(nextScrollX);
@@ -1928,7 +1937,6 @@ export default function HistoryTimelineView({
       <View
         style={[
           styles.timelineToolbar,
-          stickyTimelineToolbarStyle,
           isCompactTimeline ? styles.timelineToolbarCompact : null,
         ]}
       >
@@ -2221,6 +2229,38 @@ export default function HistoryTimelineView({
             : null}
         </View>
       </ScrollView>
+
+      {Platform.OS === "web" ? (
+        <View pointerEvents="none" style={styles.floatingAxis}>
+          <View style={styles.floatingAxisLine} />
+
+          {axisTicks.map((tick) => (
+            <View
+              key={`floating-${tick.key}`}
+              style={[
+                styles.floatingAxisMarker,
+                { left: tick.x - timelineScrollX },
+              ]}
+            >
+              <View
+                style={[
+                  styles.axisTick,
+                  tick.major ? styles.axisTickMajor : styles.axisTickMinor,
+                ]}
+              />
+              <Text
+                numberOfLines={1}
+                style={[
+                  styles.axisLabel,
+                  tick.major ? styles.axisLabelMajor : styles.axisLabelMinor,
+                ]}
+              >
+                {tick.label}
+              </Text>
+            </View>
+          ))}
+        </View>
+      ) : null}
 
       {canShowHoverPreview && activeHoverOccurrence ? (
         <View
@@ -2521,12 +2561,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9fafb",
   },
   timelineToolbar: {
-    marginBottom: 8,
-    padding: 8,
-    borderWidth: 1,
-    borderColor: "rgba(203, 213, 225, 0.9)",
-    borderRadius: 12,
-    backgroundColor: "rgba(249, 250, 251, 0.96)",
+    marginBottom: 10,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-end",
@@ -2623,6 +2658,32 @@ const styles = StyleSheet.create({
     top: TRACK_TOP + TRACK_HEIGHT + 8,
     height: 2,
     backgroundColor: "#111827",
+  },
+  floatingAxis: {
+    position: "sticky" as any,
+    bottom: 12,
+    zIndex: 35,
+    height: 50,
+    marginTop: -54,
+    marginHorizontal: -4,
+    overflow: "hidden",
+    borderTopWidth: 1,
+    borderTopColor: "rgba(15, 23, 42, 0.18)",
+    backgroundColor: "rgba(249, 250, 251, 0.94)",
+  },
+  floatingAxisLine: {
+    position: "absolute",
+    left: TIMELINE_SIDE_GUTTER,
+    right: TIMELINE_SIDE_GUTTER,
+    top: 11,
+    height: 2,
+    backgroundColor: "#111827",
+  },
+  floatingAxisMarker: {
+    position: "absolute",
+    top: 11,
+    alignItems: "center",
+    transform: [{ translateX: -0.5 }],
   },
   axisMarker: {
     position: "absolute",
