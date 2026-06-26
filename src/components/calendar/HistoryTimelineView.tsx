@@ -1898,6 +1898,11 @@ export default function HistoryTimelineView({
                 <Text numberOfLines={1} style={styles.timelineHoverTitle}>
                   {hoveredOccurrence.title}
                 </Text>
+                {hoveredOccurrence.summary ? (
+                  <Text numberOfLines={1} style={styles.timelineHoverSummary}>
+                    {hoveredOccurrence.summary}
+                  </Text>
+                ) : null}
                 <Text numberOfLines={2} style={styles.timelineHoverLabel}>
                   {getTimelineOccurrencePreviewLabel(hoveredOccurrence)}
                 </Text>
@@ -2411,6 +2416,13 @@ const styles = StyleSheet.create({
     lineHeight: 17,
     fontWeight: "900",
     color: "#0f172a",
+  },
+  timelineHoverSummary: {
+    marginTop: 1,
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: "800",
+    color: "#1e293b",
   },
   timelineHoverLabel: {
     marginTop: 2,
