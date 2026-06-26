@@ -82,6 +82,7 @@ export default function HomeScreen() {
   const [stickyHeaderHeight, setStickyHeaderHeight] = useState(
     DEFAULT_STICKY_HEADER_OFFSET
   );
+  const [appScrollY, setAppScrollY] = useState(0);
 
   const [visibleEnochYear, setVisibleEnochYear] = useState(2026);
   const [activeMonthNumber, setActiveMonthNumber] = useState<number | null>(
@@ -670,6 +671,7 @@ export default function HomeScreen() {
   function handleScroll(event: any) {
     const scrollY = event.nativeEvent.contentOffset.y;
     currentScrollYRef.current = scrollY;
+    setAppScrollY(scrollY);
 
     if (!latestTeachingAutoCollapsedRef.current && scrollY > 12) {
       latestTeachingAutoCollapsedRef.current = true;
@@ -956,6 +958,7 @@ export default function HomeScreen() {
             addRequestId={timelineAddRequestId}
             editRequestId={timelineEditRequestId}
             stickyHeaderHeight={stickyHeaderHeight}
+            appScrollY={appScrollY}
             onSelectedOccurrenceChange={setSelectedTimelineOccurrence}
             onSavingChange={setIsSavingTimeline}
           />

@@ -6,6 +6,7 @@
 import {
   Alert,
   Modal,
+  LayoutChangeEvent,
   NativeScrollEvent,
   NativeSyntheticEvent,
   Platform,
@@ -1198,6 +1199,7 @@ type HistoryTimelineViewProps = {
   addRequestId: number;
   editRequestId: number;
   stickyHeaderHeight: number;
+  appScrollY: number;
   onSelectedOccurrenceChange: (occurrence: TimelineOccurrence | null) => void;
   onSavingChange: (isSaving: boolean) => void;
 };
@@ -1215,6 +1217,7 @@ export default function HistoryTimelineView({
   addRequestId,
   editRequestId,
   stickyHeaderHeight,
+  appScrollY,
   onSelectedOccurrenceChange,
   onSavingChange,
 }: HistoryTimelineViewProps) {
@@ -1225,8 +1228,11 @@ export default function HistoryTimelineView({
   const [laneHeightIndex, setLaneHeightIndex] = useState(0);
   const [hoveredOccurrence, setHoveredOccurrence] =
     useState<TimelineOccurrence | null>(null);
+  const [pinnedOccurrence, setPinnedOccurrence] =
+    useState<TimelineOccurrence | null>(null);
   const [hasLoadedTimelineSettings, setHasLoadedTimelineSettings] =
     useState(false);
+  const [timelineLayoutY, setTimelineLayoutY] = useState(0);
   const contentWidth = getTimelineContentWidth(width, timelineZoom);
   const currentTimelineZoom = getTimelineZoomConfig(timelineZoom);
   const currentTimelineZoomIndex = Math.max(
@@ -1238,14 +1244,11 @@ export default function HistoryTimelineView({
   const timelineTrackHeight = timelineLaneHeight * TIMELINE_LANE_COUNT;
   const timelineAxisTop = TRACK_TOP + timelineTrackHeight + 8;
   const canShowHoverPreview = Platform.OS === "web" && !isCompactTimeline;
-  const hoverPreviewLeft = Math.min(
-    Math.max(TIMELINE_SIDE_GUTTER, timelineScrollX + TIMELINE_SIDE_GUTTER),
-    Math.max(
-      TIMELINE_SIDE_GUTTER,
-      contentWidth - HOVER_PREVIEW_WIDTH - TIMELINE_SIDE_GUTTER
-    )
+  const dynamicHoverPreviewTop = Math.max(
+    14,
+    appScrollY - timelineLayoutY + stickyHeaderHeight + 12
   );
-  const fixedHoverPreviewLeft = Math.max(
+  const hoverPreviewRootLeft = Math.max(
     16,
     Math.min(TIMELINE_SIDE_GUTTER, width - HOVER_PREVIEW_WIDTH - 16)
   );
@@ -1270,6 +1273,7 @@ export default function HistoryTimelineView({
   const visibleOccurrences = timelineOccurrences.filter(
     (occurrence) => occurrence.showOnTimeline
   );
+  const activeHoverOccurrence = pinnedOccurrence ?? hoveredOccurrence;
   const axisTicks = useMemo(
     () =>
       getVisibleTimelineAxisTicks({
@@ -1375,6 +1379,7 @@ export default function HistoryTimelineView({
   useEffect(() => {
     if (!canShowHoverPreview) {
       setHoveredOccurrence(null);
+      setPinnedOccurrence(null);
     }
   }, [canShowHoverPreview]);
 
@@ -1513,6 +1518,10 @@ export default function HistoryTimelineView({
     setTimelineScrollX(event.nativeEvent.contentOffset.x);
   }
 
+  function handleTimelineLayout(event: LayoutChangeEvent) {
+    setTimelineLayoutY(event.nativeEvent.layout.y);
+  }
+
   function handleTimelineEntryHoverIn(occurrence: TimelineOccurrence) {
     if (!canShowHoverPreview) return;
 
@@ -1568,6 +1577,10 @@ export default function HistoryTimelineView({
   }
 
   function handleSelectOccurrence(occurrence: TimelineOccurrence) {
+    if (canShowHoverPreview) {
+      setPinnedOccurrence(occurrence);
+    }
+
     if (isEditMode && canManageTimeline) {
       onSelectedOccurrenceChange(null);
       setEditingOccurrence(occurrence);
@@ -1839,7 +1852,7 @@ export default function HistoryTimelineView({
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} onLayout={handleTimelineLayout}>
       <View
         style={[
           styles.timelineToolbar,
@@ -2021,7 +2034,7 @@ export default function HistoryTimelineView({
                 left={left}
                 width={right - left}
                 laneHeight={timelineLaneHeight}
-                isHovered={hoveredOccurrence?.id === occurrence.id}
+                isHovered={activeHoverOccurrence?.id === occurrence.id}
                 onPress={handleSelectOccurrence}
                 onHoverIn={handleTimelineEntryHoverIn}
                 onHoverOut={handleTimelineEntryHoverOut}
@@ -2046,7 +2059,7 @@ export default function HistoryTimelineView({
                 )}
                 compact={Boolean(occurrence.timeRange)}
                 laneHeight={timelineLaneHeight}
-                isHovered={hoveredOccurrence?.id === occurrence.id}
+                isHovered={activeHoverOccurrence?.id === occurrence.id}
                 onPress={handleSelectOccurrence}
                 onHoverIn={handleTimelineEntryHoverIn}
                 onHoverOut={handleTimelineEntryHoverOut}
@@ -2131,74 +2144,69 @@ export default function HistoryTimelineView({
                 );
               })
             : null}
-
-          {canShowHoverPreview && hoveredOccurrence ? (
-            <View
-              pointerEvents="none"
-              style={[
-                styles.timelineHoverPreview,
-                {
-                  position:
-                    Platform.OS === "web" ? ("fixed" as any) : "absolute",
-                  top:
-                    Platform.OS === "web" ? stickyHeaderHeight + 12 : undefined,
-                  left:
-                    Platform.OS === "web"
-                      ? fixedHoverPreviewLeft
-                      : hoverPreviewLeft,
-                  borderColor: hoveredOccurrence.color,
-                },
-              ]}
-            >
-              <View
-                style={[
-                  styles.timelineHoverPreviewSwatch,
-                  { backgroundColor: hoveredOccurrence.color },
-                ]}
-              />
-              <View style={styles.timelineHoverPreviewText}>
-                <View style={styles.timelineHoverTitleRow}>
-                  {hoveredOccurrence.iconName?.trim() ? (
-                    <View
-                      style={[
-                        styles.timelineHoverPreviewIcon,
-                        {
-                          borderColor:
-                            getTimelineOccurrenceIconColor(hoveredOccurrence),
-                        },
-                      ]}
-                    >
-                      <MaterialIcons
-                        name={hoveredOccurrence.iconName.trim() as any}
-                        size={15}
-                        color={getTimelineOccurrenceIconColor(
-                          hoveredOccurrence
-                        )}
-                      />
-                    </View>
-                  ) : null}
-                  <Text numberOfLines={1} style={styles.timelineHoverTitle}>
-                    {hoveredOccurrence.title}
-                  </Text>
-                </View>
-                {hoveredOccurrence.summary ? (
-                  <Text numberOfLines={1} style={styles.timelineHoverSummary}>
-                    {hoveredOccurrence.summary}
-                  </Text>
-                ) : null}
-                <Text numberOfLines={2} style={styles.timelineHoverLabel}>
-                  {getTimelineOccurrencePreviewLabel(hoveredOccurrence)}
-                </Text>
-                {hoveredOccurrence.notes?.trim() ? (
-                  <Text numberOfLines={3} style={styles.timelineHoverNotes}>
-                    {hoveredOccurrence.notes.trim()}
-                  </Text>
-                ) : null}
-              </View>
-            </View>
-          ) : null}
         </View>
       </ScrollView>
+
+      {canShowHoverPreview && activeHoverOccurrence ? (
+        <View
+          pointerEvents="none"
+          style={[
+            styles.timelineHoverPreview,
+            {
+              top: dynamicHoverPreviewTop,
+              left: hoverPreviewRootLeft,
+              borderColor: activeHoverOccurrence.color,
+            },
+          ]}
+        >
+          <View
+            style={[
+              styles.timelineHoverPreviewSwatch,
+              { backgroundColor: activeHoverOccurrence.color },
+            ]}
+          />
+          <View style={styles.timelineHoverPreviewText}>
+            <View style={styles.timelineHoverTitleRow}>
+              {activeHoverOccurrence.iconName?.trim() ? (
+                <View
+                  style={[
+                    styles.timelineHoverPreviewIcon,
+                    {
+                      borderColor: getTimelineOccurrenceIconColor(
+                        activeHoverOccurrence
+                      ),
+                    },
+                  ]}
+                >
+                  <MaterialIcons
+                    name={activeHoverOccurrence.iconName.trim() as any}
+                    size={15}
+                    color={getTimelineOccurrenceIconColor(
+                      activeHoverOccurrence
+                    )}
+                  />
+                </View>
+              ) : null}
+              <Text numberOfLines={1} style={styles.timelineHoverTitle}>
+                {activeHoverOccurrence.title}
+              </Text>
+            </View>
+            {activeHoverOccurrence.summary ? (
+              <Text numberOfLines={1} style={styles.timelineHoverSummary}>
+                {activeHoverOccurrence.summary}
+              </Text>
+            ) : null}
+            <Text numberOfLines={2} style={styles.timelineHoverLabel}>
+              {getTimelineOccurrencePreviewLabel(activeHoverOccurrence)}
+            </Text>
+            {activeHoverOccurrence.notes?.trim() ? (
+              <Text numberOfLines={3} style={styles.timelineHoverNotes}>
+                {activeHoverOccurrence.notes.trim()}
+              </Text>
+            ) : null}
+          </View>
+        </View>
+      ) : null}
 
       <Modal
         animationType="slide"
@@ -2428,6 +2436,7 @@ export default function HistoryTimelineView({
 
 const styles = StyleSheet.create({
   container: {
+    position: "relative",
     marginTop: 4,
     marginBottom: 24,
     padding: 16,
