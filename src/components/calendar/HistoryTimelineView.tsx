@@ -777,7 +777,7 @@ function TimelineHoverTab({
       style={[
         styles.timelineHoverTab,
         {
-          top: laneFrame.top + 2,
+          top: laneFrame.top - 8,
           left: x - 4 + staggerIndex * 5,
           borderColor: occurrence.color,
           backgroundColor: occurrence.color,
