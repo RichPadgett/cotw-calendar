@@ -32,13 +32,22 @@ import { validateTimelineDate } from "../../engine/timelineValidation";
 import { apiUrl } from "../../config/api";
 
 const BASE_LANE_HEIGHT = 128;
-const TIMELINE_LANE_COUNT = 3;
+const TIMELINE_LANE_COUNT = 11;
+const MAX_TIMELINE_LANE = TIMELINE_LANE_COUNT - 1;
 const TIMELINE_LANE_HEIGHTS = [96, 128, 160, 196, 236, 288];
 const TRACK_TOP = 112;
 const TRACK_HEIGHT = BASE_LANE_HEIGHT * TIMELINE_LANE_COUNT;
 const TIMELINE_SIDE_GUTTER = 40;
-const MIN_LABELED_BAR_WIDTH = 72;
+const MIN_LABELED_BAR_WIDTH = 132;
+const MIN_COMPACT_LABEL_BAR_WIDTH = 34;
 const MIN_NOTES_BAR_WIDTH = 112;
+const TIMELINE_LANE_OPTIONS = Array.from(
+  { length: TIMELINE_LANE_COUNT },
+  (_, index) => ({
+    label: String(index),
+    value: String(index),
+  })
+);
 const ENOCH_YEAR_DAYS = 364;
 const SABBATH_WEEK_DAYS = 7;
 const SABBATH_WEEK_CYCLE_YEARS = 7;
@@ -127,7 +136,7 @@ type TimelineEntryFormState = {
   summary: string;
   notes: string;
   color: string;
-  level: "0" | "1" | "2";
+  level: string;
   lanePart: "top" | "bottom" | "both";
   exactEnochYear: string;
   exactEnochMonth: string;
@@ -494,7 +503,7 @@ function getLaneFrame(
   occurrence: TimelineOccurrence,
   laneHeight = BASE_LANE_HEIGHT
 ) {
-  const laneTop = TRACK_TOP + occurrence.lane * laneHeight;
+  const laneTop = TRACK_TOP + clampTimelineLane(occurrence.lane) * laneHeight;
   const lanePart = occurrence.lanePart ?? "both";
   const lanePadding = 10;
   const halfGap = 5;
@@ -583,10 +592,39 @@ function TimelineRangeLabelOverlay({
   if (!occurrence.timeRange) return null;
 
   const barWidth = Math.max(18, width);
-  if (barWidth < MIN_LABELED_BAR_WIDTH) return null;
-
   const laneFrame = getLaneFrame(occurrence, laneHeight);
-  const labelWidth = Math.max(132, Math.min(barWidth, 280));
+  const canShowFullLabel =
+    barWidth >= MIN_LABELED_BAR_WIDTH && laneFrame.height >= 38;
+  const canShowCompactLabel =
+    !canShowFullLabel &&
+    barWidth >= MIN_COMPACT_LABEL_BAR_WIDTH &&
+    laneFrame.height >= 28;
+
+  if (!canShowFullLabel && !canShowCompactLabel) return null;
+
+  if (canShowCompactLabel) {
+    return (
+      <Pressable
+        accessibilityLabel={`Open ${occurrence.title}`}
+        onPress={() => onPress(occurrence)}
+        style={[
+          styles.timelineRangeCompactLabel,
+          {
+            top: laneFrame.top + Math.max(4, (laneFrame.height - 26) / 2),
+            left,
+            width: Math.min(barWidth, 46),
+            borderColor: occurrence.color,
+          },
+        ]}
+      >
+        <Text numberOfLines={1} style={styles.compactRangeLabelText}>
+          {occurrence.title}
+        </Text>
+      </Pressable>
+    );
+  }
+
+  const labelWidth = Math.min(barWidth, 280);
 
   return (
     <Pressable
@@ -799,6 +837,12 @@ function normalizeHexColor(value: string) {
 
 function stringifyOptionalNumber(value?: number) {
   return typeof value === "number" ? String(value) : "";
+}
+
+function clampTimelineLane(lane: number) {
+  if (!Number.isFinite(lane)) return 0;
+
+  return Math.max(0, Math.min(MAX_TIMELINE_LANE, Math.round(lane)));
 }
 
 function ColorField({
@@ -1065,10 +1109,7 @@ export default function HistoryTimelineView({
       summary: occurrence.summary ?? "",
       notes: occurrence.notes ?? "",
       color: occurrence.color,
-      level: String(Math.max(0, Math.min(2, occurrence.lane))) as
-        | "0"
-        | "1"
-        | "2",
+      level: String(clampTimelineLane(occurrence.lane)),
       lanePart: occurrence.lanePart ?? "both",
       exactEnochYear: stringifyOptionalNumber(
         occurrence.exactDate?.enochDate.enochYear
@@ -1339,7 +1380,7 @@ export default function HistoryTimelineView({
       title,
       summary: formState.summary.trim() || undefined,
       notes: formState.notes.trim() || undefined,
-      lane: Number(formState.level),
+      lane: clampTimelineLane(Number(formState.level)),
       lanePart: formState.lanePart,
       color,
       colorFeature: {
@@ -1715,20 +1756,17 @@ export default function HistoryTimelineView({
               />
 
               <View style={styles.formField}>
-                <Text style={styles.formLabel}>Level</Text>
+                <Text style={styles.formLabel}>Row</Text>
                 <SegmentedSelector
                   value={formState.level}
-                  options={[
-                    { label: "Top", value: "0" },
-                    { label: "Middle", value: "1" },
-                    { label: "Bottom", value: "2" },
-                  ]}
+                  options={TIMELINE_LANE_OPTIONS}
                   onChange={(level) => updateForm({ level })}
+                  compact
                 />
               </View>
 
               <View style={styles.formField}>
-                <Text style={styles.formLabel}>Level Area</Text>
+                <Text style={styles.formLabel}>Row Area</Text>
                 <SegmentedSelector
                   value={formState.lanePart}
                   options={[
@@ -2079,6 +2117,23 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 3 },
     zIndex: 10,
+  },
+  timelineRangeCompactLabel: {
+    position: "absolute",
+    height: 26,
+    paddingHorizontal: 5,
+    borderRadius: 8,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(15, 23, 42, 0.9)",
+    zIndex: 10,
+  },
+  compactRangeLabelText: {
+    fontSize: 9,
+    lineHeight: 11,
+    fontWeight: "900",
+    color: "#ffffff",
   },
   exactPin: {
     position: "absolute",
