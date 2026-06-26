@@ -41,6 +41,8 @@ const TIMELINE_SIDE_GUTTER = 40;
 const MIN_LABELED_BAR_WIDTH = 132;
 const MIN_COMPACT_LABEL_BAR_WIDTH = 34;
 const MIN_NOTES_BAR_WIDTH = 112;
+const HOVER_PREVIEW_WIDTH = 320;
+const TIMELINE_HOVER_TAB_WIDTH = 58;
 const TIMELINE_LANE_OPTIONS = Array.from(
   { length: TIMELINE_LANE_COUNT },
   (_, index) => ({
@@ -499,6 +501,23 @@ export function getRangeLabel(occurrence: TimelineOccurrence) {
   return `${startLabel} - ${endLabel}${gregorianLabel}`;
 }
 
+function getTimelineOccurrencePreviewLabel(occurrence: TimelineOccurrence) {
+  if (occurrence.timeRange) return getRangeLabel(occurrence);
+
+  if (occurrence.exactDate) {
+    const exactLabel =
+      occurrence.exactDate.label ??
+      `Enoch Year ${occurrence.exactDate.enochDate.enochYear}`;
+    const gregorianLabel = occurrence.exactDate.gregorianDate
+      ? ` (${formatHistoricalDate(occurrence.exactDate.gregorianDate)})`
+      : "";
+
+    return `${exactLabel}${gregorianLabel}`;
+  }
+
+  return occurrence.summary ?? "";
+}
+
 function getLaneFrame(
   occurrence: TimelineOccurrence,
   laneHeight = BASE_LANE_HEIGHT
@@ -536,12 +555,16 @@ function TimelineRangeBar({
   width,
   laneHeight,
   onPress,
+  onHoverIn,
+  onHoverOut,
 }: {
   occurrence: TimelineOccurrence;
   left: number;
   width: number;
   laneHeight: number;
   onPress: (occurrence: TimelineOccurrence) => void;
+  onHoverIn?: (occurrence: TimelineOccurrence) => void;
+  onHoverOut?: (occurrence: TimelineOccurrence) => void;
 }) {
   if (!occurrence.timeRange) return null;
 
@@ -553,6 +576,8 @@ function TimelineRangeBar({
   return (
     <Pressable
       accessibilityLabel={`Open ${occurrence.title}`}
+      onHoverIn={() => onHoverIn?.(occurrence)}
+      onHoverOut={() => onHoverOut?.(occurrence)}
       onPress={() => onPress(occurrence)}
       style={[
         styles.timelineVerticalBar,
@@ -582,12 +607,16 @@ function TimelineRangeLabelOverlay({
   width,
   laneHeight,
   onPress,
+  onHoverIn,
+  onHoverOut,
 }: {
   occurrence: TimelineOccurrence;
   left: number;
   width: number;
   laneHeight: number;
   onPress: (occurrence: TimelineOccurrence) => void;
+  onHoverIn?: (occurrence: TimelineOccurrence) => void;
+  onHoverOut?: (occurrence: TimelineOccurrence) => void;
 }) {
   if (!occurrence.timeRange) return null;
 
@@ -606,6 +635,8 @@ function TimelineRangeLabelOverlay({
     return (
       <Pressable
         accessibilityLabel={`Open ${occurrence.title}`}
+        onHoverIn={() => onHoverIn?.(occurrence)}
+        onHoverOut={() => onHoverOut?.(occurrence)}
         onPress={() => onPress(occurrence)}
         style={[
           styles.timelineRangeCompactLabel,
@@ -629,6 +660,8 @@ function TimelineRangeLabelOverlay({
   return (
     <Pressable
       accessibilityLabel={`Open ${occurrence.title}`}
+      onHoverIn={() => onHoverIn?.(occurrence)}
+      onHoverOut={() => onHoverOut?.(occurrence)}
       onPress={() => onPress(occurrence)}
       style={[
         styles.timelineRangeLabelOverlay,
@@ -656,12 +689,16 @@ function TimelineExactCard({
   compact,
   laneHeight,
   onPress,
+  onHoverIn,
+  onHoverOut,
 }: {
   occurrence: TimelineOccurrence;
   x: number;
   compact?: boolean;
   laneHeight: number;
   onPress: (occurrence: TimelineOccurrence) => void;
+  onHoverIn?: (occurrence: TimelineOccurrence) => void;
+  onHoverOut?: (occurrence: TimelineOccurrence) => void;
 }) {
   if (!occurrence.exactDate) return null;
 
@@ -679,6 +716,8 @@ function TimelineExactCard({
   return (
     <Pressable
       accessibilityLabel={`Open ${occurrence.title}`}
+      onHoverIn={() => onHoverIn?.(occurrence)}
+      onHoverOut={() => onHoverOut?.(occurrence)}
       onPress={() => onPress(occurrence)}
       style={[
         styles.timelineVerticalBar,
@@ -714,6 +753,49 @@ function TimelineExactCard({
           {validation.computed?.label ?? validation.message}
         </Text>
       ) : null}
+    </Pressable>
+  );
+}
+
+function TimelineHoverTab({
+  occurrence,
+  x,
+  tabIndex,
+  laneHeight,
+  onPress,
+  onHoverIn,
+  onHoverOut,
+}: {
+  occurrence: TimelineOccurrence;
+  x: number;
+  tabIndex: number;
+  laneHeight: number;
+  onPress: (occurrence: TimelineOccurrence) => void;
+  onHoverIn: (occurrence: TimelineOccurrence) => void;
+  onHoverOut: (occurrence: TimelineOccurrence) => void;
+}) {
+  const laneFrame = getLaneFrame(occurrence, laneHeight);
+  const staggerIndex = tabIndex % 4;
+
+  return (
+    <Pressable
+      accessibilityLabel={`Preview ${occurrence.title}`}
+      onHoverIn={() => onHoverIn(occurrence)}
+      onHoverOut={() => onHoverOut(occurrence)}
+      onPress={() => onPress(occurrence)}
+      style={[
+        styles.timelineHoverTab,
+        {
+          top: laneFrame.top - 11 + staggerIndex * 3,
+          left: x + staggerIndex * 12,
+          borderColor: occurrence.color,
+          backgroundColor: occurrence.color,
+        },
+      ]}
+    >
+      <Text numberOfLines={1} style={styles.timelineHoverTabText}>
+        {occurrence.title}
+      </Text>
     </Pressable>
   );
 }
@@ -963,6 +1045,8 @@ export default function HistoryTimelineView({
   const [timelineZoom, setTimelineZoom] = useState<TimelineZoomId>("years-250");
   const [timelineScrollX, setTimelineScrollX] = useState(0);
   const [laneHeightIndex, setLaneHeightIndex] = useState(0);
+  const [hoveredOccurrence, setHoveredOccurrence] =
+    useState<TimelineOccurrence | null>(null);
   const contentWidth = getTimelineContentWidth(width, timelineZoom);
   const currentTimelineZoom = getTimelineZoomConfig(timelineZoom);
   const currentTimelineZoomIndex = Math.max(
@@ -973,6 +1057,14 @@ export default function HistoryTimelineView({
     TIMELINE_LANE_HEIGHTS[laneHeightIndex] ?? BASE_LANE_HEIGHT;
   const timelineTrackHeight = timelineLaneHeight * TIMELINE_LANE_COUNT;
   const timelineAxisTop = TRACK_TOP + timelineTrackHeight + 8;
+  const canShowHoverPreview = Platform.OS === "web" && !isCompactTimeline;
+  const hoverPreviewLeft = Math.min(
+    Math.max(TIMELINE_SIDE_GUTTER, timelineScrollX + TIMELINE_SIDE_GUTTER),
+    Math.max(
+      TIMELINE_SIDE_GUTTER,
+      contentWidth - HOVER_PREVIEW_WIDTH - TIMELINE_SIDE_GUTTER
+    )
+  );
   const canDecreaseLaneHeight = laneHeightIndex > 0;
   const canIncreaseLaneHeight =
     laneHeightIndex < TIMELINE_LANE_HEIGHTS.length - 1;
@@ -1037,6 +1129,12 @@ export default function HistoryTimelineView({
   useEffect(() => {
     onSavingChange(isSavingTimeline);
   }, [isSavingTimeline, onSavingChange]);
+
+  useEffect(() => {
+    if (!canShowHoverPreview) {
+      setHoveredOccurrence(null);
+    }
+  }, [canShowHoverPreview]);
 
   useEffect(() => {
     if (addRequestId > 0) {
@@ -1169,6 +1267,20 @@ export default function HistoryTimelineView({
     event: NativeSyntheticEvent<NativeScrollEvent>
   ) {
     setTimelineScrollX(event.nativeEvent.contentOffset.x);
+  }
+
+  function handleTimelineEntryHoverIn(occurrence: TimelineOccurrence) {
+    if (!canShowHoverPreview) return;
+
+    setHoveredOccurrence(occurrence);
+  }
+
+  function handleTimelineEntryHoverOut(occurrence: TimelineOccurrence) {
+    if (!canShowHoverPreview) return;
+
+    setHoveredOccurrence((currentOccurrence) =>
+      currentOccurrence?.id === occurrence.id ? null : currentOccurrence
+    );
   }
 
   function handleTimelineZoomChange(nextZoom: TimelineZoomId) {
@@ -1647,6 +1759,8 @@ export default function HistoryTimelineView({
                 width={right - left}
                 laneHeight={timelineLaneHeight}
                 onPress={handleSelectOccurrence}
+                onHoverIn={handleTimelineEntryHoverIn}
+                onHoverOut={handleTimelineEntryHoverOut}
               />
             );
           })}
@@ -1669,6 +1783,8 @@ export default function HistoryTimelineView({
                 compact={Boolean(occurrence.timeRange)}
                 laneHeight={timelineLaneHeight}
                 onPress={handleSelectOccurrence}
+                onHoverIn={handleTimelineEntryHoverIn}
+                onHoverOut={handleTimelineEntryHoverOut}
               />
             );
           })}
@@ -1701,9 +1817,83 @@ export default function HistoryTimelineView({
                 width={right - left}
                 laneHeight={timelineLaneHeight}
                 onPress={handleSelectOccurrence}
+                onHoverIn={handleTimelineEntryHoverIn}
+                onHoverOut={handleTimelineEntryHoverOut}
               />
             );
           })}
+
+          {canShowHoverPreview
+            ? visibleOccurrences.map((occurrence, index) => {
+                let tabX: number | null = null;
+
+                if (occurrence.timeRange) {
+                  const { start } = occurrence.timeRange;
+                  tabX = getEnochYearPosition(
+                    {
+                      enochYear: start.enochYear,
+                      month: start.enochMonth,
+                      day: start.enochDay,
+                    },
+                    contentWidth
+                  );
+                } else if (occurrence.exactDate) {
+                  tabX =
+                    getEnochYearPosition(
+                      {
+                        enochYear: occurrence.exactDate.enochDate.enochYear,
+                        month: occurrence.exactDate.enochDate.month,
+                        day: occurrence.exactDate.enochDate.day,
+                      },
+                      contentWidth
+                    ) -
+                    TIMELINE_HOVER_TAB_WIDTH / 2;
+                }
+
+                if (tabX === null) return null;
+
+                return (
+                  <TimelineHoverTab
+                    key={`${occurrence.id}-hover-tab`}
+                    occurrence={occurrence}
+                    x={tabX}
+                    tabIndex={index}
+                    laneHeight={timelineLaneHeight}
+                    onPress={handleSelectOccurrence}
+                    onHoverIn={handleTimelineEntryHoverIn}
+                    onHoverOut={handleTimelineEntryHoverOut}
+                  />
+                );
+              })
+            : null}
+
+          {canShowHoverPreview && hoveredOccurrence ? (
+            <View
+              pointerEvents="none"
+              style={[
+                styles.timelineHoverPreview,
+                {
+                  left: hoverPreviewLeft,
+                  borderColor: hoveredOccurrence.color,
+                },
+              ]}
+            >
+              <View
+                style={[
+                  styles.timelineHoverPreviewSwatch,
+                  { backgroundColor: hoveredOccurrence.color },
+                ]}
+              />
+              <View style={styles.timelineHoverPreviewText}>
+                <Text numberOfLines={1} style={styles.timelineHoverTitle}>
+                  {hoveredOccurrence.title}
+                </Text>
+                <Text numberOfLines={2} style={styles.timelineHoverLabel}>
+                  {getTimelineOccurrencePreviewLabel(hoveredOccurrence)}
+                </Text>
+              </View>
+            </View>
+          ) : null}
         </View>
       </ScrollView>
 
@@ -2134,6 +2324,70 @@ const styles = StyleSheet.create({
     lineHeight: 11,
     fontWeight: "900",
     color: "#ffffff",
+  },
+  timelineHoverPreview: {
+    position: "absolute",
+    top: 14,
+    width: HOVER_PREVIEW_WIDTH,
+    minHeight: 58,
+    padding: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    backgroundColor: "rgba(255, 255, 255, 0.96)",
+    shadowColor: "#000000",
+    shadowOpacity: 0.18,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    flexDirection: "row",
+    alignItems: "flex-start",
+    zIndex: 20,
+  },
+  timelineHoverTab: {
+    position: "absolute",
+    width: TIMELINE_HOVER_TAB_WIDTH,
+    height: 22,
+    paddingHorizontal: 7,
+    borderTopLeftRadius: 7,
+    borderTopRightRadius: 7,
+    borderBottomLeftRadius: 3,
+    borderBottomRightRadius: 3,
+    borderWidth: 1,
+    justifyContent: "center",
+    shadowColor: "#000000",
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 2 },
+    zIndex: 18,
+  },
+  timelineHoverTabText: {
+    fontSize: 9,
+    lineHeight: 11,
+    fontWeight: "900",
+    color: "#ffffff",
+  },
+  timelineHoverPreviewSwatch: {
+    width: 10,
+    alignSelf: "stretch",
+    minHeight: 38,
+    borderRadius: 6,
+    marginRight: 9,
+  },
+  timelineHoverPreviewText: {
+    flex: 1,
+    minWidth: 0,
+  },
+  timelineHoverTitle: {
+    fontSize: 13,
+    lineHeight: 17,
+    fontWeight: "900",
+    color: "#0f172a",
+  },
+  timelineHoverLabel: {
+    marginTop: 2,
+    fontSize: 11,
+    lineHeight: 15,
+    fontWeight: "700",
+    color: "#475569",
   },
   exactPin: {
     position: "absolute",
