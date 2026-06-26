@@ -41,7 +41,7 @@ const TIMELINE_SIDE_GUTTER = 40;
 const MIN_LABELED_BAR_WIDTH = 132;
 const MIN_COMPACT_LABEL_BAR_WIDTH = 34;
 const HOVER_PREVIEW_WIDTH = 320;
-const TIMELINE_HOVER_TAB_WIDTH = 18;
+const TIMELINE_HOVER_TAB_SIZE = 18;
 const TIMELINE_LANE_OPTIONS = Array.from(
   { length: TIMELINE_LANE_COUNT },
   (_, index) => ({
@@ -777,8 +777,8 @@ function TimelineHoverTab({
       style={[
         styles.timelineHoverTab,
         {
-          top: laneFrame.top - 7,
-          left: x + staggerIndex * 6,
+          top: laneFrame.top + 2,
+          left: x - 4 + staggerIndex * 5,
           borderColor: occurrence.color,
           backgroundColor: occurrence.color,
         },
@@ -1836,7 +1836,7 @@ export default function HistoryTimelineView({
                       },
                       contentWidth
                     ) -
-                    TIMELINE_HOVER_TAB_WIDTH / 2;
+                    TIMELINE_HOVER_TAB_SIZE / 2;
                 }
 
                 if (tabX === null) return null;
@@ -2333,18 +2333,15 @@ const styles = StyleSheet.create({
   },
   timelineHoverTab: {
     position: "absolute",
-    width: TIMELINE_HOVER_TAB_WIDTH,
-    height: 14,
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5,
-    borderBottomLeftRadius: 2,
-    borderBottomRightRadius: 2,
+    width: TIMELINE_HOVER_TAB_SIZE,
+    height: TIMELINE_HOVER_TAB_SIZE,
+    borderRadius: 4,
     borderWidth: 1,
     shadowColor: "#000000",
     shadowOpacity: 0.14,
     shadowRadius: 3,
     shadowOffset: { width: 0, height: 1 },
-    zIndex: 18,
+    zIndex: 9,
   },
   timelineHoverTabNotesDot: {
     position: "absolute",
