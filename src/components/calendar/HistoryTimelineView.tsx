@@ -43,6 +43,7 @@ const TIMELINE_SIDE_GUTTER = 40;
 const MIN_LABELED_BAR_WIDTH = 132;
 const MIN_COMPACT_LABEL_BAR_WIDTH = 34;
 const HOVER_PREVIEW_WIDTH = 320;
+const HOVER_PREVIEW_ESTIMATED_HEIGHT = 132;
 const TIMELINE_HOVER_TAB_SIZE = 18;
 const TIMELINE_SETTINGS_STORAGE_KEY_PREFIX = "historyTimelineSettings";
 const TIMELINE_LANE_OPTIONS = Array.from(
@@ -626,7 +627,6 @@ function TimelineRangeBar({
   laneHeight,
   isHovered,
   timelineScrollX,
-  viewportWidth,
   onPress,
   onHoverIn,
   onHoverOut,
@@ -637,7 +637,6 @@ function TimelineRangeBar({
   laneHeight: number;
   isHovered: boolean;
   timelineScrollX: number;
-  viewportWidth: number;
   onPress: (occurrence: TimelineOccurrence) => void;
   onHoverIn?: (occurrence: TimelineOccurrence) => void;
   onHoverOut?: (occurrence: TimelineOccurrence) => void;
@@ -651,10 +650,10 @@ function TimelineRangeBar({
   const iconSize = 24;
   const iconInset = 6;
   const maxIconLeft = Math.max(iconInset, barWidth - iconSize - iconInset);
-  const isBarEndOffscreen = left + barWidth > timelineScrollX + viewportWidth;
-  const preferredIconLeft = isBarEndOffscreen
-    ? timelineScrollX - left + iconInset
-    : maxIconLeft;
+  const preferredIconLeft = Math.max(
+    iconInset,
+    timelineScrollX - left + iconInset
+  );
   const hoverIconLeft = Math.max(
     iconInset,
     Math.min(maxIconLeft, preferredIconLeft)
@@ -1248,6 +1247,7 @@ export default function HistoryTimelineView({
   const [hasLoadedTimelineSettings, setHasLoadedTimelineSettings] =
     useState(false);
   const [timelineLayoutY, setTimelineLayoutY] = useState(0);
+  const [timelineViewportY, setTimelineViewportY] = useState(0);
   const contentWidth = getTimelineContentWidth(width, timelineZoom);
   const currentTimelineZoom = getTimelineZoomConfig(timelineZoom);
   const currentTimelineZoomIndex = Math.max(
@@ -1289,6 +1289,24 @@ export default function HistoryTimelineView({
     (occurrence) => occurrence.showOnTimeline
   );
   const activeHoverOccurrence = pinnedOccurrence ?? hoveredOccurrence;
+  const activeLaneFrame = activeHoverOccurrence
+    ? getLaneFrame(activeHoverOccurrence, timelineLaneHeight)
+    : null;
+  const activeRowTop = activeLaneFrame
+    ? timelineViewportY + activeLaneFrame.top
+    : null;
+  const activeRowBottom = activeLaneFrame
+    ? timelineViewportY + activeLaneFrame.top + activeLaneFrame.height
+    : null;
+  const hoverPreviewOverlapsActiveRow =
+    activeRowTop !== null &&
+    activeRowBottom !== null &&
+    dynamicHoverPreviewTop < activeRowBottom &&
+    dynamicHoverPreviewTop + HOVER_PREVIEW_ESTIMATED_HEIGHT > activeRowTop;
+  const hoverPreviewTop =
+    hoverPreviewOverlapsActiveRow && activeRowBottom !== null
+      ? activeRowBottom + 10
+      : dynamicHoverPreviewTop;
   const axisTicks = useMemo(
     () =>
       getVisibleTimelineAxisTicks({
@@ -1535,6 +1553,10 @@ export default function HistoryTimelineView({
 
   function handleTimelineLayout(event: LayoutChangeEvent) {
     setTimelineLayoutY(event.nativeEvent.layout.y);
+  }
+
+  function handleTimelineViewportLayout(event: LayoutChangeEvent) {
+    setTimelineViewportY(event.nativeEvent.layout.y);
   }
 
   function handleTimelineEntryHoverIn(occurrence: TimelineOccurrence) {
@@ -1955,6 +1977,7 @@ export default function HistoryTimelineView({
         showsHorizontalScrollIndicator
         scrollEventThrottle={32}
         onScroll={handleTimelineScroll}
+        onLayout={handleTimelineViewportLayout}
         contentContainerStyle={styles.scrollContent}
       >
         <View
@@ -2051,7 +2074,6 @@ export default function HistoryTimelineView({
                 laneHeight={timelineLaneHeight}
                 isHovered={activeHoverOccurrence?.id === occurrence.id}
                 timelineScrollX={timelineScrollX}
-                viewportWidth={width}
                 onPress={handleSelectOccurrence}
                 onHoverIn={handleTimelineEntryHoverIn}
                 onHoverOut={handleTimelineEntryHoverOut}
@@ -2170,7 +2192,7 @@ export default function HistoryTimelineView({
           style={[
             styles.timelineHoverPreview,
             {
-              top: dynamicHoverPreviewTop,
+              top: hoverPreviewTop,
               left: hoverPreviewRootLeft,
               borderColor: activeHoverOccurrence.color,
             },
