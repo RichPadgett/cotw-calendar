@@ -40,7 +40,6 @@ const TRACK_HEIGHT = BASE_LANE_HEIGHT * TIMELINE_LANE_COUNT;
 const TIMELINE_SIDE_GUTTER = 40;
 const MIN_LABELED_BAR_WIDTH = 132;
 const MIN_COMPACT_LABEL_BAR_WIDTH = 34;
-const MIN_NOTES_BAR_WIDTH = 112;
 const HOVER_PREVIEW_WIDTH = 320;
 const TIMELINE_HOVER_TAB_WIDTH = 18;
 const TIMELINE_LANE_OPTIONS = Array.from(
@@ -570,8 +569,6 @@ function TimelineRangeBar({
 
   const barWidth = Math.max(18, width);
   const laneFrame = getLaneFrame(occurrence, laneHeight);
-  const canShowNotesButton =
-    Boolean(occurrence.notes?.trim()) && barWidth >= MIN_NOTES_BAR_WIDTH;
 
   return (
     <Pressable
@@ -590,14 +587,7 @@ function TimelineRangeBar({
           borderColor: occurrence.color,
         },
       ]}
-    >
-      {canShowNotesButton ? (
-        <View style={styles.barNotesButton}>
-          <MaterialIcons name="notes" size={12} color="#ffffff" />
-          <Text style={styles.barNotesButtonText}>Notes</Text>
-        </View>
-      ) : null}
-    </Pressable>
+    />
   );
 }
 
@@ -776,6 +766,7 @@ function TimelineHoverTab({
 }) {
   const laneFrame = getLaneFrame(occurrence, laneHeight);
   const staggerIndex = tabIndex % 4;
+  const hasNotes = Boolean(occurrence.notes?.trim());
 
   return (
     <Pressable
@@ -792,7 +783,9 @@ function TimelineHoverTab({
           backgroundColor: occurrence.color,
         },
       ]}
-    />
+    >
+      {hasNotes ? <View style={styles.timelineHoverTabNotesDot} /> : null}
+    </Pressable>
   );
 }
 
@@ -2353,6 +2346,15 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     zIndex: 18,
   },
+  timelineHoverTabNotesDot: {
+    position: "absolute",
+    top: 3,
+    right: 3,
+    width: 5,
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: "#ffffff",
+  },
   timelineHoverPreviewSwatch: {
     width: 10,
     alignSelf: "stretch",
@@ -2406,24 +2408,6 @@ const styles = StyleSheet.create({
     lineHeight: 10,
     fontWeight: "800",
     color: "rgba(255, 255, 255, 0.74)",
-  },
-  barNotesButton: {
-    marginTop: 6,
-    minHeight: 24,
-    paddingHorizontal: 7,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.42)",
-    backgroundColor: "rgba(17, 24, 39, 0.2)",
-    alignSelf: "flex-start",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  barNotesButtonText: {
-    fontSize: 10,
-    fontWeight: "900",
-    color: "#ffffff",
   },
   eventCard: {
     position: "absolute",
