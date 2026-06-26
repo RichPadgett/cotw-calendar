@@ -18,14 +18,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import {
-  createElement,
-  Fragment,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { createElement, useEffect, useMemo, useRef, useState } from "react";
 
 import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -590,6 +583,10 @@ function getTimelineOccurrencePreviewLabel(occurrence: TimelineOccurrence) {
   return occurrence.summary ?? "";
 }
 
+function getTimelineOccurrenceIconColor(occurrence: TimelineOccurrence) {
+  return normalizeHexColor(occurrence.iconColor ?? occurrence.color);
+}
+
 function getLaneFrame(
   occurrence: TimelineOccurrence,
   laneHeight = BASE_LANE_HEIGHT
@@ -626,6 +623,7 @@ function TimelineRangeBar({
   left,
   width,
   laneHeight,
+  isHovered,
   onPress,
   onHoverIn,
   onHoverOut,
@@ -634,6 +632,7 @@ function TimelineRangeBar({
   left: number;
   width: number;
   laneHeight: number;
+  isHovered: boolean;
   onPress: (occurrence: TimelineOccurrence) => void;
   onHoverIn?: (occurrence: TimelineOccurrence) => void;
   onHoverOut?: (occurrence: TimelineOccurrence) => void;
@@ -642,6 +641,8 @@ function TimelineRangeBar({
 
   const barWidth = Math.max(18, width);
   const laneFrame = getLaneFrame(occurrence, laneHeight);
+  const iconName = occurrence.iconName?.trim();
+  const canShowHoverIcon = isHovered && Boolean(iconName) && barWidth >= 34;
 
   return (
     <Pressable
@@ -658,9 +659,20 @@ function TimelineRangeBar({
           height: laneFrame.height,
           backgroundColor: occurrence.color,
           borderColor: occurrence.color,
+          zIndex: canShowHoverIcon ? 12 : undefined,
         },
       ]}
-    />
+    >
+      {canShowHoverIcon ? (
+        <View style={styles.timelineBarHoverIcon}>
+          <MaterialIcons
+            name={iconName as any}
+            size={16}
+            color={getTimelineOccurrenceIconColor(occurrence)}
+          />
+        </View>
+      ) : null}
+    </Pressable>
   );
 }
 
@@ -751,6 +763,7 @@ function TimelineExactCard({
   x,
   compact,
   laneHeight,
+  isHovered,
   onPress,
   onHoverIn,
   onHoverOut,
@@ -759,6 +772,7 @@ function TimelineExactCard({
   x: number;
   compact?: boolean;
   laneHeight: number;
+  isHovered: boolean;
   onPress: (occurrence: TimelineOccurrence) => void;
   onHoverIn?: (occurrence: TimelineOccurrence) => void;
   onHoverOut?: (occurrence: TimelineOccurrence) => void;
@@ -773,6 +787,8 @@ function TimelineExactCard({
         occurrence.exactDate.enochDate
       )
     : null;
+  const iconName = occurrence.iconName?.trim();
+  const canShowHoverIcon = isHovered && Boolean(iconName);
 
   if (compact) return null;
 
@@ -791,9 +807,19 @@ function TimelineExactCard({
           height: laneFrame.height,
           backgroundColor: occurrence.color,
           borderColor: occurrence.color,
+          zIndex: canShowHoverIcon ? 12 : undefined,
         },
       ]}
     >
+      {canShowHoverIcon ? (
+        <View style={styles.timelineBarHoverIcon}>
+          <MaterialIcons
+            name={iconName as any}
+            size={16}
+            color={getTimelineOccurrenceIconColor(occurrence)}
+          />
+        </View>
+      ) : null}
       <Text numberOfLines={1} style={styles.verticalBarTitle}>
         {occurrence.title}
       </Text>
@@ -858,47 +884,6 @@ function TimelineHoverTab({
       ]}
     >
       {hasNotes ? <View style={styles.timelineHoverTabNotesDot} /> : null}
-    </Pressable>
-  );
-}
-
-function TimelineOccurrenceIcon({
-  occurrence,
-  x,
-  laneHeight,
-  onPress,
-  onHoverIn,
-  onHoverOut,
-}: {
-  occurrence: TimelineOccurrence;
-  x: number;
-  laneHeight: number;
-  onPress: (occurrence: TimelineOccurrence) => void;
-  onHoverIn: (occurrence: TimelineOccurrence) => void;
-  onHoverOut: (occurrence: TimelineOccurrence) => void;
-}) {
-  const iconName = occurrence.iconName?.trim();
-  if (!iconName) return null;
-
-  const laneFrame = getLaneFrame(occurrence, laneHeight);
-  const iconColor = normalizeHexColor(occurrence.iconColor ?? occurrence.color);
-
-  return (
-    <Pressable
-      accessibilityLabel={`Open ${occurrence.title}`}
-      onHoverIn={() => onHoverIn(occurrence)}
-      onHoverOut={() => onHoverOut(occurrence)}
-      onPress={() => onPress(occurrence)}
-      style={[
-        styles.timelineOccurrenceIcon,
-        {
-          top: laneFrame.top - 34,
-          left: x - 15,
-          borderColor: iconColor,
-        },
-      ]}
-    >
-      <MaterialIcons name={iconName as any} size={18} color={iconColor} />
     </Pressable>
   );
 }
@@ -1212,6 +1197,7 @@ type HistoryTimelineViewProps = {
   isEditMode: boolean;
   addRequestId: number;
   editRequestId: number;
+  stickyHeaderHeight: number;
   onSelectedOccurrenceChange: (occurrence: TimelineOccurrence | null) => void;
   onSavingChange: (isSaving: boolean) => void;
 };
@@ -1228,6 +1214,7 @@ export default function HistoryTimelineView({
   isEditMode,
   addRequestId,
   editRequestId,
+  stickyHeaderHeight,
   onSelectedOccurrenceChange,
   onSavingChange,
 }: HistoryTimelineViewProps) {
@@ -1257,6 +1244,10 @@ export default function HistoryTimelineView({
       TIMELINE_SIDE_GUTTER,
       contentWidth - HOVER_PREVIEW_WIDTH - TIMELINE_SIDE_GUTTER
     )
+  );
+  const fixedHoverPreviewLeft = Math.max(
+    16,
+    Math.min(TIMELINE_SIDE_GUTTER, width - HOVER_PREVIEW_WIDTH - 16)
   );
   const canDecreaseLaneHeight = laneHeightIndex > 0;
   const canIncreaseLaneHeight =
@@ -2030,6 +2021,7 @@ export default function HistoryTimelineView({
                 left={left}
                 width={right - left}
                 laneHeight={timelineLaneHeight}
+                isHovered={hoveredOccurrence?.id === occurrence.id}
                 onPress={handleSelectOccurrence}
                 onHoverIn={handleTimelineEntryHoverIn}
                 onHoverOut={handleTimelineEntryHoverOut}
@@ -2054,6 +2046,7 @@ export default function HistoryTimelineView({
                 )}
                 compact={Boolean(occurrence.timeRange)}
                 laneHeight={timelineLaneHeight}
+                isHovered={hoveredOccurrence?.id === occurrence.id}
                 onPress={handleSelectOccurrence}
                 onHoverIn={handleTimelineEntryHoverIn}
                 onHoverOut={handleTimelineEntryHoverOut}
@@ -2098,11 +2091,9 @@ export default function HistoryTimelineView({
           {canShowHoverPreview
             ? visibleOccurrences.map((occurrence, index) => {
                 let tabX: number | null = null;
-                let iconX: number | null = null;
 
                 if (occurrence.timeRange) {
                   const { start } = occurrence.timeRange;
-                  const rangeEnd = getResolvedRangeEnd(occurrence);
                   tabX = getEnochYearPosition(
                     {
                       enochYear: start.enochYear,
@@ -2111,50 +2102,32 @@ export default function HistoryTimelineView({
                     },
                     contentWidth
                   );
-
-                  if (rangeEnd) {
-                    const right = getEnochYearPosition(
-                      { enochYear: rangeEnd },
-                      contentWidth
-                    );
-                    iconX = tabX + (right - tabX) / 2;
-                  }
                 } else if (occurrence.exactDate) {
-                  iconX = getEnochYearPosition(
-                    {
-                      enochYear: occurrence.exactDate.enochDate.enochYear,
-                      month: occurrence.exactDate.enochDate.month,
-                      day: occurrence.exactDate.enochDate.day,
-                    },
-                    contentWidth
-                  );
-                  tabX = iconX - TIMELINE_HOVER_TAB_SIZE / 2;
+                  tabX =
+                    getEnochYearPosition(
+                      {
+                        enochYear: occurrence.exactDate.enochDate.enochYear,
+                        month: occurrence.exactDate.enochDate.month,
+                        day: occurrence.exactDate.enochDate.day,
+                      },
+                      contentWidth
+                    ) -
+                    TIMELINE_HOVER_TAB_SIZE / 2;
                 }
 
                 if (tabX === null) return null;
 
                 return (
-                  <Fragment key={`${occurrence.id}-markers`}>
-                    <TimelineHoverTab
-                      occurrence={occurrence}
-                      x={tabX}
-                      tabIndex={index}
-                      laneHeight={timelineLaneHeight}
-                      onPress={handleSelectOccurrence}
-                      onHoverIn={handleTimelineEntryHoverIn}
-                      onHoverOut={handleTimelineEntryHoverOut}
-                    />
-                    {iconX !== null ? (
-                      <TimelineOccurrenceIcon
-                        occurrence={occurrence}
-                        x={iconX}
-                        laneHeight={timelineLaneHeight}
-                        onPress={handleSelectOccurrence}
-                        onHoverIn={handleTimelineEntryHoverIn}
-                        onHoverOut={handleTimelineEntryHoverOut}
-                      />
-                    ) : null}
-                  </Fragment>
+                  <TimelineHoverTab
+                    key={`${occurrence.id}-hover-tab`}
+                    occurrence={occurrence}
+                    x={tabX}
+                    tabIndex={index}
+                    laneHeight={timelineLaneHeight}
+                    onPress={handleSelectOccurrence}
+                    onHoverIn={handleTimelineEntryHoverIn}
+                    onHoverOut={handleTimelineEntryHoverOut}
+                  />
                 );
               })
             : null}
@@ -2165,7 +2138,14 @@ export default function HistoryTimelineView({
               style={[
                 styles.timelineHoverPreview,
                 {
-                  left: hoverPreviewLeft,
+                  position:
+                    Platform.OS === "web" ? ("fixed" as any) : "absolute",
+                  top:
+                    Platform.OS === "web" ? stickyHeaderHeight + 12 : undefined,
+                  left:
+                    Platform.OS === "web"
+                      ? fixedHoverPreviewLeft
+                      : hoverPreviewLeft,
                   borderColor: hoveredOccurrence.color,
                 },
               ]}
@@ -2177,9 +2157,30 @@ export default function HistoryTimelineView({
                 ]}
               />
               <View style={styles.timelineHoverPreviewText}>
-                <Text numberOfLines={1} style={styles.timelineHoverTitle}>
-                  {hoveredOccurrence.title}
-                </Text>
+                <View style={styles.timelineHoverTitleRow}>
+                  {hoveredOccurrence.iconName?.trim() ? (
+                    <View
+                      style={[
+                        styles.timelineHoverPreviewIcon,
+                        {
+                          borderColor:
+                            getTimelineOccurrenceIconColor(hoveredOccurrence),
+                        },
+                      ]}
+                    >
+                      <MaterialIcons
+                        name={hoveredOccurrence.iconName.trim() as any}
+                        size={15}
+                        color={getTimelineOccurrenceIconColor(
+                          hoveredOccurrence
+                        )}
+                      />
+                    </View>
+                  ) : null}
+                  <Text numberOfLines={1} style={styles.timelineHoverTitle}>
+                    {hoveredOccurrence.title}
+                  </Text>
+                </View>
                 {hoveredOccurrence.summary ? (
                   <Text numberOfLines={1} style={styles.timelineHoverSummary}>
                     {hoveredOccurrence.summary}
@@ -2188,6 +2189,11 @@ export default function HistoryTimelineView({
                 <Text numberOfLines={2} style={styles.timelineHoverLabel}>
                   {getTimelineOccurrencePreviewLabel(hoveredOccurrence)}
                 </Text>
+                {hoveredOccurrence.notes?.trim() ? (
+                  <Text numberOfLines={3} style={styles.timelineHoverNotes}>
+                    {hoveredOccurrence.notes.trim()}
+                  </Text>
+                ) : null}
               </View>
             </View>
           ) : null}
@@ -2620,6 +2626,17 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     overflow: "hidden",
   },
+  timelineBarHoverIcon: {
+    position: "absolute",
+    top: 6,
+    right: 6,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.92)",
+  },
   timelineRangeLabelOverlay: {
     position: "absolute",
     minHeight: 38,
@@ -2689,21 +2706,6 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     backgroundColor: "#ffffff",
   },
-  timelineOccurrenceIcon: {
-    position: "absolute",
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    borderWidth: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.94)",
-    shadowColor: "#000000",
-    shadowOpacity: 0.16,
-    shadowRadius: 5,
-    shadowOffset: { width: 0, height: 2 },
-    zIndex: 19,
-  },
   timelineHoverPreviewSwatch: {
     width: 10,
     alignSelf: "stretch",
@@ -2715,7 +2717,23 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: 0,
   },
+  timelineHoverTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  timelineHoverPreviewIcon: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#ffffff",
+  },
   timelineHoverTitle: {
+    flex: 1,
+    minWidth: 0,
     fontSize: 13,
     lineHeight: 17,
     fontWeight: "900",
@@ -2734,6 +2752,16 @@ const styles = StyleSheet.create({
     lineHeight: 15,
     fontWeight: "700",
     color: "#475569",
+  },
+  timelineHoverNotes: {
+    marginTop: 6,
+    paddingTop: 6,
+    borderTopWidth: 1,
+    borderTopColor: "rgba(148, 163, 184, 0.28)",
+    fontSize: 11,
+    lineHeight: 15,
+    fontWeight: "600",
+    color: "#334155",
   },
   exactPin: {
     position: "absolute",

@@ -79,6 +79,9 @@ export default function HomeScreen() {
   const latestTeachingAutoCollapsedRef = useRef(false);
   const headerHeightRef = useRef(DEFAULT_STICKY_HEADER_OFFSET);
   const yearViewTopOffsetRef = useRef(DEFAULT_YEAR_VIEW_TOP_OFFSET);
+  const [stickyHeaderHeight, setStickyHeaderHeight] = useState(
+    DEFAULT_STICKY_HEADER_OFFSET
+  );
 
   const [visibleEnochYear, setVisibleEnochYear] = useState(2026);
   const [activeMonthNumber, setActiveMonthNumber] = useState<number | null>(
@@ -649,6 +652,7 @@ export default function HomeScreen() {
 
   function handleHeaderLayout(height: number) {
     headerHeightRef.current = height;
+    setStickyHeaderHeight(height);
   }
 
   function handleYearViewLayout(y: number) {
@@ -951,6 +955,7 @@ export default function HomeScreen() {
             isEditMode={isTimelineEditMode}
             addRequestId={timelineAddRequestId}
             editRequestId={timelineEditRequestId}
+            stickyHeaderHeight={stickyHeaderHeight}
             onSelectedOccurrenceChange={setSelectedTimelineOccurrence}
             onSavingChange={setIsSavingTimeline}
           />
