@@ -34,7 +34,7 @@ import { apiUrl } from "../../config/api";
 const BASE_LANE_HEIGHT = 128;
 const TIMELINE_LANE_COUNT = 11;
 const MAX_TIMELINE_LANE = TIMELINE_LANE_COUNT - 1;
-const TIMELINE_LANE_HEIGHTS = [96, 128, 160, 196, 236, 288];
+const TIMELINE_LANE_HEIGHTS = [72, 88, 104, 128, 160, 196];
 const TRACK_TOP = 112;
 const TRACK_HEIGHT = BASE_LANE_HEIGHT * TIMELINE_LANE_COUNT;
 const TIMELINE_SIDE_GUTTER = 40;
@@ -48,6 +48,10 @@ const TIMELINE_LANE_OPTIONS = Array.from(
     label: String(index),
     value: String(index),
   })
+);
+const TIMELINE_LANE_INDEXES = Array.from(
+  { length: TIMELINE_LANE_COUNT },
+  (_, index) => index
 );
 const ENOCH_YEAR_DAYS = 364;
 const SABBATH_WEEK_DAYS = 7;
@@ -523,9 +527,9 @@ function getLaneFrame(
 ) {
   const laneTop = TRACK_TOP + clampTimelineLane(occurrence.lane) * laneHeight;
   const lanePart = occurrence.lanePart ?? "both";
-  const lanePadding = 10;
-  const halfGap = 5;
-  const fullHeight = laneHeight - lanePadding * 2 - 8;
+  const lanePadding = 6;
+  const halfGap = 3;
+  const fullHeight = laneHeight - lanePadding * 2 - 4;
   const halfHeight = (fullHeight - halfGap) / 2;
 
   if (lanePart === "top") {
@@ -1681,6 +1685,23 @@ export default function HistoryTimelineView({
             },
           ]}
         >
+          {TIMELINE_LANE_INDEXES.map((laneIndex) => (
+            <View
+              key={`lane-guide-${laneIndex}`}
+              pointerEvents="none"
+              style={[
+                styles.timelineLaneGuide,
+                laneIndex % 2 === 1 ? styles.timelineLaneGuideAlternate : null,
+                {
+                  top: TRACK_TOP + laneIndex * timelineLaneHeight,
+                  height: timelineLaneHeight,
+                },
+              ]}
+            >
+              <Text style={styles.timelineLaneGuideLabel}>{laneIndex}</Text>
+            </View>
+          ))}
+
           <View style={[styles.axisLine, { top: timelineAxisTop }]} />
 
           {axisTicks.map((tick) => (
@@ -2183,6 +2204,28 @@ const styles = StyleSheet.create({
   timelineCanvas: {
     height: TRACK_TOP + TRACK_HEIGHT + 84,
     position: "relative",
+  },
+  timelineLaneGuide: {
+    position: "absolute",
+    left: TIMELINE_SIDE_GUTTER,
+    right: TIMELINE_SIDE_GUTTER,
+    borderTopWidth: 1,
+    borderTopColor: "rgba(148, 163, 184, 0.22)",
+    backgroundColor: "rgba(255, 255, 255, 0.22)",
+  },
+  timelineLaneGuideAlternate: {
+    backgroundColor: "rgba(226, 232, 240, 0.18)",
+  },
+  timelineLaneGuideLabel: {
+    position: "absolute",
+    top: 4,
+    left: -28,
+    width: 20,
+    fontSize: 9,
+    lineHeight: 11,
+    fontWeight: "800",
+    color: "rgba(71, 85, 105, 0.5)",
+    textAlign: "right",
   },
   axisLine: {
     position: "absolute",
