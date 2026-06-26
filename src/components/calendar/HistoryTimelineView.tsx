@@ -18,9 +18,17 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import { createElement, useEffect, useMemo, useRef, useState } from "react";
+import {
+  createElement,
+  Fragment,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { MaterialIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import {
   HistoricalDate,
@@ -42,6 +50,7 @@ const MIN_LABELED_BAR_WIDTH = 132;
 const MIN_COMPACT_LABEL_BAR_WIDTH = 34;
 const HOVER_PREVIEW_WIDTH = 320;
 const TIMELINE_HOVER_TAB_SIZE = 18;
+const TIMELINE_SETTINGS_STORAGE_KEY_PREFIX = "historyTimelineSettings";
 const TIMELINE_LANE_OPTIONS = Array.from(
   { length: TIMELINE_LANE_COUNT },
   (_, index) => ({
@@ -136,10 +145,16 @@ type TimelineAxisTick = {
   major: boolean;
 };
 
+type TimelineViewSettings = {
+  zoomId?: TimelineZoomId;
+  laneHeightIndex?: number;
+};
+
 type TimelineEntryFormState = {
   title: string;
   summary: string;
   notes: string;
+  iconName: string;
   color: string;
   level: string;
   lanePart: "top" | "bottom" | "both";
@@ -160,6 +175,7 @@ const DEFAULT_FORM_STATE: TimelineEntryFormState = {
   title: "",
   summary: "",
   notes: "",
+  iconName: "",
   color: "#2563eb",
   level: "0",
   lanePart: "both",
@@ -194,6 +210,39 @@ function getTimelineZoomConfig(zoomId: TimelineZoomId) {
     TIMELINE_ZOOM_LEVELS.find((zoomLevel) => zoomLevel.id === zoomId) ??
     TIMELINE_ZOOM_LEVELS[0]
   );
+}
+
+function isTimelineZoomId(value: unknown): value is TimelineZoomId {
+  return (
+    typeof value === "string" &&
+    TIMELINE_ZOOM_LEVELS.some((zoomLevel) => zoomLevel.id === value)
+  );
+}
+
+function parseTimelineViewSettings(value: string | null): TimelineViewSettings {
+  if (!value) return {};
+
+  try {
+    const parsed = JSON.parse(value);
+    if (!parsed || typeof parsed !== "object") return {};
+
+    const settings = parsed as Record<string, unknown>;
+    const laneHeightIndex =
+      typeof settings.laneHeightIndex === "number" &&
+      Number.isInteger(settings.laneHeightIndex)
+        ? Math.max(
+            0,
+            Math.min(TIMELINE_LANE_HEIGHTS.length - 1, settings.laneHeightIndex)
+          )
+        : undefined;
+
+    return {
+      zoomId: isTimelineZoomId(settings.zoomId) ? settings.zoomId : undefined,
+      laneHeightIndex,
+    };
+  } catch {
+    return {};
+  }
 }
 
 function getTimelineContentWidth(
@@ -793,6 +842,50 @@ function TimelineHoverTab({
   );
 }
 
+function TimelineOccurrenceIcon({
+  occurrence,
+  x,
+  laneHeight,
+  onPress,
+  onHoverIn,
+  onHoverOut,
+}: {
+  occurrence: TimelineOccurrence;
+  x: number;
+  laneHeight: number;
+  onPress: (occurrence: TimelineOccurrence) => void;
+  onHoverIn: (occurrence: TimelineOccurrence) => void;
+  onHoverOut: (occurrence: TimelineOccurrence) => void;
+}) {
+  const iconName = occurrence.iconName?.trim();
+  if (!iconName) return null;
+
+  const laneFrame = getLaneFrame(occurrence, laneHeight);
+
+  return (
+    <Pressable
+      accessibilityLabel={`Open ${occurrence.title}`}
+      onHoverIn={() => onHoverIn(occurrence)}
+      onHoverOut={() => onHoverOut(occurrence)}
+      onPress={() => onPress(occurrence)}
+      style={[
+        styles.timelineOccurrenceIcon,
+        {
+          top: laneFrame.top - 34,
+          left: x - 15,
+          borderColor: occurrence.color,
+        },
+      ]}
+    >
+      <MaterialIcons
+        name={iconName as any}
+        size={18}
+        color={occurrence.color}
+      />
+    </Pressable>
+  );
+}
+
 function EraToggle({
   value,
   onChange,
@@ -1040,6 +1133,8 @@ export default function HistoryTimelineView({
   const [laneHeightIndex, setLaneHeightIndex] = useState(0);
   const [hoveredOccurrence, setHoveredOccurrence] =
     useState<TimelineOccurrence | null>(null);
+  const [hasLoadedTimelineSettings, setHasLoadedTimelineSettings] =
+    useState(false);
   const contentWidth = getTimelineContentWidth(width, timelineZoom);
   const currentTimelineZoom = getTimelineZoomConfig(timelineZoom);
   const currentTimelineZoomIndex = Math.max(
@@ -1062,6 +1157,7 @@ export default function HistoryTimelineView({
   const canIncreaseLaneHeight =
     laneHeightIndex < TIMELINE_LANE_HEIGHTS.length - 1;
   const timelineScrollRef = useRef<ScrollView>(null);
+  const timelineSettingsStorageKey = `${TIMELINE_SETTINGS_STORAGE_KEY_PREFIX}:${groupCode || "default"}:${userRole}`;
   const canManageTimeline =
     userRole === "admin" &&
     groupCode === "church-of-the-word" &&
@@ -1122,6 +1218,63 @@ export default function HistoryTimelineView({
   useEffect(() => {
     onSavingChange(isSavingTimeline);
   }, [isSavingTimeline, onSavingChange]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadTimelineSettings() {
+      setHasLoadedTimelineSettings(false);
+
+      try {
+        const savedSettings = parseTimelineViewSettings(
+          await AsyncStorage.getItem(timelineSettingsStorageKey)
+        );
+
+        if (!isMounted) return;
+
+        if (savedSettings.zoomId) {
+          setTimelineZoom(savedSettings.zoomId);
+        }
+
+        if (typeof savedSettings.laneHeightIndex === "number") {
+          setLaneHeightIndex(savedSettings.laneHeightIndex);
+        }
+      } catch (error) {
+        console.log("Failed to load timeline settings", error);
+      } finally {
+        if (isMounted) {
+          setHasLoadedTimelineSettings(true);
+        }
+      }
+    }
+
+    loadTimelineSettings();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [timelineSettingsStorageKey]);
+
+  useEffect(() => {
+    if (!hasLoadedTimelineSettings) return;
+
+    const settings: TimelineViewSettings = {
+      zoomId: timelineZoom,
+      laneHeightIndex,
+    };
+
+    AsyncStorage.setItem(
+      timelineSettingsStorageKey,
+      JSON.stringify(settings)
+    ).catch((error) => {
+      console.log("Failed to save timeline settings", error);
+    });
+  }, [
+    hasLoadedTimelineSettings,
+    laneHeightIndex,
+    timelineSettingsStorageKey,
+    timelineZoom,
+  ]);
 
   useEffect(() => {
     if (!canShowHoverPreview) {
@@ -1199,6 +1352,7 @@ export default function HistoryTimelineView({
       title: occurrence.title,
       summary: occurrence.summary ?? "",
       notes: occurrence.notes ?? "",
+      iconName: occurrence.iconName ?? "",
       color: occurrence.color,
       level: String(clampTimelineLane(occurrence.lane)),
       lanePart: occurrence.lanePart ?? "both",
@@ -1485,6 +1639,7 @@ export default function HistoryTimelineView({
       title,
       summary: formState.summary.trim() || undefined,
       notes: formState.notes.trim() || undefined,
+      iconName: formState.iconName.trim() || undefined,
       lane: clampTimelineLane(Number(formState.level)),
       lanePart: formState.lanePart,
       color,
@@ -1836,9 +1991,11 @@ export default function HistoryTimelineView({
           {canShowHoverPreview
             ? visibleOccurrences.map((occurrence, index) => {
                 let tabX: number | null = null;
+                let iconX: number | null = null;
 
                 if (occurrence.timeRange) {
                   const { start } = occurrence.timeRange;
+                  const rangeEnd = getResolvedRangeEnd(occurrence);
                   tabX = getEnochYearPosition(
                     {
                       enochYear: start.enochYear,
@@ -1847,32 +2004,50 @@ export default function HistoryTimelineView({
                     },
                     contentWidth
                   );
-                } else if (occurrence.exactDate) {
-                  tabX =
-                    getEnochYearPosition(
-                      {
-                        enochYear: occurrence.exactDate.enochDate.enochYear,
-                        month: occurrence.exactDate.enochDate.month,
-                        day: occurrence.exactDate.enochDate.day,
-                      },
+
+                  if (rangeEnd) {
+                    const right = getEnochYearPosition(
+                      { enochYear: rangeEnd },
                       contentWidth
-                    ) -
-                    TIMELINE_HOVER_TAB_SIZE / 2;
+                    );
+                    iconX = tabX + (right - tabX) / 2;
+                  }
+                } else if (occurrence.exactDate) {
+                  iconX = getEnochYearPosition(
+                    {
+                      enochYear: occurrence.exactDate.enochDate.enochYear,
+                      month: occurrence.exactDate.enochDate.month,
+                      day: occurrence.exactDate.enochDate.day,
+                    },
+                    contentWidth
+                  );
+                  tabX = iconX - TIMELINE_HOVER_TAB_SIZE / 2;
                 }
 
                 if (tabX === null) return null;
 
                 return (
-                  <TimelineHoverTab
-                    key={`${occurrence.id}-hover-tab`}
-                    occurrence={occurrence}
-                    x={tabX}
-                    tabIndex={index}
-                    laneHeight={timelineLaneHeight}
-                    onPress={handleSelectOccurrence}
-                    onHoverIn={handleTimelineEntryHoverIn}
-                    onHoverOut={handleTimelineEntryHoverOut}
-                  />
+                  <Fragment key={`${occurrence.id}-markers`}>
+                    <TimelineHoverTab
+                      occurrence={occurrence}
+                      x={tabX}
+                      tabIndex={index}
+                      laneHeight={timelineLaneHeight}
+                      onPress={handleSelectOccurrence}
+                      onHoverIn={handleTimelineEntryHoverIn}
+                      onHoverOut={handleTimelineEntryHoverOut}
+                    />
+                    {iconX !== null ? (
+                      <TimelineOccurrenceIcon
+                        occurrence={occurrence}
+                        x={iconX}
+                        laneHeight={timelineLaneHeight}
+                        onPress={handleSelectOccurrence}
+                        onHoverIn={handleTimelineEntryHoverIn}
+                        onHoverOut={handleTimelineEntryHoverOut}
+                      />
+                    ) : null}
+                  </Fragment>
                 );
               })
             : null}
@@ -1954,6 +2129,12 @@ export default function HistoryTimelineView({
                 onChangeText={(notes) => updateForm({ notes })}
                 placeholder="Longer notes"
                 multiline
+              />
+              <FormField
+                label="Icon"
+                value={formState.iconName}
+                onChangeText={(iconName) => updateForm({ iconName })}
+                placeholder="person, directions-boat, church, favorite"
               />
               <ColorField
                 value={formState.color}
@@ -2399,6 +2580,21 @@ const styles = StyleSheet.create({
     height: 5,
     borderRadius: 3,
     backgroundColor: "#ffffff",
+  },
+  timelineOccurrenceIcon: {
+    position: "absolute",
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.94)",
+    shadowColor: "#000000",
+    shadowOpacity: 0.16,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 2 },
+    zIndex: 19,
   },
   timelineHoverPreviewSwatch: {
     width: 10,
