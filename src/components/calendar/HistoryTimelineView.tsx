@@ -2323,6 +2323,59 @@ export default function HistoryTimelineView({
         </View>
       ) : null}
 
+      {isCompactTimeline && selectedOccurrence ? (
+        <View
+          style={[
+            styles.mobileTimelineDetail,
+            { borderColor: selectedOccurrence.color },
+          ]}
+        >
+          <View
+            style={[
+              styles.timelineHoverPreviewSwatch,
+              { backgroundColor: selectedOccurrence.color },
+            ]}
+          />
+          <View style={styles.timelineHoverPreviewText}>
+            <View style={styles.timelineHoverTitleRow}>
+              {selectedOccurrence.iconName?.trim() ? (
+                <View
+                  style={[
+                    styles.timelineHoverPreviewIcon,
+                    {
+                      borderColor:
+                        getTimelineOccurrenceIconColor(selectedOccurrence),
+                    },
+                  ]}
+                >
+                  <MaterialIcons
+                    name={selectedOccurrence.iconName.trim() as any}
+                    size={15}
+                    color={getTimelineOccurrenceIconColor(selectedOccurrence)}
+                  />
+                </View>
+              ) : null}
+              <Text numberOfLines={2} style={styles.timelineHoverTitle}>
+                {selectedOccurrence.title}
+              </Text>
+            </View>
+            {selectedOccurrence.summary ? (
+              <Text numberOfLines={2} style={styles.timelineHoverSummary}>
+                {selectedOccurrence.summary}
+              </Text>
+            ) : null}
+            <Text numberOfLines={3} style={styles.timelineHoverLabel}>
+              {getTimelineOccurrencePreviewLabel(selectedOccurrence)}
+            </Text>
+            {selectedOccurrence.notes?.trim() ? (
+              <Text numberOfLines={4} style={styles.timelineHoverNotes}>
+                {selectedOccurrence.notes.trim()}
+              </Text>
+            ) : null}
+          </View>
+        </View>
+      ) : null}
+
       <Modal
         animationType="slide"
         transparent
@@ -2833,6 +2886,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     zIndex: 20,
+  },
+  mobileTimelineDetail: {
+    marginTop: 12,
+    padding: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    backgroundColor: "rgba(255, 255, 255, 0.96)",
+    flexDirection: "row",
+    alignItems: "flex-start",
   },
   timelineHoverTab: {
     position: "absolute",
