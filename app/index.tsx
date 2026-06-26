@@ -26,6 +26,8 @@ import DayDetailModal from "../src/components/calendar/DayDetailModal";
 import HistoryTimelineView, {
   formatHistoricalDate,
   getRangeLabel,
+  getTimelineZoomLabel,
+  type TimelineZoomId,
 } from "../src/components/calendar/HistoryTimelineView";
 import LatestShabbatTeachingPlayer from "../src/components/calendar/LatestShabbatTeachingPlayer";
 import YearView from "../src/components/calendar/YearView";
@@ -113,6 +115,11 @@ export default function HomeScreen() {
     useState(0);
   const [selectedTimelineOccurrence, setSelectedTimelineOccurrence] =
     useState<TimelineOccurrence | null>(null);
+  const [timelineZoom, setTimelineZoom] = useState<TimelineZoomId>("years-250");
+  const [timelineScaleStepRequest, setTimelineScaleStepRequest] = useState<{
+    id: number;
+    direction: -1 | 1;
+  }>({ id: 0, direction: 1 });
   const [isTimelineEditMode, setIsTimelineEditMode] = useState(false);
   const [timelineAddRequestId, setTimelineAddRequestId] = useState(0);
   const [timelineEditRequestId, setTimelineEditRequestId] = useState(0);
@@ -876,8 +883,21 @@ export default function HomeScreen() {
               canManageTimeline={canManageTimeline}
               isEditMode={isTimelineEditMode}
               isSavingTimeline={isSavingTimeline}
+              timelineScaleLabel={getTimelineZoomLabel(timelineZoom)}
               groupLabel={groupLabel}
               userRole={userRole}
+              onPreviousTimelineScale={() => {
+                setTimelineScaleStepRequest((currentRequest) => ({
+                  id: currentRequest.id + 1,
+                  direction: -1,
+                }));
+              }}
+              onNextTimelineScale={() => {
+                setTimelineScaleStepRequest((currentRequest) => ({
+                  id: currentRequest.id + 1,
+                  direction: 1,
+                }));
+              }}
               onToggleEditMode={() =>
                 setIsTimelineEditMode((isEditing) => !isEditing)
               }
@@ -959,6 +979,9 @@ export default function HomeScreen() {
             editRequestId={timelineEditRequestId}
             stickyHeaderHeight={stickyHeaderHeight}
             appScrollY={appScrollY}
+            timelineZoom={timelineZoom}
+            timelineScaleStepRequest={timelineScaleStepRequest}
+            onTimelineZoomChange={setTimelineZoom}
             onSelectedOccurrenceChange={setSelectedTimelineOccurrence}
             onSavingChange={setIsSavingTimeline}
           />
@@ -1209,8 +1232,11 @@ function TimelineStickyHeader({
   canManageTimeline,
   isEditMode,
   isSavingTimeline,
+  timelineScaleLabel,
   groupLabel,
   userRole,
+  onPreviousTimelineScale,
+  onNextTimelineScale,
   onToggleEditMode,
   onRequestAdd,
   onRequestEdit,
@@ -1219,8 +1245,11 @@ function TimelineStickyHeader({
   canManageTimeline: boolean;
   isEditMode: boolean;
   isSavingTimeline: boolean;
+  timelineScaleLabel: string;
   groupLabel: string;
   userRole: "member" | "admin";
+  onPreviousTimelineScale: () => void;
+  onNextTimelineScale: () => void;
   onToggleEditMode: () => void;
   onRequestAdd: () => void;
   onRequestEdit: () => void;
@@ -1357,6 +1386,13 @@ function TimelineStickyHeader({
             flexShrink: 0,
           }}
         >
+          <TimelineHeaderScaleControl
+            label={timelineScaleLabel}
+            isCompact={isCompactHeader}
+            onPrevious={onPreviousTimelineScale}
+            onNext={onNextTimelineScale}
+          />
+
           {!isCompactHeader ? (
             <Pressable
               onPress={() => setIsDesktopHeaderCollapsed((value) => !value)}
@@ -1603,6 +1639,103 @@ function TimelineStickyHeader({
           />
         </Pressable>
       ) : null}
+    </View>
+  );
+}
+
+function TimelineHeaderScaleControl({
+  label,
+  isCompact,
+  onPrevious,
+  onNext,
+}: {
+  label: string;
+  isCompact: boolean;
+  onPrevious: () => void;
+  onNext: () => void;
+}) {
+  return (
+    <View
+      style={{
+        height: 36,
+        maxWidth: isCompact ? 128 : 186,
+        paddingHorizontal: 4,
+        borderRadius: 18,
+        borderWidth: 1,
+        borderColor: "#cbd5e1",
+        backgroundColor: "#ffffff",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 2,
+      }}
+    >
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Previous timeline scale"
+        onPress={onPrevious}
+        style={({ pressed }) => [
+          {
+            width: 28,
+            height: 28,
+            borderRadius: 14,
+            alignItems: "center",
+            justifyContent: "center",
+          },
+          pressed && { backgroundColor: "#e2e8f0" },
+        ]}
+      >
+        <MaterialIcons name="chevron-left" size={21} color="#334155" />
+      </Pressable>
+
+      <View style={{ flex: 1, minWidth: 0 }}>
+        {!isCompact ? (
+          <Text
+            numberOfLines={1}
+            style={{
+              fontSize: 8,
+              lineHeight: 10,
+              fontWeight: "900",
+              color: "#94a3b8",
+              textTransform: "uppercase",
+            }}
+          >
+            Scale
+          </Text>
+        ) : null}
+
+        <Text
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.72}
+          style={{
+            fontSize: 12,
+            lineHeight: 15,
+            fontWeight: "900",
+            color: "#081a33",
+            textAlign: "center",
+          }}
+        >
+          {label}
+        </Text>
+      </View>
+
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Next timeline scale"
+        onPress={onNext}
+        style={({ pressed }) => [
+          {
+            width: 28,
+            height: 28,
+            borderRadius: 14,
+            alignItems: "center",
+            justifyContent: "center",
+          },
+          pressed && { backgroundColor: "#e2e8f0" },
+        ]}
+      >
+        <MaterialIcons name="chevron-right" size={21} color="#334155" />
+      </Pressable>
     </View>
   );
 }

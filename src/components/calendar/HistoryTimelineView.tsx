@@ -150,7 +150,7 @@ const TIMELINE_ZOOM_LEVELS = [
   },
 ] as const;
 
-type TimelineZoomId = (typeof TIMELINE_ZOOM_LEVELS)[number]["id"];
+export type TimelineZoomId = (typeof TIMELINE_ZOOM_LEVELS)[number]["id"];
 type TimelineAxisTick = {
   key: string;
   label: string;
@@ -225,6 +225,25 @@ function getTimelineZoomConfig(zoomId: TimelineZoomId) {
     TIMELINE_ZOOM_LEVELS.find((zoomLevel) => zoomLevel.id === zoomId) ??
     TIMELINE_ZOOM_LEVELS[0]
   );
+}
+
+export function getTimelineZoomLabel(zoomId: TimelineZoomId) {
+  return getTimelineZoomConfig(zoomId).label;
+}
+
+export function getSteppedTimelineZoomId(
+  zoomId: TimelineZoomId,
+  direction: -1 | 1
+) {
+  const currentIndex = Math.max(
+    0,
+    TIMELINE_ZOOM_LEVELS.findIndex((zoomLevel) => zoomLevel.id === zoomId)
+  );
+  const nextIndex =
+    (currentIndex + direction + TIMELINE_ZOOM_LEVELS.length) %
+    TIMELINE_ZOOM_LEVELS.length;
+
+  return TIMELINE_ZOOM_LEVELS[nextIndex].id;
 }
 
 function isTimelineZoomId(value: unknown): value is TimelineZoomId {
@@ -1214,6 +1233,12 @@ type HistoryTimelineViewProps = {
   editRequestId: number;
   stickyHeaderHeight: number;
   appScrollY: number;
+  timelineZoom: TimelineZoomId;
+  timelineScaleStepRequest: {
+    id: number;
+    direction: -1 | 1;
+  };
+  onTimelineZoomChange: (zoomId: TimelineZoomId) => void;
   onSelectedOccurrenceChange: (occurrence: TimelineOccurrence | null) => void;
   onSavingChange: (isSaving: boolean) => void;
 };
@@ -1232,12 +1257,14 @@ export default function HistoryTimelineView({
   editRequestId,
   stickyHeaderHeight,
   appScrollY,
+  timelineZoom,
+  timelineScaleStepRequest,
+  onTimelineZoomChange,
   onSelectedOccurrenceChange,
   onSavingChange,
 }: HistoryTimelineViewProps) {
   const { width } = useWindowDimensions();
   const isCompactTimeline = width < 520;
-  const [timelineZoom, setTimelineZoom] = useState<TimelineZoomId>("years-250");
   const [timelineScrollX, setTimelineScrollX] = useState(0);
   const [laneHeightIndex, setLaneHeightIndex] = useState(0);
   const [hoveredOccurrence, setHoveredOccurrence] =
@@ -1250,10 +1277,6 @@ export default function HistoryTimelineView({
   const [timelineViewportY, setTimelineViewportY] = useState(0);
   const contentWidth = getTimelineContentWidth(width, timelineZoom);
   const currentTimelineZoom = getTimelineZoomConfig(timelineZoom);
-  const currentTimelineZoomIndex = Math.max(
-    0,
-    TIMELINE_ZOOM_LEVELS.findIndex((zoomLevel) => zoomLevel.id === timelineZoom)
-  );
   const timelineLaneHeight =
     TIMELINE_LANE_HEIGHTS[laneHeightIndex] ?? BASE_LANE_HEIGHT;
   const timelineTrackHeight = timelineLaneHeight * TIMELINE_LANE_COUNT;
@@ -1267,6 +1290,14 @@ export default function HistoryTimelineView({
     16,
     Math.min(TIMELINE_SIDE_GUTTER, width - HOVER_PREVIEW_WIDTH - 16)
   );
+  const stickyTimelineToolbarStyle =
+    Platform.OS === "web"
+      ? ({
+          position: "sticky",
+          top: stickyHeaderHeight + 8,
+          zIndex: 40,
+        } as const)
+      : null;
   const canDecreaseLaneHeight = laneHeightIndex > 0;
   const canIncreaseLaneHeight =
     laneHeightIndex < TIMELINE_LANE_HEIGHTS.length - 1;
@@ -1366,7 +1397,7 @@ export default function HistoryTimelineView({
         if (!isMounted) return;
 
         if (savedSettings.zoomId) {
-          setTimelineZoom(savedSettings.zoomId);
+          onTimelineZoomChange(savedSettings.zoomId);
         }
 
         if (typeof savedSettings.laneHeightIndex === "number") {
@@ -1386,7 +1417,7 @@ export default function HistoryTimelineView({
     return () => {
       isMounted = false;
     };
-  }, [timelineSettingsStorageKey]);
+  }, [onTimelineZoomChange, timelineSettingsStorageKey]);
 
   useEffect(() => {
     if (!hasLoadedTimelineSettings) return;
@@ -1408,6 +1439,14 @@ export default function HistoryTimelineView({
     timelineSettingsStorageKey,
     timelineZoom,
   ]);
+
+  useEffect(() => {
+    if (timelineScaleStepRequest.id === 0) return;
+
+    handleTimelineZoomChange(
+      getSteppedTimelineZoomId(timelineZoom, timelineScaleStepRequest.direction)
+    );
+  }, [timelineScaleStepRequest.id, timelineScaleStepRequest.direction]);
 
   useEffect(() => {
     if (!canShowHoverPreview) {
@@ -1585,7 +1624,7 @@ export default function HistoryTimelineView({
     );
     const nextScrollX = Math.max(0, nextCenterX - width / 2);
 
-    setTimelineZoom(nextZoom);
+    onTimelineZoomChange(nextZoom);
     setTimelineScrollX(nextScrollX);
 
     setTimeout(() => {
@@ -1597,11 +1636,7 @@ export default function HistoryTimelineView({
   }
 
   function stepTimelineZoom(direction: -1 | 1) {
-    const nextZoomIndex =
-      (currentTimelineZoomIndex + direction + TIMELINE_ZOOM_LEVELS.length) %
-      TIMELINE_ZOOM_LEVELS.length;
-
-    handleTimelineZoomChange(TIMELINE_ZOOM_LEVELS[nextZoomIndex].id);
+    handleTimelineZoomChange(getSteppedTimelineZoomId(timelineZoom, direction));
   }
 
   function stepLaneHeight(direction: -1 | 1) {
@@ -1893,6 +1928,7 @@ export default function HistoryTimelineView({
       <View
         style={[
           styles.timelineToolbar,
+          stickyTimelineToolbarStyle,
           isCompactTimeline ? styles.timelineToolbarCompact : null,
         ]}
       >
@@ -2485,7 +2521,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9fafb",
   },
   timelineToolbar: {
-    marginBottom: 10,
+    marginBottom: 8,
+    padding: 8,
+    borderWidth: 1,
+    borderColor: "rgba(203, 213, 225, 0.9)",
+    borderRadius: 12,
+    backgroundColor: "rgba(249, 250, 251, 0.96)",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-end",
