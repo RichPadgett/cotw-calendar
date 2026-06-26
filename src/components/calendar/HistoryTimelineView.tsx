@@ -42,7 +42,7 @@ const MIN_LABELED_BAR_WIDTH = 132;
 const MIN_COMPACT_LABEL_BAR_WIDTH = 34;
 const MIN_NOTES_BAR_WIDTH = 112;
 const HOVER_PREVIEW_WIDTH = 320;
-const TIMELINE_HOVER_TAB_WIDTH = 58;
+const TIMELINE_HOVER_TAB_WIDTH = 18;
 const TIMELINE_LANE_OPTIONS = Array.from(
   { length: TIMELINE_LANE_COUNT },
   (_, index) => ({
@@ -786,17 +786,13 @@ function TimelineHoverTab({
       style={[
         styles.timelineHoverTab,
         {
-          top: laneFrame.top - 11 + staggerIndex * 3,
-          left: x + staggerIndex * 12,
+          top: laneFrame.top - 7 + staggerIndex * 2,
+          left: x + staggerIndex * 6,
           borderColor: occurrence.color,
           backgroundColor: occurrence.color,
         },
       ]}
-    >
-      <Text numberOfLines={1} style={styles.timelineHoverTabText}>
-        {occurrence.title}
-      </Text>
-    </Pressable>
+    />
   );
 }
 
@@ -2345,25 +2341,17 @@ const styles = StyleSheet.create({
   timelineHoverTab: {
     position: "absolute",
     width: TIMELINE_HOVER_TAB_WIDTH,
-    height: 22,
-    paddingHorizontal: 7,
-    borderTopLeftRadius: 7,
-    borderTopRightRadius: 7,
-    borderBottomLeftRadius: 3,
-    borderBottomRightRadius: 3,
+    height: 14,
+    borderTopLeftRadius: 5,
+    borderTopRightRadius: 5,
+    borderBottomLeftRadius: 2,
+    borderBottomRightRadius: 2,
     borderWidth: 1,
-    justifyContent: "center",
     shadowColor: "#000000",
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.14,
+    shadowRadius: 3,
+    shadowOffset: { width: 0, height: 1 },
     zIndex: 18,
-  },
-  timelineHoverTabText: {
-    fontSize: 9,
-    lineHeight: 11,
-    fontWeight: "900",
-    color: "#ffffff",
   },
   timelineHoverPreviewSwatch: {
     width: 10,
