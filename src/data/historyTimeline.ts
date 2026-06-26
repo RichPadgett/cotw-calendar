@@ -65,6 +65,7 @@ export type TimelineOccurrence = {
   summary?: string;
   notes?: string;
   iconName?: string;
+  iconColor?: string;
   category?: string;
   lane: number;
   lanePart?: TimelineLanePart;

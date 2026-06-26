@@ -86,6 +86,24 @@ const COLOR_SWATCHES = [
   "#64748b",
   "#111827",
 ];
+const TIMELINE_ICON_OPTIONS = [
+  "person",
+  "groups",
+  "directions-boat",
+  "anchor",
+  "add",
+  "church",
+  "favorite",
+  "flag",
+  "star",
+  "menu-book",
+  "local-fire-department",
+  "water-drop",
+  "terrain",
+  "wb-sunny",
+  "nightlight",
+  "restaurant",
+];
 const TIMELINE_ZOOM_LEVELS = [
   {
     id: "years-10000",
@@ -155,6 +173,7 @@ type TimelineEntryFormState = {
   summary: string;
   notes: string;
   iconName: string;
+  iconColor: string;
   color: string;
   level: string;
   lanePart: "top" | "bottom" | "both";
@@ -176,6 +195,7 @@ const DEFAULT_FORM_STATE: TimelineEntryFormState = {
   summary: "",
   notes: "",
   iconName: "",
+  iconColor: "",
   color: "#2563eb",
   level: "0",
   lanePart: "both",
@@ -861,6 +881,7 @@ function TimelineOccurrenceIcon({
   if (!iconName) return null;
 
   const laneFrame = getLaneFrame(occurrence, laneHeight);
+  const iconColor = normalizeHexColor(occurrence.iconColor ?? occurrence.color);
 
   return (
     <Pressable
@@ -873,15 +894,11 @@ function TimelineOccurrenceIcon({
         {
           top: laneFrame.top - 34,
           left: x - 15,
-          borderColor: occurrence.color,
+          borderColor: iconColor,
         },
       ]}
     >
-      <MaterialIcons
-        name={iconName as any}
-        size={18}
-        color={occurrence.color}
-      />
+      <MaterialIcons name={iconName as any} size={18} color={iconColor} />
     </Pressable>
   );
 }
@@ -1016,9 +1033,13 @@ function clampTimelineLane(lane: number) {
 function ColorField({
   value,
   onChangeText,
+  accessibilityLabel = "Timeline entry color",
+  placeholder = "Color #2563eb",
 }: {
   value: string;
   onChangeText: (value: string) => void;
+  accessibilityLabel?: string;
+  placeholder?: string;
 }) {
   const colorValue = normalizeHexColor(value);
 
@@ -1047,15 +1068,15 @@ function ColorField({
                 background: "transparent",
                 cursor: "pointer",
               },
-              "aria-label": "Choose timeline entry color",
+              "aria-label": `Choose ${accessibilityLabel}`,
             })
           : null}
 
         <TextInput
-          accessibilityLabel="Timeline entry color"
+          accessibilityLabel={accessibilityLabel}
           value={value}
           onChangeText={onChangeText}
-          placeholder="Color #2563eb"
+          placeholder={placeholder}
           placeholderTextColor="#6b7280"
           autoCapitalize="none"
           style={[styles.formInput, styles.colorHexInput]}
@@ -1078,6 +1099,90 @@ function ColorField({
           />
         ))}
       </View>
+    </View>
+  );
+}
+
+function IconField({
+  iconName,
+  iconColor,
+  entryColor,
+  onIconNameChange,
+  onIconColorChange,
+}: {
+  iconName: string;
+  iconColor: string;
+  entryColor: string;
+  onIconNameChange: (value: string) => void;
+  onIconColorChange: (value: string) => void;
+}) {
+  const trimmedIconName = iconName.trim();
+  const previewColor = normalizeHexColor(iconColor || entryColor);
+
+  return (
+    <View style={styles.formField}>
+      <View style={styles.iconPickerHeader}>
+        <View style={[styles.iconPreview, { borderColor: previewColor }]}>
+          {trimmedIconName ? (
+            <MaterialIcons
+              name={trimmedIconName as any}
+              size={22}
+              color={previewColor}
+            />
+          ) : (
+            <MaterialIcons name="add" size={20} color="#94a3b8" />
+          )}
+        </View>
+        <TextInput
+          accessibilityLabel="Timeline entry icon"
+          value={iconName}
+          onChangeText={onIconNameChange}
+          placeholder="Icon name"
+          placeholderTextColor="#6b7280"
+          autoCapitalize="none"
+          style={[styles.formInput, styles.iconNameInput]}
+        />
+        {trimmedIconName ? (
+          <Pressable
+            accessibilityLabel="Clear timeline entry icon"
+            onPress={() => onIconNameChange("")}
+            style={styles.clearIconButton}
+          >
+            <MaterialIcons name="close" size={18} color="#475569" />
+          </Pressable>
+        ) : null}
+      </View>
+
+      <View style={styles.iconOptionGrid}>
+        {TIMELINE_ICON_OPTIONS.map((option) => {
+          const isActive = trimmedIconName === option;
+
+          return (
+            <Pressable
+              key={option}
+              accessibilityLabel={`Use ${option} icon`}
+              onPress={() => onIconNameChange(option)}
+              style={[
+                styles.iconOptionButton,
+                isActive ? styles.iconOptionButtonActive : null,
+              ]}
+            >
+              <MaterialIcons
+                name={option as any}
+                size={20}
+                color={isActive ? previewColor : "#475569"}
+              />
+            </Pressable>
+          );
+        })}
+      </View>
+
+      <ColorField
+        value={iconColor}
+        onChangeText={onIconColorChange}
+        accessibilityLabel="Timeline entry icon color"
+        placeholder="Icon color, defaults to bar color"
+      />
     </View>
   );
 }
@@ -1353,6 +1458,7 @@ export default function HistoryTimelineView({
       summary: occurrence.summary ?? "",
       notes: occurrence.notes ?? "",
       iconName: occurrence.iconName ?? "",
+      iconColor: occurrence.iconColor ?? "",
       color: occurrence.color,
       level: String(clampTimelineLane(occurrence.lane)),
       lanePart: occurrence.lanePart ?? "both",
@@ -1640,6 +1746,7 @@ export default function HistoryTimelineView({
       summary: formState.summary.trim() || undefined,
       notes: formState.notes.trim() || undefined,
       iconName: formState.iconName.trim() || undefined,
+      iconColor: formState.iconColor.trim() || undefined,
       lane: clampTimelineLane(Number(formState.level)),
       lanePart: formState.lanePart,
       color,
@@ -2130,11 +2237,12 @@ export default function HistoryTimelineView({
                 placeholder="Longer notes"
                 multiline
               />
-              <FormField
-                label="Icon"
-                value={formState.iconName}
-                onChangeText={(iconName) => updateForm({ iconName })}
-                placeholder="person, directions-boat, church, favorite"
+              <IconField
+                iconName={formState.iconName}
+                iconColor={formState.iconColor}
+                entryColor={formState.color}
+                onIconNameChange={(iconName) => updateForm({ iconName })}
+                onIconColorChange={(iconColor) => updateForm({ iconColor })}
               />
               <ColorField
                 value={formState.color}
@@ -2891,6 +2999,55 @@ const styles = StyleSheet.create({
   },
   segmentButtonTextActive: {
     color: "#081a33",
+  },
+  iconPickerHeader: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
+    gap: 10,
+  },
+  iconPreview: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#ffffff",
+  },
+  iconNameInput: {
+    flexGrow: 1,
+    flexShrink: 1,
+    minWidth: 170,
+  },
+  clearIconButton: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#e5e7eb",
+  },
+  iconOptionGrid: {
+    marginTop: 10,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  iconOptionButton: {
+    width: 38,
+    height: 34,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#cbd5e1",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#f8fafc",
+  },
+  iconOptionButtonActive: {
+    borderWidth: 2,
+    borderColor: "#111827",
+    backgroundColor: "#ffffff",
   },
   colorPickerRow: {
     flexDirection: "row",
