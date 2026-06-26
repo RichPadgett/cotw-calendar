@@ -41,7 +41,7 @@ const TIMELINE_SIDE_GUTTER = 40;
 const MIN_LABELED_BAR_WIDTH = 132;
 const MIN_COMPACT_LABEL_BAR_WIDTH = 34;
 const HOVER_PREVIEW_WIDTH = 320;
-const TIMELINE_HOVER_TAB_SIZE = 18;
+const TIMELINE_HOVER_TAB_SIZE = 24;
 const TIMELINE_LANE_OPTIONS = Array.from(
   { length: TIMELINE_LANE_COUNT },
   (_, index) => ({
@@ -777,9 +777,9 @@ function TimelineHoverTab({
       style={[
         styles.timelineHoverTab,
         {
-          top: laneFrame.top - 8,
-          left: x - 4 + staggerIndex * 5,
-          borderColor: occurrence.color,
+          top: laneFrame.top - 14,
+          left: x + 8 + staggerIndex * 5,
+          borderColor: "#ffffff",
           backgroundColor: occurrence.color,
         },
       ]}
