@@ -41,7 +41,7 @@ const TIMELINE_SIDE_GUTTER = 40;
 const MIN_LABELED_BAR_WIDTH = 132;
 const MIN_COMPACT_LABEL_BAR_WIDTH = 34;
 const HOVER_PREVIEW_WIDTH = 320;
-const TIMELINE_HOVER_TAB_SIZE = 24;
+const TIMELINE_HOVER_TAB_SIZE = 18;
 const TIMELINE_LANE_OPTIONS = Array.from(
   { length: TIMELINE_LANE_COUNT },
   (_, index) => ({
@@ -777,9 +777,9 @@ function TimelineHoverTab({
       style={[
         styles.timelineHoverTab,
         {
-          top: laneFrame.top - 14,
-          left: x + 8 + staggerIndex * 5,
-          borderColor: "#ffffff",
+          top: laneFrame.top - 7,
+          left: x + staggerIndex * 6,
+          borderColor: occurrence.color,
           backgroundColor: occurrence.color,
         },
       ]}
@@ -2341,7 +2341,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.14,
     shadowRadius: 3,
     shadowOffset: { width: 0, height: 1 },
-    zIndex: 9,
+    zIndex: 18,
   },
   timelineHoverTabNotesDot: {
     position: "absolute",
