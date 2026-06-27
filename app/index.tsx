@@ -172,7 +172,7 @@ export default function HomeScreen() {
     userRole === "admin" &&
     groupCode === "church-of-the-word" &&
     Boolean(adminToken);
-  const isTimelineVisible = canManageTimeline;
+  const isTimelineVisible = hasEnteredApp;
   const todayNode = nodes.find((node) => {
     return node.gregorianDate === todayDateId;
   });
