@@ -131,6 +131,36 @@ const TIMELINE_ZOOM_LEVELS = [
     minViewportMultiplier: 3.2,
   },
   {
+    id: "years-100",
+    label: "100 Years",
+    pixelsPerYear: 3,
+    minViewportMultiplier: 3.2,
+  },
+  {
+    id: "years-50",
+    label: "50 Years",
+    pixelsPerYear: 6,
+    minViewportMultiplier: 3.2,
+  },
+  {
+    id: "years-25",
+    label: "25 Years",
+    pixelsPerYear: 12,
+    minViewportMultiplier: 3.2,
+  },
+  {
+    id: "years-5",
+    label: "5 Years",
+    pixelsPerYear: 24,
+    minViewportMultiplier: 3.2,
+  },
+  {
+    id: "years-1",
+    label: "1 Year",
+    pixelsPerYear: 48,
+    minViewportMultiplier: 3.2,
+  },
+  {
     id: "half-years",
     label: "6 Months",
     pixelsPerYear: 72,
@@ -379,6 +409,9 @@ function getAxisYearInterval(visibleYearSpan: number, zoomId?: TimelineZoomId) {
   if (zoomId === "years-5000") return 500;
   if (zoomId === "years-500") return 100;
   if (zoomId === "years-250") return 50;
+  if (zoomId === "years-100") return 25;
+  if (zoomId === "years-50") return 10;
+  if (zoomId === "years-25") return 5;
   if (visibleYearSpan > 2500) return 1000;
   if (visibleYearSpan > 1000) return 500;
   if (visibleYearSpan > 250) return 100;
@@ -439,7 +472,10 @@ function getVisibleTimelineAxisTicks(params: {
     params.zoomId === "years-10000" ||
     params.zoomId === "years-5000" ||
     params.zoomId === "years-500" ||
-    params.zoomId === "years-250"
+    params.zoomId === "years-250" ||
+    params.zoomId === "years-100" ||
+    params.zoomId === "years-50" ||
+    params.zoomId === "years-25"
   ) {
     const interval = getAxisYearInterval(visibleYearSpan, params.zoomId);
     const firstYear = Math.max(
