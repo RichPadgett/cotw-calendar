@@ -459,6 +459,12 @@ function getVisibleTimelineAxisTicks(params: {
   );
   const visibleYearSpan = Math.max(1, visibleEnd - visibleStart);
   const ticks: TimelineAxisTick[] = [];
+  const timelinePixelsPerYear =
+    (params.contentWidth - TIMELINE_SIDE_GUTTER * 2) /
+    (HISTORY_TIMELINE_RANGE.endYear - HISTORY_TIMELINE_RANGE.startYear);
+  const monthPixelSpacing = timelinePixelsPerYear / 12;
+  const weekPixelSpacing = timelinePixelsPerYear / 52;
+  const dayPixelSpacing = timelinePixelsPerYear / ENOCH_YEAR_DAYS;
 
   if (
     params.zoomId === "years-10000" ||
@@ -557,7 +563,9 @@ function getVisibleTimelineAxisTicks(params: {
     );
 
     if (params.zoomId === "years-1") {
-      for (let month = 2; month <= 12; month += 1) {
+      const monthStep = monthPixelSpacing >= 10 ? 1 : 3;
+
+      for (let month = 1 + monthStep; month <= 12; month += monthStep) {
         addTick(
           `year-${year}-month-${month}`,
           undefined,
@@ -571,7 +579,9 @@ function getVisibleTimelineAxisTicks(params: {
     }
 
     if (params.zoomId === "half-years") {
-      for (let month = 2; month <= 12; month += 1) {
+      const monthStep = monthPixelSpacing >= 10 ? 1 : 3;
+
+      for (let month = 1 + monthStep; month <= 12; month += monthStep) {
         const isHalfYear = month === 7;
 
         addTick(
@@ -610,16 +620,18 @@ function getVisibleTimelineAxisTicks(params: {
           );
         }
 
-        for (const day of [8, 15, 22, 29]) {
-          addTick(
-            `year-${year}-month-${month}-week-${day}`,
-            undefined,
-            getEnochYearPosition(
-              { enochYear: year, month, day },
-              params.contentWidth
-            ),
-            false
-          );
+        if (weekPixelSpacing >= 8) {
+          for (const day of [8, 15, 22, 29]) {
+            addTick(
+              `year-${year}-month-${month}-week-${day}`,
+              undefined,
+              getEnochYearPosition(
+                { enochYear: year, month, day },
+                params.contentWidth
+              ),
+              false
+            );
+          }
         }
       }
     }
@@ -648,19 +660,21 @@ function getVisibleTimelineAxisTicks(params: {
           );
         }
 
-        for (const day of [8, 15, 22, 29]) {
-          addTick(
-            `year-${year}-month-${month}-week-${day}`,
-            undefined,
-            getEnochYearPosition(
-              { enochYear: year, month, day },
-              params.contentWidth
-            ),
-            false
-          );
+        if (weekPixelSpacing >= 8) {
+          for (const day of [8, 15, 22, 29]) {
+            addTick(
+              `year-${year}-month-${month}-week-${day}`,
+              undefined,
+              getEnochYearPosition(
+                { enochYear: year, month, day },
+                params.contentWidth
+              ),
+              false
+            );
+          }
         }
 
-        if (visibleYearSpan <= 0.35) {
+        if (dayPixelSpacing >= 5) {
           for (let day = 2; day <= 30; day += 1) {
             if (day === 8 || day === 15 || day === 22 || day === 29) continue;
 
