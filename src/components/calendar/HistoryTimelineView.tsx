@@ -419,11 +419,11 @@ function getAxisYearTickRule(
   if (zoomId === "years-5000" || zoomId === "millennia") {
     return { majorInterval: 1000, minorInterval: 500 };
   }
-  if (zoomId === "years-500") return { majorInterval: 250, minorInterval: 50 };
-  if (zoomId === "years-250") return { majorInterval: 100, minorInterval: 25 };
-  if (zoomId === "years-100") return { majorInterval: 50, minorInterval: 10 };
-  if (zoomId === "years-50") return { majorInterval: 25, minorInterval: 5 };
-  if (zoomId === "years-25") return { majorInterval: 5, minorInterval: 1 };
+  if (zoomId === "years-500") return { majorInterval: 500, minorInterval: 100 };
+  if (zoomId === "years-250") return { majorInterval: 250, minorInterval: 50 };
+  if (zoomId === "years-100") return { majorInterval: 100, minorInterval: 25 };
+  if (zoomId === "years-50") return { majorInterval: 50, minorInterval: 10 };
+  if (zoomId === "years-25") return { majorInterval: 25, minorInterval: 5 };
   if (zoomId === "years-5") return { majorInterval: 5, minorInterval: 1 };
   if (zoomId === "years-1") return { majorInterval: 5, minorInterval: 1 };
 
