@@ -183,7 +183,7 @@ const TIMELINE_ZOOM_LEVELS = [
 export type TimelineZoomId = (typeof TIMELINE_ZOOM_LEVELS)[number]["id"];
 type TimelineAxisTick = {
   key: string;
-  label: string;
+  label?: string;
   x: number;
   major: boolean;
 };
@@ -412,6 +412,8 @@ function getAxisYearInterval(visibleYearSpan: number, zoomId?: TimelineZoomId) {
   if (zoomId === "years-100") return 25;
   if (zoomId === "years-50") return 10;
   if (zoomId === "years-25") return 5;
+  if (zoomId === "years-5") return 5;
+  if (zoomId === "years-1") return 5;
   if (visibleYearSpan > 2500) return 1000;
   if (visibleYearSpan > 1000) return 500;
   if (visibleYearSpan > 250) return 100;
@@ -475,7 +477,9 @@ function getVisibleTimelineAxisTicks(params: {
     params.zoomId === "years-250" ||
     params.zoomId === "years-100" ||
     params.zoomId === "years-50" ||
-    params.zoomId === "years-25"
+    params.zoomId === "years-25" ||
+    params.zoomId === "years-5" ||
+    params.zoomId === "years-1"
   ) {
     const interval = getAxisYearInterval(visibleYearSpan, params.zoomId);
     const firstYear = Math.max(
@@ -494,6 +498,27 @@ function getVisibleTimelineAxisTicks(params: {
         x: getTimelineValuePosition(year, params.contentWidth),
         major: true,
       });
+    }
+
+    if (params.zoomId === "years-1") {
+      const firstMinorYear = Math.max(
+        HISTORY_TIMELINE_RANGE.startYear,
+        Math.ceil(visibleStart)
+      );
+
+      for (
+        let year = firstMinorYear;
+        year <= visibleEnd && ticks.length < 180;
+        year += 1
+      ) {
+        if (year % interval === 0) continue;
+
+        ticks.push({
+          key: `year-${year}-minor`,
+          x: getTimelineValuePosition(year, params.contentWidth),
+          major: false,
+        });
+      }
     }
 
     return ticks;
@@ -523,7 +548,6 @@ function getVisibleTimelineAxisTicks(params: {
     if (params.zoomId === "half-years") {
       ticks.push({
         key: `year-${year}-month-7`,
-        label: "M7",
         x: getEnochYearPosition(
           { enochYear: year, month: 7, day: 1 },
           params.contentWidth
@@ -533,12 +557,12 @@ function getVisibleTimelineAxisTicks(params: {
     }
 
     if (params.zoomId === "months") {
-      const monthStep = visibleYearSpan > 8 ? 3 : 1;
+      const monthStep = visibleYearSpan > 8 ? 6 : 3;
 
       for (let month = 1 + monthStep; month <= 12; month += monthStep) {
         ticks.push({
           key: `year-${year}-month-${month}`,
-          label: `M${month}`,
+          label: visibleYearSpan <= 2 ? `M${month}` : undefined,
           x: getEnochYearPosition(
             { enochYear: year, month, day: 1 },
             params.contentWidth
@@ -549,12 +573,14 @@ function getVisibleTimelineAxisTicks(params: {
     }
 
     if (params.zoomId === "days") {
-      const dayStep = visibleYearSpan > 1.5 ? 14 : 7;
+      const dayStep = visibleYearSpan > 1.5 ? 28 : 14;
 
       for (let month = 1; month <= 12 && ticks.length < 260; month += 1) {
+        const showMonthLabel = visibleYearSpan <= 0.5 || month % 3 === 1;
+
         ticks.push({
           key: `year-${year}-month-${month}`,
-          label: `M${month}`,
+          label: showMonthLabel ? `M${month}` : undefined,
           x: getEnochYearPosition(
             { enochYear: year, month, day: 1 },
             params.contentWidth
@@ -565,7 +591,6 @@ function getVisibleTimelineAxisTicks(params: {
         for (let day = 1 + dayStep; day <= 30; day += dayStep) {
           ticks.push({
             key: `year-${year}-month-${month}-day-${day}`,
-            label: `D${day}`,
             x: getEnochYearPosition(
               { enochYear: year, month, day },
               params.contentWidth
@@ -2217,15 +2242,17 @@ export default function HistoryTimelineView({
                   tick.major ? styles.axisTickMajor : styles.axisTickMinor,
                 ]}
               />
-              <Text
-                numberOfLines={1}
-                style={[
-                  styles.axisLabel,
-                  tick.major ? styles.axisLabelMajor : styles.axisLabelMinor,
-                ]}
-              >
-                {tick.label}
-              </Text>
+              {tick.label ? (
+                <Text
+                  numberOfLines={1}
+                  style={[
+                    styles.axisLabel,
+                    tick.major ? styles.axisLabelMajor : styles.axisLabelMinor,
+                  ]}
+                >
+                  {tick.label}
+                </Text>
+              ) : null}
             </View>
           ))}
 
@@ -2399,15 +2426,17 @@ export default function HistoryTimelineView({
                   tick.major ? styles.axisTickMajor : styles.axisTickMinor,
                 ]}
               />
-              <Text
-                numberOfLines={1}
-                style={[
-                  styles.axisLabel,
-                  tick.major ? styles.axisLabelMajor : styles.axisLabelMinor,
-                ]}
-              >
-                {tick.label}
-              </Text>
+              {tick.label ? (
+                <Text
+                  numberOfLines={1}
+                  style={[
+                    styles.axisLabel,
+                    tick.major ? styles.axisLabelMajor : styles.axisLabelMinor,
+                  ]}
+                >
+                  {tick.label}
+                </Text>
+              ) : null}
             </View>
           ))}
         </View>
