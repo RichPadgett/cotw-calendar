@@ -193,6 +193,12 @@ type TimelineViewSettings = {
   laneHeightIndex?: number;
 };
 
+type TimelineYearTickRule = {
+  majorInterval: number;
+  minorInterval: number;
+  includeStartYear?: boolean;
+};
+
 type TimelineEntryFormState = {
   title: string;
   summary: string;
@@ -404,35 +410,39 @@ function getEnochYearPosition(
   return getTimelineValuePosition(getEnochTimelineValue(params), width);
 }
 
-function getAxisYearInterval(visibleYearSpan: number, zoomId?: TimelineZoomId) {
-  if (zoomId === "years-10000") return 1000;
-  if (zoomId === "years-5000") return 500;
-  if (zoomId === "years-500") return 100;
-  if (zoomId === "years-250") return 50;
-  if (zoomId === "years-100") return 25;
-  if (zoomId === "years-50") return 10;
-  if (zoomId === "years-25") return 5;
-  if (zoomId === "years-5") return 5;
-  if (zoomId === "years-1") return 5;
-  if (visibleYearSpan > 2500) return 1000;
-  if (visibleYearSpan > 1000) return 500;
-  if (visibleYearSpan > 250) return 100;
-  if (visibleYearSpan > 100) return 50;
-  if (visibleYearSpan > 30) return 10;
+function getAxisYearTickRule(
+  zoomId: TimelineZoomId,
+  visibleYearSpan: number
+): TimelineYearTickRule {
+  if (zoomId === "years-10000") {
+    return { majorInterval: 2000, minorInterval: 500, includeStartYear: true };
+  }
+  if (zoomId === "years-5000" || zoomId === "millennia") {
+    return { majorInterval: 1000, minorInterval: 500, includeStartYear: true };
+  }
+  if (zoomId === "years-500") return { majorInterval: 250, minorInterval: 50 };
+  if (zoomId === "years-250") return { majorInterval: 100, minorInterval: 25 };
+  if (zoomId === "years-100") return { majorInterval: 50, minorInterval: 10 };
+  if (zoomId === "years-50") return { majorInterval: 25, minorInterval: 5 };
+  if (zoomId === "years-25") return { majorInterval: 5, minorInterval: 1 };
+  if (zoomId === "years-5") return { majorInterval: 5, minorInterval: 1 };
+  if (zoomId === "years-1") return { majorInterval: 5, minorInterval: 1 };
 
-  return 1;
+  if (visibleYearSpan > 2500) {
+    return { majorInterval: 2000, minorInterval: 500, includeStartYear: true };
+  }
+  if (visibleYearSpan > 1000) {
+    return { majorInterval: 1000, minorInterval: 500, includeStartYear: true };
+  }
+  if (visibleYearSpan > 250) return { majorInterval: 250, minorInterval: 50 };
+  if (visibleYearSpan > 100) return { majorInterval: 100, minorInterval: 25 };
+  if (visibleYearSpan > 30) return { majorInterval: 25, minorInterval: 5 };
+
+  return { majorInterval: 5, minorInterval: 1 };
 }
 
-function getAxisMinorYearInterval(majorInterval: number) {
-  if (majorInterval >= 1000) return 500;
-  if (majorInterval >= 500) return 250;
-  if (majorInterval >= 100) return 50;
-  if (majorInterval >= 50) return 25;
-  if (majorInterval >= 25) return 5;
-  if (majorInterval >= 10) return 5;
-  if (majorInterval >= 5) return 1;
-
-  return 1;
+function getFirstIntervalYear(visibleStart: number, interval: number) {
+  return Math.ceil(visibleStart / interval) * interval;
 }
 
 function getVisibleTimelineAxisTicks(params: {
@@ -455,36 +465,10 @@ function getVisibleTimelineAxisTicks(params: {
   const visibleYearSpan = Math.max(1, visibleEnd - visibleStart);
   const ticks: TimelineAxisTick[] = [];
 
-  if (params.zoomId === "millennia") {
-    const millennialTicks = [
-      HISTORY_TIMELINE_RANGE.startYear,
-      1000,
-      2000,
-      3000,
-      4000,
-      5000,
-      6000,
-      7000,
-      HISTORY_TIMELINE_RANGE.endYear,
-    ];
-
-    millennialTicks.forEach((year) => {
-      if (year >= visibleStart && year <= visibleEnd) {
-        ticks.push({
-          key: `year-${year}`,
-          label: `Year ${year}`,
-          x: getTimelineValuePosition(year, params.contentWidth),
-          major: true,
-        });
-      }
-    });
-
-    return ticks;
-  }
-
   if (
     params.zoomId === "years-10000" ||
     params.zoomId === "years-5000" ||
+    params.zoomId === "millennia" ||
     params.zoomId === "years-500" ||
     params.zoomId === "years-250" ||
     params.zoomId === "years-100" ||
@@ -493,46 +477,54 @@ function getVisibleTimelineAxisTicks(params: {
     params.zoomId === "years-5" ||
     params.zoomId === "years-1"
   ) {
-    const majorInterval = getAxisYearInterval(visibleYearSpan, params.zoomId);
-    const minorInterval = getAxisMinorYearInterval(majorInterval);
+    const tickRule = getAxisYearTickRule(params.zoomId, visibleYearSpan);
+    const tickYears = new Set<number>();
+    const addTick = (year: number, major: boolean) => {
+      if (year < visibleStart || year > visibleEnd || tickYears.has(year)) {
+        return;
+      }
+
+      tickYears.add(year);
+      ticks.push({
+        key: major ? `year-${year}` : `year-${year}-minor`,
+        label: major ? `Year ${year}` : undefined,
+        x: getTimelineValuePosition(year, params.contentWidth),
+        major,
+      });
+    };
+
+    if (tickRule.includeStartYear) {
+      addTick(HISTORY_TIMELINE_RANGE.startYear, true);
+    }
+
     const firstMajorYear = Math.max(
       HISTORY_TIMELINE_RANGE.startYear,
-      Math.ceil(visibleStart / majorInterval) * majorInterval
+      getFirstIntervalYear(visibleStart, tickRule.majorInterval)
     );
 
     for (
       let year = firstMajorYear;
       year <= visibleEnd && ticks.length < 120;
-      year += majorInterval
+      year += tickRule.majorInterval
     ) {
-      ticks.push({
-        key: `year-${year}`,
-        label: `Year ${year}`,
-        x: getTimelineValuePosition(year, params.contentWidth),
-        major: true,
-      });
+      addTick(year, true);
     }
 
     const firstMinorYear = Math.max(
       HISTORY_TIMELINE_RANGE.startYear,
-      Math.ceil(visibleStart / minorInterval) * minorInterval
+      getFirstIntervalYear(visibleStart, tickRule.minorInterval)
     );
 
     for (
       let year = firstMinorYear;
       year <= visibleEnd && ticks.length < 220;
-      year += minorInterval
+      year += tickRule.minorInterval
     ) {
-      if (year % majorInterval === 0) continue;
-
-      ticks.push({
-        key: `year-${year}-minor`,
-        x: getTimelineValuePosition(year, params.contentWidth),
-        major: false,
-      });
+      if (year % tickRule.majorInterval === 0) continue;
+      addTick(year, false);
     }
 
-    return ticks;
+    return ticks.sort((left, right) => left.x - right.x);
   }
 
   const firstVisibleYear = Math.max(
