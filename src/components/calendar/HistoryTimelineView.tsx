@@ -1295,6 +1295,14 @@ export default function HistoryTimelineView({
     16,
     Math.min(TIMELINE_SIDE_GUTTER, width - HOVER_PREVIEW_WIDTH - 16)
   );
+  const mobileTimelineDetailStickyStyle =
+    Platform.OS === "web" && isCompactTimeline
+      ? ({
+          position: "sticky",
+          top: stickyHeaderHeight + 8,
+          zIndex: 45,
+        } as const)
+      : null;
   const canDecreaseLaneHeight = laneHeightIndex > 0;
   const canIncreaseLaneHeight =
     laneHeightIndex < TIMELINE_LANE_HEIGHTS.length - 1;
@@ -2072,6 +2080,7 @@ export default function HistoryTimelineView({
         <View
           style={[
             styles.mobileTimelineDetail,
+            mobileTimelineDetailStickyStyle,
             { borderColor: selectedOccurrence.color },
           ]}
         >
