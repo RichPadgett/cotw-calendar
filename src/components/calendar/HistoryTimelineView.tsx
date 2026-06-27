@@ -196,7 +196,6 @@ type TimelineViewSettings = {
 type TimelineYearTickRule = {
   majorInterval: number;
   minorInterval: number;
-  includeStartYear?: boolean;
 };
 
 type TimelineEntryFormState = {
@@ -415,10 +414,10 @@ function getAxisYearTickRule(
   visibleYearSpan: number
 ): TimelineYearTickRule {
   if (zoomId === "years-10000") {
-    return { majorInterval: 2000, minorInterval: 500, includeStartYear: true };
+    return { majorInterval: 2000, minorInterval: 500 };
   }
   if (zoomId === "years-5000" || zoomId === "millennia") {
-    return { majorInterval: 1000, minorInterval: 500, includeStartYear: true };
+    return { majorInterval: 1000, minorInterval: 500 };
   }
   if (zoomId === "years-500") return { majorInterval: 250, minorInterval: 50 };
   if (zoomId === "years-250") return { majorInterval: 100, minorInterval: 25 };
@@ -429,10 +428,10 @@ function getAxisYearTickRule(
   if (zoomId === "years-1") return { majorInterval: 5, minorInterval: 1 };
 
   if (visibleYearSpan > 2500) {
-    return { majorInterval: 2000, minorInterval: 500, includeStartYear: true };
+    return { majorInterval: 2000, minorInterval: 500 };
   }
   if (visibleYearSpan > 1000) {
-    return { majorInterval: 1000, minorInterval: 500, includeStartYear: true };
+    return { majorInterval: 1000, minorInterval: 500 };
   }
   if (visibleYearSpan > 250) return { majorInterval: 250, minorInterval: 50 };
   if (visibleYearSpan > 100) return { majorInterval: 100, minorInterval: 25 };
@@ -478,53 +477,27 @@ function getVisibleTimelineAxisTicks(params: {
     params.zoomId === "years-1"
   ) {
     const tickRule = getAxisYearTickRule(params.zoomId, visibleYearSpan);
-    const tickYears = new Set<number>();
-    const addTick = (year: number, major: boolean) => {
-      if (year < visibleStart || year > visibleEnd || tickYears.has(year)) {
-        return;
-      }
+    const firstTickYear = Math.max(
+      HISTORY_TIMELINE_RANGE.startYear,
+      getFirstIntervalYear(visibleStart, tickRule.minorInterval)
+    );
 
-      tickYears.add(year);
+    for (
+      let year = firstTickYear;
+      year <= visibleEnd && ticks.length < 220;
+      year += tickRule.minorInterval
+    ) {
+      const major = year % tickRule.majorInterval === 0;
+
       ticks.push({
         key: major ? `year-${year}` : `year-${year}-minor`,
         label: major ? `Year ${year}` : undefined,
         x: getTimelineValuePosition(year, params.contentWidth),
         major,
       });
-    };
-
-    if (tickRule.includeStartYear) {
-      addTick(HISTORY_TIMELINE_RANGE.startYear, true);
     }
 
-    const firstMajorYear = Math.max(
-      HISTORY_TIMELINE_RANGE.startYear,
-      getFirstIntervalYear(visibleStart, tickRule.majorInterval)
-    );
-
-    for (
-      let year = firstMajorYear;
-      year <= visibleEnd && ticks.length < 120;
-      year += tickRule.majorInterval
-    ) {
-      addTick(year, true);
-    }
-
-    const firstMinorYear = Math.max(
-      HISTORY_TIMELINE_RANGE.startYear,
-      getFirstIntervalYear(visibleStart, tickRule.minorInterval)
-    );
-
-    for (
-      let year = firstMinorYear;
-      year <= visibleEnd && ticks.length < 220;
-      year += tickRule.minorInterval
-    ) {
-      if (year % tickRule.majorInterval === 0) continue;
-      addTick(year, false);
-    }
-
-    return ticks.sort((left, right) => left.x - right.x);
+    return ticks;
   }
 
   const firstVisibleYear = Math.max(
