@@ -423,6 +423,18 @@ function getAxisYearInterval(visibleYearSpan: number, zoomId?: TimelineZoomId) {
   return 1;
 }
 
+function getAxisMinorYearInterval(majorInterval: number) {
+  if (majorInterval >= 1000) return 500;
+  if (majorInterval >= 500) return 250;
+  if (majorInterval >= 100) return 50;
+  if (majorInterval >= 50) return 25;
+  if (majorInterval >= 25) return 5;
+  if (majorInterval >= 10) return 5;
+  if (majorInterval >= 5) return 1;
+
+  return 1;
+}
+
 function getVisibleTimelineAxisTicks(params: {
   zoomId: TimelineZoomId;
   scrollX: number;
@@ -481,16 +493,17 @@ function getVisibleTimelineAxisTicks(params: {
     params.zoomId === "years-5" ||
     params.zoomId === "years-1"
   ) {
-    const interval = getAxisYearInterval(visibleYearSpan, params.zoomId);
-    const firstYear = Math.max(
+    const majorInterval = getAxisYearInterval(visibleYearSpan, params.zoomId);
+    const minorInterval = getAxisMinorYearInterval(majorInterval);
+    const firstMajorYear = Math.max(
       HISTORY_TIMELINE_RANGE.startYear,
-      Math.ceil(visibleStart / interval) * interval
+      Math.ceil(visibleStart / majorInterval) * majorInterval
     );
 
     for (
-      let year = firstYear;
+      let year = firstMajorYear;
       year <= visibleEnd && ticks.length < 120;
-      year += interval
+      year += majorInterval
     ) {
       ticks.push({
         key: `year-${year}`,
@@ -500,25 +513,23 @@ function getVisibleTimelineAxisTicks(params: {
       });
     }
 
-    if (params.zoomId === "years-1") {
-      const firstMinorYear = Math.max(
-        HISTORY_TIMELINE_RANGE.startYear,
-        Math.ceil(visibleStart)
-      );
+    const firstMinorYear = Math.max(
+      HISTORY_TIMELINE_RANGE.startYear,
+      Math.ceil(visibleStart / minorInterval) * minorInterval
+    );
 
-      for (
-        let year = firstMinorYear;
-        year <= visibleEnd && ticks.length < 180;
-        year += 1
-      ) {
-        if (year % interval === 0) continue;
+    for (
+      let year = firstMinorYear;
+      year <= visibleEnd && ticks.length < 220;
+      year += minorInterval
+    ) {
+      if (year % majorInterval === 0) continue;
 
-        ticks.push({
-          key: `year-${year}-minor`,
-          x: getTimelineValuePosition(year, params.contentWidth),
-          major: false,
-        });
-      }
+      ticks.push({
+        key: `year-${year}-minor`,
+        x: getTimelineValuePosition(year, params.contentWidth),
+        major: false,
+      });
     }
 
     return ticks;
