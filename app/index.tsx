@@ -1386,12 +1386,14 @@ function TimelineStickyHeader({
             flexShrink: 0,
           }}
         >
-          <TimelineHeaderScaleControl
-            label={timelineScaleLabel}
-            isCompact={isCompactHeader}
-            onPrevious={onPreviousTimelineScale}
-            onNext={onNextTimelineScale}
-          />
+          {!isCompactHeader ? (
+            <TimelineHeaderScaleControl
+              label={timelineScaleLabel}
+              isCompact={isCompactHeader}
+              onPrevious={onPreviousTimelineScale}
+              onNext={onNextTimelineScale}
+            />
+          ) : null}
 
           {!isCompactHeader ? (
             <Pressable

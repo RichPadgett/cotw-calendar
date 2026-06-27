@@ -1317,6 +1317,7 @@ export default function HistoryTimelineView({
     (occurrence) => occurrence.showOnTimeline
   );
   const activeHoverOccurrence = pinnedOccurrence ?? hoveredOccurrence;
+  const activeTimelineOccurrence = activeHoverOccurrence ?? selectedOccurrence;
   const activeLaneFrame = activeHoverOccurrence
     ? getLaneFrame(activeHoverOccurrence, timelineLaneHeight)
     : null;
@@ -1940,21 +1941,44 @@ export default function HistoryTimelineView({
           isCompactTimeline ? styles.timelineToolbarCompact : null,
         ]}
       >
-        <Text style={styles.toolbarLabel}>Scale</Text>
-        <View style={styles.scaleStepper}>
+        <Text
+          style={[
+            styles.toolbarLabel,
+            isCompactTimeline ? styles.toolbarLabelCompact : null,
+          ]}
+        >
+          Scale
+        </Text>
+        <View
+          style={[
+            styles.scaleStepper,
+            isCompactTimeline ? styles.stepperCompact : null,
+          ]}
+        >
           <Pressable
             onPress={() => stepTimelineZoom(-1)}
             accessibilityRole="button"
             accessibilityLabel="Previous timeline scale"
             style={({ pressed }) => [
               styles.scaleStepperButton,
+              isCompactTimeline ? styles.scaleStepperButtonCompact : null,
               pressed ? styles.scaleStepperButtonPressed : null,
             ]}
           >
-            <MaterialIcons name="chevron-left" size={22} color="#334155" />
+            <MaterialIcons
+              name="chevron-left"
+              size={isCompactTimeline ? 18 : 22}
+              color="#334155"
+            />
           </Pressable>
 
-          <Text numberOfLines={1} style={styles.scaleStepperLabel}>
+          <Text
+            numberOfLines={1}
+            style={[
+              styles.scaleStepperLabel,
+              isCompactTimeline ? styles.scaleStepperLabelCompact : null,
+            ]}
+          >
             {currentTimelineZoom.label}
           </Text>
 
@@ -1964,15 +1988,32 @@ export default function HistoryTimelineView({
             accessibilityLabel="Next timeline scale"
             style={({ pressed }) => [
               styles.scaleStepperButton,
+              isCompactTimeline ? styles.scaleStepperButtonCompact : null,
               pressed ? styles.scaleStepperButtonPressed : null,
             ]}
           >
-            <MaterialIcons name="chevron-right" size={22} color="#334155" />
+            <MaterialIcons
+              name="chevron-right"
+              size={isCompactTimeline ? 18 : 22}
+              color="#334155"
+            />
           </Pressable>
         </View>
 
-        <Text style={styles.toolbarLabel}>Height</Text>
-        <View style={styles.heightStepper}>
+        <Text
+          style={[
+            styles.toolbarLabel,
+            isCompactTimeline ? styles.toolbarLabelCompact : null,
+          ]}
+        >
+          Height
+        </Text>
+        <View
+          style={[
+            styles.heightStepper,
+            isCompactTimeline ? styles.stepperCompact : null,
+          ]}
+        >
           <Pressable
             onPress={() => stepLaneHeight(-1)}
             disabled={!canDecreaseLaneHeight}
@@ -1980,6 +2021,7 @@ export default function HistoryTimelineView({
             accessibilityLabel="Decrease timeline bar height"
             style={({ pressed }) => [
               styles.scaleStepperButton,
+              isCompactTimeline ? styles.scaleStepperButtonCompact : null,
               !canDecreaseLaneHeight ? styles.stepperButtonDisabled : null,
               pressed && canDecreaseLaneHeight
                 ? styles.scaleStepperButtonPressed
@@ -1988,12 +2030,18 @@ export default function HistoryTimelineView({
           >
             <MaterialIcons
               name="keyboard-arrow-down"
-              size={22}
+              size={isCompactTimeline ? 18 : 22}
               color="#334155"
             />
           </Pressable>
 
-          <Text numberOfLines={1} style={styles.heightStepperLabel}>
+          <Text
+            numberOfLines={1}
+            style={[
+              styles.heightStepperLabel,
+              isCompactTimeline ? styles.heightStepperLabelCompact : null,
+            ]}
+          >
             {`${laneHeightIndex + 1}/${TIMELINE_LANE_HEIGHTS.length}`}
           </Text>
 
@@ -2004,13 +2052,18 @@ export default function HistoryTimelineView({
             accessibilityLabel="Increase timeline bar height"
             style={({ pressed }) => [
               styles.scaleStepperButton,
+              isCompactTimeline ? styles.scaleStepperButtonCompact : null,
               !canIncreaseLaneHeight ? styles.stepperButtonDisabled : null,
               pressed && canIncreaseLaneHeight
                 ? styles.scaleStepperButtonPressed
                 : null,
             ]}
           >
-            <MaterialIcons name="keyboard-arrow-up" size={22} color="#334155" />
+            <MaterialIcons
+              name="keyboard-arrow-up"
+              size={isCompactTimeline ? 18 : 22}
+              color="#334155"
+            />
           </Pressable>
         </View>
       </View>
@@ -2116,7 +2169,7 @@ export default function HistoryTimelineView({
                 left={left}
                 width={right - left}
                 laneHeight={timelineLaneHeight}
-                isHovered={activeHoverOccurrence?.id === occurrence.id}
+                isHovered={activeTimelineOccurrence?.id === occurrence.id}
                 timelineScrollX={timelineScrollX}
                 onPress={handleSelectOccurrence}
                 onHoverIn={handleTimelineEntryHoverIn}
@@ -2142,7 +2195,7 @@ export default function HistoryTimelineView({
                 )}
                 compact={Boolean(occurrence.timeRange)}
                 laneHeight={timelineLaneHeight}
-                isHovered={activeHoverOccurrence?.id === occurrence.id}
+                isHovered={activeTimelineOccurrence?.id === occurrence.id}
                 onPress={handleSelectOccurrence}
                 onHoverIn={handleTimelineEntryHoverIn}
                 onHoverOut={handleTimelineEntryHoverOut}
@@ -2325,6 +2378,7 @@ export default function HistoryTimelineView({
 
       {isCompactTimeline && selectedOccurrence ? (
         <View
+          pointerEvents="none"
           style={[
             styles.mobileTimelineDetail,
             { borderColor: selectedOccurrence.color },
@@ -2623,12 +2677,16 @@ const styles = StyleSheet.create({
   timelineToolbarCompact: {
     justifyContent: "flex-start",
     flexWrap: "wrap",
+    gap: 6,
   },
   toolbarLabel: {
     fontSize: 12,
     fontWeight: "900",
     color: "#4b5563",
     textTransform: "uppercase",
+  },
+  toolbarLabelCompact: {
+    fontSize: 10,
   },
   scaleStepper: {
     minHeight: 42,
@@ -2638,12 +2696,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 3,
   },
+  stepperCompact: {
+    minHeight: 32,
+    borderRadius: 7,
+    padding: 2,
+  },
   scaleStepperButton: {
     width: 36,
     height: 36,
     borderRadius: 6,
     alignItems: "center",
     justifyContent: "center",
+  },
+  scaleStepperButtonCompact: {
+    width: 28,
+    height: 28,
+    borderRadius: 5,
   },
   scaleStepperButtonPressed: {
     backgroundColor: "#d1d5db",
@@ -2655,6 +2723,11 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     color: "#081a33",
     textAlign: "center",
+  },
+  scaleStepperLabelCompact: {
+    minWidth: 88,
+    paddingHorizontal: 6,
+    fontSize: 11,
   },
   heightStepper: {
     minHeight: 42,
@@ -2671,6 +2744,11 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     color: "#081a33",
     textAlign: "center",
+  },
+  heightStepperLabelCompact: {
+    minWidth: 28,
+    paddingHorizontal: 4,
+    fontSize: 11,
   },
   stepperButtonDisabled: {
     opacity: 0.38,
@@ -2888,13 +2966,22 @@ const styles = StyleSheet.create({
     zIndex: 20,
   },
   mobileTimelineDetail: {
-    marginTop: 12,
+    position: "absolute",
+    right: 10,
+    bottom: 62,
+    left: 10,
+    maxHeight: 150,
     padding: 10,
     borderRadius: 10,
     borderWidth: 1,
     backgroundColor: "rgba(255, 255, 255, 0.96)",
+    shadowColor: "#000000",
+    shadowOpacity: 0.18,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
     flexDirection: "row",
     alignItems: "flex-start",
+    zIndex: 24,
   },
   timelineHoverTab: {
     position: "absolute",
