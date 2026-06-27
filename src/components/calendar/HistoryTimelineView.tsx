@@ -440,10 +440,6 @@ function getAxisYearTickRule(
   return { majorInterval: 5, minorInterval: 1 };
 }
 
-function getFirstIntervalYear(visibleStart: number, interval: number) {
-  return Math.ceil(visibleStart / interval) * interval;
-}
-
 function getVisibleTimelineAxisTicks(params: {
   zoomId: TimelineZoomId;
   scrollX: number;
@@ -477,27 +473,51 @@ function getVisibleTimelineAxisTicks(params: {
     params.zoomId === "years-1"
   ) {
     const tickRule = getAxisYearTickRule(params.zoomId, visibleYearSpan);
-    const firstTickYear = Math.max(
-      HISTORY_TIMELINE_RANGE.startYear,
-      getFirstIntervalYear(visibleStart, tickRule.minorInterval)
-    );
+    const firstMajorIntervalStart =
+      Math.floor(visibleStart / tickRule.majorInterval) *
+      tickRule.majorInterval;
 
     for (
-      let year = firstTickYear;
-      year <= visibleEnd && ticks.length < 220;
-      year += tickRule.minorInterval
+      let intervalStart = firstMajorIntervalStart;
+      intervalStart <= visibleEnd && ticks.length < 220;
+      intervalStart += tickRule.majorInterval
     ) {
-      const major = year % tickRule.majorInterval === 0;
+      if (
+        intervalStart >= visibleStart &&
+        intervalStart >= HISTORY_TIMELINE_RANGE.startYear
+      ) {
+        ticks.push({
+          key: `year-${intervalStart}`,
+          label: `Year ${intervalStart}`,
+          x: getTimelineValuePosition(intervalStart, params.contentWidth),
+          major: true,
+        });
+      }
 
-      ticks.push({
-        key: major ? `year-${year}` : `year-${year}-minor`,
-        label: major ? `Year ${year}` : undefined,
-        x: getTimelineValuePosition(year, params.contentWidth),
-        major,
-      });
+      const intervalEnd = intervalStart + tickRule.majorInterval;
+
+      for (
+        let year = intervalStart + tickRule.minorInterval / 2;
+        year < intervalEnd && ticks.length < 220;
+        year += tickRule.minorInterval
+      ) {
+        if (
+          year < visibleStart ||
+          year > visibleEnd ||
+          year < HISTORY_TIMELINE_RANGE.startYear
+        ) {
+          continue;
+        }
+
+        ticks.push({
+          key: `year-${year}-minor`,
+          x: getTimelineValuePosition(year, params.contentWidth),
+          major: false,
+        });
+      }
     }
 
-    return ticks;
+    return ticks.sort((left, right) => left.x - right.x);
   }
 
   const firstVisibleYear = Math.max(
