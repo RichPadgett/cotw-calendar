@@ -2068,6 +2068,59 @@ export default function HistoryTimelineView({
         </View>
       </View>
 
+      {isCompactTimeline && selectedOccurrence ? (
+        <View
+          style={[
+            styles.mobileTimelineDetail,
+            { borderColor: selectedOccurrence.color },
+          ]}
+        >
+          <View
+            style={[
+              styles.timelineHoverPreviewSwatch,
+              { backgroundColor: selectedOccurrence.color },
+            ]}
+          />
+          <View style={styles.timelineHoverPreviewText}>
+            <View style={styles.timelineHoverTitleRow}>
+              {selectedOccurrence.iconName?.trim() ? (
+                <View
+                  style={[
+                    styles.timelineHoverPreviewIcon,
+                    {
+                      borderColor:
+                        getTimelineOccurrenceIconColor(selectedOccurrence),
+                    },
+                  ]}
+                >
+                  <MaterialIcons
+                    name={selectedOccurrence.iconName.trim() as any}
+                    size={15}
+                    color={getTimelineOccurrenceIconColor(selectedOccurrence)}
+                  />
+                </View>
+              ) : null}
+              <Text numberOfLines={1} style={styles.timelineHoverTitle}>
+                {selectedOccurrence.title}
+              </Text>
+            </View>
+            {selectedOccurrence.summary ? (
+              <Text numberOfLines={1} style={styles.timelineHoverSummary}>
+                {selectedOccurrence.summary}
+              </Text>
+            ) : null}
+            <Text numberOfLines={2} style={styles.timelineHoverLabel}>
+              {getTimelineOccurrencePreviewLabel(selectedOccurrence)}
+            </Text>
+            {selectedOccurrence.notes?.trim() ? (
+              <Text numberOfLines={2} style={styles.timelineHoverNotes}>
+                {selectedOccurrence.notes.trim()}
+              </Text>
+            ) : null}
+          </View>
+        </View>
+      ) : null}
+
       <ScrollView
         ref={timelineScrollRef}
         horizontal
@@ -2370,60 +2423,6 @@ export default function HistoryTimelineView({
             {activeHoverOccurrence.notes?.trim() ? (
               <Text numberOfLines={3} style={styles.timelineHoverNotes}>
                 {activeHoverOccurrence.notes.trim()}
-              </Text>
-            ) : null}
-          </View>
-        </View>
-      ) : null}
-
-      {isCompactTimeline && selectedOccurrence ? (
-        <View
-          pointerEvents="none"
-          style={[
-            styles.mobileTimelineDetail,
-            { borderColor: selectedOccurrence.color },
-          ]}
-        >
-          <View
-            style={[
-              styles.timelineHoverPreviewSwatch,
-              { backgroundColor: selectedOccurrence.color },
-            ]}
-          />
-          <View style={styles.timelineHoverPreviewText}>
-            <View style={styles.timelineHoverTitleRow}>
-              {selectedOccurrence.iconName?.trim() ? (
-                <View
-                  style={[
-                    styles.timelineHoverPreviewIcon,
-                    {
-                      borderColor:
-                        getTimelineOccurrenceIconColor(selectedOccurrence),
-                    },
-                  ]}
-                >
-                  <MaterialIcons
-                    name={selectedOccurrence.iconName.trim() as any}
-                    size={15}
-                    color={getTimelineOccurrenceIconColor(selectedOccurrence)}
-                  />
-                </View>
-              ) : null}
-              <Text numberOfLines={2} style={styles.timelineHoverTitle}>
-                {selectedOccurrence.title}
-              </Text>
-            </View>
-            {selectedOccurrence.summary ? (
-              <Text numberOfLines={2} style={styles.timelineHoverSummary}>
-                {selectedOccurrence.summary}
-              </Text>
-            ) : null}
-            <Text numberOfLines={3} style={styles.timelineHoverLabel}>
-              {getTimelineOccurrencePreviewLabel(selectedOccurrence)}
-            </Text>
-            {selectedOccurrence.notes?.trim() ? (
-              <Text numberOfLines={4} style={styles.timelineHoverNotes}>
-                {selectedOccurrence.notes.trim()}
               </Text>
             ) : null}
           </View>
@@ -2966,12 +2965,11 @@ const styles = StyleSheet.create({
     zIndex: 20,
   },
   mobileTimelineDetail: {
-    position: "absolute",
-    right: 10,
-    bottom: 62,
-    left: 10,
-    maxHeight: 150,
-    padding: 10,
+    minHeight: 74,
+    maxHeight: 112,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
     borderRadius: 10,
     borderWidth: 1,
     backgroundColor: "rgba(255, 255, 255, 0.96)",
@@ -2981,7 +2979,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     flexDirection: "row",
     alignItems: "flex-start",
-    zIndex: 24,
   },
   timelineHoverTab: {
     position: "absolute",
