@@ -27,6 +27,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import {
   HistoricalDate,
+  HISTORY_TIMELINE_AXIS_YEARS,
   HISTORY_TIMELINE_OCCURRENCES,
   HISTORY_TIMELINE_RANGE,
   TimelineOccurrence,
@@ -2096,6 +2097,26 @@ export default function HistoryTimelineView({
           ]}
         >
           <View style={styles.timelineOverviewAxis} />
+          {HISTORY_TIMELINE_AXIS_YEARS.map((year) => {
+            const markerLeft = timelineOverviewWidth
+              ? ((year - HISTORY_TIMELINE_RANGE.startYear) /
+                  timelineRangeSpan) *
+                timelineOverviewWidth
+              : 0;
+
+            return (
+              <View
+                key={`overview-year-${year}`}
+                pointerEvents="none"
+                style={[styles.timelineOverviewMarker, { left: markerLeft }]}
+              >
+                <View style={styles.timelineOverviewTick} />
+                <Text numberOfLines={1} style={styles.timelineOverviewYear}>
+                  {year}
+                </Text>
+              </View>
+            );
+          })}
           <View
             pointerEvents="none"
             style={[
@@ -2106,12 +2127,6 @@ export default function HistoryTimelineView({
               },
             ]}
           />
-          <Text style={[styles.timelineOverviewYear, { left: 8 }]}>
-            {HISTORY_TIMELINE_RANGE.startYear}
-          </Text>
-          <Text style={[styles.timelineOverviewYear, { right: 8 }]}>
-            {HISTORY_TIMELINE_RANGE.endYear}
-          </Text>
         </Pressable>
       </View>
 
@@ -2829,7 +2844,7 @@ const styles = StyleSheet.create({
     textAlign: "right",
   },
   timelineOverviewTrack: {
-    height: 34,
+    height: 46,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#cbd5e1",
@@ -2844,26 +2859,41 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 8,
     right: 8,
+    top: 15,
     height: 2,
     borderRadius: 999,
     backgroundColor: "#334155",
   },
   timelineOverviewWindow: {
     position: "absolute",
-    top: 5,
-    bottom: 5,
+    top: 6,
+    bottom: 18,
     borderRadius: 6,
     borderWidth: 1,
     borderColor: "#081a33",
     backgroundColor: "rgba(8, 26, 51, 0.18)",
+    zIndex: 2,
+  },
+  timelineOverviewMarker: {
+    position: "absolute",
+    top: 9,
+    alignItems: "center",
+    transform: [{ translateX: -0.5 }],
+  },
+  timelineOverviewTick: {
+    width: 2,
+    height: 12,
+    borderRadius: 999,
+    backgroundColor: "#334155",
   },
   timelineOverviewYear: {
-    position: "absolute",
-    bottom: 3,
+    marginTop: 5,
+    width: 42,
     fontSize: 9,
     lineHeight: 11,
     fontWeight: "900",
     color: "#64748b",
+    textAlign: "center",
   },
   scrollContent: {
     paddingVertical: 4,
