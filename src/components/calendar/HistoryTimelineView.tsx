@@ -1944,64 +1944,40 @@ export default function HistoryTimelineView({
           isCompactTimeline ? styles.timelineToolbarCompact : null,
         ]}
       >
-        <Text
-          style={[
-            styles.toolbarLabel,
-            isCompactTimeline ? styles.toolbarLabelCompact : null,
-          ]}
-        >
-          Scale
-        </Text>
-        <View
-          style={[
-            styles.scaleStepper,
-            isCompactTimeline ? styles.stepperCompact : null,
-          ]}
-        >
-          <Pressable
-            onPress={() => stepTimelineZoom(-1)}
-            accessibilityRole="button"
-            accessibilityLabel="Previous timeline scale"
-            style={({ pressed }) => [
-              styles.scaleStepperButton,
-              isCompactTimeline ? styles.scaleStepperButtonCompact : null,
-              pressed ? styles.scaleStepperButtonPressed : null,
-            ]}
-          >
-            <MaterialIcons
-              name="chevron-left"
-              size={isCompactTimeline ? 18 : 22}
-              color="#334155"
-            />
-          </Pressable>
+        {!isCompactTimeline ? (
+          <>
+            <Text style={styles.toolbarLabel}>Scale</Text>
+            <View style={styles.scaleStepper}>
+              <Pressable
+                onPress={() => stepTimelineZoom(-1)}
+                accessibilityRole="button"
+                accessibilityLabel="Previous timeline scale"
+                style={({ pressed }) => [
+                  styles.scaleStepperButton,
+                  pressed ? styles.scaleStepperButtonPressed : null,
+                ]}
+              >
+                <MaterialIcons name="chevron-left" size={22} color="#334155" />
+              </Pressable>
 
-          <Text
-            numberOfLines={1}
-            style={[
-              styles.scaleStepperLabel,
-              isCompactTimeline ? styles.scaleStepperLabelCompact : null,
-            ]}
-          >
-            {currentTimelineZoom.label}
-          </Text>
+              <Text numberOfLines={1} style={styles.scaleStepperLabel}>
+                {currentTimelineZoom.label}
+              </Text>
 
-          <Pressable
-            onPress={() => stepTimelineZoom(1)}
-            accessibilityRole="button"
-            accessibilityLabel="Next timeline scale"
-            style={({ pressed }) => [
-              styles.scaleStepperButton,
-              isCompactTimeline ? styles.scaleStepperButtonCompact : null,
-              pressed ? styles.scaleStepperButtonPressed : null,
-            ]}
-          >
-            <MaterialIcons
-              name="chevron-right"
-              size={isCompactTimeline ? 18 : 22}
-              color="#334155"
-            />
-          </Pressable>
-        </View>
+              <Pressable
+                onPress={() => stepTimelineZoom(1)}
+                accessibilityRole="button"
+                accessibilityLabel="Next timeline scale"
+                style={({ pressed }) => [
+                  styles.scaleStepperButton,
+                  pressed ? styles.scaleStepperButtonPressed : null,
+                ]}
+              >
+                <MaterialIcons name="chevron-right" size={22} color="#334155" />
+              </Pressable>
+            </View>
+          </>
+        ) : null}
 
         <Text
           style={[
@@ -2821,17 +2797,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#d1d5db",
   },
   scaleStepperLabel: {
-    minWidth: 128,
-    paddingHorizontal: 10,
+    minWidth: 42,
+    paddingHorizontal: 6,
     fontSize: 13,
     fontWeight: "900",
     color: "#081a33",
     textAlign: "center",
-  },
-  scaleStepperLabelCompact: {
-    minWidth: 88,
-    paddingHorizontal: 6,
-    fontSize: 11,
   },
   heightStepper: {
     minHeight: 42,

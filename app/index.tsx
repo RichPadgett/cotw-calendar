@@ -1386,14 +1386,12 @@ function TimelineStickyHeader({
             flexShrink: 0,
           }}
         >
-          {!isCompactHeader ? (
-            <TimelineHeaderScaleControl
-              label={timelineScaleLabel}
-              isCompact={isCompactHeader}
-              onPrevious={onPreviousTimelineScale}
-              onNext={onNextTimelineScale}
-            />
-          ) : null}
+          <TimelineHeaderScaleControl
+            label={timelineScaleLabel}
+            isCompact={isCompactHeader}
+            onPrevious={onPreviousTimelineScale}
+            onNext={onNextTimelineScale}
+          />
 
           {!isCompactHeader ? (
             <Pressable
@@ -1660,7 +1658,7 @@ function TimelineHeaderScaleControl({
     <View
       style={{
         height: 36,
-        maxWidth: isCompact ? 128 : 186,
+        maxWidth: isCompact ? 96 : 132,
         paddingHorizontal: 4,
         borderRadius: 18,
         borderWidth: 1,
@@ -1689,7 +1687,7 @@ function TimelineHeaderScaleControl({
         <MaterialIcons name="chevron-left" size={21} color="#334155" />
       </Pressable>
 
-      <View style={{ flex: 1, minWidth: 0 }}>
+      <View style={{ minWidth: isCompact ? 24 : 34 }}>
         {!isCompact ? (
           <Text
             numberOfLines={1}
