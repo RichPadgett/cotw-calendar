@@ -658,6 +658,7 @@ function TimelineRangeLabelOverlay({
   left,
   width,
   laneHeight,
+  isActive,
   onPress,
   onHoverIn,
   onHoverOut,
@@ -666,6 +667,7 @@ function TimelineRangeLabelOverlay({
   left: number;
   width: number;
   laneHeight: number;
+  isActive: boolean;
   onPress: (occurrence: TimelineOccurrence) => void;
   onHoverIn?: (occurrence: TimelineOccurrence) => void;
   onHoverOut?: (occurrence: TimelineOccurrence) => void;
@@ -681,9 +683,9 @@ function TimelineRangeLabelOverlay({
     barWidth >= MIN_COMPACT_LABEL_BAR_WIDTH &&
     laneFrame.height >= 28;
 
-  if (!canShowFullLabel && !canShowCompactLabel) return null;
+  if (!isActive && !canShowFullLabel && !canShowCompactLabel) return null;
 
-  if (canShowCompactLabel) {
+  if (!isActive && canShowCompactLabel) {
     return (
       <Pressable
         accessibilityLabel={`Open ${occurrence.title}`}
@@ -707,7 +709,9 @@ function TimelineRangeLabelOverlay({
     );
   }
 
-  const labelWidth = Math.min(barWidth, 280);
+  const labelWidth = isActive
+    ? Math.min(Math.max(barWidth, MIN_LABELED_BAR_WIDTH), 280)
+    : Math.min(barWidth, 280);
 
   return (
     <Pressable
@@ -722,6 +726,7 @@ function TimelineRangeLabelOverlay({
           left,
           width: labelWidth,
           borderColor: occurrence.color,
+          zIndex: isActive ? 18 : undefined,
         },
       ]}
     >
@@ -1287,9 +1292,18 @@ export default function HistoryTimelineView({
     activeRowBottom !== null &&
     dynamicHoverPreviewTop < activeRowBottom &&
     dynamicHoverPreviewTop + HOVER_PREVIEW_ESTIMATED_HEIGHT > activeRowTop;
+  const hoverPreviewTrackBottom = timelineViewportY + timelineAxisTop - 8;
   const hoverPreviewTop =
-    hoverPreviewOverlapsActiveRow && activeRowBottom !== null
-      ? activeRowBottom + 10
+    hoverPreviewOverlapsActiveRow &&
+    activeRowTop !== null &&
+    activeRowBottom !== null
+      ? activeRowBottom + 10 + HOVER_PREVIEW_ESTIMATED_HEIGHT <=
+        hoverPreviewTrackBottom
+        ? activeRowBottom + 10
+        : Math.max(
+            HOVER_PREVIEW_TOP_RESERVED_SPACE,
+            activeRowTop - HOVER_PREVIEW_ESTIMATED_HEIGHT - 10
+          )
       : dynamicHoverPreviewTop;
   const axisTicks = useMemo(
     () =>
@@ -2258,6 +2272,7 @@ export default function HistoryTimelineView({
                 left={left}
                 width={right - left}
                 laneHeight={timelineLaneHeight}
+                isActive={activeTimelineOccurrence?.id === occurrence.id}
                 onPress={handleSelectOccurrence}
                 onHoverIn={handleTimelineEntryHoverIn}
                 onHoverOut={handleTimelineEntryHoverOut}
