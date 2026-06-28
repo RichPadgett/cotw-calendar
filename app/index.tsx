@@ -1289,6 +1289,40 @@ function TimelineStickyHeader({
   const isMobileCollapsedMode = isCompactHeader && !isMobileHeaderExpanded;
   const isDesktopCollapsedMode = !isCompactHeader && isDesktopHeaderCollapsed;
   const isHeaderCollapsed = isMobileCollapsedMode || isDesktopCollapsedMode;
+  const timelineSettingsControl = (
+    <View
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 6,
+        padding: 3,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: "#cbd5e1",
+        backgroundColor: "#ffffff",
+      }}
+    >
+      <TimelineHeaderScaleControl
+        label={timelineScaleLabel}
+        title="Scale"
+        iconPrevious="chevron-left"
+        iconNext="chevron-right"
+        isCompact={isCompactHeader}
+        onPrevious={onPreviousTimelineScale}
+        onNext={onNextTimelineScale}
+      />
+
+      <TimelineHeaderScaleControl
+        label={timelineLaneHeightLabel}
+        title="Rows"
+        iconPrevious="keyboard-arrow-down"
+        iconNext="keyboard-arrow-up"
+        isCompact={isCompactHeader}
+        onPrevious={onPreviousTimelineLaneHeight}
+        onNext={onNextTimelineLaneHeight}
+      />
+    </View>
+  );
 
   return (
     <View
@@ -1413,38 +1447,7 @@ function TimelineStickyHeader({
             flexShrink: 0,
           }}
         >
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 6,
-              padding: 3,
-              borderRadius: 20,
-              borderWidth: 1,
-              borderColor: "#cbd5e1",
-              backgroundColor: "#ffffff",
-            }}
-          >
-            <TimelineHeaderScaleControl
-              label={timelineScaleLabel}
-              title="Scale"
-              iconPrevious="chevron-left"
-              iconNext="chevron-right"
-              isCompact={isCompactHeader}
-              onPrevious={onPreviousTimelineScale}
-              onNext={onNextTimelineScale}
-            />
-
-            <TimelineHeaderScaleControl
-              label={timelineLaneHeightLabel}
-              title="Rows"
-              iconPrevious="keyboard-arrow-down"
-              iconNext="keyboard-arrow-up"
-              isCompact={isCompactHeader}
-              onPrevious={onPreviousTimelineLaneHeight}
-              onNext={onNextTimelineLaneHeight}
-            />
-          </View>
+          {!isCompactHeader ? timelineSettingsControl : null}
 
           {!isCompactHeader ? (
             <Pressable
@@ -1524,6 +1527,19 @@ function TimelineStickyHeader({
           ) : null}
         </View>
       </View>
+
+      {isCompactHeader ? (
+        <View
+          style={{
+            marginTop: 10,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "flex-end",
+          }}
+        >
+          {timelineSettingsControl}
+        </View>
+      ) : null}
 
       {!isHeaderCollapsed ? (
         <View
