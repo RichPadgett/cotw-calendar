@@ -837,8 +837,8 @@ function TimelineHoverTab({
   tabIndex: number;
   laneHeight: number;
   onPress: (occurrence: TimelineOccurrence) => void;
-  onHoverIn: (occurrence: TimelineOccurrence) => void;
-  onHoverOut: (occurrence: TimelineOccurrence) => void;
+  onHoverIn?: (occurrence: TimelineOccurrence) => void;
+  onHoverOut?: (occurrence: TimelineOccurrence) => void;
 }) {
   const laneFrame = getLaneFrame(occurrence, laneHeight);
   const staggerIndex = tabIndex % 4;
@@ -847,8 +847,8 @@ function TimelineHoverTab({
   return (
     <Pressable
       accessibilityLabel={`Preview ${occurrence.title}`}
-      onHoverIn={() => onHoverIn(occurrence)}
-      onHoverOut={() => onHoverOut(occurrence)}
+      onHoverIn={() => onHoverIn?.(occurrence)}
+      onHoverOut={() => onHoverOut?.(occurrence)}
       onPress={() => onPress(occurrence)}
       style={[
         styles.timelineHoverTab,
@@ -2384,49 +2384,51 @@ export default function HistoryTimelineView({
             );
           })}
 
-          {canShowHoverPreview
-            ? visibleOccurrences.map((occurrence, index) => {
-                let tabX: number | null = null;
+          {visibleOccurrences.map((occurrence, index) => {
+            let tabX: number | null = null;
 
-                if (occurrence.timeRange) {
-                  const { start } = occurrence.timeRange;
-                  tabX = getEnochYearPosition(
-                    {
-                      enochYear: start.enochYear,
-                      month: start.enochMonth,
-                      day: start.enochDay,
-                    },
-                    contentWidth
-                  );
-                } else if (occurrence.exactDate) {
-                  tabX =
-                    getEnochYearPosition(
-                      {
-                        enochYear: occurrence.exactDate.enochDate.enochYear,
-                        month: occurrence.exactDate.enochDate.month,
-                        day: occurrence.exactDate.enochDate.day,
-                      },
-                      contentWidth
-                    ) -
-                    TIMELINE_HOVER_TAB_SIZE / 2;
+            if (occurrence.timeRange) {
+              const { start } = occurrence.timeRange;
+              tabX = getEnochYearPosition(
+                {
+                  enochYear: start.enochYear,
+                  month: start.enochMonth,
+                  day: start.enochDay,
+                },
+                contentWidth
+              );
+            } else if (occurrence.exactDate) {
+              tabX =
+                getEnochYearPosition(
+                  {
+                    enochYear: occurrence.exactDate.enochDate.enochYear,
+                    month: occurrence.exactDate.enochDate.month,
+                    day: occurrence.exactDate.enochDate.day,
+                  },
+                  contentWidth
+                ) -
+                TIMELINE_HOVER_TAB_SIZE / 2;
+            }
+
+            if (tabX === null) return null;
+
+            return (
+              <TimelineHoverTab
+                key={`${occurrence.id}-hover-tab`}
+                occurrence={occurrence}
+                x={tabX}
+                tabIndex={index}
+                laneHeight={timelineLaneHeight}
+                onPress={handleSelectOccurrence}
+                onHoverIn={
+                  canShowHoverPreview ? handleTimelineEntryHoverIn : undefined
                 }
-
-                if (tabX === null) return null;
-
-                return (
-                  <TimelineHoverTab
-                    key={`${occurrence.id}-hover-tab`}
-                    occurrence={occurrence}
-                    x={tabX}
-                    tabIndex={index}
-                    laneHeight={timelineLaneHeight}
-                    onPress={handleSelectOccurrence}
-                    onHoverIn={handleTimelineEntryHoverIn}
-                    onHoverOut={handleTimelineEntryHoverOut}
-                  />
-                );
-              })
-            : null}
+                onHoverOut={
+                  canShowHoverPreview ? handleTimelineEntryHoverOut : undefined
+                }
+              />
+            );
+          })}
         </View>
       </ScrollView>
 
