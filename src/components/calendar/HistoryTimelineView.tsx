@@ -195,7 +195,6 @@ type TimelineViewSettings = {
 
 type TimelineYearTickRule = {
   majorInterval: number;
-  minorInterval: number;
 };
 
 type TimelineEntryFormState = {
@@ -414,37 +413,37 @@ function getAxisYearTickRule(
   visibleYearSpan: number
 ): TimelineYearTickRule {
   if (zoomId === "years-10000") {
-    return { majorInterval: 2000, minorInterval: 500 };
+    return { majorInterval: 2000 };
   }
   if (zoomId === "years-5000" || zoomId === "millennia") {
-    return { majorInterval: 1000, minorInterval: 500 };
+    return { majorInterval: 1000 };
   }
-  if (zoomId === "years-500") return { majorInterval: 500, minorInterval: 100 };
-  if (zoomId === "years-250") return { majorInterval: 250, minorInterval: 50 };
-  if (zoomId === "years-100") return { majorInterval: 100, minorInterval: 25 };
-  if (zoomId === "years-50") return { majorInterval: 50, minorInterval: 10 };
-  if (zoomId === "years-25") return { majorInterval: 25, minorInterval: 5 };
-  if (zoomId === "years-5") return { majorInterval: 5, minorInterval: 1 };
+  if (zoomId === "years-500") return { majorInterval: 500 };
+  if (zoomId === "years-250") return { majorInterval: 250 };
+  if (zoomId === "years-100") return { majorInterval: 100 };
+  if (zoomId === "years-50") return { majorInterval: 50 };
+  if (zoomId === "years-25") return { majorInterval: 25 };
+  if (zoomId === "years-5") return { majorInterval: 5 };
   if (
     zoomId === "years-1" ||
     zoomId === "half-years" ||
     zoomId === "months" ||
     zoomId === "days"
   ) {
-    return { majorInterval: 1, minorInterval: 0.25 };
+    return { majorInterval: 1 };
   }
 
   if (visibleYearSpan > 2500) {
-    return { majorInterval: 2000, minorInterval: 500 };
+    return { majorInterval: 2000 };
   }
   if (visibleYearSpan > 1000) {
-    return { majorInterval: 1000, minorInterval: 500 };
+    return { majorInterval: 1000 };
   }
-  if (visibleYearSpan > 250) return { majorInterval: 250, minorInterval: 50 };
-  if (visibleYearSpan > 100) return { majorInterval: 100, minorInterval: 25 };
-  if (visibleYearSpan > 30) return { majorInterval: 25, minorInterval: 5 };
+  if (visibleYearSpan > 250) return { majorInterval: 250 };
+  if (visibleYearSpan > 100) return { majorInterval: 100 };
+  if (visibleYearSpan > 30) return { majorInterval: 25 };
 
-  return { majorInterval: 5, minorInterval: 1 };
+  return { majorInterval: 5 };
 }
 
 function getVisibleTimelineAxisTicks(params: {
@@ -468,27 +467,20 @@ function getVisibleTimelineAxisTicks(params: {
   const ticks: TimelineAxisTick[] = [];
   const tickRule = getAxisYearTickRule(params.zoomId, visibleYearSpan);
   const firstTickValue =
-    Math.ceil(visibleStart / tickRule.minorInterval) * tickRule.minorInterval;
+    Math.ceil(visibleStart / tickRule.majorInterval) * tickRule.majorInterval;
 
   for (
     let tickValue = Math.max(HISTORY_TIMELINE_RANGE.startYear, firstTickValue);
     tickValue <= visibleEnd && ticks.length < 220;
-    tickValue += tickRule.minorInterval
+    tickValue += tickRule.majorInterval
   ) {
     const normalizedTickValue = Number(tickValue.toFixed(4));
-    const major =
-      Math.abs(
-        normalizedTickValue / tickRule.majorInterval -
-          Math.round(normalizedTickValue / tickRule.majorInterval)
-      ) < 0.0001;
 
     ticks.push({
-      key: major
-        ? `year-${normalizedTickValue}`
-        : `year-${normalizedTickValue}-minor`,
-      label: major ? `Year ${Math.round(normalizedTickValue)}` : undefined,
+      key: `year-${normalizedTickValue}`,
+      label: `Year ${Math.round(normalizedTickValue)}`,
       x: getTimelineValuePosition(normalizedTickValue, params.contentWidth),
-      major,
+      major: true,
     });
   }
 
