@@ -45,6 +45,7 @@ const MIN_LABELED_BAR_WIDTH = 132;
 const MIN_COMPACT_LABEL_BAR_WIDTH = 34;
 const HOVER_PREVIEW_WIDTH = 320;
 const HOVER_PREVIEW_ESTIMATED_HEIGHT = 132;
+const HOVER_PREVIEW_TOP_RESERVED_SPACE = 132;
 const TIMELINE_HOVER_TAB_SIZE = 18;
 const TIMELINE_SETTINGS_STORAGE_KEY_PREFIX = "historyTimelineSettings";
 const TIMELINE_LANE_OPTIONS = Array.from(
@@ -89,13 +90,33 @@ const TIMELINE_ICON_OPTIONS = [
   "anchor",
   "add",
   "church",
+  "account-balance",
+  "workspace-premium",
+  "emoji-events",
   "favorite",
   "flag",
+  "shield",
   "star",
+  "auto-awesome",
   "menu-book",
   "local-fire-department",
   "water-drop",
+  "waves",
+  "grain",
+  "local-florist",
+  "grass",
+  "spa",
+  "park",
+  "forest",
   "terrain",
+  "landscape",
+  "filter-hdr",
+  "foundation",
+  "fort",
+  "castle",
+  "diamond",
+  "gavel",
+  "flare",
   "wb-sunny",
   "nightlight",
   "restaurant",
@@ -1224,7 +1245,7 @@ export default function HistoryTimelineView({
   const timelineAxisTop = TRACK_TOP + timelineTrackHeight + 8;
   const canShowHoverPreview = Platform.OS === "web" && !isCompactTimeline;
   const dynamicHoverPreviewTop = Math.max(
-    14,
+    HOVER_PREVIEW_TOP_RESERVED_SPACE,
     appScrollY - timelineLayoutY + stickyHeaderHeight + 12
   );
   const hoverPreviewRootLeft = Math.max(
