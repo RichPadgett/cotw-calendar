@@ -5,7 +5,6 @@
 
 import {
   Alert,
-  GestureResponderEvent,
   Modal,
   LayoutChangeEvent,
   NativeScrollEvent,
@@ -48,6 +47,7 @@ const HOVER_PREVIEW_WIDTH = 320;
 const HOVER_PREVIEW_ESTIMATED_HEIGHT = 132;
 const TIMELINE_HOVER_TAB_SIZE = 18;
 const TIMELINE_SETTINGS_STORAGE_KEY_PREFIX = "historyTimelineSettings";
+const TIMELINE_OVERVIEW_JUMP_INTERVAL = 500;
 const TIMELINE_LANE_OPTIONS = Array.from(
   { length: TIMELINE_LANE_COUNT },
   (_, index) => ({
@@ -272,19 +272,6 @@ export function getSteppedTimelineZoomId(
   const nextIndex =
     (currentIndex + direction + TIMELINE_ZOOM_LEVELS.length) %
     TIMELINE_ZOOM_LEVELS.length;
-
-  return TIMELINE_ZOOM_LEVELS[nextIndex].id;
-}
-
-function getBoundedTimelineZoomId(zoomId: TimelineZoomId, direction: -1 | 1) {
-  const currentIndex = Math.max(
-    0,
-    TIMELINE_ZOOM_LEVELS.findIndex((zoomLevel) => zoomLevel.id === zoomId)
-  );
-  const nextIndex = Math.max(
-    0,
-    Math.min(TIMELINE_ZOOM_LEVELS.length - 1, currentIndex + direction)
-  );
 
   return TIMELINE_ZOOM_LEVELS[nextIndex].id;
 }
@@ -1190,13 +1177,6 @@ type HistoryTimelineViewProps = {
   onSavingChange: (isSaving: boolean) => void;
 };
 
-type TimelineOverviewPressTarget = {
-  altKey?: boolean;
-  localX: number;
-  shiftKey?: boolean;
-  trackWidth?: number;
-};
-
 /**
  * Creates a horizontally swipeable history chart.
  * This UX component renders timeline occurrences as range bars, exact-date cards, or both.
@@ -1231,9 +1211,6 @@ export default function HistoryTimelineView({
   const [timelineViewportY, setTimelineViewportY] = useState(0);
   const [timelineViewportWidth, setTimelineViewportWidth] = useState(0);
   const [timelineOverviewWidth, setTimelineOverviewWidth] = useState(0);
-  const [selectedOverviewValue, setSelectedOverviewValue] = useState<
-    number | null
-  >(null);
   const effectiveTimelineViewportWidth = timelineViewportWidth || width;
   const contentWidth = getTimelineContentWidth(
     effectiveTimelineViewportWidth,
@@ -1319,6 +1296,23 @@ export default function HistoryTimelineView({
   );
   const timelineRangeSpan =
     HISTORY_TIMELINE_RANGE.endYear - HISTORY_TIMELINE_RANGE.startYear;
+  const timelineOverviewJumpYears = useMemo(() => {
+    const jumpYears: number[] = [];
+    const firstJumpYear =
+      Math.ceil(
+        HISTORY_TIMELINE_RANGE.startYear / TIMELINE_OVERVIEW_JUMP_INTERVAL
+      ) * TIMELINE_OVERVIEW_JUMP_INTERVAL;
+
+    for (
+      let year = firstJumpYear;
+      year <= HISTORY_TIMELINE_RANGE.endYear;
+      year += TIMELINE_OVERVIEW_JUMP_INTERVAL
+    ) {
+      jumpYears.push(year);
+    }
+
+    return jumpYears;
+  }, []);
   const timelineVisibleStartValue = getTimelineValueFromPosition(
     timelineScrollX,
     contentWidth
@@ -1352,18 +1346,6 @@ export default function HistoryTimelineView({
         overviewWindowLeft
       )
     : 0;
-  const selectedOverviewLeft =
-    selectedOverviewValue !== null && timelineOverviewWidth
-      ? Math.max(
-          0,
-          Math.min(
-            timelineOverviewWidth,
-            ((selectedOverviewValue - HISTORY_TIMELINE_RANGE.startYear) /
-              timelineRangeSpan) *
-              timelineOverviewWidth
-          )
-        )
-      : null;
 
   useEffect(() => {
     let isMounted = true;
@@ -1619,8 +1601,8 @@ export default function HistoryTimelineView({
     setTimelineOverviewWidth(event.nativeEvent.layout.width);
   }
 
-  function scrollTimelineToValue(targetValue: number, animated = true) {
-    const targetX = getTimelineValuePosition(targetValue, contentWidth);
+  function jumpTimelineToYear(year: number) {
+    const targetX = getTimelineValuePosition(year, contentWidth);
     const maxScrollX = Math.max(
       0,
       contentWidth - effectiveTimelineViewportWidth
@@ -1633,110 +1615,7 @@ export default function HistoryTimelineView({
     setTimelineScrollX(nextScrollX);
     timelineScrollRef.current?.scrollTo({
       x: nextScrollX,
-      animated,
-    });
-  }
-
-  function scaleTimelineToValue(
-    targetValue: number,
-    nextZoom: TimelineZoomId,
-    animated = true
-  ) {
-    const nextContentWidth = getTimelineContentWidth(
-      effectiveTimelineViewportWidth,
-      nextZoom
-    );
-    const targetX = getTimelineValuePosition(targetValue, nextContentWidth);
-    const maxScrollX = Math.max(
-      0,
-      nextContentWidth - effectiveTimelineViewportWidth
-    );
-    const nextScrollX = Math.max(
-      0,
-      Math.min(maxScrollX, targetX - effectiveTimelineViewportWidth / 2)
-    );
-
-    onTimelineZoomChange(nextZoom);
-    setTimelineScrollX(nextScrollX);
-
-    setTimeout(() => {
-      timelineScrollRef.current?.scrollTo({
-        x: nextScrollX,
-        animated,
-      });
-    }, 0);
-  }
-
-  function handleTimelineOverviewTargetPress({
-    altKey,
-    localX,
-    shiftKey,
-    trackWidth,
-  }: TimelineOverviewPressTarget) {
-    const activeTrackWidth = trackWidth || timelineOverviewWidth;
-
-    if (!activeTrackWidth) return;
-
-    const progress = Math.max(0, Math.min(1, localX / activeTrackWidth));
-    const targetValue =
-      HISTORY_TIMELINE_RANGE.startYear + progress * timelineRangeSpan;
-
-    setSelectedOverviewValue(targetValue);
-
-    const shouldScaleFromOverview =
-      Platform.OS === "web" && !isCompactTimeline && shiftKey;
-
-    if (shouldScaleFromOverview) {
-      const zoomDirection = altKey ? -1 : 1;
-      const nextZoom = getBoundedTimelineZoomId(timelineZoom, zoomDirection);
-
-      if (nextZoom !== timelineZoom) {
-        scaleTimelineToValue(targetValue, nextZoom);
-        return;
-      }
-    }
-
-    scrollTimelineToValue(targetValue);
-  }
-
-  function handleTimelineOverviewPress(event: GestureResponderEvent) {
-    if (!timelineOverviewWidth) return;
-
-    const nativeEvent = event.nativeEvent as typeof event.nativeEvent & {
-      altKey?: boolean;
-      offsetX?: number;
-      shiftKey?: boolean;
-    };
-
-    handleTimelineOverviewTargetPress({
-      altKey: nativeEvent.altKey,
-      localX:
-        typeof nativeEvent.offsetX === "number"
-          ? nativeEvent.offsetX
-          : nativeEvent.locationX,
-      shiftKey: nativeEvent.shiftKey,
-    });
-  }
-
-  function handleTimelineOverviewWebClick(event: {
-    altKey?: boolean;
-    clientX?: number;
-    currentTarget?: {
-      getBoundingClientRect?: () => { left: number; width: number };
-    };
-    preventDefault?: () => void;
-    shiftKey?: boolean;
-  }) {
-    const trackRect = event.currentTarget?.getBoundingClientRect?.();
-
-    if (!trackRect || typeof event.clientX !== "number") return;
-
-    event.preventDefault?.();
-    handleTimelineOverviewTargetPress({
-      altKey: event.altKey,
-      localX: event.clientX - trackRect.left,
-      shiftKey: event.shiftKey,
-      trackWidth: trackRect.width,
+      animated: true,
     });
   }
 
@@ -2216,27 +2095,44 @@ export default function HistoryTimelineView({
           </Text>
         </View>
 
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Quick scroll timeline overview"
+        <View
           onLayout={handleTimelineOverviewLayout}
-          onPress={
-            Platform.OS === "web" ? undefined : handleTimelineOverviewPress
-          }
-          {...(Platform.OS === "web"
-            ? {
-                onClick: handleTimelineOverviewWebClick,
-                onContextMenu: (event: { preventDefault?: () => void }) => {
-                  event.preventDefault?.();
-                },
-              }
-            : {})}
-          style={({ pressed }) => [
-            styles.timelineOverviewTrack,
-            pressed ? styles.timelineOverviewTrackPressed : null,
-          ]}
+          style={styles.timelineOverviewTrack}
         >
           <View style={styles.timelineOverviewAxis} />
+          {timelineOverviewJumpYears.map((year) => {
+            const jumpLeft = timelineOverviewWidth
+              ? Math.max(
+                  11,
+                  Math.min(
+                    timelineOverviewWidth - 11,
+                    ((year - HISTORY_TIMELINE_RANGE.startYear) /
+                      timelineRangeSpan) *
+                      timelineOverviewWidth
+                  )
+                )
+              : 0;
+
+            return (
+              <Pressable
+                key={`overview-jump-${year}`}
+                accessibilityRole="button"
+                accessibilityLabel={`Jump timeline to year ${year}`}
+                onPress={() => jumpTimelineToYear(year)}
+                style={({ pressed }) => [
+                  styles.timelineOverviewJumpButton,
+                  { left: jumpLeft },
+                  pressed ? styles.timelineOverviewJumpButtonPressed : null,
+                ]}
+              >
+                <MaterialIcons
+                  name="arrow-drop-down"
+                  size={18}
+                  color="#0f172a"
+                />
+              </Pressable>
+            );
+          })}
           {HISTORY_TIMELINE_AXIS_YEARS.map((year) => {
             const markerLeft = timelineOverviewWidth
               ? ((year - HISTORY_TIMELINE_RANGE.startYear) /
@@ -2267,16 +2163,7 @@ export default function HistoryTimelineView({
               },
             ]}
           />
-          {selectedOverviewLeft !== null ? (
-            <View
-              pointerEvents="none"
-              style={[
-                styles.timelineOverviewSelectedMarker,
-                { left: selectedOverviewLeft },
-              ]}
-            />
-          ) : null}
-        </Pressable>
+        </View>
       </View>
 
       {isCompactTimeline && selectedOccurrence ? (
@@ -3001,9 +2888,6 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     justifyContent: "center",
   },
-  timelineOverviewTrackPressed: {
-    backgroundColor: "#e2e8f0",
-  },
   timelineOverviewAxis: {
     position: "absolute",
     left: 8,
@@ -3023,17 +2907,23 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(8, 26, 51, 0.18)",
     zIndex: 2,
   },
-  timelineOverviewSelectedMarker: {
+  timelineOverviewJumpButton: {
     position: "absolute",
-    top: 4,
-    bottom: 16,
-    width: 3,
-    borderRadius: 999,
-    backgroundColor: "#0f766e",
+    top: 0,
+    width: 22,
+    height: 22,
+    borderRadius: 6,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.72)",
     borderWidth: 1,
-    borderColor: "#ffffff",
-    transform: [{ translateX: -1.5 }],
-    zIndex: 4,
+    borderColor: "rgba(100, 116, 139, 0.28)",
+    transform: [{ translateX: -11 }],
+    zIndex: 5,
+  },
+  timelineOverviewJumpButtonPressed: {
+    backgroundColor: "#cbd5e1",
+    borderColor: "#64748b",
   },
   timelineOverviewMarker: {
     position: "absolute",
