@@ -120,6 +120,12 @@ export default function HomeScreen() {
     id: number;
     direction: -1 | 1;
   }>({ id: 0, direction: 1 });
+  const [timelineLaneHeightLabel, setTimelineLaneHeightLabel] = useState("1/6");
+  const [timelineLaneHeightStepRequest, setTimelineLaneHeightStepRequest] =
+    useState<{
+      id: number;
+      direction: -1 | 1;
+    }>({ id: 0, direction: 1 });
   const [isTimelineEditMode, setIsTimelineEditMode] = useState(false);
   const [timelineAddRequestId, setTimelineAddRequestId] = useState(0);
   const [timelineEditRequestId, setTimelineEditRequestId] = useState(0);
@@ -884,6 +890,7 @@ export default function HomeScreen() {
               isEditMode={isTimelineEditMode}
               isSavingTimeline={isSavingTimeline}
               timelineScaleLabel={getTimelineZoomLabel(timelineZoom)}
+              timelineLaneHeightLabel={timelineLaneHeightLabel}
               groupLabel={groupLabel}
               userRole={userRole}
               onPreviousTimelineScale={() => {
@@ -894,6 +901,18 @@ export default function HomeScreen() {
               }}
               onNextTimelineScale={() => {
                 setTimelineScaleStepRequest((currentRequest) => ({
+                  id: currentRequest.id + 1,
+                  direction: 1,
+                }));
+              }}
+              onPreviousTimelineLaneHeight={() => {
+                setTimelineLaneHeightStepRequest((currentRequest) => ({
+                  id: currentRequest.id + 1,
+                  direction: -1,
+                }));
+              }}
+              onNextTimelineLaneHeight={() => {
+                setTimelineLaneHeightStepRequest((currentRequest) => ({
                   id: currentRequest.id + 1,
                   direction: 1,
                 }));
@@ -981,7 +1000,9 @@ export default function HomeScreen() {
             appScrollY={appScrollY}
             timelineZoom={timelineZoom}
             timelineScaleStepRequest={timelineScaleStepRequest}
+            timelineLaneHeightStepRequest={timelineLaneHeightStepRequest}
             onTimelineZoomChange={setTimelineZoom}
+            onTimelineLaneHeightLabelChange={setTimelineLaneHeightLabel}
             onSelectedOccurrenceChange={setSelectedTimelineOccurrence}
             onSavingChange={setIsSavingTimeline}
           />
@@ -1233,10 +1254,13 @@ function TimelineStickyHeader({
   isEditMode,
   isSavingTimeline,
   timelineScaleLabel,
+  timelineLaneHeightLabel,
   groupLabel,
   userRole,
   onPreviousTimelineScale,
   onNextTimelineScale,
+  onPreviousTimelineLaneHeight,
+  onNextTimelineLaneHeight,
   onToggleEditMode,
   onRequestAdd,
   onRequestEdit,
@@ -1246,10 +1270,13 @@ function TimelineStickyHeader({
   isEditMode: boolean;
   isSavingTimeline: boolean;
   timelineScaleLabel: string;
+  timelineLaneHeightLabel: string;
   groupLabel: string;
   userRole: "member" | "admin";
   onPreviousTimelineScale: () => void;
   onNextTimelineScale: () => void;
+  onPreviousTimelineLaneHeight: () => void;
+  onNextTimelineLaneHeight: () => void;
   onToggleEditMode: () => void;
   onRequestAdd: () => void;
   onRequestEdit: () => void;
@@ -1386,12 +1413,38 @@ function TimelineStickyHeader({
             flexShrink: 0,
           }}
         >
-          <TimelineHeaderScaleControl
-            label={timelineScaleLabel}
-            isCompact={isCompactHeader}
-            onPrevious={onPreviousTimelineScale}
-            onNext={onNextTimelineScale}
-          />
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 6,
+              padding: 3,
+              borderRadius: 20,
+              borderWidth: 1,
+              borderColor: "#cbd5e1",
+              backgroundColor: "#ffffff",
+            }}
+          >
+            <TimelineHeaderScaleControl
+              label={timelineScaleLabel}
+              title="Scale"
+              iconPrevious="chevron-left"
+              iconNext="chevron-right"
+              isCompact={isCompactHeader}
+              onPrevious={onPreviousTimelineScale}
+              onNext={onNextTimelineScale}
+            />
+
+            <TimelineHeaderScaleControl
+              label={timelineLaneHeightLabel}
+              title="Rows"
+              iconPrevious="keyboard-arrow-down"
+              iconNext="keyboard-arrow-up"
+              isCompact={isCompactHeader}
+              onPrevious={onPreviousTimelineLaneHeight}
+              onNext={onNextTimelineLaneHeight}
+            />
+          </View>
 
           {!isCompactHeader ? (
             <Pressable
@@ -1645,11 +1698,17 @@ function TimelineStickyHeader({
 
 function TimelineHeaderScaleControl({
   label,
+  title,
+  iconPrevious,
+  iconNext,
   isCompact,
   onPrevious,
   onNext,
 }: {
   label: string;
+  title: string;
+  iconPrevious: keyof typeof MaterialIcons.glyphMap;
+  iconNext: keyof typeof MaterialIcons.glyphMap;
   isCompact: boolean;
   onPrevious: () => void;
   onNext: () => void;
@@ -1658,12 +1717,9 @@ function TimelineHeaderScaleControl({
     <View
       style={{
         height: 36,
-        maxWidth: isCompact ? 96 : 132,
+        maxWidth: isCompact ? 86 : 116,
         paddingHorizontal: 4,
         borderRadius: 18,
-        borderWidth: 1,
-        borderColor: "#cbd5e1",
-        backgroundColor: "#ffffff",
         flexDirection: "row",
         alignItems: "center",
         gap: 2,
@@ -1671,7 +1727,7 @@ function TimelineHeaderScaleControl({
     >
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Previous timeline scale"
+        accessibilityLabel={`Decrease timeline ${title.toLowerCase()}`}
         onPress={onPrevious}
         style={({ pressed }) => [
           {
@@ -1684,10 +1740,10 @@ function TimelineHeaderScaleControl({
           pressed && { backgroundColor: "#e2e8f0" },
         ]}
       >
-        <MaterialIcons name="chevron-left" size={21} color="#334155" />
+        <MaterialIcons name={iconPrevious} size={21} color="#334155" />
       </Pressable>
 
-      <View style={{ minWidth: isCompact ? 24 : 34 }}>
+      <View style={{ minWidth: isCompact ? 24 : 32 }}>
         {!isCompact ? (
           <Text
             numberOfLines={1}
@@ -1699,7 +1755,7 @@ function TimelineHeaderScaleControl({
               textTransform: "uppercase",
             }}
           >
-            Scale
+            {title}
           </Text>
         ) : null}
 
@@ -1721,7 +1777,7 @@ function TimelineHeaderScaleControl({
 
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Next timeline scale"
+        accessibilityLabel={`Increase timeline ${title.toLowerCase()}`}
         onPress={onNext}
         style={({ pressed }) => [
           {
@@ -1734,7 +1790,7 @@ function TimelineHeaderScaleControl({
           pressed && { backgroundColor: "#e2e8f0" },
         ]}
       >
-        <MaterialIcons name="chevron-right" size={21} color="#334155" />
+        <MaterialIcons name={iconNext} size={21} color="#334155" />
       </Pressable>
     </View>
   );

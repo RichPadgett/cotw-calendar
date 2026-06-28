@@ -1181,7 +1181,12 @@ type HistoryTimelineViewProps = {
     id: number;
     direction: -1 | 1;
   };
+  timelineLaneHeightStepRequest: {
+    id: number;
+    direction: -1 | 1;
+  };
   onTimelineZoomChange: (zoomId: TimelineZoomId) => void;
+  onTimelineLaneHeightLabelChange: (label: string) => void;
   onSelectedOccurrenceChange: (occurrence: TimelineOccurrence | null) => void;
   onSavingChange: (isSaving: boolean) => void;
 };
@@ -1202,7 +1207,9 @@ export default function HistoryTimelineView({
   appScrollY,
   timelineZoom,
   timelineScaleStepRequest,
+  timelineLaneHeightStepRequest,
   onTimelineZoomChange,
+  onTimelineLaneHeightLabelChange,
   onSelectedOccurrenceChange,
   onSavingChange,
 }: HistoryTimelineViewProps) {
@@ -1225,7 +1232,6 @@ export default function HistoryTimelineView({
     effectiveTimelineViewportWidth,
     timelineZoom
   );
-  const currentTimelineZoom = getTimelineZoomConfig(timelineZoom);
   const timelineLaneHeight =
     TIMELINE_LANE_HEIGHTS[laneHeightIndex] ?? BASE_LANE_HEIGHT;
   const timelineTrackHeight = timelineLaneHeight * TIMELINE_LANE_COUNT;
@@ -1247,9 +1253,6 @@ export default function HistoryTimelineView({
           zIndex: 45,
         } as const)
       : null;
-  const canDecreaseLaneHeight = laneHeightIndex > 0;
-  const canIncreaseLaneHeight =
-    laneHeightIndex < TIMELINE_LANE_HEIGHTS.length - 1;
   const timelineScrollRef = useRef<ScrollView>(null);
   const timelineSettingsStorageKey = `${TIMELINE_SETTINGS_STORAGE_KEY_PREFIX}:${groupCode || "default"}:${userRole}`;
   const canManageTimeline =
@@ -1377,6 +1380,12 @@ export default function HistoryTimelineView({
   }, [isSavingTimeline, onSavingChange]);
 
   useEffect(() => {
+    onTimelineLaneHeightLabelChange(
+      `${laneHeightIndex + 1}/${TIMELINE_LANE_HEIGHTS.length}`
+    );
+  }, [laneHeightIndex, onTimelineLaneHeightLabelChange]);
+
+  useEffect(() => {
     let isMounted = true;
 
     async function loadTimelineSettings() {
@@ -1440,6 +1449,15 @@ export default function HistoryTimelineView({
       getSteppedTimelineZoomId(timelineZoom, timelineScaleStepRequest.direction)
     );
   }, [timelineScaleStepRequest.id, timelineScaleStepRequest.direction]);
+
+  useEffect(() => {
+    if (timelineLaneHeightStepRequest.id === 0) return;
+
+    stepLaneHeight(timelineLaneHeightStepRequest.direction);
+  }, [
+    timelineLaneHeightStepRequest.id,
+    timelineLaneHeightStepRequest.direction,
+  ]);
 
   useEffect(() => {
     if (!canShowHoverPreview) {
@@ -1638,10 +1656,6 @@ export default function HistoryTimelineView({
         animated: false,
       });
     }, 0);
-  }
-
-  function stepTimelineZoom(direction: -1 | 1) {
-    handleTimelineZoomChange(getSteppedTimelineZoomId(timelineZoom, direction));
   }
 
   function stepLaneHeight(direction: -1 | 1) {
@@ -1938,115 +1952,6 @@ export default function HistoryTimelineView({
 
   return (
     <View style={styles.container} onLayout={handleTimelineLayout}>
-      <View
-        style={[
-          styles.timelineToolbar,
-          isCompactTimeline ? styles.timelineToolbarCompact : null,
-        ]}
-      >
-        {!isCompactTimeline ? (
-          <>
-            <Text style={styles.toolbarLabel}>Scale</Text>
-            <View style={styles.scaleStepper}>
-              <Pressable
-                onPress={() => stepTimelineZoom(-1)}
-                accessibilityRole="button"
-                accessibilityLabel="Previous timeline scale"
-                style={({ pressed }) => [
-                  styles.scaleStepperButton,
-                  pressed ? styles.scaleStepperButtonPressed : null,
-                ]}
-              >
-                <MaterialIcons name="chevron-left" size={22} color="#334155" />
-              </Pressable>
-
-              <Text numberOfLines={1} style={styles.scaleStepperLabel}>
-                {currentTimelineZoom.label}
-              </Text>
-
-              <Pressable
-                onPress={() => stepTimelineZoom(1)}
-                accessibilityRole="button"
-                accessibilityLabel="Next timeline scale"
-                style={({ pressed }) => [
-                  styles.scaleStepperButton,
-                  pressed ? styles.scaleStepperButtonPressed : null,
-                ]}
-              >
-                <MaterialIcons name="chevron-right" size={22} color="#334155" />
-              </Pressable>
-            </View>
-          </>
-        ) : null}
-
-        <Text
-          style={[
-            styles.toolbarLabel,
-            isCompactTimeline ? styles.toolbarLabelCompact : null,
-          ]}
-        >
-          Height
-        </Text>
-        <View
-          style={[
-            styles.heightStepper,
-            isCompactTimeline ? styles.stepperCompact : null,
-          ]}
-        >
-          <Pressable
-            onPress={() => stepLaneHeight(-1)}
-            disabled={!canDecreaseLaneHeight}
-            accessibilityRole="button"
-            accessibilityLabel="Decrease timeline bar height"
-            style={({ pressed }) => [
-              styles.scaleStepperButton,
-              isCompactTimeline ? styles.scaleStepperButtonCompact : null,
-              !canDecreaseLaneHeight ? styles.stepperButtonDisabled : null,
-              pressed && canDecreaseLaneHeight
-                ? styles.scaleStepperButtonPressed
-                : null,
-            ]}
-          >
-            <MaterialIcons
-              name="keyboard-arrow-down"
-              size={isCompactTimeline ? 18 : 22}
-              color="#334155"
-            />
-          </Pressable>
-
-          <Text
-            numberOfLines={1}
-            style={[
-              styles.heightStepperLabel,
-              isCompactTimeline ? styles.heightStepperLabelCompact : null,
-            ]}
-          >
-            {`${laneHeightIndex + 1}/${TIMELINE_LANE_HEIGHTS.length}`}
-          </Text>
-
-          <Pressable
-            onPress={() => stepLaneHeight(1)}
-            disabled={!canIncreaseLaneHeight}
-            accessibilityRole="button"
-            accessibilityLabel="Increase timeline bar height"
-            style={({ pressed }) => [
-              styles.scaleStepperButton,
-              isCompactTimeline ? styles.scaleStepperButtonCompact : null,
-              !canIncreaseLaneHeight ? styles.stepperButtonDisabled : null,
-              pressed && canIncreaseLaneHeight
-                ? styles.scaleStepperButtonPressed
-                : null,
-            ]}
-          >
-            <MaterialIcons
-              name="keyboard-arrow-up"
-              size={isCompactTimeline ? 18 : 22}
-              color="#334155"
-            />
-          </Pressable>
-        </View>
-      </View>
-
       <View style={styles.timelineOverview}>
         <View style={styles.timelineOverviewHeader}>
           <Text style={styles.timelineOverviewTitle}>Overview</Text>
@@ -2746,87 +2651,6 @@ const styles = StyleSheet.create({
     borderColor: "#e5e7eb",
     borderRadius: 20,
     backgroundColor: "#f9fafb",
-  },
-  timelineToolbar: {
-    marginBottom: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-end",
-    gap: 10,
-  },
-  timelineToolbarCompact: {
-    justifyContent: "flex-start",
-    flexWrap: "wrap",
-    gap: 6,
-  },
-  toolbarLabel: {
-    fontSize: 12,
-    fontWeight: "900",
-    color: "#4b5563",
-    textTransform: "uppercase",
-  },
-  toolbarLabelCompact: {
-    fontSize: 10,
-  },
-  scaleStepper: {
-    minHeight: 42,
-    borderRadius: 8,
-    backgroundColor: "#e5e7eb",
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 3,
-  },
-  stepperCompact: {
-    minHeight: 32,
-    borderRadius: 7,
-    padding: 2,
-  },
-  scaleStepperButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 6,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  scaleStepperButtonCompact: {
-    width: 28,
-    height: 28,
-    borderRadius: 5,
-  },
-  scaleStepperButtonPressed: {
-    backgroundColor: "#d1d5db",
-  },
-  scaleStepperLabel: {
-    minWidth: 42,
-    paddingHorizontal: 6,
-    fontSize: 13,
-    fontWeight: "900",
-    color: "#081a33",
-    textAlign: "center",
-  },
-  heightStepper: {
-    minHeight: 42,
-    borderRadius: 8,
-    backgroundColor: "#e5e7eb",
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 3,
-  },
-  heightStepperLabel: {
-    minWidth: 34,
-    paddingHorizontal: 6,
-    fontSize: 12,
-    fontWeight: "900",
-    color: "#081a33",
-    textAlign: "center",
-  },
-  heightStepperLabelCompact: {
-    minWidth: 28,
-    paddingHorizontal: 4,
-    fontSize: 11,
-  },
-  stepperButtonDisabled: {
-    opacity: 0.38,
   },
   timelineOverview: {
     marginBottom: 10,
