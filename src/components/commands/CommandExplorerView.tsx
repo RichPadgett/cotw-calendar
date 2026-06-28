@@ -63,7 +63,15 @@ export type CommandNavigationState = {
   goNext: () => void;
 };
 
-export type BibleVersion = "KJV" | "NKJV" | "NLT" | "NIV" | "ESV" | "CSB" | "YLT" | "BES";
+export type BibleVersion =
+  | "KJV"
+  | "NKJV"
+  | "NLT"
+  | "NIV"
+  | "ESV"
+  | "CSB"
+  | "YLT"
+  | "BES";
 
 type SourceTerm = {
   language: string;
@@ -225,6 +233,7 @@ export default function CommandExplorerView({
   >([]);
   const [voteIndex, setVoteIndex] = useState(0);
   const [isVoteTasksOpen, setIsVoteTasksOpen] = useState(false);
+  const [isCommunityReviewOpen, setIsCommunityReviewOpen] = useState(false);
   const [voteDraft, setVoteDraft] = useState<{
     contribution: PendingContribution;
     type: "support" | "concern";
@@ -292,12 +301,7 @@ export default function CommandExplorerView({
       .map((group) => ({
         ...group,
         commands: group.commands.filter((item) =>
-          [
-            item.title,
-            item.key,
-            group.key,
-            ...(item.categories ?? []),
-          ]
+          [item.title, item.key, group.key, ...(item.categories ?? [])]
             .join(" ")
             .toLowerCase()
             .includes(normalizedSearch)
@@ -307,7 +311,8 @@ export default function CommandExplorerView({
   }, [categoryGroups, normalizedSearch]);
 
   const commandCount = useMemo(
-    () => categoryGroups.reduce((total, group) => total + group.commands.length, 0),
+    () =>
+      categoryGroups.reduce((total, group) => total + group.commands.length, 0),
     [categoryGroups]
   );
   const usesSplitPane = width >= 680;
@@ -395,8 +400,8 @@ export default function CommandExplorerView({
         savedCommandGroup
           ? { [savedCommandGroup.key]: true }
           : firstGroup
-          ? { [firstGroup.key]: true }
-          : {}
+            ? { [firstGroup.key]: true }
+            : {}
       );
 
       if (savedCommandKey && savedCommandGroup) {
@@ -559,7 +564,10 @@ export default function CommandExplorerView({
   async function selectCommand(
     commandKey: string,
     categoryKey?: string,
-    options: { centerOnMobile?: boolean; preloadedCommand?: CommandResource } = {}
+    options: {
+      centerOnMobile?: boolean;
+      preloadedCommand?: CommandResource;
+    } = {}
   ) {
     try {
       setSelectedCommandKey(commandKey);
@@ -608,7 +616,9 @@ export default function CommandExplorerView({
       setErrorMessage(null);
 
       const response = await commandFetch(
-        apiUrl("/command-resources/random?facts=reminder_eligible,scripture_backed")
+        apiUrl(
+          "/command-resources/random?facts=reminder_eligible,scripture_backed"
+        )
       );
 
       if (!response.ok) {
@@ -750,8 +760,7 @@ export default function CommandExplorerView({
       mode: params.mode,
       type: params.type,
       title: params.title,
-      text:
-        params.mode === "suggest_edit" ? params.currentText ?? "" : "",
+      text: params.mode === "suggest_edit" ? (params.currentText ?? "") : "",
       reason: "",
       target:
         params.mode === "add"
@@ -811,10 +820,10 @@ export default function CommandExplorerView({
             type: contributionDraft.type,
             text:
               contributionDraft.mode === "suggest_remove"
-                ? contributionDraft.target?.currentText ?? "Suggested removal"
+                ? (contributionDraft.target?.currentText ?? "Suggested removal")
                 : contributionDraft.mode === "suggest_edit"
-                ? contributionDraft.target?.currentText ?? text
-                : text,
+                  ? (contributionDraft.target?.currentText ?? text)
+                  : text,
             suggestedText:
               contributionDraft.mode === "suggest_edit" ? text : undefined,
             reason: reason || undefined,
@@ -828,8 +837,7 @@ export default function CommandExplorerView({
         throw new Error("Contribution could not be submitted.");
       }
 
-      const data: { contribution: PendingContribution } =
-        await response.json();
+      const data: { contribution: PendingContribution } = await response.json();
       setPendingContributions((current) => [data.contribution, ...current]);
       setVoteContributions((current) => [data.contribution, ...current]);
       setContributionDraft(null);
@@ -896,7 +904,9 @@ export default function CommandExplorerView({
     }
   }
 
-  function updateContributionEverywhere(updatedContribution: PendingContribution) {
+  function updateContributionEverywhere(
+    updatedContribution: PendingContribution
+  ) {
     setPendingContributions((current) =>
       current.map((item) =>
         item.id === updatedContribution.id ? updatedContribution : item
@@ -954,8 +964,7 @@ export default function CommandExplorerView({
         throw new Error("Vote could not be submitted.");
       }
 
-      const data: { contribution: PendingContribution } =
-        await response.json();
+      const data: { contribution: PendingContribution } = await response.json();
       updateContributionEverywhere(data.contribution);
       setVoteDraft(null);
       setVoteMessage("Vote saved.");
@@ -998,8 +1007,7 @@ export default function CommandExplorerView({
         throw new Error("Concern could not be resolved.");
       }
 
-      const data: { contribution: PendingContribution } =
-        await response.json();
+      const data: { contribution: PendingContribution } = await response.json();
       updateContributionEverywhere(data.contribution);
       setVoteMessage("Concern resolved.");
     } catch (error) {
@@ -1026,7 +1034,8 @@ export default function CommandExplorerView({
             Authorization: `Bearer ${adminToken}`,
           },
           body: JSON.stringify({
-            updatedBy: normalizeContributorUsername(contributorUsername) || "admin",
+            updatedBy:
+              normalizeContributorUsername(contributorUsername) || "admin",
           }),
         }
       );
@@ -1103,7 +1112,10 @@ export default function CommandExplorerView({
       );
       setContributionMessage("Contribution promoted to Prolog.");
 
-      if (promotedContribution && promotedContribution.commandKey === command?.key) {
+      if (
+        promotedContribution &&
+        promotedContribution.commandKey === command?.key
+      ) {
         await selectCommand(promotedContribution.commandKey);
       }
     } catch (error) {
@@ -1117,16 +1129,26 @@ export default function CommandExplorerView({
     ? pendingContributions.filter((item) => item.commandKey === command.key)
     : [];
   const reviewContribution = canModerateContributions
-    ? pendingContributions[reviewIndex] ?? null
+    ? (pendingContributions[reviewIndex] ?? null)
     : null;
   const voteContribution = voteContributions[voteIndex] ?? null;
-  const renderCommandStudyContent = () => {
-    if (!command) {
-      return <Text style={styles.mutedText}>Select a command.</Text>;
-    }
+  const activeVoteConcernCount = voteContributions.reduce(
+    (total, contribution) =>
+      total + getContributionVoteCounts(contribution).concern,
+    0
+  );
+  const renderCommunityReviewTools = () => {
+    if (!canContribute && !canModerateContributions) return null;
 
     return (
-      <View style={{ gap: 16 }}>
+      <CommunityReviewSection
+        isOpen={isCommunityReviewOpen}
+        voteCount={voteContributions.length}
+        reviewCount={canModerateContributions ? pendingContributions.length : 0}
+        concernCount={activeVoteConcernCount}
+        canModerate={canModerateContributions}
+        onToggle={() => setIsCommunityReviewOpen((value) => !value)}
+      >
         {canContribute ? (
           <VoteTasksPanel
             isOpen={isVoteTasksOpen}
@@ -1139,7 +1161,9 @@ export default function CommandExplorerView({
             voteDraft={voteDraft}
             isSubmittingVote={isSubmittingVote}
             onToggle={() => setIsVoteTasksOpen((value) => !value)}
-            onPrevious={() => setVoteIndex((current) => Math.max(0, current - 1))}
+            onPrevious={() =>
+              setVoteIndex((current) => Math.max(0, current - 1))
+            }
             onNext={() =>
               setVoteIndex((current) =>
                 Math.min(voteContributions.length - 1, current + 1)
@@ -1185,7 +1209,16 @@ export default function CommandExplorerView({
             onResolveConcern={resolveContributionConcern}
           />
         ) : null}
+      </CommunityReviewSection>
+    );
+  };
+  const renderCommandStudyContent = () => {
+    if (!command) {
+      return <Text style={styles.mutedText}>Select a command.</Text>;
+    }
 
+    return (
+      <View style={{ gap: 16 }}>
         <CommandDetail
           command={command}
           bibleVersion={bibleVersion}
@@ -1201,6 +1234,8 @@ export default function CommandExplorerView({
           onSubmitContribution={submitContribution}
           onWithdrawContribution={withdrawContribution}
         />
+
+        {renderCommunityReviewTools()}
       </View>
     );
   };
@@ -1310,7 +1345,6 @@ export default function CommandExplorerView({
             )}
           </PaneScroll>
         </View>
-
       </View>
     </View>
   );
@@ -1679,7 +1713,10 @@ function SourceTermList({
       ) : null}
 
       {items.map((item, index) => (
-        <View key={`${item.language}-${item.term}-${index}`} style={styles.termRow}>
+        <View
+          key={`${item.language}-${item.term}-${index}`}
+          style={styles.termRow}
+        >
           <Text style={styles.termTitle}>
             {formatKey(item.language)} - {item.term}
           </Text>
@@ -1966,9 +2003,7 @@ function DetailList({
         <SectionTitle title={title} />
       )}
 
-      {helpText ? (
-        <Text style={styles.sectionHelpText}>{helpText}</Text>
-      ) : null}
+      {helpText ? <Text style={styles.sectionHelpText}>{helpText}</Text> : null}
 
       {items.length === 0 ? (
         <Text style={styles.mutedText}>{emptyText}</Text>
@@ -2121,12 +2156,15 @@ function VoteTasksPanel({
       {isOpen ? (
         <View style={styles.voteTasksBody}>
           {!contribution ? (
-            <Text style={styles.mutedText}>No pending suggestions to vote on.</Text>
+            <Text style={styles.mutedText}>
+              No pending suggestions to vote on.
+            </Text>
           ) : (
             <>
               <View style={styles.adminReviewHeader}>
                 <Text style={styles.adminReviewMeta}>
-                  {currentIndex + 1} of {totalCount} - {formatKey(contribution.commandKey)}
+                  {currentIndex + 1} of {totalCount} -{" "}
+                  {formatKey(contribution.commandKey)}
                 </Text>
 
                 <View style={styles.adminReviewStepControls}>
@@ -2179,7 +2217,9 @@ function VoteTasksPanel({
                     pressed && { opacity: 0.78 },
                   ]}
                 >
-                  <Text style={styles.adminReviewSecondaryText}>Open Command</Text>
+                  <Text style={styles.adminReviewSecondaryText}>
+                    Open Command
+                  </Text>
                 </Pressable>
 
                 <Pressable
@@ -2205,7 +2245,9 @@ function VoteTasksPanel({
             </>
           )}
 
-          {message ? <Text style={styles.contributionMessage}>{message}</Text> : null}
+          {message ? (
+            <Text style={styles.contributionMessage}>{message}</Text>
+          ) : null}
         </View>
       ) : null}
 
@@ -2216,6 +2258,73 @@ function VoteTasksPanel({
         onClose={onCloseVote}
         onSubmit={onSubmitVote}
       />
+    </View>
+  );
+}
+
+function CommunityReviewSection({
+  children,
+  isOpen,
+  voteCount,
+  reviewCount,
+  concernCount,
+  canModerate,
+  onToggle,
+}: {
+  children: ReactNode;
+  isOpen: boolean;
+  voteCount: number;
+  reviewCount: number;
+  concernCount: number;
+  canModerate: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <View style={styles.communityReviewSection}>
+      <Pressable
+        onPress={onToggle}
+        accessibilityRole="button"
+        accessibilityLabel={
+          isOpen ? "Hide community review tools" : "Show community review tools"
+        }
+        style={({ pressed }) => [
+          styles.communityReviewHeader,
+          pressed && { opacity: 0.78 },
+        ]}
+      >
+        <View style={styles.communityReviewTitleGroup}>
+          <Text style={styles.communityReviewEyebrow}>Community Review</Text>
+          <Text style={styles.communityReviewTitle}>
+            Voting and pending suggestions
+          </Text>
+        </View>
+
+        <View style={styles.communityReviewSummary}>
+          <Text style={styles.communityReviewSummaryPill}>
+            Vote {Math.min(voteCount, 99)}
+          </Text>
+          {canModerate ? (
+            <Text style={styles.communityReviewSummaryPill}>
+              Review {Math.min(reviewCount, 99)}
+            </Text>
+          ) : null}
+          {concernCount > 0 ? (
+            <Text
+              style={[
+                styles.communityReviewSummaryPill,
+                styles.communityReviewConcernPill,
+              ]}
+            >
+              !{Math.min(concernCount, 99)}
+            </Text>
+          ) : null}
+          <Text style={styles.communityReviewToggle}>{isOpen ? "-" : "+"}</Text>
+        </View>
+      </Pressable>
+
+      {isOpen ? (
+        <View style={styles.communityReviewBody}>{children}</View>
+      ) : null}
     </View>
   );
 }
@@ -2251,7 +2360,8 @@ function AdminReviewPanel({
     createEmptyPromotionDraft()
   );
   const isRemovalSuggestion = contribution?.mode === "suggest_remove";
-  const unresolvedConcernCount = getContributionVoteCounts(contribution).concern;
+  const unresolvedConcernCount =
+    getContributionVoteCounts(contribution).concern;
 
   useEffect(() => {
     setDraft(createPromotionDraft(contribution));
@@ -2282,7 +2392,8 @@ function AdminReviewPanel({
             onChangeReviewMode={onChangeReviewMode}
           />
           <Text style={styles.adminReviewMeta}>
-            {currentIndex + 1} of {totalCount} - {formatKey(contribution.commandKey)}
+            {currentIndex + 1} of {totalCount} -{" "}
+            {formatKey(contribution.commandKey)}
           </Text>
         </View>
 
@@ -2431,7 +2542,8 @@ function ContributionReviewCard({
     <View style={styles.adminReviewBody}>
       <Text style={styles.pendingContributionBadge}>Under review</Text>
       <Text style={styles.pendingContributionTitle}>
-        {formatContributionMode(contribution.mode)} - {formatKey(contribution.type)}
+        {formatContributionMode(contribution.mode)} -{" "}
+        {formatKey(contribution.type)}
       </Text>
       {contribution.createdBy ? (
         <Text style={styles.pendingContributionByline}>
@@ -2666,7 +2778,9 @@ function PromotionForm({
   if (contribution.type === "story_reference") {
     return (
       <View style={styles.promotionForm}>
-        <Text style={styles.promotionFormTitle}>Official Scripture Example</Text>
+        <Text style={styles.promotionFormTitle}>
+          Official Scripture Example
+        </Text>
         <TextInput
           value={draft.reference}
           onChangeText={(reference) => onChange({ ...draft, reference })}
@@ -2784,8 +2898,8 @@ function ContributionForm({
     draft.mode === "add"
       ? `Add ${draft.title}`
       : draft.mode === "suggest_edit"
-      ? `Suggest Edit - ${draft.title}`
-      : `Suggest Remove - ${draft.title}`;
+        ? `Suggest Edit - ${draft.title}`
+        : `Suggest Remove - ${draft.title}`;
   const guidance = getContributionTypeGuidance(draft.type);
 
   return (
@@ -2810,8 +2924,8 @@ function ContributionForm({
             draft.type === "story_reference"
               ? "Reference: short label"
               : draft.mode === "add"
-              ? "Add the new information"
-              : "Enter the suggested wording"
+                ? "Add the new information"
+                : "Enter the suggested wording"
           }
           placeholderTextColor="#94a3b8"
           multiline
@@ -3360,6 +3474,83 @@ const styles = {
     backgroundColor: "#fefce8",
     borderWidth: 1,
     borderColor: "#fde68a",
+  },
+  communityReviewSection: {
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#cbd5e1",
+    backgroundColor: "#f8fafc",
+    overflow: "hidden" as const,
+  },
+  communityReviewHeader: {
+    minHeight: 58,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "space-between" as const,
+    gap: 10,
+    backgroundColor: "#eef2f7",
+  },
+  communityReviewTitleGroup: {
+    flex: 1,
+    minWidth: 0,
+  },
+  communityReviewEyebrow: {
+    fontSize: 10,
+    lineHeight: 13,
+    fontWeight: "900" as const,
+    color: "#64748b",
+    textTransform: "uppercase" as const,
+  },
+  communityReviewTitle: {
+    marginTop: 1,
+    fontSize: 14,
+    lineHeight: 18,
+    fontWeight: "900" as const,
+    color: "#1e293b",
+  },
+  communityReviewSummary: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    flexWrap: "wrap" as const,
+    justifyContent: "flex-end" as const,
+    gap: 6,
+  },
+  communityReviewSummaryPill: {
+    minWidth: 44,
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 999,
+    overflow: "hidden" as const,
+    backgroundColor: "#ffffff",
+    borderWidth: 1,
+    borderColor: "#cbd5e1",
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: "900" as const,
+    color: "#334155",
+    textAlign: "center" as const,
+  },
+  communityReviewConcernPill: {
+    borderColor: "#f59e0b",
+    backgroundColor: "#fffbeb",
+    color: "#b45309",
+  },
+  communityReviewToggle: {
+    minWidth: 20,
+    textAlign: "center" as const,
+    fontSize: 18,
+    lineHeight: 22,
+    fontWeight: "900" as const,
+    color: "#334155",
+  },
+  communityReviewBody: {
+    gap: 12,
+    padding: 12,
+    borderTopWidth: 1,
+    borderTopColor: "#cbd5e1",
+    backgroundColor: "#ffffff",
   },
   adminReviewPanel: {
     gap: 10,
