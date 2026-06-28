@@ -425,7 +425,14 @@ function getAxisYearTickRule(
   if (zoomId === "years-50") return { majorInterval: 50, minorInterval: 10 };
   if (zoomId === "years-25") return { majorInterval: 25, minorInterval: 5 };
   if (zoomId === "years-5") return { majorInterval: 5, minorInterval: 1 };
-  if (zoomId === "years-1") return { majorInterval: 5, minorInterval: 1 };
+  if (
+    zoomId === "years-1" ||
+    zoomId === "half-years" ||
+    zoomId === "months" ||
+    zoomId === "days"
+  ) {
+    return { majorInterval: 1, minorInterval: 0.25 };
+  }
 
   if (visibleYearSpan > 2500) {
     return { majorInterval: 2000, minorInterval: 500 };
@@ -459,241 +466,33 @@ function getVisibleTimelineAxisTicks(params: {
   );
   const visibleYearSpan = Math.max(1, visibleEnd - visibleStart);
   const ticks: TimelineAxisTick[] = [];
-  const timelinePixelsPerYear =
-    (params.contentWidth - TIMELINE_SIDE_GUTTER * 2) /
-    (HISTORY_TIMELINE_RANGE.endYear - HISTORY_TIMELINE_RANGE.startYear);
-  const monthPixelSpacing = timelinePixelsPerYear / 12;
-  const weekPixelSpacing = timelinePixelsPerYear / 52;
-  const dayPixelSpacing = timelinePixelsPerYear / ENOCH_YEAR_DAYS;
-
-  if (
-    params.zoomId === "years-10000" ||
-    params.zoomId === "years-5000" ||
-    params.zoomId === "millennia" ||
-    params.zoomId === "years-500" ||
-    params.zoomId === "years-250" ||
-    params.zoomId === "years-100" ||
-    params.zoomId === "years-50" ||
-    params.zoomId === "years-25" ||
-    params.zoomId === "years-5"
-  ) {
-    const tickRule = getAxisYearTickRule(params.zoomId, visibleYearSpan);
-    const firstMajorIntervalStart =
-      Math.floor(visibleStart / tickRule.majorInterval) *
-      tickRule.majorInterval;
-
-    for (
-      let intervalStart = firstMajorIntervalStart;
-      intervalStart <= visibleEnd && ticks.length < 220;
-      intervalStart += tickRule.majorInterval
-    ) {
-      if (
-        intervalStart >= visibleStart &&
-        intervalStart >= HISTORY_TIMELINE_RANGE.startYear
-      ) {
-        ticks.push({
-          key: `year-${intervalStart}`,
-          label: `Year ${intervalStart}`,
-          x: getTimelineValuePosition(intervalStart, params.contentWidth),
-          major: true,
-        });
-      }
-
-      const intervalEnd = intervalStart + tickRule.majorInterval;
-
-      for (
-        let year = intervalStart + tickRule.minorInterval / 2;
-        year < intervalEnd && ticks.length < 220;
-        year += tickRule.minorInterval
-      ) {
-        if (
-          year < visibleStart ||
-          year > visibleEnd ||
-          year < HISTORY_TIMELINE_RANGE.startYear
-        ) {
-          continue;
-        }
-
-        ticks.push({
-          key: `year-${year}-minor`,
-          x: getTimelineValuePosition(year, params.contentWidth),
-          major: false,
-        });
-      }
-    }
-
-    return ticks.sort((left, right) => left.x - right.x);
-  }
-
-  const firstVisibleYear = Math.max(
-    HISTORY_TIMELINE_RANGE.startYear,
-    Math.floor(visibleStart)
-  );
-  const lastVisibleYear = Math.min(
-    HISTORY_TIMELINE_RANGE.endYear,
-    Math.ceil(visibleEnd)
-  );
+  const tickRule = getAxisYearTickRule(params.zoomId, visibleYearSpan);
+  const firstTickValue =
+    Math.ceil(visibleStart / tickRule.minorInterval) * tickRule.minorInterval;
 
   for (
-    let year = firstVisibleYear;
-    year <= lastVisibleYear && ticks.length < 220;
-    year += 1
+    let tickValue = Math.max(HISTORY_TIMELINE_RANGE.startYear, firstTickValue);
+    tickValue <= visibleEnd && ticks.length < 220;
+    tickValue += tickRule.minorInterval
   ) {
-    const addTick = (
-      key: string,
-      label: string | undefined,
-      x: number,
-      major: boolean
-    ) => {
-      if (ticks.length >= 280) return;
+    const normalizedTickValue = Number(tickValue.toFixed(4));
+    const major =
+      Math.abs(
+        normalizedTickValue / tickRule.majorInterval -
+          Math.round(normalizedTickValue / tickRule.majorInterval)
+      ) < 0.0001;
 
-      ticks.push({
-        key,
-        label,
-        x,
-        major,
-      });
-    };
-
-    addTick(
-      `year-${year}`,
-      `Year ${year}`,
-      getTimelineValuePosition(year, params.contentWidth),
-      true
-    );
-
-    if (params.zoomId === "years-1") {
-      const monthStep = monthPixelSpacing >= 10 ? 1 : 3;
-
-      for (let month = 1 + monthStep; month <= 12; month += monthStep) {
-        addTick(
-          `year-${year}-month-${month}`,
-          undefined,
-          getEnochYearPosition(
-            { enochYear: year, month, day: 1 },
-            params.contentWidth
-          ),
-          false
-        );
-      }
-    }
-
-    if (params.zoomId === "half-years") {
-      const monthStep = monthPixelSpacing >= 10 ? 1 : 3;
-
-      for (let month = 1 + monthStep; month <= 12; month += monthStep) {
-        const isHalfYear = month === 7;
-
-        addTick(
-          `year-${year}-month-${month}`,
-          isHalfYear && visibleYearSpan <= 6 ? "M7" : undefined,
-          getEnochYearPosition(
-            { enochYear: year, month, day: 1 },
-            params.contentWidth
-          ),
-          isHalfYear
-        );
-      }
-    }
-
-    if (params.zoomId === "months") {
-      for (let month = 1; month <= 12; month += 1) {
-        const label =
-          month === 1
-            ? `Year ${year}`
-            : visibleYearSpan <= 1.5 ||
-                month === 4 ||
-                month === 7 ||
-                month === 10
-              ? `M${month}`
-              : undefined;
-
-        if (month > 1) {
-          addTick(
-            `year-${year}-month-${month}`,
-            label,
-            getEnochYearPosition(
-              { enochYear: year, month, day: 1 },
-              params.contentWidth
-            ),
-            true
-          );
-        }
-
-        if (weekPixelSpacing >= 8) {
-          for (const day of [8, 15, 22, 29]) {
-            addTick(
-              `year-${year}-month-${month}-week-${day}`,
-              undefined,
-              getEnochYearPosition(
-                { enochYear: year, month, day },
-                params.contentWidth
-              ),
-              false
-            );
-          }
-        }
-      }
-    }
-
-    if (params.zoomId === "days") {
-      for (let month = 1; month <= 12; month += 1) {
-        const label =
-          month === 1
-            ? `Year ${year}`
-            : visibleYearSpan <= 0.75 ||
-                month === 4 ||
-                month === 7 ||
-                month === 10
-              ? `M${month}`
-              : undefined;
-
-        if (month > 1) {
-          addTick(
-            `year-${year}-month-${month}`,
-            label,
-            getEnochYearPosition(
-              { enochYear: year, month, day: 1 },
-              params.contentWidth
-            ),
-            true
-          );
-        }
-
-        if (weekPixelSpacing >= 8) {
-          for (const day of [8, 15, 22, 29]) {
-            addTick(
-              `year-${year}-month-${month}-week-${day}`,
-              undefined,
-              getEnochYearPosition(
-                { enochYear: year, month, day },
-                params.contentWidth
-              ),
-              false
-            );
-          }
-        }
-
-        if (dayPixelSpacing >= 5) {
-          for (let day = 2; day <= 30; day += 1) {
-            if (day === 8 || day === 15 || day === 22 || day === 29) continue;
-
-            addTick(
-              `year-${year}-month-${month}-day-${day}`,
-              undefined,
-              getEnochYearPosition(
-                { enochYear: year, month, day },
-                params.contentWidth
-              ),
-              false
-            );
-          }
-        }
-      }
-    }
+    ticks.push({
+      key: major
+        ? `year-${normalizedTickValue}`
+        : `year-${normalizedTickValue}-minor`,
+      label: major ? `Year ${Math.round(normalizedTickValue)}` : undefined,
+      x: getTimelineValuePosition(normalizedTickValue, params.contentWidth),
+      major,
+    });
   }
 
-  return ticks.sort((left, right) => left.x - right.x);
+  return ticks;
 }
 
 export function formatHistoricalDate(date: HistoricalDate) {
