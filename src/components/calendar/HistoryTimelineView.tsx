@@ -47,7 +47,6 @@ const HOVER_PREVIEW_WIDTH = 320;
 const HOVER_PREVIEW_ESTIMATED_HEIGHT = 132;
 const TIMELINE_HOVER_TAB_SIZE = 18;
 const TIMELINE_SETTINGS_STORAGE_KEY_PREFIX = "historyTimelineSettings";
-const TIMELINE_OVERVIEW_JUMP_INTERVAL = 500;
 const TIMELINE_LANE_OPTIONS = Array.from(
   { length: TIMELINE_LANE_COUNT },
   (_, index) => ({
@@ -202,6 +201,7 @@ type TimelineEntryFormState = {
   color: string;
   level: string;
   lanePart: "top" | "bottom" | "both";
+  showOnQuickTimeline: boolean;
   exactEnochYear: string;
   exactEnochMonth: string;
   exactEnochDay: string;
@@ -224,6 +224,7 @@ const DEFAULT_FORM_STATE: TimelineEntryFormState = {
   color: "#2563eb",
   level: "0",
   lanePart: "both",
+  showOnQuickTimeline: false,
   exactEnochYear: "",
   exactEnochMonth: "",
   exactEnochDay: "",
@@ -1296,23 +1297,9 @@ export default function HistoryTimelineView({
   );
   const timelineRangeSpan =
     HISTORY_TIMELINE_RANGE.endYear - HISTORY_TIMELINE_RANGE.startYear;
-  const timelineOverviewJumpYears = useMemo(() => {
-    const jumpYears: number[] = [];
-    const firstJumpYear =
-      Math.ceil(
-        HISTORY_TIMELINE_RANGE.startYear / TIMELINE_OVERVIEW_JUMP_INTERVAL
-      ) * TIMELINE_OVERVIEW_JUMP_INTERVAL;
-
-    for (
-      let year = firstJumpYear;
-      year <= HISTORY_TIMELINE_RANGE.endYear;
-      year += TIMELINE_OVERVIEW_JUMP_INTERVAL
-    ) {
-      jumpYears.push(year);
-    }
-
-    return jumpYears;
-  }, []);
+  const quickTimelineOccurrences = visibleOccurrences.filter(
+    (occurrence) => occurrence.showOnQuickTimeline
+  );
   const timelineVisibleStartValue = getTimelineValueFromPosition(
     timelineScrollX,
     contentWidth
@@ -1528,6 +1515,7 @@ export default function HistoryTimelineView({
       color: occurrence.color,
       level: String(clampTimelineLane(occurrence.lane)),
       lanePart: occurrence.lanePart ?? "both",
+      showOnQuickTimeline: Boolean(occurrence.showOnQuickTimeline),
       exactEnochYear: stringifyOptionalNumber(
         occurrence.exactDate?.enochDate.enochYear
       ),
@@ -1599,24 +1587,6 @@ export default function HistoryTimelineView({
 
   function handleTimelineOverviewLayout(event: LayoutChangeEvent) {
     setTimelineOverviewWidth(event.nativeEvent.layout.width);
-  }
-
-  function jumpTimelineToYear(year: number) {
-    const targetX = getTimelineValuePosition(year, contentWidth);
-    const maxScrollX = Math.max(
-      0,
-      contentWidth - effectiveTimelineViewportWidth
-    );
-    const nextScrollX = Math.max(
-      0,
-      Math.min(maxScrollX, targetX - effectiveTimelineViewportWidth / 2)
-    );
-
-    setTimelineScrollX(nextScrollX);
-    timelineScrollRef.current?.scrollTo({
-      x: nextScrollX,
-      animated: true,
-    });
   }
 
   function handleTimelineEntryHoverIn(occurrence: TimelineOccurrence) {
@@ -1699,16 +1669,13 @@ export default function HistoryTimelineView({
     setIsAddModalVisible(true);
   }
 
-  function getOccurrenceCenterX(occurrence: TimelineOccurrence) {
+  function getOccurrenceCenterValue(occurrence: TimelineOccurrence) {
     if (occurrence.exactDate) {
-      return getEnochYearPosition(
-        {
-          enochYear: occurrence.exactDate.enochDate.enochYear,
-          month: occurrence.exactDate.enochDate.month,
-          day: occurrence.exactDate.enochDate.day,
-        },
-        contentWidth
-      );
+      return getEnochTimelineValue({
+        enochYear: occurrence.exactDate.enochDate.enochYear,
+        month: occurrence.exactDate.enochDate.month,
+        day: occurrence.exactDate.enochDate.day,
+      });
     }
 
     if (occurrence.timeRange) {
@@ -1716,24 +1683,25 @@ export default function HistoryTimelineView({
       const rangeEnd = getResolvedRangeEnd(occurrence);
 
       if (rangeEnd) {
-        const left = getEnochYearPosition(
-          {
-            enochYear: start.enochYear,
-            month: start.enochMonth,
-            day: start.enochDay,
-          },
-          contentWidth
-        );
-        const right = getEnochYearPosition(
-          { enochYear: rangeEnd },
-          contentWidth
-        );
+        const startValue = getEnochTimelineValue({
+          enochYear: start.enochYear,
+          month: start.enochMonth,
+          day: start.enochDay,
+        });
 
-        return left + (right - left) / 2;
+        return startValue + (rangeEnd - startValue) / 2;
       }
     }
 
     return null;
+  }
+
+  function getOccurrenceCenterX(occurrence: TimelineOccurrence) {
+    const centerValue = getOccurrenceCenterValue(occurrence);
+
+    return centerValue === null
+      ? null
+      : getTimelineValuePosition(centerValue, contentWidth);
   }
 
   function centerTimelineOnOccurrence(occurrence: TimelineOccurrence) {
@@ -1753,6 +1721,15 @@ export default function HistoryTimelineView({
         animated: true,
       });
     }, 120);
+  }
+
+  function handleQuickTimelineOccurrencePress(occurrence: TimelineOccurrence) {
+    centerTimelineOnOccurrence(occurrence);
+    onSelectedOccurrenceChange(occurrence);
+
+    if (canShowHoverPreview) {
+      setPinnedOccurrence(occurrence);
+    }
   }
 
   function deleteTimelineEntry(occurrenceId: string) {
@@ -1857,6 +1834,7 @@ export default function HistoryTimelineView({
         primary: color,
       },
       showOnTimeline: true,
+      showOnQuickTimeline: formState.showOnQuickTimeline,
       showOnCalendar: false,
     };
 
@@ -2100,35 +2078,42 @@ export default function HistoryTimelineView({
           style={styles.timelineOverviewTrack}
         >
           <View style={styles.timelineOverviewAxis} />
-          {timelineOverviewJumpYears.map((year) => {
-            const jumpLeft = timelineOverviewWidth
+          {quickTimelineOccurrences.map((occurrence) => {
+            const centerValue = getOccurrenceCenterValue(occurrence);
+            if (centerValue === null) return null;
+
+            const markerLeft = timelineOverviewWidth
               ? Math.max(
-                  11,
+                  12,
                   Math.min(
-                    timelineOverviewWidth - 11,
-                    ((year - HISTORY_TIMELINE_RANGE.startYear) /
+                    timelineOverviewWidth - 12,
+                    ((centerValue - HISTORY_TIMELINE_RANGE.startYear) /
                       timelineRangeSpan) *
                       timelineOverviewWidth
                   )
                 )
               : 0;
+            const iconName = occurrence.iconName?.trim() || "arrow-drop-down";
 
             return (
               <Pressable
-                key={`overview-jump-${year}`}
+                key={`overview-quick-${occurrence.id}`}
                 accessibilityRole="button"
-                accessibilityLabel={`Jump timeline to year ${year}`}
-                onPress={() => jumpTimelineToYear(year)}
+                accessibilityLabel={`Jump timeline to ${occurrence.title}`}
+                onPress={() => handleQuickTimelineOccurrencePress(occurrence)}
                 style={({ pressed }) => [
-                  styles.timelineOverviewJumpButton,
-                  { left: jumpLeft },
-                  pressed ? styles.timelineOverviewJumpButtonPressed : null,
+                  styles.timelineOverviewQuickButton,
+                  {
+                    borderColor: getTimelineOccurrenceIconColor(occurrence),
+                    left: markerLeft,
+                  },
+                  pressed ? styles.timelineOverviewQuickButtonPressed : null,
                 ]}
               >
                 <MaterialIcons
-                  name="arrow-drop-down"
-                  size={18}
-                  color="#0f172a"
+                  name={iconName as any}
+                  size={15}
+                  color={getTimelineOccurrenceIconColor(occurrence)}
                 />
               </Pressable>
             );
@@ -2586,6 +2571,13 @@ export default function HistoryTimelineView({
                 value={formState.color}
                 onChangeText={(color) => updateForm({ color })}
               />
+              <SectionToggle
+                label="Show on quick timeline"
+                value={formState.showOnQuickTimeline}
+                onValueChange={(showOnQuickTimeline) =>
+                  updateForm({ showOnQuickTimeline })
+                }
+              />
 
               <View style={styles.formField}>
                 <Text style={styles.formLabel}>Row</Text>
@@ -2907,23 +2899,21 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(8, 26, 51, 0.18)",
     zIndex: 2,
   },
-  timelineOverviewJumpButton: {
+  timelineOverviewQuickButton: {
     position: "absolute",
     top: 0,
-    width: 22,
-    height: 22,
-    borderRadius: 6,
+    width: 24,
+    height: 24,
+    borderRadius: 999,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "rgba(255, 255, 255, 0.72)",
     borderWidth: 1,
-    borderColor: "rgba(100, 116, 139, 0.28)",
-    transform: [{ translateX: -11 }],
+    transform: [{ translateX: -12 }],
     zIndex: 5,
   },
-  timelineOverviewJumpButtonPressed: {
+  timelineOverviewQuickButtonPressed: {
     backgroundColor: "#cbd5e1",
-    borderColor: "#64748b",
   },
   timelineOverviewMarker: {
     position: "absolute",

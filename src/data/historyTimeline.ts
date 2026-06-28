@@ -72,6 +72,7 @@ export type TimelineOccurrence = {
   color: string;
   colorFeature?: TimelineColorFeature;
   showOnTimeline: boolean;
+  showOnQuickTimeline?: boolean;
   showOnCalendar: boolean;
   timeRange?: TimelineTimeRange;
   exactDate?: TimelineExactDate;
