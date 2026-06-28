@@ -5,6 +5,7 @@
 
 import {
   Alert,
+  GestureResponderEvent,
   Modal,
   LayoutChangeEvent,
   NativeScrollEvent,
@@ -1208,6 +1209,7 @@ export default function HistoryTimelineView({
   const [timelineLayoutY, setTimelineLayoutY] = useState(0);
   const [timelineViewportY, setTimelineViewportY] = useState(0);
   const [timelineViewportWidth, setTimelineViewportWidth] = useState(0);
+  const [timelineOverviewWidth, setTimelineOverviewWidth] = useState(0);
   const effectiveTimelineViewportWidth = timelineViewportWidth || width;
   const contentWidth = getTimelineContentWidth(
     effectiveTimelineViewportWidth,
@@ -1291,6 +1293,41 @@ export default function HistoryTimelineView({
       timelineZoom,
     ]
   );
+  const timelineRangeSpan =
+    HISTORY_TIMELINE_RANGE.endYear - HISTORY_TIMELINE_RANGE.startYear;
+  const timelineVisibleStartValue = getTimelineValueFromPosition(
+    timelineScrollX,
+    contentWidth
+  );
+  const timelineVisibleEndValue = getTimelineValueFromPosition(
+    timelineScrollX + effectiveTimelineViewportWidth,
+    contentWidth
+  );
+  const overviewWindowLeft = timelineOverviewWidth
+    ? Math.max(
+        0,
+        Math.min(
+          timelineOverviewWidth,
+          ((timelineVisibleStartValue - HISTORY_TIMELINE_RANGE.startYear) /
+            timelineRangeSpan) *
+            timelineOverviewWidth
+        )
+      )
+    : 0;
+  const overviewWindowWidth = timelineOverviewWidth
+    ? Math.max(
+        12,
+        ((timelineVisibleEndValue - timelineVisibleStartValue) /
+          timelineRangeSpan) *
+          timelineOverviewWidth
+      )
+    : 0;
+  const overviewWindowLeftClamped = timelineOverviewWidth
+    ? Math.min(
+        Math.max(0, timelineOverviewWidth - overviewWindowWidth),
+        overviewWindowLeft
+      )
+    : 0;
 
   useEffect(() => {
     let isMounted = true;
@@ -1540,6 +1577,36 @@ export default function HistoryTimelineView({
   function handleTimelineViewportLayout(event: LayoutChangeEvent) {
     setTimelineViewportY(event.nativeEvent.layout.y);
     setTimelineViewportWidth(event.nativeEvent.layout.width);
+  }
+
+  function handleTimelineOverviewLayout(event: LayoutChangeEvent) {
+    setTimelineOverviewWidth(event.nativeEvent.layout.width);
+  }
+
+  function handleTimelineOverviewPress(event: GestureResponderEvent) {
+    if (!timelineOverviewWidth) return;
+
+    const progress = Math.max(
+      0,
+      Math.min(1, event.nativeEvent.locationX / timelineOverviewWidth)
+    );
+    const targetValue =
+      HISTORY_TIMELINE_RANGE.startYear + progress * timelineRangeSpan;
+    const targetX = getTimelineValuePosition(targetValue, contentWidth);
+    const maxScrollX = Math.max(
+      0,
+      contentWidth - effectiveTimelineViewportWidth
+    );
+    const nextScrollX = Math.max(
+      0,
+      Math.min(maxScrollX, targetX - effectiveTimelineViewportWidth / 2)
+    );
+
+    setTimelineScrollX(nextScrollX);
+    timelineScrollRef.current?.scrollTo({
+      x: nextScrollX,
+      animated: true,
+    });
   }
 
   function handleTimelineEntryHoverIn(occurrence: TimelineOccurrence) {
@@ -2006,6 +2073,46 @@ export default function HistoryTimelineView({
             />
           </Pressable>
         </View>
+      </View>
+
+      <View style={styles.timelineOverview}>
+        <View style={styles.timelineOverviewHeader}>
+          <Text style={styles.timelineOverviewTitle}>Overview</Text>
+          <Text numberOfLines={1} style={styles.timelineOverviewRange}>
+            {`Year ${Math.round(timelineVisibleStartValue)} - Year ${Math.round(
+              timelineVisibleEndValue
+            )}`}
+          </Text>
+        </View>
+
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Quick scroll timeline overview"
+          onLayout={handleTimelineOverviewLayout}
+          onPress={handleTimelineOverviewPress}
+          style={({ pressed }) => [
+            styles.timelineOverviewTrack,
+            pressed ? styles.timelineOverviewTrackPressed : null,
+          ]}
+        >
+          <View style={styles.timelineOverviewAxis} />
+          <View
+            pointerEvents="none"
+            style={[
+              styles.timelineOverviewWindow,
+              {
+                left: overviewWindowLeftClamped,
+                width: overviewWindowWidth,
+              },
+            ]}
+          />
+          <Text style={[styles.timelineOverviewYear, { left: 8 }]}>
+            {HISTORY_TIMELINE_RANGE.startYear}
+          </Text>
+          <Text style={[styles.timelineOverviewYear, { right: 8 }]}>
+            {HISTORY_TIMELINE_RANGE.endYear}
+          </Text>
+        </Pressable>
       </View>
 
       {isCompactTimeline && selectedOccurrence ? (
@@ -2696,6 +2803,67 @@ const styles = StyleSheet.create({
   },
   stepperButtonDisabled: {
     opacity: 0.38,
+  },
+  timelineOverview: {
+    marginBottom: 10,
+    gap: 5,
+  },
+  timelineOverviewHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 8,
+  },
+  timelineOverviewTitle: {
+    fontSize: 11,
+    fontWeight: "900",
+    color: "#475569",
+    textTransform: "uppercase",
+  },
+  timelineOverviewRange: {
+    flex: 1,
+    minWidth: 0,
+    fontSize: 11,
+    fontWeight: "800",
+    color: "#64748b",
+    textAlign: "right",
+  },
+  timelineOverviewTrack: {
+    height: 34,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#cbd5e1",
+    backgroundColor: "#eef2f7",
+    overflow: "hidden",
+    justifyContent: "center",
+  },
+  timelineOverviewTrackPressed: {
+    backgroundColor: "#e2e8f0",
+  },
+  timelineOverviewAxis: {
+    position: "absolute",
+    left: 8,
+    right: 8,
+    height: 2,
+    borderRadius: 999,
+    backgroundColor: "#334155",
+  },
+  timelineOverviewWindow: {
+    position: "absolute",
+    top: 5,
+    bottom: 5,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "#081a33",
+    backgroundColor: "rgba(8, 26, 51, 0.18)",
+  },
+  timelineOverviewYear: {
+    position: "absolute",
+    bottom: 3,
+    fontSize: 9,
+    lineHeight: 11,
+    fontWeight: "900",
+    color: "#64748b",
   },
   scrollContent: {
     paddingVertical: 4,
