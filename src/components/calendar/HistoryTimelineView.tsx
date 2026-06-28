@@ -1227,6 +1227,10 @@ export default function HistoryTimelineView({
   const [selectedOverviewValue, setSelectedOverviewValue] = useState<
     number | null
   >(null);
+  const timelineOverviewModifierKeysRef = useRef({
+    altKey: false,
+    shiftKey: false,
+  });
   const effectiveTimelineViewportWidth = timelineViewportWidth || width;
   const contentWidth = getTimelineContentWidth(
     effectiveTimelineViewportWidth,
@@ -1357,6 +1361,33 @@ export default function HistoryTimelineView({
           )
         )
       : null;
+
+  useEffect(() => {
+    if (Platform.OS !== "web" || typeof window === "undefined") return;
+
+    const updateModifierKeys = (event: KeyboardEvent) => {
+      timelineOverviewModifierKeysRef.current = {
+        altKey: event.altKey,
+        shiftKey: event.shiftKey,
+      };
+    };
+    const resetModifierKeys = () => {
+      timelineOverviewModifierKeysRef.current = {
+        altKey: false,
+        shiftKey: false,
+      };
+    };
+
+    window.addEventListener("keydown", updateModifierKeys);
+    window.addEventListener("keyup", updateModifierKeys);
+    window.addEventListener("blur", resetModifierKeys);
+
+    return () => {
+      window.removeEventListener("keydown", updateModifierKeys);
+      window.removeEventListener("keyup", updateModifierKeys);
+      window.removeEventListener("blur", resetModifierKeys);
+    };
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -1672,20 +1703,23 @@ export default function HistoryTimelineView({
 
     setSelectedOverviewValue(targetValue);
 
-    const modifierKeys = event.nativeEvent as typeof event.nativeEvent & {
+    const eventModifierKeys = event.nativeEvent as typeof event.nativeEvent & {
       altKey?: boolean;
-      ctrlKey?: boolean;
-      metaKey?: boolean;
       shiftKey?: boolean;
+    };
+    const modifierKeys = {
+      altKey:
+        timelineOverviewModifierKeysRef.current.altKey ||
+        Boolean(eventModifierKeys.altKey),
+      shiftKey:
+        timelineOverviewModifierKeysRef.current.shiftKey ||
+        Boolean(eventModifierKeys.shiftKey),
     };
     const shouldScaleFromOverview =
       Platform.OS === "web" && !isCompactTimeline && modifierKeys.shiftKey;
 
     if (shouldScaleFromOverview) {
-      const zoomDirection =
-        modifierKeys.altKey || modifierKeys.ctrlKey || modifierKeys.metaKey
-          ? -1
-          : 1;
+      const zoomDirection = modifierKeys.altKey ? -1 : 1;
       const nextZoom = getBoundedTimelineZoomId(timelineZoom, zoomDirection);
 
       if (nextZoom !== timelineZoom) {
