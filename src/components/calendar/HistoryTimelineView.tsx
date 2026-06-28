@@ -155,14 +155,8 @@ const TIMELINE_ZOOM_LEVELS = [
     minViewportMultiplier: 3.2,
   },
   {
-    id: "years-1",
-    label: "1 Year",
-    pixelsPerYear: 48,
-    minViewportMultiplier: 3.2,
-  },
-  {
     id: "half-years",
-    label: "6 Months",
+    label: "1 Year",
     pixelsPerYear: 72,
     minViewportMultiplier: 3.2,
   },
@@ -424,12 +418,7 @@ function getAxisYearTickRule(
   if (zoomId === "years-50") return { majorInterval: 50 };
   if (zoomId === "years-25") return { majorInterval: 25 };
   if (zoomId === "years-5") return { majorInterval: 5 };
-  if (
-    zoomId === "years-1" ||
-    zoomId === "half-years" ||
-    zoomId === "months" ||
-    zoomId === "days"
-  ) {
+  if (zoomId === "half-years" || zoomId === "months" || zoomId === "days") {
     return { majorInterval: 1 };
   }
 
