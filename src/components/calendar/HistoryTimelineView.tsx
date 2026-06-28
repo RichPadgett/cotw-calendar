@@ -276,6 +276,19 @@ export function getSteppedTimelineZoomId(
   return TIMELINE_ZOOM_LEVELS[nextIndex].id;
 }
 
+function getBoundedTimelineZoomId(zoomId: TimelineZoomId, direction: -1 | 1) {
+  const currentIndex = Math.max(
+    0,
+    TIMELINE_ZOOM_LEVELS.findIndex((zoomLevel) => zoomLevel.id === zoomId)
+  );
+  const nextIndex = Math.max(
+    0,
+    Math.min(TIMELINE_ZOOM_LEVELS.length - 1, currentIndex + direction)
+  );
+
+  return TIMELINE_ZOOM_LEVELS[nextIndex].id;
+}
+
 function isTimelineZoomId(value: unknown): value is TimelineZoomId {
   return (
     typeof value === "string" &&
@@ -1211,6 +1224,9 @@ export default function HistoryTimelineView({
   const [timelineViewportY, setTimelineViewportY] = useState(0);
   const [timelineViewportWidth, setTimelineViewportWidth] = useState(0);
   const [timelineOverviewWidth, setTimelineOverviewWidth] = useState(0);
+  const [selectedOverviewValue, setSelectedOverviewValue] = useState<
+    number | null
+  >(null);
   const effectiveTimelineViewportWidth = timelineViewportWidth || width;
   const contentWidth = getTimelineContentWidth(
     effectiveTimelineViewportWidth,
@@ -1329,6 +1345,18 @@ export default function HistoryTimelineView({
         overviewWindowLeft
       )
     : 0;
+  const selectedOverviewLeft =
+    selectedOverviewValue !== null && timelineOverviewWidth
+      ? Math.max(
+          0,
+          Math.min(
+            timelineOverviewWidth,
+            ((selectedOverviewValue - HISTORY_TIMELINE_RANGE.startYear) /
+              timelineRangeSpan) *
+              timelineOverviewWidth
+          )
+        )
+      : null;
 
   useEffect(() => {
     let isMounted = true;
@@ -1584,15 +1612,7 @@ export default function HistoryTimelineView({
     setTimelineOverviewWidth(event.nativeEvent.layout.width);
   }
 
-  function handleTimelineOverviewPress(event: GestureResponderEvent) {
-    if (!timelineOverviewWidth) return;
-
-    const progress = Math.max(
-      0,
-      Math.min(1, event.nativeEvent.locationX / timelineOverviewWidth)
-    );
-    const targetValue =
-      HISTORY_TIMELINE_RANGE.startYear + progress * timelineRangeSpan;
+  function scrollTimelineToValue(targetValue: number, animated = true) {
     const targetX = getTimelineValuePosition(targetValue, contentWidth);
     const maxScrollX = Math.max(
       0,
@@ -1606,8 +1626,75 @@ export default function HistoryTimelineView({
     setTimelineScrollX(nextScrollX);
     timelineScrollRef.current?.scrollTo({
       x: nextScrollX,
-      animated: true,
+      animated,
     });
+  }
+
+  function scaleTimelineToValue(
+    targetValue: number,
+    nextZoom: TimelineZoomId,
+    animated = true
+  ) {
+    const nextContentWidth = getTimelineContentWidth(
+      effectiveTimelineViewportWidth,
+      nextZoom
+    );
+    const targetX = getTimelineValuePosition(targetValue, nextContentWidth);
+    const maxScrollX = Math.max(
+      0,
+      nextContentWidth - effectiveTimelineViewportWidth
+    );
+    const nextScrollX = Math.max(
+      0,
+      Math.min(maxScrollX, targetX - effectiveTimelineViewportWidth / 2)
+    );
+
+    onTimelineZoomChange(nextZoom);
+    setTimelineScrollX(nextScrollX);
+
+    setTimeout(() => {
+      timelineScrollRef.current?.scrollTo({
+        x: nextScrollX,
+        animated,
+      });
+    }, 0);
+  }
+
+  function handleTimelineOverviewPress(event: GestureResponderEvent) {
+    if (!timelineOverviewWidth) return;
+
+    const progress = Math.max(
+      0,
+      Math.min(1, event.nativeEvent.locationX / timelineOverviewWidth)
+    );
+    const targetValue =
+      HISTORY_TIMELINE_RANGE.startYear + progress * timelineRangeSpan;
+
+    setSelectedOverviewValue(targetValue);
+
+    const modifierKeys = event.nativeEvent as typeof event.nativeEvent & {
+      altKey?: boolean;
+      ctrlKey?: boolean;
+      metaKey?: boolean;
+      shiftKey?: boolean;
+    };
+    const shouldScaleFromOverview =
+      Platform.OS === "web" && !isCompactTimeline && modifierKeys.shiftKey;
+
+    if (shouldScaleFromOverview) {
+      const zoomDirection =
+        modifierKeys.altKey || modifierKeys.ctrlKey || modifierKeys.metaKey
+          ? -1
+          : 1;
+      const nextZoom = getBoundedTimelineZoomId(timelineZoom, zoomDirection);
+
+      if (nextZoom !== timelineZoom) {
+        scaleTimelineToValue(targetValue, nextZoom);
+        return;
+      }
+    }
+
+    scrollTimelineToValue(targetValue);
   }
 
   function handleTimelineEntryHoverIn(occurrence: TimelineOccurrence) {
@@ -2127,6 +2214,15 @@ export default function HistoryTimelineView({
               },
             ]}
           />
+          {selectedOverviewLeft !== null ? (
+            <View
+              pointerEvents="none"
+              style={[
+                styles.timelineOverviewSelectedMarker,
+                { left: selectedOverviewLeft },
+              ]}
+            />
+          ) : null}
         </Pressable>
       </View>
 
@@ -2873,6 +2969,18 @@ const styles = StyleSheet.create({
     borderColor: "#081a33",
     backgroundColor: "rgba(8, 26, 51, 0.18)",
     zIndex: 2,
+  },
+  timelineOverviewSelectedMarker: {
+    position: "absolute",
+    top: 4,
+    bottom: 16,
+    width: 3,
+    borderRadius: 999,
+    backgroundColor: "#0f766e",
+    borderWidth: 1,
+    borderColor: "#ffffff",
+    transform: [{ translateX: -1.5 }],
+    zIndex: 4,
   },
   timelineOverviewMarker: {
     position: "absolute",
