@@ -1190,6 +1190,13 @@ type HistoryTimelineViewProps = {
   onSavingChange: (isSaving: boolean) => void;
 };
 
+type TimelineOverviewPressTarget = {
+  altKey?: boolean;
+  localX: number;
+  shiftKey?: boolean;
+  trackWidth?: number;
+};
+
 /**
  * Creates a horizontally swipeable history chart.
  * This UX component renders timeline occurrences as range bars, exact-date cards, or both.
@@ -1227,10 +1234,6 @@ export default function HistoryTimelineView({
   const [selectedOverviewValue, setSelectedOverviewValue] = useState<
     number | null
   >(null);
-  const timelineOverviewModifierKeysRef = useRef({
-    altKey: false,
-    shiftKey: false,
-  });
   const effectiveTimelineViewportWidth = timelineViewportWidth || width;
   const contentWidth = getTimelineContentWidth(
     effectiveTimelineViewportWidth,
@@ -1361,33 +1364,6 @@ export default function HistoryTimelineView({
           )
         )
       : null;
-
-  useEffect(() => {
-    if (Platform.OS !== "web" || typeof window === "undefined") return;
-
-    const updateModifierKeys = (event: KeyboardEvent) => {
-      timelineOverviewModifierKeysRef.current = {
-        altKey: event.altKey,
-        shiftKey: event.shiftKey,
-      };
-    };
-    const resetModifierKeys = () => {
-      timelineOverviewModifierKeysRef.current = {
-        altKey: false,
-        shiftKey: false,
-      };
-    };
-
-    window.addEventListener("keydown", updateModifierKeys);
-    window.addEventListener("keyup", updateModifierKeys);
-    window.addEventListener("blur", resetModifierKeys);
-
-    return () => {
-      window.removeEventListener("keydown", updateModifierKeys);
-      window.removeEventListener("keyup", updateModifierKeys);
-      window.removeEventListener("blur", resetModifierKeys);
-    };
-  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -1691,35 +1667,27 @@ export default function HistoryTimelineView({
     }, 0);
   }
 
-  function handleTimelineOverviewPress(event: GestureResponderEvent) {
-    if (!timelineOverviewWidth) return;
+  function handleTimelineOverviewTargetPress({
+    altKey,
+    localX,
+    shiftKey,
+    trackWidth,
+  }: TimelineOverviewPressTarget) {
+    const activeTrackWidth = trackWidth || timelineOverviewWidth;
 
-    const progress = Math.max(
-      0,
-      Math.min(1, event.nativeEvent.locationX / timelineOverviewWidth)
-    );
+    if (!activeTrackWidth) return;
+
+    const progress = Math.max(0, Math.min(1, localX / activeTrackWidth));
     const targetValue =
       HISTORY_TIMELINE_RANGE.startYear + progress * timelineRangeSpan;
 
     setSelectedOverviewValue(targetValue);
 
-    const eventModifierKeys = event.nativeEvent as typeof event.nativeEvent & {
-      altKey?: boolean;
-      shiftKey?: boolean;
-    };
-    const modifierKeys = {
-      altKey:
-        timelineOverviewModifierKeysRef.current.altKey ||
-        Boolean(eventModifierKeys.altKey),
-      shiftKey:
-        timelineOverviewModifierKeysRef.current.shiftKey ||
-        Boolean(eventModifierKeys.shiftKey),
-    };
     const shouldScaleFromOverview =
-      Platform.OS === "web" && !isCompactTimeline && modifierKeys.shiftKey;
+      Platform.OS === "web" && !isCompactTimeline && shiftKey;
 
     if (shouldScaleFromOverview) {
-      const zoomDirection = modifierKeys.altKey ? -1 : 1;
+      const zoomDirection = altKey ? -1 : 1;
       const nextZoom = getBoundedTimelineZoomId(timelineZoom, zoomDirection);
 
       if (nextZoom !== timelineZoom) {
@@ -1729,6 +1697,47 @@ export default function HistoryTimelineView({
     }
 
     scrollTimelineToValue(targetValue);
+  }
+
+  function handleTimelineOverviewPress(event: GestureResponderEvent) {
+    if (!timelineOverviewWidth) return;
+
+    const nativeEvent = event.nativeEvent as typeof event.nativeEvent & {
+      altKey?: boolean;
+      offsetX?: number;
+      shiftKey?: boolean;
+    };
+
+    handleTimelineOverviewTargetPress({
+      altKey: nativeEvent.altKey,
+      localX:
+        typeof nativeEvent.offsetX === "number"
+          ? nativeEvent.offsetX
+          : nativeEvent.locationX,
+      shiftKey: nativeEvent.shiftKey,
+    });
+  }
+
+  function handleTimelineOverviewWebClick(event: {
+    altKey?: boolean;
+    clientX?: number;
+    currentTarget?: {
+      getBoundingClientRect?: () => { left: number; width: number };
+    };
+    preventDefault?: () => void;
+    shiftKey?: boolean;
+  }) {
+    const trackRect = event.currentTarget?.getBoundingClientRect?.();
+
+    if (!trackRect || typeof event.clientX !== "number") return;
+
+    event.preventDefault?.();
+    handleTimelineOverviewTargetPress({
+      altKey: event.altKey,
+      localX: event.clientX - trackRect.left,
+      shiftKey: event.shiftKey,
+      trackWidth: trackRect.width,
+    });
   }
 
   function handleTimelineEntryHoverIn(occurrence: TimelineOccurrence) {
@@ -2211,7 +2220,17 @@ export default function HistoryTimelineView({
           accessibilityRole="button"
           accessibilityLabel="Quick scroll timeline overview"
           onLayout={handleTimelineOverviewLayout}
-          onPress={handleTimelineOverviewPress}
+          onPress={
+            Platform.OS === "web" ? undefined : handleTimelineOverviewPress
+          }
+          {...(Platform.OS === "web"
+            ? {
+                onClick: handleTimelineOverviewWebClick,
+                onContextMenu: (event: { preventDefault?: () => void }) => {
+                  event.preventDefault?.();
+                },
+              }
+            : {})}
           style={({ pressed }) => [
             styles.timelineOverviewTrack,
             pressed ? styles.timelineOverviewTrackPressed : null,
