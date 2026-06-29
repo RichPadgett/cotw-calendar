@@ -48,6 +48,7 @@ const HOVER_PREVIEW_ESTIMATED_HEIGHT = 168;
 const HOVER_PREVIEW_TOP_RESERVED_SPACE = 132;
 const TIMELINE_HOVER_TAB_SIZE = 18;
 const TIMELINE_SETTINGS_STORAGE_KEY_PREFIX = "historyTimelineSettings";
+const TIMELINE_OVERVIEW_STICKY_HEIGHT = 82;
 const SABBATH_JUBILEE_OVERLAY_BUFFER_YEARS = 4;
 const TIMELINE_LANE_OPTIONS = Array.from(
   { length: TIMELINE_LANE_COUNT },
@@ -1581,8 +1582,8 @@ export default function HistoryTimelineView({
     Platform.OS === "web" && isCompactTimeline
       ? ({
           position: "sticky",
-          top: stickyHeaderHeight + 8,
-          zIndex: 45,
+          top: stickyHeaderHeight + TIMELINE_OVERVIEW_STICKY_HEIGHT + 12,
+          zIndex: 33,
         } as const)
       : null;
   const timelineScrollRef = useRef<ScrollView>(null);
