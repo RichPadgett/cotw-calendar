@@ -2242,7 +2242,18 @@ export default function HistoryTimelineView({
 
   return (
     <View style={styles.container} onLayout={handleTimelineLayout}>
-      <View style={styles.timelineOverview}>
+      <View
+        style={[
+          styles.timelineOverview,
+          Platform.OS === "web"
+            ? {
+                position: "sticky",
+                top: stickyHeaderHeight + 8,
+                zIndex: 34,
+              }
+            : null,
+        ]}
+      >
         <View style={styles.timelineOverviewHeader}>
           <Text style={styles.timelineOverviewTitle}>Overview</Text>
           <Text numberOfLines={1} style={styles.timelineOverviewRange}>
@@ -2933,6 +2944,12 @@ const styles = StyleSheet.create({
   timelineOverview: {
     marginBottom: 10,
     gap: 5,
+    padding: 8,
+    marginHorizontal: -8,
+    borderRadius: 10,
+    backgroundColor: "rgba(249, 250, 251, 0.96)",
+    borderWidth: 1,
+    borderColor: "rgba(226, 232, 240, 0.9)",
   },
   timelineOverviewHeader: {
     flexDirection: "row",
