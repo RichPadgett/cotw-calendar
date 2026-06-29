@@ -1138,7 +1138,6 @@ export default function CommandExplorerView({
       total + getContributionVoteCounts(contribution).concern,
     0
   );
-  const reviewDrawerWidth = Math.min(390, Math.max(300, width - 32));
   const renderCommunityReviewTools = () => {
     if (!canContribute && !canModerateContributions) return null;
 
@@ -1149,7 +1148,6 @@ export default function CommandExplorerView({
         reviewCount={canModerateContributions ? pendingContributions.length : 0}
         concernCount={activeVoteConcernCount}
         canModerate={canModerateContributions}
-        drawerWidth={reviewDrawerWidth}
         onToggle={() => setIsCommunityReviewOpen((value) => !value)}
       >
         {canContribute ? (
@@ -1243,6 +1241,8 @@ export default function CommandExplorerView({
 
   return (
     <View style={{ gap: 14 }}>
+      {renderCommunityReviewTools()}
+
       <View style={[styles.studyGrid, usesSplitPane && styles.studyGridSplit]}>
         {usesSplitPane ? (
           <View style={[styles.detailPanel, styles.detailPaneSplit]}>
@@ -1347,7 +1347,6 @@ export default function CommandExplorerView({
           </PaneScroll>
         </View>
       </View>
-      {renderCommunityReviewTools()}
     </View>
   );
 }
@@ -2284,7 +2283,6 @@ function CommunityReviewDrawer({
   reviewCount,
   concernCount,
   canModerate,
-  drawerWidth,
   onToggle,
 }: {
   children: ReactNode;
@@ -2293,16 +2291,13 @@ function CommunityReviewDrawer({
   reviewCount: number;
   concernCount: number;
   canModerate: boolean;
-  drawerWidth: number;
   onToggle: () => void;
 }) {
   const totalCount = voteCount + (canModerate ? reviewCount : 0);
 
   return (
-    <View pointerEvents="box-none" style={styles.communityReviewDrawerLayer}>
-      <View
-        style={[styles.communityReviewDrawer, isOpen && { width: drawerWidth }]}
-      >
+    <View style={styles.communityReviewDock}>
+      <View style={styles.communityReviewDrawer}>
         <Pressable
           onPress={onToggle}
           accessibilityRole="button"
@@ -2340,6 +2335,11 @@ function CommunityReviewDrawer({
               {Math.min(totalCount, 99)}
             </Text>
           ) : null}
+          <MaterialIcons
+            name={isOpen ? "keyboard-arrow-up" : "keyboard-arrow-down"}
+            size={22}
+            color={isOpen ? "#ffffff" : "#0f766e"}
+          />
         </Pressable>
 
         {isOpen ? (
@@ -2355,7 +2355,7 @@ function CommunityReviewDrawer({
             <ScrollView
               nestedScrollEnabled
               showsVerticalScrollIndicator
-              style={styles.communityReviewPanelScroll}
+              style={styles.communityReviewDockPanelScroll}
               contentContainerStyle={styles.communityReviewBody}
             >
               {children}
@@ -3593,55 +3593,36 @@ const styles = {
     borderWidth: 1,
     borderColor: "#fde68a",
   },
-  communityReviewDrawerLayer: {
-    ...(Platform.OS === "web"
-      ? {
-          position: "fixed" as const,
-          top: 184,
-          right: 12,
-        }
-      : {
-          position: "absolute" as const,
-          top: 16,
-          right: 0,
-        }),
-    zIndex: 80,
-    alignItems: "flex-end" as const,
+  communityReviewDock: {
+    gap: 0,
+    borderRadius: 8,
+    backgroundColor: "#f0fdfa",
+    borderWidth: 1,
+    borderColor: "#99f6e4",
+    overflow: "hidden" as const,
   },
   communityReviewDrawer: {
-    flexDirection: "row" as const,
-    alignItems: "flex-start" as const,
-    justifyContent: "flex-end" as const,
+    width: "100%" as const,
   },
   communityReviewTab: {
-    width: 74,
-    minHeight: 92,
-    paddingHorizontal: 8,
-    paddingVertical: 10,
+    minHeight: 42,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    flexDirection: "row" as const,
     alignItems: "center" as const,
-    justifyContent: "center" as const,
-    gap: 5,
-    borderTopLeftRadius: 8,
-    borderBottomLeftRadius: 8,
+    justifyContent: "flex-start" as const,
+    gap: 8,
     backgroundColor: "#ffffff",
-    borderWidth: 1,
-    borderRightWidth: 0,
-    borderColor: "#99f6e4",
-    shadowColor: "#0f172a",
-    shadowOpacity: 0.13,
-    shadowRadius: 9,
-    shadowOffset: { width: 0, height: 3 },
   },
   communityReviewTabOpen: {
     backgroundColor: "#0f766e",
-    borderColor: "#0f766e",
   },
   communityReviewTabText: {
-    fontSize: 11,
-    lineHeight: 14,
+    flex: 1,
+    fontSize: 13,
+    lineHeight: 18,
     fontWeight: "900" as const,
     color: "#0f766e",
-    textAlign: "center" as const,
   },
   communityReviewTabTextOpen: {
     color: "#ffffff",
@@ -3664,17 +3645,9 @@ const styles = {
     color: "#0f766e",
   },
   communityReviewSection: {
-    flex: 1,
-    borderRadius: 8,
-    borderTopLeftRadius: 0,
-    borderWidth: 1,
-    borderColor: "#0f766e",
+    borderTopWidth: 1,
+    borderTopColor: "#99f6e4",
     backgroundColor: "#f8fafc",
-    overflow: "hidden" as const,
-    shadowColor: "#0f172a",
-    shadowOpacity: 0.16,
-    shadowRadius: 14,
-    shadowOffset: { width: 0, height: 5 },
   },
   communityReviewHeader: {
     minHeight: 58,
@@ -3746,8 +3719,8 @@ const styles = {
     borderTopColor: "#cbd5e1",
     backgroundColor: "#ffffff",
   },
-  communityReviewPanelScroll: {
-    maxHeight: 540,
+  communityReviewDockPanelScroll: {
+    maxHeight: 520,
   },
   adminReviewPanel: {
     gap: 10,
