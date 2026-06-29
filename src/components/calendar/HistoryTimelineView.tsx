@@ -248,6 +248,8 @@ type TimelineYearTickRule = {
   majorInterval: number;
 };
 
+type TimelineAxisTickMode = "year" | "month" | "day";
+
 type TimelineEntryFormState = {
   title: string;
   summary: string;
@@ -326,9 +328,10 @@ export function getSteppedTimelineZoomId(
     0,
     TIMELINE_ZOOM_LEVELS.findIndex((zoomLevel) => zoomLevel.id === zoomId)
   );
-  const nextIndex =
-    (currentIndex + direction + TIMELINE_ZOOM_LEVELS.length) %
-    TIMELINE_ZOOM_LEVELS.length;
+  const nextIndex = Math.max(
+    0,
+    Math.min(TIMELINE_ZOOM_LEVELS.length - 1, currentIndex + direction)
+  );
 
   return TIMELINE_ZOOM_LEVELS[nextIndex].id;
 }
@@ -411,6 +414,116 @@ function getEnochDayOfYear(month: number, day: number) {
   const safeDay = Math.max(1, Math.min(30, day));
 
   return (safeMonth - 1) * 30 + safeDay;
+}
+
+function getTimelineAxisTickMode(zoomId: TimelineZoomId): TimelineAxisTickMode {
+  if (
+    zoomId === "days-5" ||
+    zoomId === "days-6" ||
+    zoomId === "days-7" ||
+    zoomId === "days-8" ||
+    zoomId === "days-9"
+  ) {
+    return "day";
+  }
+
+  if (zoomId === "days-2" || zoomId === "days-3" || zoomId === "days-4") {
+    return "month";
+  }
+
+  return "year";
+}
+
+function getTimelineDatePartsFromValue(value: number) {
+  const enochYear = Math.floor(value);
+  const yearProgress = value - enochYear;
+  const dayIndex = Math.max(
+    0,
+    Math.min(ENOCH_YEAR_DAYS - 1, Math.floor(yearProgress * ENOCH_YEAR_DAYS))
+  );
+
+  return {
+    enochYear,
+    month: Math.floor(dayIndex / 30) + 1,
+    day: (dayIndex % 30) + 1,
+  };
+}
+
+function getTimelineDayTickInterval(zoomId: TimelineZoomId) {
+  if (zoomId === "days-5" || zoomId === "days-6") return 10;
+  return 5;
+}
+
+function getNextTimelineMonthStart(value: number) {
+  const parts = getTimelineDatePartsFromValue(value);
+  let { enochYear, month } = parts;
+
+  if (parts.day > 1) {
+    month += 1;
+  }
+
+  if (month > 12) {
+    enochYear += 1;
+    month = 1;
+  }
+
+  return { enochYear, month, day: 1 };
+}
+
+function getNextTimelineDayStart(value: number) {
+  const parts = getTimelineDatePartsFromValue(value);
+  let { enochYear, month, day } = parts;
+  const currentDayValue = getEnochTimelineValue({ enochYear, month, day });
+
+  if (currentDayValue < value) {
+    day += 1;
+  }
+
+  if (day > 30) {
+    day = 1;
+    month += 1;
+  }
+
+  if (month > 12) {
+    month = 1;
+    enochYear += 1;
+  }
+
+  return { enochYear, month, day };
+}
+
+function getNextTimelineDay(parts: {
+  enochYear: number;
+  month: number;
+  day: number;
+  stepDays?: number;
+}) {
+  let { enochYear, month, day } = parts;
+  day += parts.stepDays ?? 1;
+
+  while (day > 30) {
+    day -= 30;
+    month += 1;
+  }
+
+  while (month > 12) {
+    month -= 12;
+    enochYear += 1;
+  }
+
+  return { enochYear, month, day };
+}
+
+function getNextTimelineMonth(parts: { enochYear: number; month: number }) {
+  let { enochYear, month } = parts;
+  month += 1;
+
+  if (month > 12) {
+    month = 1;
+    enochYear += 1;
+  }
+
+  return { enochYear, month, day: 1 };
 }
 
 function getEnochTimelineValue(params: {
@@ -517,6 +630,56 @@ function getVisibleTimelineAxisTicks(params: {
   );
   const visibleYearSpan = Math.max(1, visibleEnd - visibleStart);
   const ticks: TimelineAxisTick[] = [];
+  const tickMode = getTimelineAxisTickMode(params.zoomId);
+
+  if (tickMode === "month") {
+    let tickDate = getNextTimelineMonthStart(visibleStart);
+
+    while (ticks.length < 220) {
+      const tickValue = getEnochTimelineValue(tickDate);
+      if (tickValue > visibleEnd) break;
+
+      ticks.push({
+        key: `month-${tickDate.enochYear}-${tickDate.month}`,
+        label: `M${tickDate.month}`,
+        x: getTimelineValuePosition(tickValue, params.contentWidth),
+        major: true,
+      });
+
+      tickDate = getNextTimelineMonth(tickDate);
+    }
+
+    return ticks;
+  }
+
+  if (tickMode === "day") {
+    const dayInterval = getTimelineDayTickInterval(params.zoomId);
+    let tickDate = getNextTimelineDayStart(visibleStart);
+
+    while ((tickDate.day - 1) % dayInterval !== 0) {
+      tickDate = getNextTimelineDay(tickDate);
+    }
+
+    while (ticks.length < 220) {
+      const tickValue = getEnochTimelineValue(tickDate);
+      if (tickValue > visibleEnd) break;
+
+      ticks.push({
+        key: `day-${tickDate.enochYear}-${tickDate.month}-${tickDate.day}`,
+        label: `M${tickDate.month} D${tickDate.day}`,
+        x: getTimelineValuePosition(tickValue, params.contentWidth),
+        major: true,
+      });
+
+      tickDate = getNextTimelineDay({
+        ...tickDate,
+        stepDays: dayInterval,
+      });
+    }
+
+    return ticks;
+  }
+
   const tickRule = getAxisYearTickRule(params.zoomId, visibleYearSpan);
   const firstTickValue =
     Math.ceil(visibleStart / tickRule.majorInterval) * tickRule.majorInterval;
@@ -1311,6 +1474,8 @@ export default function HistoryTimelineView({
         } as const)
       : null;
   const timelineScrollRef = useRef<ScrollView>(null);
+  const timelineScrollXRef = useRef(0);
+  const pendingTimelineScrollXRef = useRef<number | null>(null);
   const timelineSettingsStorageKey = `${TIMELINE_SETTINGS_STORAGE_KEY_PREFIX}:${groupCode || "default"}:${userRole}`;
   const canManageTimeline =
     userRole === "admin" &&
@@ -1517,6 +1682,32 @@ export default function HistoryTimelineView({
   }, [timelineScaleStepRequest.id, timelineScaleStepRequest.direction]);
 
   useEffect(() => {
+    const pendingScrollX = pendingTimelineScrollXRef.current;
+    if (pendingScrollX === null) return;
+
+    const maxScrollX = Math.max(
+      0,
+      contentWidth - effectiveTimelineViewportWidth
+    );
+    const nextScrollX = Math.max(0, Math.min(maxScrollX, pendingScrollX));
+    pendingTimelineScrollXRef.current = null;
+    timelineScrollXRef.current = nextScrollX;
+    setTimelineScrollX(nextScrollX);
+
+    const scrollToAnchoredPosition = () => {
+      timelineScrollRef.current?.scrollTo({
+        x: nextScrollX,
+        animated: false,
+      });
+    };
+
+    requestAnimationFrame(() => {
+      scrollToAnchoredPosition();
+      requestAnimationFrame(scrollToAnchoredPosition);
+    });
+  }, [contentWidth, effectiveTimelineViewportWidth, timelineZoom]);
+
+  useEffect(() => {
     if (timelineLaneHeightStepRequest.id === 0) return;
 
     stepLaneHeight(timelineLaneHeightStepRequest.direction);
@@ -1665,7 +1856,9 @@ export default function HistoryTimelineView({
   function handleTimelineScroll(
     event: NativeSyntheticEvent<NativeScrollEvent>
   ) {
-    setTimelineScrollX(event.nativeEvent.contentOffset.x);
+    const nextScrollX = event.nativeEvent.contentOffset.x;
+    timelineScrollXRef.current = nextScrollX;
+    setTimelineScrollX(nextScrollX);
   }
 
   function handleTimelineLayout(event: LayoutChangeEvent) {
@@ -1696,8 +1889,11 @@ export default function HistoryTimelineView({
   }
 
   function handleTimelineZoomChange(nextZoom: TimelineZoomId) {
+    if (nextZoom === timelineZoom) return;
+
+    const currentScrollX = timelineScrollXRef.current;
     const currentCenterValue = getTimelineValueFromPosition(
-      timelineScrollX + effectiveTimelineViewportWidth / 2,
+      currentScrollX + effectiveTimelineViewportWidth / 2,
       contentWidth
     );
     const nextContentWidth = getTimelineContentWidth(
@@ -1718,19 +1914,9 @@ export default function HistoryTimelineView({
     );
 
     onTimelineZoomChange(nextZoom);
+    pendingTimelineScrollXRef.current = nextScrollX;
+    timelineScrollXRef.current = nextScrollX;
     setTimelineScrollX(nextScrollX);
-
-    const scrollToNextPosition = () => {
-      timelineScrollRef.current?.scrollTo({
-        x: nextScrollX,
-        animated: false,
-      });
-    };
-
-    setTimeout(scrollToNextPosition, 0);
-    requestAnimationFrame(() => {
-      requestAnimationFrame(scrollToNextPosition);
-    });
   }
 
   function stepLaneHeight(direction: -1 | 1) {
@@ -2169,154 +2355,65 @@ export default function HistoryTimelineView({
         </View>
       ) : null}
 
-      <ScrollView
-        ref={timelineScrollRef}
-        horizontal
-        showsHorizontalScrollIndicator
-        scrollEventThrottle={32}
-        onScroll={handleTimelineScroll}
+      <View
+        style={styles.timelineViewportFrame}
         onLayout={handleTimelineViewportLayout}
-        contentContainerStyle={styles.scrollContent}
       >
-        <View
-          style={[
-            styles.timelineCanvas,
-            {
-              width: contentWidth,
-              height: TRACK_TOP + timelineTrackHeight + 84,
-            },
-          ]}
+        <ScrollView
+          ref={timelineScrollRef}
+          horizontal
+          showsHorizontalScrollIndicator
+          scrollEventThrottle={16}
+          onScroll={handleTimelineScroll}
+          contentContainerStyle={styles.scrollContent}
         >
-          {TIMELINE_LANE_INDEXES.map((laneIndex) => (
-            <View
-              key={`lane-guide-${laneIndex}`}
-              pointerEvents="none"
-              style={[
-                styles.timelineLaneGuide,
-                laneIndex % 2 === 1 ? styles.timelineLaneGuideAlternate : null,
-                {
-                  top: TRACK_TOP + laneIndex * timelineLaneHeight,
-                  height: timelineLaneHeight,
-                },
-              ]}
-            >
-              <Text style={styles.timelineLaneGuideLabel}>{laneIndex}</Text>
-            </View>
-          ))}
-
-          {visibleOccurrences.length === 0 ? (
-            <View style={styles.emptyState}>
-              <Text style={styles.emptyStateTitle}>
-                No timeline entries yet
-              </Text>
-              <Text style={styles.emptyStateText}>
-                Use the add button to begin building this history view.
-              </Text>
-            </View>
-          ) : null}
-
-          {visibleOccurrences.map((occurrence) => {
-            if (!occurrence.timeRange) return null;
-
-            const rangeEnd = getResolvedRangeEnd(occurrence);
-            const { start } = occurrence.timeRange;
-            if (!rangeEnd) return null;
-
-            const left = getEnochYearPosition(
+          <View
+            style={[
+              styles.timelineCanvas,
               {
-                enochYear: start.enochYear,
-                month: start.enochMonth,
-                day: start.enochDay,
+                width: contentWidth,
+                height: TRACK_TOP + timelineTrackHeight + 84,
               },
-              contentWidth
-            );
-            const right = getEnochYearPosition(
-              { enochYear: rangeEnd },
-              contentWidth
-            );
-
-            return (
-              <TimelineRangeBar
-                key={`${occurrence.id}-range`}
-                occurrence={occurrence}
-                left={left}
-                width={right - left}
-                laneHeight={timelineLaneHeight}
-                isHovered={activeTimelineOccurrence?.id === occurrence.id}
-                timelineScrollX={timelineScrollX}
-                onPress={handleSelectOccurrence}
-                onHoverIn={handleTimelineEntryHoverIn}
-                onHoverOut={handleTimelineEntryHoverOut}
-              />
-            );
-          })}
-
-          {visibleOccurrences.map((occurrence) => {
-            if (!occurrence.exactDate) return null;
-
-            return (
-              <TimelineExactCard
-                key={`${occurrence.id}-exact`}
-                occurrence={occurrence}
-                x={getEnochYearPosition(
+            ]}
+          >
+            {TIMELINE_LANE_INDEXES.map((laneIndex) => (
+              <View
+                key={`lane-guide-${laneIndex}`}
+                pointerEvents="none"
+                style={[
+                  styles.timelineLaneGuide,
+                  laneIndex % 2 === 1
+                    ? styles.timelineLaneGuideAlternate
+                    : null,
                   {
-                    enochYear: occurrence.exactDate.enochDate.enochYear,
-                    month: occurrence.exactDate.enochDate.month,
-                    day: occurrence.exactDate.enochDate.day,
+                    top: TRACK_TOP + laneIndex * timelineLaneHeight,
+                    height: timelineLaneHeight,
                   },
-                  contentWidth
-                )}
-                compact={Boolean(occurrence.timeRange)}
-                laneHeight={timelineLaneHeight}
-                isHovered={activeTimelineOccurrence?.id === occurrence.id}
-                onPress={handleSelectOccurrence}
-                onHoverIn={handleTimelineEntryHoverIn}
-                onHoverOut={handleTimelineEntryHoverOut}
-              />
-            );
-          })}
+                ]}
+              >
+                <Text style={styles.timelineLaneGuideLabel}>{laneIndex}</Text>
+              </View>
+            ))}
 
-          {visibleOccurrences.map((occurrence) => {
-            if (!occurrence.timeRange) return null;
+            {visibleOccurrences.length === 0 ? (
+              <View style={styles.emptyState}>
+                <Text style={styles.emptyStateTitle}>
+                  No timeline entries yet
+                </Text>
+                <Text style={styles.emptyStateText}>
+                  Use the add button to begin building this history view.
+                </Text>
+              </View>
+            ) : null}
 
-            const rangeEnd = getResolvedRangeEnd(occurrence);
-            const { start } = occurrence.timeRange;
-            if (!rangeEnd) return null;
+            {visibleOccurrences.map((occurrence) => {
+              if (!occurrence.timeRange) return null;
 
-            const left = getEnochYearPosition(
-              {
-                enochYear: start.enochYear,
-                month: start.enochMonth,
-                day: start.enochDay,
-              },
-              contentWidth
-            );
-            const right = getEnochYearPosition(
-              { enochYear: rangeEnd },
-              contentWidth
-            );
-
-            return (
-              <TimelineRangeLabelOverlay
-                key={`${occurrence.id}-range-label`}
-                occurrence={occurrence}
-                left={left}
-                width={right - left}
-                laneHeight={timelineLaneHeight}
-                isActive={activeTimelineOccurrence?.id === occurrence.id}
-                onPress={handleSelectOccurrence}
-                onHoverIn={handleTimelineEntryHoverIn}
-                onHoverOut={handleTimelineEntryHoverOut}
-              />
-            );
-          })}
-
-          {visibleOccurrences.map((occurrence, index) => {
-            let tabX: number | null = null;
-
-            if (occurrence.timeRange) {
+              const rangeEnd = getResolvedRangeEnd(occurrence);
               const { start } = occurrence.timeRange;
-              tabX = getEnochYearPosition(
+              if (!rangeEnd) return null;
+
+              const left = getEnochYearPosition(
                 {
                   enochYear: start.enochYear,
                   month: start.enochMonth,
@@ -2324,40 +2421,148 @@ export default function HistoryTimelineView({
                 },
                 contentWidth
               );
-            } else if (occurrence.exactDate) {
-              tabX =
-                getEnochYearPosition(
+              const right = getEnochYearPosition(
+                { enochYear: rangeEnd },
+                contentWidth
+              );
+
+              return (
+                <TimelineRangeBar
+                  key={`${occurrence.id}-range`}
+                  occurrence={occurrence}
+                  left={left}
+                  width={right - left}
+                  laneHeight={timelineLaneHeight}
+                  isHovered={activeTimelineOccurrence?.id === occurrence.id}
+                  timelineScrollX={timelineScrollX}
+                  onPress={handleSelectOccurrence}
+                  onHoverIn={handleTimelineEntryHoverIn}
+                  onHoverOut={handleTimelineEntryHoverOut}
+                />
+              );
+            })}
+
+            {visibleOccurrences.map((occurrence) => {
+              if (!occurrence.exactDate) return null;
+
+              return (
+                <TimelineExactCard
+                  key={`${occurrence.id}-exact`}
+                  occurrence={occurrence}
+                  x={getEnochYearPosition(
+                    {
+                      enochYear: occurrence.exactDate.enochDate.enochYear,
+                      month: occurrence.exactDate.enochDate.month,
+                      day: occurrence.exactDate.enochDate.day,
+                    },
+                    contentWidth
+                  )}
+                  compact={Boolean(occurrence.timeRange)}
+                  laneHeight={timelineLaneHeight}
+                  isHovered={activeTimelineOccurrence?.id === occurrence.id}
+                  onPress={handleSelectOccurrence}
+                  onHoverIn={handleTimelineEntryHoverIn}
+                  onHoverOut={handleTimelineEntryHoverOut}
+                />
+              );
+            })}
+
+            {visibleOccurrences.map((occurrence) => {
+              if (!occurrence.timeRange) return null;
+
+              const rangeEnd = getResolvedRangeEnd(occurrence);
+              const { start } = occurrence.timeRange;
+              if (!rangeEnd) return null;
+
+              const left = getEnochYearPosition(
+                {
+                  enochYear: start.enochYear,
+                  month: start.enochMonth,
+                  day: start.enochDay,
+                },
+                contentWidth
+              );
+              const right = getEnochYearPosition(
+                { enochYear: rangeEnd },
+                contentWidth
+              );
+
+              return (
+                <TimelineRangeLabelOverlay
+                  key={`${occurrence.id}-range-label`}
+                  occurrence={occurrence}
+                  left={left}
+                  width={right - left}
+                  laneHeight={timelineLaneHeight}
+                  isActive={activeTimelineOccurrence?.id === occurrence.id}
+                  onPress={handleSelectOccurrence}
+                  onHoverIn={handleTimelineEntryHoverIn}
+                  onHoverOut={handleTimelineEntryHoverOut}
+                />
+              );
+            })}
+
+            {visibleOccurrences.map((occurrence, index) => {
+              let tabX: number | null = null;
+
+              if (occurrence.timeRange) {
+                const { start } = occurrence.timeRange;
+                tabX = getEnochYearPosition(
                   {
-                    enochYear: occurrence.exactDate.enochDate.enochYear,
-                    month: occurrence.exactDate.enochDate.month,
-                    day: occurrence.exactDate.enochDate.day,
+                    enochYear: start.enochYear,
+                    month: start.enochMonth,
+                    day: start.enochDay,
                   },
                   contentWidth
-                ) -
-                TIMELINE_HOVER_TAB_SIZE / 2;
-            }
+                );
+              } else if (occurrence.exactDate) {
+                tabX =
+                  getEnochYearPosition(
+                    {
+                      enochYear: occurrence.exactDate.enochDate.enochYear,
+                      month: occurrence.exactDate.enochDate.month,
+                      day: occurrence.exactDate.enochDate.day,
+                    },
+                    contentWidth
+                  ) -
+                  TIMELINE_HOVER_TAB_SIZE / 2;
+              }
 
-            if (tabX === null) return null;
+              if (tabX === null) return null;
 
-            return (
-              <TimelineHoverTab
-                key={`${occurrence.id}-hover-tab`}
-                occurrence={occurrence}
-                x={tabX}
-                tabIndex={index}
-                laneHeight={timelineLaneHeight}
-                onPress={handleSelectOccurrence}
-                onHoverIn={
-                  canShowHoverPreview ? handleTimelineEntryHoverIn : undefined
-                }
-                onHoverOut={
-                  canShowHoverPreview ? handleTimelineEntryHoverOut : undefined
-                }
-              />
-            );
-          })}
+              return (
+                <TimelineHoverTab
+                  key={`${occurrence.id}-hover-tab`}
+                  occurrence={occurrence}
+                  x={tabX}
+                  tabIndex={index}
+                  laneHeight={timelineLaneHeight}
+                  onPress={handleSelectOccurrence}
+                  onHoverIn={
+                    canShowHoverPreview ? handleTimelineEntryHoverIn : undefined
+                  }
+                  onHoverOut={
+                    canShowHoverPreview
+                      ? handleTimelineEntryHoverOut
+                      : undefined
+                  }
+                />
+              );
+            })}
+          </View>
+        </ScrollView>
+
+        <View
+          pointerEvents="none"
+          style={[
+            styles.timelineCenterCrosshair,
+            { top: TRACK_TOP, height: timelineTrackHeight },
+          ]}
+        >
+          <View style={styles.timelineCenterCrosshairLine} />
+          <View style={styles.timelineCenterCrosshairDot} />
         </View>
-      </ScrollView>
+      </View>
 
       {Platform.OS === "web" ? (
         <View pointerEvents="none" style={styles.floatingAxis}>
@@ -2790,9 +2995,36 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingVertical: 4,
   },
+  timelineViewportFrame: {
+    position: "relative",
+  },
   timelineCanvas: {
     height: TRACK_TOP + TRACK_HEIGHT + 84,
     position: "relative",
+  },
+  timelineCenterCrosshair: {
+    position: "absolute",
+    left: "50%",
+    width: 26,
+    alignItems: "center",
+    transform: [{ translateX: -13 }],
+    zIndex: 30,
+  },
+  timelineCenterCrosshairLine: {
+    width: 1,
+    flex: 1,
+    backgroundColor: "rgba(15, 23, 42, 0.28)",
+  },
+  timelineCenterCrosshairDot: {
+    position: "absolute",
+    top: "50%",
+    width: 9,
+    height: 9,
+    borderRadius: 999,
+    backgroundColor: "rgba(15, 23, 42, 0.46)",
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.88)",
+    transform: [{ translateY: -4.5 }],
   },
   timelineLaneGuide: {
     position: "absolute",
