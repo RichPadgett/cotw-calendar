@@ -2352,14 +2352,7 @@ function CommunityReviewDrawer({
               onToggle={onToggle}
             />
 
-            <ScrollView
-              nestedScrollEnabled
-              showsVerticalScrollIndicator
-              style={styles.communityReviewDockPanelScroll}
-              contentContainerStyle={styles.communityReviewBody}
-            >
-              {children}
-            </ScrollView>
+            <View style={styles.communityReviewBody}>{children}</View>
           </View>
         ) : null}
       </View>
@@ -3718,9 +3711,6 @@ const styles = {
     borderTopWidth: 1,
     borderTopColor: "#cbd5e1",
     backgroundColor: "#ffffff",
-  },
-  communityReviewDockPanelScroll: {
-    maxHeight: 520,
   },
   adminReviewPanel: {
     gap: 10,
