@@ -454,6 +454,22 @@ function getTimelineDayTickInterval(zoomId: TimelineZoomId) {
   return 5;
 }
 
+function formatTimelineOverviewEndpoint(value: number, zoomId: TimelineZoomId) {
+  const tickMode = getTimelineAxisTickMode(zoomId);
+  const parts = getTimelineDatePartsFromValue(value);
+  const yearLabel = `Year ${parts.enochYear}`;
+
+  if (tickMode === "day") {
+    return `${yearLabel} M${parts.month} D${parts.day}`;
+  }
+
+  if (tickMode === "month") {
+    return `${yearLabel} M${parts.month}`;
+  }
+
+  return yearLabel;
+}
+
 function getNextTimelineMonthStart(value: number) {
   const parts = getTimelineDatePartsFromValue(value);
   let { enochYear, month } = parts;
@@ -1550,6 +1566,10 @@ export default function HistoryTimelineView({
     timelineScrollX + effectiveTimelineViewportWidth,
     contentWidth
   );
+  const timelineOverviewRangeLabel = `${formatTimelineOverviewEndpoint(
+    timelineVisibleStartValue,
+    timelineZoom
+  )} - ${formatTimelineOverviewEndpoint(timelineVisibleEndValue, timelineZoom)}`;
   const overviewWindowLeft = timelineOverviewWidth
     ? Math.max(
         0,
@@ -2217,9 +2237,7 @@ export default function HistoryTimelineView({
         <View style={styles.timelineOverviewHeader}>
           <Text style={styles.timelineOverviewTitle}>Overview</Text>
           <Text numberOfLines={1} style={styles.timelineOverviewRange}>
-            {`Year ${Math.round(timelineVisibleStartValue)} - Year ${Math.round(
-              timelineVisibleEndValue
-            )}`}
+            {timelineOverviewRangeLabel}
           </Text>
         </View>
 
