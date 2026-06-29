@@ -779,7 +779,7 @@ function getSabbathJubileeOverlayOccurrences(
         iconName: "forest",
         iconColor: "#0f766e",
         category: "computed-sabbath-year",
-        lane: 0,
+        lane: 10,
         lanePart: "both",
         color: "#0f766e",
         colorFeature: { primary: "#0f766e" },
