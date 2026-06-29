@@ -181,6 +181,54 @@ const TIMELINE_ZOOM_LEVELS = [
     pixelsPerYear: 546,
     minViewportMultiplier: 3.2,
   },
+  {
+    id: "days-2",
+    label: "13X",
+    pixelsPerYear: 780,
+    minViewportMultiplier: 3.2,
+  },
+  {
+    id: "days-3",
+    label: "14X",
+    pixelsPerYear: 1080,
+    minViewportMultiplier: 3.2,
+  },
+  {
+    id: "days-4",
+    label: "15X",
+    pixelsPerYear: 1440,
+    minViewportMultiplier: 3.2,
+  },
+  {
+    id: "days-5",
+    label: "16X",
+    pixelsPerYear: 1920,
+    minViewportMultiplier: 3.2,
+  },
+  {
+    id: "days-6",
+    label: "17X",
+    pixelsPerYear: 2520,
+    minViewportMultiplier: 3.2,
+  },
+  {
+    id: "days-7",
+    label: "18X",
+    pixelsPerYear: 3300,
+    minViewportMultiplier: 3.2,
+  },
+  {
+    id: "days-8",
+    label: "19X",
+    pixelsPerYear: 4320,
+    minViewportMultiplier: 3.2,
+  },
+  {
+    id: "days-9",
+    label: "20X",
+    pixelsPerYear: 5640,
+    minViewportMultiplier: 3.2,
+  },
 ] as const;
 
 export type TimelineZoomId = (typeof TIMELINE_ZOOM_LEVELS)[number]["id"];
@@ -429,7 +477,11 @@ function getAxisYearTickRule(
   if (zoomId === "years-50") return { majorInterval: 50 };
   if (zoomId === "years-25") return { majorInterval: 25 };
   if (zoomId === "years-5") return { majorInterval: 5 };
-  if (zoomId === "half-years" || zoomId === "months" || zoomId === "days") {
+  if (
+    zoomId === "half-years" ||
+    zoomId === "months" ||
+    zoomId.startsWith("days")
+  ) {
     return { majorInterval: 1 };
   }
 
