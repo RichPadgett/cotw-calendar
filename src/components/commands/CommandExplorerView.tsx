@@ -3413,6 +3413,11 @@ const styles = {
   listPaneSplit: {
     flex: 0.42,
     minWidth: 250,
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: "#ffffff",
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
   },
   mobileInlineHint: {
     paddingHorizontal: 4,
