@@ -44,7 +44,7 @@ const TIMELINE_SIDE_GUTTER = 40;
 const MIN_LABELED_BAR_WIDTH = 132;
 const MIN_COMPACT_LABEL_BAR_WIDTH = 34;
 const HOVER_PREVIEW_WIDTH = 320;
-const HOVER_PREVIEW_ESTIMATED_HEIGHT = 132;
+const HOVER_PREVIEW_ESTIMATED_HEIGHT = 168;
 const HOVER_PREVIEW_TOP_RESERVED_SPACE = 132;
 const TIMELINE_HOVER_TAB_SIZE = 18;
 const TIMELINE_SETTINGS_STORAGE_KEY_PREFIX = "historyTimelineSettings";
@@ -1449,7 +1449,7 @@ export default function HistoryTimelineView({
   onSelectedOccurrenceChange,
   onSavingChange,
 }: HistoryTimelineViewProps) {
-  const { width } = useWindowDimensions();
+  const { height, width } = useWindowDimensions();
   const isCompactTimeline = width < 520;
   const [timelineScrollX, setTimelineScrollX] = useState(0);
   const [laneHeightIndex, setLaneHeightIndex] = useState(0);
@@ -1526,7 +1526,7 @@ export default function HistoryTimelineView({
     dynamicHoverPreviewTop < activeRowBottom &&
     dynamicHoverPreviewTop + HOVER_PREVIEW_ESTIMATED_HEIGHT > activeRowTop;
   const hoverPreviewTrackBottom = timelineViewportY + timelineAxisTop - 8;
-  const hoverPreviewTop =
+  const preferredHoverPreviewTop =
     hoverPreviewOverlapsActiveRow &&
     activeRowTop !== null &&
     activeRowBottom !== null
@@ -1538,6 +1538,15 @@ export default function HistoryTimelineView({
             activeRowTop - HOVER_PREVIEW_ESTIMATED_HEIGHT - 10
           )
       : dynamicHoverPreviewTop;
+  const hoverPreviewViewportBottom = appScrollY - timelineLayoutY + height - 12;
+  const hoverPreviewMaxTop = Math.max(
+    HOVER_PREVIEW_TOP_RESERVED_SPACE,
+    hoverPreviewViewportBottom - HOVER_PREVIEW_ESTIMATED_HEIGHT
+  );
+  const hoverPreviewTop = Math.max(
+    HOVER_PREVIEW_TOP_RESERVED_SPACE,
+    Math.min(hoverPreviewMaxTop, preferredHoverPreviewTop)
+  );
   const axisTicks = useMemo(
     () =>
       getVisibleTimelineAxisTicks({
