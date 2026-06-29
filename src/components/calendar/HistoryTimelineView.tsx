@@ -48,6 +48,7 @@ const HOVER_PREVIEW_ESTIMATED_HEIGHT = 168;
 const HOVER_PREVIEW_TOP_RESERVED_SPACE = 132;
 const TIMELINE_HOVER_TAB_SIZE = 18;
 const TIMELINE_SETTINGS_STORAGE_KEY_PREFIX = "historyTimelineSettings";
+const SABBATH_JUBILEE_OVERLAY_BUFFER_YEARS = 4;
 const TIMELINE_LANE_OPTIONS = Array.from(
   { length: TIMELINE_LANE_COUNT },
   (_, index) => ({
@@ -716,6 +717,97 @@ function getVisibleTimelineAxisTicks(params: {
   }
 
   return ticks;
+}
+
+function getSabbathJubileeOverlayOccurrences(
+  visibleStartValue: number,
+  visibleEndValue: number
+): TimelineOccurrence[] {
+  const startYear = Math.max(
+    HISTORY_TIMELINE_RANGE.startYear,
+    Math.floor(visibleStartValue) - SABBATH_JUBILEE_OVERLAY_BUFFER_YEARS
+  );
+  const endYear = Math.min(
+    HISTORY_TIMELINE_RANGE.endYear,
+    Math.ceil(visibleEndValue) + SABBATH_JUBILEE_OVERLAY_BUFFER_YEARS
+  );
+  const occurrences: TimelineOccurrence[] = [];
+
+  for (let enochYear = startYear; enochYear <= endYear; enochYear += 1) {
+    const cycleYear = ((enochYear - 1) % 50) + 1;
+    const cycleNumber = Math.ceil(enochYear / 50);
+
+    if (cycleYear === 50) {
+      const jubileeNumber = cycleNumber;
+
+      occurrences.push({
+        id: `computed-jubilee-${jubileeNumber}`,
+        title: `${jubileeNumber} Jubilee`,
+        summary: `Jubilee year ${enochYear}`,
+        iconName: "workspace-premium",
+        iconColor: "#ca8a04",
+        category: "computed-jubilee",
+        lane: 0,
+        lanePart: "both",
+        color: "#ca8a04",
+        colorFeature: { primary: "#ca8a04" },
+        showOnTimeline: true,
+        showOnQuickTimeline: false,
+        showOnCalendar: false,
+        exactDate: {
+          label: `Enoch Year ${enochYear}, Jubilee`,
+          enochDate: {
+            enochYear,
+            month: 1,
+            day: 1,
+            label: `Enoch Year ${enochYear}, Month 1, Day 1`,
+          },
+          precision: "traditional",
+        },
+      });
+
+      continue;
+    }
+
+    if (cycleYear % 7 === 0) {
+      const sabbathNumber = cycleYear / 7;
+
+      occurrences.push({
+        id: `computed-sabbath-year-${enochYear}`,
+        title: `${sabbathNumber} Sabbath`,
+        summary: `Sabbath year ${enochYear}`,
+        iconName: "forest",
+        iconColor: "#0f766e",
+        category: "computed-sabbath-year",
+        lane: 0,
+        lanePart: "both",
+        color: "#0f766e",
+        colorFeature: { primary: "#0f766e" },
+        showOnTimeline: true,
+        showOnQuickTimeline: false,
+        showOnCalendar: false,
+        exactDate: {
+          label: `Enoch Year ${enochYear}, ${sabbathNumber} Sabbath`,
+          enochDate: {
+            enochYear,
+            month: 1,
+            day: 1,
+            label: `Enoch Year ${enochYear}, Month 1, Day 1`,
+          },
+          precision: "traditional",
+        },
+      });
+    }
+  }
+
+  return occurrences;
+}
+
+function isComputedCycleOccurrence(occurrence: TimelineOccurrence) {
+  return (
+    occurrence.id.startsWith("computed-sabbath-year-") ||
+    occurrence.id.startsWith("computed-jubilee-")
+  );
 }
 
 export function formatHistoricalDate(date: HistoricalDate) {
@@ -1506,7 +1598,7 @@ export default function HistoryTimelineView({
   const [isSavingTimeline, setIsSavingTimeline] = useState(false);
   const [formState, setFormState] =
     useState<TimelineEntryFormState>(DEFAULT_FORM_STATE);
-  const visibleOccurrences = timelineOccurrences.filter(
+  const visibleSavedOccurrences = timelineOccurrences.filter(
     (occurrence) => occurrence.showOnTimeline
   );
   const activeHoverOccurrence = pinnedOccurrence ?? hoveredOccurrence;
@@ -1564,7 +1656,7 @@ export default function HistoryTimelineView({
   );
   const timelineRangeSpan =
     HISTORY_TIMELINE_RANGE.endYear - HISTORY_TIMELINE_RANGE.startYear;
-  const quickTimelineOccurrences = visibleOccurrences.filter(
+  const quickTimelineOccurrences = visibleSavedOccurrences.filter(
     (occurrence) => occurrence.showOnQuickTimeline
   );
   const timelineVisibleStartValue = getTimelineValueFromPosition(
@@ -1579,6 +1671,18 @@ export default function HistoryTimelineView({
     timelineVisibleStartValue,
     timelineZoom
   )} - ${formatTimelineOverviewEndpoint(timelineVisibleEndValue, timelineZoom)}`;
+  const computedCycleOccurrences = useMemo(
+    () =>
+      getSabbathJubileeOverlayOccurrences(
+        timelineVisibleStartValue,
+        timelineVisibleEndValue
+      ),
+    [timelineVisibleEndValue, timelineVisibleStartValue]
+  );
+  const visibleOccurrences = useMemo(
+    () => [...computedCycleOccurrences, ...visibleSavedOccurrences],
+    [computedCycleOccurrences, visibleSavedOccurrences]
+  );
   const overviewWindowLeft = timelineOverviewWidth
     ? Math.max(
         0,
@@ -1962,7 +2066,11 @@ export default function HistoryTimelineView({
       setPinnedOccurrence(occurrence);
     }
 
-    if (isEditMode && canManageTimeline) {
+    if (
+      isEditMode &&
+      canManageTimeline &&
+      !isComputedCycleOccurrence(occurrence)
+    ) {
       onSelectedOccurrenceChange(null);
       setEditingOccurrence(occurrence);
       setFormState(getFormStateFromOccurrence(occurrence));
@@ -1974,7 +2082,7 @@ export default function HistoryTimelineView({
   }
 
   function editTimelineEntry(occurrence: TimelineOccurrence) {
-    if (!canManageTimeline) return;
+    if (!canManageTimeline || isComputedCycleOccurrence(occurrence)) return;
 
     setEditingOccurrence(occurrence);
     setFormState(getFormStateFromOccurrence(occurrence));
