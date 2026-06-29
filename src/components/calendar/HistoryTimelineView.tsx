@@ -1656,20 +1656,29 @@ export default function HistoryTimelineView({
       currentCenterValue,
       nextContentWidth
     );
-    const nextScrollX = Math.max(
+    const maxScrollX = Math.max(
       0,
-      nextCenterX - effectiveTimelineViewportWidth / 2
+      nextContentWidth - effectiveTimelineViewportWidth
+    );
+    const nextScrollX = Math.min(
+      maxScrollX,
+      Math.max(0, nextCenterX - effectiveTimelineViewportWidth / 2)
     );
 
     onTimelineZoomChange(nextZoom);
     setTimelineScrollX(nextScrollX);
 
-    setTimeout(() => {
+    const scrollToNextPosition = () => {
       timelineScrollRef.current?.scrollTo({
         x: nextScrollX,
         animated: false,
       });
-    }, 0);
+    };
+
+    setTimeout(scrollToNextPosition, 0);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(scrollToNextPosition);
+    });
   }
 
   function stepLaneHeight(direction: -1 | 1) {
@@ -2140,36 +2149,6 @@ export default function HistoryTimelineView({
               ]}
             >
               <Text style={styles.timelineLaneGuideLabel}>{laneIndex}</Text>
-            </View>
-          ))}
-
-          <View style={[styles.axisLine, { top: timelineAxisTop }]} />
-
-          {axisTicks.map((tick) => (
-            <View
-              key={tick.key}
-              style={[
-                styles.axisMarker,
-                { left: tick.x, top: timelineAxisTop },
-              ]}
-            >
-              <View
-                style={[
-                  styles.axisTick,
-                  tick.major ? styles.axisTickMajor : styles.axisTickMinor,
-                ]}
-              />
-              {tick.label ? (
-                <Text
-                  numberOfLines={1}
-                  style={[
-                    styles.axisLabel,
-                    tick.major ? styles.axisLabelMajor : styles.axisLabelMinor,
-                  ]}
-                >
-                  {tick.label}
-                </Text>
-              ) : null}
             </View>
           ))}
 
@@ -2785,14 +2764,6 @@ const styles = StyleSheet.create({
     color: "rgba(71, 85, 105, 0.5)",
     textAlign: "right",
   },
-  axisLine: {
-    position: "absolute",
-    left: TIMELINE_SIDE_GUTTER,
-    right: TIMELINE_SIDE_GUTTER,
-    top: TRACK_TOP + TRACK_HEIGHT + 8,
-    height: 2,
-    backgroundColor: "#111827",
-  },
   floatingAxis: {
     position: "sticky" as any,
     bottom: 12,
@@ -2818,11 +2789,6 @@ const styles = StyleSheet.create({
     top: 11,
     alignItems: "center",
     transform: [{ translateX: -0.5 }],
-  },
-  axisMarker: {
-    position: "absolute",
-    top: TRACK_TOP + TRACK_HEIGHT + 8,
-    alignItems: "center",
   },
   axisTick: {
     width: 2,
