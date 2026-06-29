@@ -3,8 +3,74 @@
   "month": 4,
   "day": 11,
   "title": "Month 4 Day 11",
-  "notes": "",
-  "scriptureReadings": [],
+  "notes": "This teaching continues through Deuteronomy 12–13, delivering strong warnings against mixing pagan customs with the worship of Yahweh and following prophets or dreamers who lead people after other gods. It draws powerful parallels between the test of a true prophet in Deuteronomy 13 and the false accusations against Stephen and Yeshua, while exposing traditions such as Christmas trees, Tammuz weeping, and Catholic practices as abominations. The study emphasizes that justification by faith upholds the Law rather than abolishes it, highlights the zeal of believing Jews for the Torah, and calls believers to reject lawlessness and mixed worship in favor of pure obedience.",
+  "scriptureReadings": [
+    {
+      "label": "Meditation on the Book of the Law",
+      "reference": "Joshua 1:8",
+      "url": "https://www.blueletterbible.org/verse/kjv/jos/1/8/"
+    },
+    {
+      "label": "Place of Worship",
+      "reference": "Deuteronomy 12",
+      "url": "https://www.blueletterbible.org/kjv/deu/12/"
+    },
+    {
+      "label": "Customs of the Nations",
+      "reference": "Jeremiah 10:1-5",
+      "url": "https://www.blueletterbible.org/verse/kjv/jer/10/1/"
+    },
+    {
+      "label": "Idol of Jealousy",
+      "reference": "Ezekiel 8:1-16",
+      "url": "https://www.blueletterbible.org/verse/kjv/eze/8/1/"
+    },
+    {
+      "label": "Destroyed for Lack of Knowledge",
+      "reference": "Hosea 4:6",
+      "url": "https://www.blueletterbible.org/verse/kjv/hos/4/6/"
+    },
+    {
+      "label": "Test of Other Gods",
+      "reference": "Deuteronomy 13",
+      "url": "https://www.blueletterbible.org/kjv/deu/13/"
+    },
+    {
+      "label": "Fourth Beast",
+      "reference": "Daniel 7:23-25",
+      "url": "https://www.blueletterbible.org/verse/kjv/dan/7/23/"
+    },
+    {
+      "label": "Against Moses & Elohim",
+      "reference": "Acts 6:11,14",
+      "url": "https://www.blueletterbible.org/verse/kjv/act/6/11/"
+    },
+    {
+      "label": "No Flesh Justified by Law",
+      "reference": "Romans 3:20",
+      "url": "https://www.blueletterbible.org/verse/kjv/rom/3/20/"
+    },
+    {
+      "label": "Misunderstanding Paul",
+      "reference": "2 Peter 3:14-16",
+      "url": "https://www.blueletterbible.org/verse/kjv/2pe/3/14/"
+    },
+    {
+      "label": "Proving Yeshua Guilty",
+      "reference": "John 8:44-46",
+      "url": "https://www.blueletterbible.org/verse/kjv/jhn/8/44/"
+    },
+    {
+      "label": "Fulfilling the Law",
+      "reference": "Matthew 5:17-20",
+      "url": "https://www.blueletterbible.org/verse/kjv/mat/5/17/"
+    },
+    {
+      "label": "Keep the Commands",
+      "reference": "Revelation 22:10-16",
+      "url": "https://www.blueletterbible.org/verse/kjv/rev/22/10/"
+    }
+  ],
   "sections": [
     {
       "title": "Notices",
@@ -22,7 +88,14 @@
     {
       "title": "Files / Links / Media",
       "displayStyle": "default",
-      "items": []
+      "items": [
+        {
+          "label": "Deuteronomy 133 Test: Rejecting Idolatry, False Prophets & Mixed Worship",
+          "type": "external-link",
+          "access": "public",
+          "url": "https://open.spotify.com/episode/6FWzLDc05YutkBvSOqQIKS"
+        }
+      ]
     }
   ]
 }
