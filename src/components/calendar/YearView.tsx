@@ -140,6 +140,7 @@ export default function YearView({
         const numericMonth = Number(monthNumber);
         const firstMonthNode = monthNodes[0];
         const month = firstMonthNode.enoch?.month;
+        const monthColor = month?.themeColor ?? "#cbd5e1";
 
         const leadingOffset =
           ((firstMonthNode.enoch?.dayOfYear ?? 1) - 1 + ENOCH_WEEK_OFFSET) % 7;
@@ -161,107 +162,148 @@ export default function YearView({
             onLayout={(event) => {
               onMonthLayout?.(numericMonth, event.nativeEvent.layout.y);
             }}
-            style={{ marginBottom: 24 }}
+            style={{
+              marginBottom: 24,
+              borderWidth: 1.5,
+              borderColor: monthColor,
+              borderRadius: 8,
+              backgroundColor: "#ffffff",
+              overflow: "hidden",
+            }}
           >
-            <Text
+            <View
               style={{
-                marginBottom: 8,
-                fontSize: 20,
-                fontWeight: "800",
+                paddingHorizontal: 12,
+                paddingVertical: 10,
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 10,
+                backgroundColor: "#f8fafc",
+                borderBottomWidth: 1,
+                borderBottomColor: "#e2e8f0",
               }}
             >
-              Month {month?.number}
-            </Text>
+              <View
+                style={{
+                  width: 5,
+                  alignSelf: "stretch",
+                  borderRadius: 999,
+                  backgroundColor: monthColor,
+                }}
+              />
 
-            <Text
-              style={{
-                marginBottom: 12,
-                fontSize: 13,
-                color: "#6b7280",
-                textTransform: "capitalize",
-              }}
-            >
-              {month?.season}
-            </Text>
-
-            <View style={{ flexDirection: "row", marginBottom: 6 }}>
-              {WEEKDAY_LABELS.map((label) => (
-                <View
-                  key={label}
+              <View>
+                <Text
                   style={{
-                    width: "14.2857%",
-                    alignItems: "center",
+                    fontSize: 20,
+                    fontWeight: "800",
+                    color: "#111827",
                   }}
                 >
-                  <Text
+                  Month {month?.number}
+                </Text>
+
+                <Text
+                  style={{
+                    marginTop: 2,
+                    fontSize: 13,
+                    color: "#6b7280",
+                    textTransform: "capitalize",
+                  }}
+                >
+                  {month?.season}
+                </Text>
+              </View>
+            </View>
+
+            <View style={{ padding: 8 }}>
+              <View style={{ flexDirection: "row", marginBottom: 6 }}>
+                {WEEKDAY_LABELS.map((label) => (
+                  <View
+                    key={label}
                     style={{
-                      fontSize: 10,
-                      fontWeight: "700",
-                      color: "#6b7280",
+                      width: "14.2857%",
+                      alignItems: "center",
                     }}
                   >
-                    {label}
-                  </Text>
-                </View>
-              ))}
-            </View>
+                    <Text
+                      style={{
+                        fontSize: 10,
+                        fontWeight: "700",
+                        color: "#6b7280",
+                      }}
+                    >
+                      {label}
+                    </Text>
+                  </View>
+                ))}
+              </View>
 
-            <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-              {leadingBlanks.map((_, index) => (
-                <View
-                  key={`blank-${monthNumber}-${index}`}
-                  style={{ width: "14.2857%", padding: 2 }}
-                />
-              ))}
+              <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+                {leadingBlanks.map((_, index) => (
+                  <View
+                    key={`blank-${monthNumber}-${index}`}
+                    style={{ width: "14.2857%", padding: 2 }}
+                  />
+                ))}
 
-              {monthNodes.map((node) => {
-                const dayContent = notices.find(
-                  (item) =>
-                    item.year === node.enoch?.year &&
-                    item.month === node.enoch?.month?.number &&
-                    item.day === node.enoch?.day
-                );
+                {monthNodes.map((node) => {
+                  const dayContent = notices.find(
+                    (item) =>
+                      item.year === node.enoch?.year &&
+                      item.month === node.enoch?.month?.number &&
+                      item.day === node.enoch?.day
+                  );
 
-                const hasNotice = Boolean(dayContent?.notice);
-                const hasContent = Boolean(dayContent?.hasContent);
+                  const hasNotice = Boolean(dayContent?.notice);
+                  const hasContent = Boolean(dayContent?.hasContent);
 
-                const markersForDay = perpetualMarkers.filter((marker) => {
-                  const matchesMonthDay =
-                    marker.month === node.enoch?.month?.number &&
-                    marker.day === node.enoch?.day;
+                  const markersForDay = perpetualMarkers.filter((marker) => {
+                    const matchesMonthDay =
+                      marker.month === node.enoch?.month?.number &&
+                      marker.day === node.enoch?.day;
 
-                  const matchesGateDay =
-                    Boolean(marker.gateDay) &&
-                    node.enoch?.isIntercalary &&
-                    marker.gateDay === node.enoch?.quarter;
+                    const matchesGateDay =
+                      Boolean(marker.gateDay) &&
+                      node.enoch?.isIntercalary &&
+                      marker.gateDay === node.enoch?.quarter;
 
-                  const matchesIntercalaryWeek =
-                    marker.intercalaryWeek === true &&
-                    node.enoch?.isSabbathWeek === true;
+                    const matchesIntercalaryWeek =
+                      marker.intercalaryWeek === true &&
+                      node.enoch?.isSabbathWeek === true;
+
+                    return (
+                      matchesMonthDay ||
+                      matchesGateDay ||
+                      matchesIntercalaryWeek
+                    );
+                  });
 
                   return (
-                    matchesMonthDay || matchesGateDay || matchesIntercalaryWeek
+                    <View
+                      key={node.id}
+                      style={{ width: "14.2857%", padding: 2 }}
+                    >
+                      <DayCell
+                        node={node}
+                        hasNotice={hasNotice}
+                        hasContent={hasContent}
+                        perpetualMarkers={markersForDay}
+                        onPressDay={onPressDay}
+                        todayDateId={todayDateId}
+                      />
+                    </View>
                   );
-                });
+                })}
+              </View>
 
-                return (
-                  <View key={node.id} style={{ width: "14.2857%", padding: 2 }}>
-                    <DayCell
-                      node={node}
-                      hasNotice={hasNotice}
-                      hasContent={hasContent}
-                      perpetualMarkers={markersForDay}
-                      onPressDay={onPressDay}
-                      todayDateId={todayDateId}
-                    />
-                  </View>
-                );
-              })}
+              {intercalaryNode && (
+                <IntercalaryRow
+                  node={intercalaryNode}
+                  onPressDay={onPressDay}
+                />
+              )}
             </View>
-
-            {intercalaryNode && (
-              <IntercalaryRow node={intercalaryNode} onPressDay={onPressDay} />
-            )}
           </View>
         );
       })}
