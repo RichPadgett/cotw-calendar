@@ -389,6 +389,12 @@ function isSabbathWeekYear(enochYear: number) {
   return enochYear > 0 && enochYear % SABBATH_WEEK_CYCLE_YEARS === 0;
 }
 
+function getEnochYearDurationDays(enochYear: number) {
+  return (
+    ENOCH_YEAR_DAYS + (isSabbathWeekYear(enochYear) ? SABBATH_WEEK_DAYS : 0)
+  );
+}
+
 function getTimelineYearSpan(durationDays: number, enochYear?: number) {
   if (!enochYear) return durationDays / AVERAGE_ENOCH_YEAR_DAYS;
 
@@ -397,9 +403,7 @@ function getTimelineYearSpan(durationDays: number, enochYear?: number) {
   let yearSpan = 0;
 
   while (remainingDays > 0) {
-    const currentYearDays =
-      ENOCH_YEAR_DAYS +
-      (isSabbathWeekYear(currentYear) ? SABBATH_WEEK_DAYS : 0);
+    const currentYearDays = getEnochYearDurationDays(currentYear);
     const consumedDays = Math.min(remainingDays, currentYearDays);
 
     yearSpan += consumedDays / currentYearDays;
@@ -747,21 +751,21 @@ function getSabbathJubileeOverlayOccurrences(
         iconName: "workspace-premium",
         iconColor: "#ca8a04",
         category: "computed-jubilee",
-        lane: 0,
+        lane: 10,
         lanePart: "both",
         color: "#ca8a04",
         colorFeature: { primary: "#ca8a04" },
         showOnTimeline: true,
         showOnQuickTimeline: false,
         showOnCalendar: false,
-        exactDate: {
+        timeRange: {
           label: `Enoch Year ${enochYear}, Jubilee`,
-          enochDate: {
+          start: {
             enochYear,
-            month: 1,
-            day: 1,
-            label: `Enoch Year ${enochYear}, Month 1, Day 1`,
+            enochMonth: 1,
+            enochDay: 1,
           },
+          durationDays: getEnochYearDurationDays(enochYear),
           precision: "traditional",
         },
       });
@@ -786,14 +790,14 @@ function getSabbathJubileeOverlayOccurrences(
         showOnTimeline: true,
         showOnQuickTimeline: false,
         showOnCalendar: false,
-        exactDate: {
+        timeRange: {
           label: `Enoch Year ${enochYear}, ${sabbathNumber} Sabbath`,
-          enochDate: {
+          start: {
             enochYear,
-            month: 1,
-            day: 1,
-            label: `Enoch Year ${enochYear}, Month 1, Day 1`,
+            enochMonth: 1,
+            enochDay: 1,
           },
+          durationDays: getEnochYearDurationDays(enochYear),
           precision: "traditional",
         },
       });
