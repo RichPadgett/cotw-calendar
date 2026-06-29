@@ -19,6 +19,7 @@ import {
 import type { StyleProp, ViewStyle } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { MaterialIcons } from "@expo/vector-icons";
 
 import { apiUrl } from "../../config/api";
 
@@ -1137,16 +1138,18 @@ export default function CommandExplorerView({
       total + getContributionVoteCounts(contribution).concern,
     0
   );
+  const reviewDrawerWidth = Math.min(390, Math.max(300, width - 32));
   const renderCommunityReviewTools = () => {
     if (!canContribute && !canModerateContributions) return null;
 
     return (
-      <CommunityReviewSection
+      <CommunityReviewDrawer
         isOpen={isCommunityReviewOpen}
         voteCount={voteContributions.length}
         reviewCount={canModerateContributions ? pendingContributions.length : 0}
         concernCount={activeVoteConcernCount}
         canModerate={canModerateContributions}
+        drawerWidth={reviewDrawerWidth}
         onToggle={() => setIsCommunityReviewOpen((value) => !value)}
       >
         {canContribute ? (
@@ -1209,7 +1212,7 @@ export default function CommandExplorerView({
             onResolveConcern={resolveContributionConcern}
           />
         ) : null}
-      </CommunityReviewSection>
+      </CommunityReviewDrawer>
     );
   };
   const renderCommandStudyContent = () => {
@@ -1234,8 +1237,6 @@ export default function CommandExplorerView({
           onSubmitContribution={submitContribution}
           onWithdrawContribution={withdrawContribution}
         />
-
-        {renderCommunityReviewTools()}
       </View>
     );
   };
@@ -1346,6 +1347,7 @@ export default function CommandExplorerView({
           </PaneScroll>
         </View>
       </View>
+      {renderCommunityReviewTools()}
     </View>
   );
 }
@@ -2275,13 +2277,14 @@ function VoteTasksPanel({
   );
 }
 
-function CommunityReviewSection({
+function CommunityReviewDrawer({
   children,
   isOpen,
   voteCount,
   reviewCount,
   concernCount,
   canModerate,
+  drawerWidth,
   onToggle,
 }: {
   children: ReactNode;
@@ -2290,55 +2293,132 @@ function CommunityReviewSection({
   reviewCount: number;
   concernCount: number;
   canModerate: boolean;
+  drawerWidth: number;
+  onToggle: () => void;
+}) {
+  const totalCount = voteCount + (canModerate ? reviewCount : 0);
+
+  return (
+    <View pointerEvents="box-none" style={styles.communityReviewDrawerLayer}>
+      <View
+        style={[styles.communityReviewDrawer, isOpen && { width: drawerWidth }]}
+      >
+        <Pressable
+          onPress={onToggle}
+          accessibilityRole="button"
+          accessibilityLabel={
+            isOpen
+              ? "Hide community review tools"
+              : "Show community review tools"
+          }
+          style={({ pressed }) => [
+            styles.communityReviewTab,
+            isOpen && styles.communityReviewTabOpen,
+            pressed && { opacity: 0.78 },
+          ]}
+        >
+          <MaterialIcons
+            name={isOpen ? "close" : "rate-review"}
+            size={20}
+            color={isOpen ? "#ffffff" : "#0f766e"}
+          />
+          <Text
+            style={[
+              styles.communityReviewTabText,
+              isOpen && styles.communityReviewTabTextOpen,
+            ]}
+          >
+            Review
+          </Text>
+          {totalCount > 0 ? (
+            <Text
+              style={[
+                styles.communityReviewTabCount,
+                isOpen && styles.communityReviewTabCountOpen,
+              ]}
+            >
+              {Math.min(totalCount, 99)}
+            </Text>
+          ) : null}
+        </Pressable>
+
+        {isOpen ? (
+          <View style={styles.communityReviewSection}>
+            <CommunityReviewHeader
+              voteCount={voteCount}
+              reviewCount={reviewCount}
+              concernCount={concernCount}
+              canModerate={canModerate}
+              onToggle={onToggle}
+            />
+
+            <ScrollView
+              nestedScrollEnabled
+              showsVerticalScrollIndicator
+              style={styles.communityReviewPanelScroll}
+              contentContainerStyle={styles.communityReviewBody}
+            >
+              {children}
+            </ScrollView>
+          </View>
+        ) : null}
+      </View>
+    </View>
+  );
+}
+
+function CommunityReviewHeader({
+  voteCount,
+  reviewCount,
+  concernCount,
+  canModerate,
+  onToggle,
+}: {
+  voteCount: number;
+  reviewCount: number;
+  concernCount: number;
+  canModerate: boolean;
   onToggle: () => void;
 }) {
   return (
-    <View style={styles.communityReviewSection}>
-      <Pressable
-        onPress={onToggle}
-        accessibilityRole="button"
-        accessibilityLabel={
-          isOpen ? "Hide community review tools" : "Show community review tools"
-        }
-        style={({ pressed }) => [
-          styles.communityReviewHeader,
-          pressed && { opacity: 0.78 },
-        ]}
-      >
-        <View style={styles.communityReviewTitleGroup}>
-          <Text style={styles.communityReviewEyebrow}>Community Review</Text>
-          <Text style={styles.communityReviewTitle}>
-            Voting and pending suggestions
-          </Text>
-        </View>
+    <Pressable
+      onPress={onToggle}
+      accessibilityRole="button"
+      accessibilityLabel="Hide community review tools"
+      style={({ pressed }) => [
+        styles.communityReviewHeader,
+        pressed && { opacity: 0.78 },
+      ]}
+    >
+      <View style={styles.communityReviewTitleGroup}>
+        <Text style={styles.communityReviewEyebrow}>Community Review</Text>
+        <Text style={styles.communityReviewTitle}>
+          Voting and pending suggestions
+        </Text>
+      </View>
 
-        <View style={styles.communityReviewSummary}>
+      <View style={styles.communityReviewSummary}>
+        <Text style={styles.communityReviewSummaryPill}>
+          Vote {Math.min(voteCount, 99)}
+        </Text>
+        {canModerate ? (
           <Text style={styles.communityReviewSummaryPill}>
-            Vote {Math.min(voteCount, 99)}
+            Review {Math.min(reviewCount, 99)}
           </Text>
-          {canModerate ? (
-            <Text style={styles.communityReviewSummaryPill}>
-              Review {Math.min(reviewCount, 99)}
-            </Text>
-          ) : null}
-          {concernCount > 0 ? (
-            <Text
-              style={[
-                styles.communityReviewSummaryPill,
-                styles.communityReviewConcernPill,
-              ]}
-            >
-              !{Math.min(concernCount, 99)}
-            </Text>
-          ) : null}
-          <Text style={styles.communityReviewToggle}>{isOpen ? "-" : "+"}</Text>
-        </View>
-      </Pressable>
-
-      {isOpen ? (
-        <View style={styles.communityReviewBody}>{children}</View>
-      ) : null}
-    </View>
+        ) : null}
+        {concernCount > 0 ? (
+          <Text
+            style={[
+              styles.communityReviewSummaryPill,
+              styles.communityReviewConcernPill,
+            ]}
+          >
+            !{Math.min(concernCount, 99)}
+          </Text>
+        ) : null}
+        <MaterialIcons name="close" size={20} color="#334155" />
+      </View>
+    </Pressable>
   );
 }
 
@@ -3513,12 +3593,88 @@ const styles = {
     borderWidth: 1,
     borderColor: "#fde68a",
   },
-  communityReviewSection: {
-    borderRadius: 8,
+  communityReviewDrawerLayer: {
+    ...(Platform.OS === "web"
+      ? {
+          position: "fixed" as const,
+          top: 184,
+          right: 12,
+        }
+      : {
+          position: "absolute" as const,
+          top: 16,
+          right: 0,
+        }),
+    zIndex: 80,
+    alignItems: "flex-end" as const,
+  },
+  communityReviewDrawer: {
+    flexDirection: "row" as const,
+    alignItems: "flex-start" as const,
+    justifyContent: "flex-end" as const,
+  },
+  communityReviewTab: {
+    width: 74,
+    minHeight: 92,
+    paddingHorizontal: 8,
+    paddingVertical: 10,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    gap: 5,
+    borderTopLeftRadius: 8,
+    borderBottomLeftRadius: 8,
+    backgroundColor: "#ffffff",
     borderWidth: 1,
-    borderColor: "#cbd5e1",
+    borderRightWidth: 0,
+    borderColor: "#99f6e4",
+    shadowColor: "#0f172a",
+    shadowOpacity: 0.13,
+    shadowRadius: 9,
+    shadowOffset: { width: 0, height: 3 },
+  },
+  communityReviewTabOpen: {
+    backgroundColor: "#0f766e",
+    borderColor: "#0f766e",
+  },
+  communityReviewTabText: {
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: "900" as const,
+    color: "#0f766e",
+    textAlign: "center" as const,
+  },
+  communityReviewTabTextOpen: {
+    color: "#ffffff",
+  },
+  communityReviewTabCount: {
+    minWidth: 24,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 999,
+    overflow: "hidden" as const,
+    backgroundColor: "#ccfbf1",
+    color: "#0f766e",
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: "900" as const,
+    textAlign: "center" as const,
+  },
+  communityReviewTabCountOpen: {
+    backgroundColor: "#ffffff",
+    color: "#0f766e",
+  },
+  communityReviewSection: {
+    flex: 1,
+    borderRadius: 8,
+    borderTopLeftRadius: 0,
+    borderWidth: 1,
+    borderColor: "#0f766e",
     backgroundColor: "#f8fafc",
     overflow: "hidden" as const,
+    shadowColor: "#0f172a",
+    shadowOpacity: 0.16,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 5 },
   },
   communityReviewHeader: {
     minHeight: 58,
@@ -3589,6 +3745,9 @@ const styles = {
     borderTopWidth: 1,
     borderTopColor: "#cbd5e1",
     backgroundColor: "#ffffff",
+  },
+  communityReviewPanelScroll: {
+    maxHeight: 540,
   },
   adminReviewPanel: {
     gap: 10,
