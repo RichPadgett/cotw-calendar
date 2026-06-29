@@ -1467,14 +1467,22 @@ function CommandDetail({
   return (
     <View style={{ gap: 16 }}>
       <View style={styles.commandSummaryBlock}>
-        <Text
-          style={styles.commandSummaryTitle}
-          numberOfLines={3}
-          adjustsFontSizeToFit
-          minimumFontScale={0.78}
-        >
-          {commandTitle}
-        </Text>
+        <View style={styles.commandSummaryTopRow}>
+          <View style={styles.commandDotRow} aria-hidden>
+            <View style={styles.commandDot} />
+            <View style={styles.commandDot} />
+            <View style={styles.commandDot} />
+          </View>
+
+          <Text
+            style={styles.commandSummaryTitle}
+            numberOfLines={3}
+            adjustsFontSizeToFit
+            minimumFontScale={0.78}
+          >
+            {commandTitle}
+          </Text>
+        </View>
 
         {references.length > 0 ? (
           <View style={styles.referenceWrap}>
@@ -2069,7 +2077,12 @@ function DetailList({
 }
 
 function SectionTitle({ title }: { title: string }) {
-  return <Text style={styles.sectionTitle}>{title}</Text>;
+  return (
+    <View style={styles.sectionTitleBlock}>
+      <View style={styles.sectionTitleMarker} />
+      <Text style={styles.sectionTitle}>{title}</Text>
+    </View>
+  );
 }
 
 function VoteTasksPanel({
@@ -3434,13 +3447,38 @@ const styles = {
     borderColor: "#f3e6b3",
   },
   commandSummaryBlock: {
-    gap: 8,
+    gap: 10,
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: "#eef6ff",
+    borderWidth: 1,
+    borderColor: "#93c5fd",
+    borderLeftWidth: 5,
+    borderLeftColor: "#2563eb",
+  },
+  commandSummaryTopRow: {
+    flexDirection: "row" as const,
+    alignItems: "flex-start" as const,
+    gap: 10,
+  },
+  commandDotRow: {
+    width: 18,
+    marginTop: 8,
+    gap: 4,
+    alignItems: "center" as const,
+  },
+  commandDot: {
+    width: 5,
+    height: 5,
+    borderRadius: 999,
+    backgroundColor: "#2563eb",
   },
   commandSummaryTitle: {
+    flex: 1,
     fontSize: 21,
     lineHeight: 27,
-    fontWeight: "500" as const,
-    color: "#111827",
+    fontWeight: "800" as const,
+    color: "#172554",
   },
   referenceWrap: {
     flexDirection: "row" as const,
@@ -3866,10 +3904,31 @@ const styles = {
     textAlignVertical: "top" as const,
   },
   sectionTitle: {
+    flex: 1,
     fontSize: 13,
+    lineHeight: 18,
     fontWeight: "900" as const,
-    color: "#334155",
+    color: "#0f172a",
     textTransform: "uppercase" as const,
+  },
+  sectionTitleBlock: {
+    flex: 1,
+    minHeight: 34,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+    borderRadius: 8,
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    gap: 8,
+    backgroundColor: "#f1f5f9",
+    borderWidth: 1,
+    borderColor: "#cbd5e1",
+  },
+  sectionTitleMarker: {
+    width: 7,
+    height: 18,
+    borderRadius: 999,
+    backgroundColor: "#0f766e",
   },
   sectionTitleRow: {
     flexDirection: "row" as const,
