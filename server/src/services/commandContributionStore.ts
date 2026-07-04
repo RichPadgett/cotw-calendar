@@ -691,7 +691,7 @@ function toPrologAtomOrString(value: string) {
 }
 
 function toPrologString(value: string) {
-  return `'${value.replace(/'/g, "''")}'`;
+  return `'${value.replace(/\s+/g, " ").trim().replace(/'/g, "''")}'`;
 }
 
 function findContribution(file: ContributionFile, id: string) {
