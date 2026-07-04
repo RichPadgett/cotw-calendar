@@ -498,7 +498,8 @@ command_title(do_not_take_both_millstones_or_the_upper_millstone_as_pledge, 'Deu
 normal_obedience(do_not_take_both_millstones_or_the_upper_millstone_as_pledge, 'Do not take both millstones or the upper millstone as pledge.').
 concerns(do_not_take_both_millstones_or_the_upper_millstone_as_pledge, damages_and_restitution).
 scripture_reference(do_not_take_both_millstones_or_the_upper_millstone_as_pledge, 'Deuteronomy 24:6').
-study_note(do_not_take_both_millstones_or_the_upper_millstone_as_pledge, 'This command assigns responsibility for loss or damage and turns wrongdoing toward restitution where Torah requires it: Do not take both millstones or the upper millstone as pledge.').
+command_requirement(do_not_take_both_millstones_or_the_upper_millstone_as_pledge, 'Lenders').
+
 
 % Command: do_not_move_your_neighbor_s_boundary_marker
 command(do_not_move_your_neighbor_s_boundary_marker).
