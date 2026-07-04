@@ -4,6 +4,7 @@
  */
 
 import crypto from "crypto";
+import { execFileSync } from "child_process";
 import fs from "fs";
 import path from "path";
 
@@ -11,6 +12,8 @@ const CONTRIBUTION_GROUP_CODE = "church-of-the-word";
 const SERVER_ROOT = path.resolve(__dirname, "../..");
 const CONTENT_ROOT = path.join(SERVER_ROOT, "content", "groups");
 const PROLOG_COMMANDS_ROOT = path.join(SERVER_ROOT, "prolog", "commands");
+const PROLOG_ROOT = path.join(SERVER_ROOT, "prolog");
+const PROLOG_API_ENTRY = path.join(PROLOG_ROOT, "api.pl");
 const safeAtomPattern = /^[a-z][a-z0-9_]*$/;
 const usernamePattern = /^[a-z0-9_-]{2,32}$/;
 const contributionPath = path.join(
@@ -98,12 +101,14 @@ export function getContributionGroupCode() {
   return CONTRIBUTION_GROUP_CODE;
 }
 
-export function listCommandContributions(params: {
-  commandKey?: string;
-  status?: CommandContributionStatus | "all";
-  includeDeleted?: boolean;
-  promoted?: boolean;
-} = {}) {
+export function listCommandContributions(
+  params: {
+    commandKey?: string;
+    status?: CommandContributionStatus | "all";
+    includeDeleted?: boolean;
+    promoted?: boolean;
+  } = {}
+) {
   if (params.commandKey) {
     assertSafeAtom(params.commandKey, "commandKey");
   }
@@ -515,7 +520,7 @@ function appendPrologFact(commandKey: string, prologFact: string) {
 
     const insertIndex = commandIndexes[commandIndexes.length - 1] + 1;
     lines.splice(insertIndex, 0, prologFact);
-    fs.writeFileSync(filePath, lines.join("\n"), "utf-8");
+    writeValidatedPrologFile(filePath, content, lines.join("\n"));
 
     return path.relative(SERVER_ROOT, filePath);
   }
@@ -544,7 +549,7 @@ function removePrologFact(commandKey: string, prologFact: string) {
     }
 
     lines.splice(targetIndex, 1);
-    fs.writeFileSync(filePath, lines.join("\n"), "utf-8");
+    writeValidatedPrologFile(filePath, content, lines.join("\n"));
 
     return path.relative(SERVER_ROOT, filePath);
   }
@@ -694,6 +699,49 @@ function toPrologString(value: string) {
   return `'${value.replace(/\s+/g, " ").trim().replace(/'/g, "''")}'`;
 }
 
+function writeValidatedPrologFile(
+  filePath: string,
+  previousContent: string,
+  nextContent: string
+) {
+  fs.writeFileSync(filePath, nextContent, "utf-8");
+
+  try {
+    validatePrologCatalog();
+  } catch (error) {
+    fs.writeFileSync(filePath, previousContent, "utf-8");
+    throw error;
+  }
+}
+
+function validatePrologCatalog() {
+  try {
+    execFileSync(
+      "swipl",
+      ["-q", "-s", PROLOG_API_ENTRY, "-g", "api_commands_json,halt."],
+      {
+        cwd: PROLOG_ROOT,
+        encoding: "utf-8",
+        stdio: ["ignore", "pipe", "pipe"],
+        timeout: 10000,
+      }
+    );
+  } catch (error) {
+    const message =
+      error instanceof Error && "stderr" in error
+        ? String(
+            (error as Error & { stderr?: unknown }).stderr || error.message
+          )
+        : error instanceof Error
+          ? error.message
+          : "Unknown Prolog validation error.";
+
+    throw new Error(
+      `Promoted Prolog fact failed validation: ${message.trim()}`
+    );
+  }
+}
+
 function findContribution(file: ContributionFile, id: string) {
   const contribution = file.contributions.find((item) => item.id === id);
 
@@ -783,7 +831,9 @@ function normalizeContributionTarget(
   const source = target.source;
 
   if (source !== "prolog" && source !== "contribution") {
-    throw new Error("Contribution target source must be prolog or contribution.");
+    throw new Error(
+      "Contribution target source must be prolog or contribution."
+    );
   }
 
   return {
