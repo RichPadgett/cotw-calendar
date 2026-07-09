@@ -153,6 +153,7 @@ normal_obedience(do_not_cause_the_names_of_other_gods_to_be_heard_from_your_mout
 concerns(do_not_cause_the_names_of_other_gods_to_be_heard_from_your_mouth, reject_idolatry).
 scripture_reference(do_not_cause_the_names_of_other_gods_to_be_heard_from_your_mouth, 'Exodus 23:13').
 study_note(do_not_cause_the_names_of_other_gods_to_be_heard_from_your_mouth, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not cause the names of other gods to be heard from your mouth.').
+command_requirement(do_not_cause_the_names_of_other_gods_to_be_heard_from_your_mouth, 'Applicable in modern times').
 
 % Command: do_not_bow_down_to_other_gods
 command(do_not_bow_down_to_other_gods).
@@ -304,6 +305,7 @@ normal_obedience(do_not_intermarry_with_the_idolatrous_nations_listed_in_the_lan
 concerns(do_not_intermarry_with_the_idolatrous_nations_listed_in_the_land_context, reject_idolatry).
 scripture_reference(do_not_intermarry_with_the_idolatrous_nations_listed_in_the_land_context, 'Deuteronomy 7:3').
 study_note(do_not_intermarry_with_the_idolatrous_nations_listed_in_the_land_context, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not intermarry with the idolatrous nations listed in the land context.').
+study_note(do_not_intermarry_with_the_idolatrous_nations_listed_in_the_land_context, 'Interesting recent  studies are regarding Ruth (Moabite) and Bathsheeba''s husband (Hitite). Both of these cases would have been a clear breaking of Torah, but scripture indicated both Ruth and Uriah  had been grafted into Israel thus not guilty of breaking this command.').
 
 % Command: test_a_prophet_by_whether_his_word_comes_to_pass_and_whether_he_turns_people_f
 command(test_a_prophet_by_whether_his_word_comes_to_pass_and_whether_he_turns_people_f).
@@ -483,3 +485,4 @@ normal_obedience(priests_must_not_make_baldness_shave_edges_of_beard_or_cut_fles
 concerns(priests_must_not_make_baldness_shave_edges_of_beard_or_cut_flesh_for_the_dead, reject_idolatry).
 scripture_reference(priests_must_not_make_baldness_shave_edges_of_beard_or_cut_flesh_for_the_dead, 'Leviticus 21:5').
 study_note(priests_must_not_make_baldness_shave_edges_of_beard_or_cut_flesh_for_the_dead, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Priests must not make baldness, shave edges of beard, or cut flesh for the dead.').
+command_requirement(priests_must_not_make_baldness_shave_edges_of_beard_or_cut_flesh_for_the_dead, 'Priest').

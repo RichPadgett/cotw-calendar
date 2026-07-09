@@ -499,6 +499,9 @@ normal_obedience(do_not_take_both_millstones_or_the_upper_millstone_as_pledge, '
 concerns(do_not_take_both_millstones_or_the_upper_millstone_as_pledge, damages_and_restitution).
 scripture_reference(do_not_take_both_millstones_or_the_upper_millstone_as_pledge, 'Deuteronomy 24:6').
 study_note(do_not_take_both_millstones_or_the_upper_millstone_as_pledge, 'This command assigns responsibility for loss or damage and turns wrongdoing toward restitution where Torah requires it: Do not take both millstones or the upper millstone as pledge.').
+clarification_note(do_not_take_both_millstones_or_the_upper_millstone_as_pledge, 'A pledge was collateral for a loan. A millstone was used every day to grind grain into flour, which was essential for making bread. The point is: A lender could require collateral, but not something essential to the borrower''s survival. Taking someone''s millstone would effectively prevent them from preparing food or earning a living. That is why the text says it would be like taking a life in pledge - you''re not merely taking property, you''re taking away the person''s ability to sustain themselves.').
+command_requirement(do_not_take_both_millstones_or_the_upper_millstone_as_pledge, 'Lenders').
+source_term(do_not_take_both_millstones_or_the_upper_millstone_as_pledge, hebrew, 'châbal, khaw-bal''', 'châbal, khaw-bal''; a primitive root; to wind tightly (as a rope), i.e. to bind; specifically, by a pledge; figuratively, to pervert, destroy; also to writhe in pain (especially of parturition):—× at all, band, bring forth, (deal) corrupt(-ly), destroy, offend, lay to (take a) pledge, spoil, travail, × very, withhold.').
 
 % Command: do_not_move_your_neighbor_s_boundary_marker
 command(do_not_move_your_neighbor_s_boundary_marker).

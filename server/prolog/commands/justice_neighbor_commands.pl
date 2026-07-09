@@ -233,7 +233,6 @@ command_title(do_not_pity_in_the_false_witness_case, 'Deuteronomy 19:21 - Do not
 normal_obedience(do_not_pity_in_the_false_witness_case, 'Do not pity in the false witness case.').
 concerns(do_not_pity_in_the_false_witness_case, justice_and_truth).
 scripture_reference(do_not_pity_in_the_false_witness_case, 'Deuteronomy 19:21').
-study_note(do_not_pity_in_the_false_witness_case, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Do not pity in the false witness case.').
 
 % Command: do_not_accept_ransom_for_a_murderer
 command(do_not_accept_ransom_for_a_murderer).

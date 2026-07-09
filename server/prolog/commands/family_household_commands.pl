@@ -113,6 +113,7 @@ normal_obedience(do_not_take_millstone_as_pledge, 'Do not take a millstone or up
 concerns(do_not_take_millstone_as_pledge, neighbor_protection).
 scripture_reference(do_not_take_millstone_as_pledge, 'Deuteronomy 24:6').
 study_note(do_not_take_millstone_as_pledge, 'The command protects a household''s means of life.').
+command_requirement(do_not_take_millstone_as_pledge, 'Lender, Someone who Lends').
 
 % Command: do_not_return_runaway_slave
 command(do_not_return_runaway_slave).
@@ -218,6 +219,9 @@ normal_obedience(do_not_marry_a_woman_and_her_mother, 'Do not marry a woman and 
 concerns(do_not_marry_a_woman_and_her_mother, marriage_household_procedure).
 scripture_reference(do_not_marry_a_woman_and_her_mother, 'Leviticus 20:14').
 study_note(do_not_marry_a_woman_and_her_mother, 'This command addresses a defined household, marriage, or servant case and keeps the procedure bounded by the Torah text: Do not marry a woman and her mother.').
+source_term(do_not_marry_a_woman_and_her_mother, hebrew, 'zimmâh, zim-maw''; or זַמָּה zammâh; from H2161; a plan, especially a bad one:—heinous crime, lewd(-ly, -ness), mischief, purpose, thought, wicked (device, mind, -ness).', 'zimmâh, zim-maw''; or זַמָּה zammâh; from H2161; a plan, especially a bad one:—heinous crime, lewd(-ly, -ness), mischief, purpose, thought, wicked (device, mind, -ness).').
+source_term(do_not_marry_a_woman_and_her_mother, hebrew, 'lâqach, law-kakh''; a primitive root; to take (in the widest variety of applications):—accept, bring, buy, carry away, drawn, fetch, get, infold, × many, mingle, place, receive(-ing), reserve, seize, send for, take (away, -ing, up), use, win.', 'lâqach, law-kakh''; a primitive root; to take (in the widest variety of applications):—accept, bring, buy, carry away, drawn, fetch, get, infold, × many, mingle, place, receive(-ing), reserve, seize, send for, take (away, -ing, up), use, win.').
+translation_note(do_not_marry_a_woman_and_her_mother, 'NIV uses the word marry. Most other versions says to take.').
 
 % Command: follow_the_accused_bride_case_procedure
 command(follow_the_accused_bride_case_procedure).
@@ -242,6 +246,7 @@ normal_obedience(follow_the_unbetrothed_virgin_violation_case_procedure, 'Follow
 concerns(follow_the_unbetrothed_virgin_violation_case_procedure, marriage_household_procedure).
 scripture_reference(follow_the_unbetrothed_virgin_violation_case_procedure, 'Deuteronomy 22:28-29').
 study_note(follow_the_unbetrothed_virgin_violation_case_procedure, 'This command addresses a defined household, marriage, or servant case and keeps the procedure bounded by the Torah text: Follow the unbetrothed virgin violation case procedure.').
+study_note(follow_the_unbetrothed_virgin_violation_case_procedure, 'Placeholder note: The Book of  Susanna or Daniel 13 tells a story about a woman who is attacked and false claims are made about her. Daniel goes to her Defense to cross examine the attackers and finds inconsistencies in their story ultimately freeing the victim from punishment.').
 
 % Command: do_not_take_your_father_s_wife
 command(do_not_take_your_father_s_wife).
@@ -268,7 +273,6 @@ concerns(perform_levirate_marriage_in_the_stated_brother_childless_case, marriag
 scripture_reference(perform_levirate_marriage_in_the_stated_brother_childless_case, 'Deuteronomy 25:5-6').
 story_reference(perform_levirate_marriage_in_the_stated_brother_childless_case, 'Genesis 38:6-11', 'Judah tells Onan to perform the brother-in-law duty for Tamar.').
 story_reference(perform_levirate_marriage_in_the_stated_brother_childless_case, 'Ruth 4:1-10', 'Boaz redeems Ruth and raises up the name of the dead on the inheritance.').
-study_note(perform_levirate_marriage_in_the_stated_brother_childless_case, 'This command addresses a defined household, marriage, or servant case and keeps the procedure bounded by the Torah text: Perform levirate marriage in the stated brother-childless case.').
 
 % Command: perform_the_shoe_removal_procedure_if_levirate_duty_is_refused
 command(perform_the_shoe_removal_procedure_if_levirate_duty_is_refused).
@@ -277,7 +281,6 @@ normal_obedience(perform_the_shoe_removal_procedure_if_levirate_duty_is_refused,
 concerns(perform_the_shoe_removal_procedure_if_levirate_duty_is_refused, marriage_household_procedure).
 scripture_reference(perform_the_shoe_removal_procedure_if_levirate_duty_is_refused, 'Deuteronomy 25:7-10').
 story_reference(perform_the_shoe_removal_procedure_if_levirate_duty_is_refused, 'Ruth 4:7-8', 'The nearer redeemer removes his sandal before the elders when declining the redemption.').
-study_note(perform_the_shoe_removal_procedure_if_levirate_duty_is_refused, 'This command addresses a defined household, marriage, or servant case and keeps the procedure bounded by the Torah text: Perform the shoe-removal procedure if levirate duty is refused.').
 
 % Command: a_newly_married_man_must_not_go_out_with_the_army_or_be_charged_with_public_du
 command(a_newly_married_man_must_not_go_out_with_the_army_or_be_charged_with_public_du).
@@ -285,7 +288,6 @@ command_title(a_newly_married_man_must_not_go_out_with_the_army_or_be_charged_wi
 normal_obedience(a_newly_married_man_must_not_go_out_with_the_army_or_be_charged_with_public_du, 'A newly married man must not go out with the army or be charged with public duty for one year.').
 concerns(a_newly_married_man_must_not_go_out_with_the_army_or_be_charged_with_public_du, marriage_household_procedure).
 scripture_reference(a_newly_married_man_must_not_go_out_with_the_army_or_be_charged_with_public_du, 'Deuteronomy 24:5').
-study_note(a_newly_married_man_must_not_go_out_with_the_army_or_be_charged_with_public_du, 'This command addresses a defined household, marriage, or servant case and keeps the procedure bounded by the Torah text: A newly married man must not go out with the army or be charged with public duty for one year.').
 
 % Command: let_the_runaway_slave_dwell_where_he_chooses_among_you
 command(let_the_runaway_slave_dwell_where_he_chooses_among_you).

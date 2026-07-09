@@ -63,6 +63,23 @@ normal_obedience(do_not_sow_field_with_two_kinds_of_seed, 'Do not sow a field wi
 concerns(do_not_sow_field_with_two_kinds_of_seed, mixed_kinds_boundary).
 scripture_reference(do_not_sow_field_with_two_kinds_of_seed, 'Leviticus 19:19').
 study_note(do_not_sow_field_with_two_kinds_of_seed, 'This entry keeps the agricultural seed command distinct from the wool-and-linen garment command.').
+story_reference(do_not_sow_field_with_two_kinds_of_seed, 'Matthew 17:24-30
+The Parable of the Weeds
+24 ¶ He put another parable before them, saying, “The kingdom of heaven may be compared to a man who sowed good seed in his field,
+25 but while his men were sleeping, his enemy came and sowed weedsfn among the wheat and went away.
+26 So when the plants came up and bore grain, then the weeds appeared also.
+27 And the servantsfn of the master of the house came and said to him, ‘Master, did you not sow good seed in your field? How then does it have weeds?’
+28 He said to them, ‘An enemy has done this.’ So the servants said to him, ‘Then do you want us to go and gather them?’
+29 But he said, ‘No, lest in gathering the weeds you root up the wheat along with them.
+30 Let both grow together until the harvest, and at harvest time I will tell the reapers, “Gather the weeds first and bind them in bundles to be burned, but gather the wheat into my barn.”’”', 'Matthew 17:24-30
+The Parable of the Weeds
+24 ¶ He put another parable before them, saying, “The kingdom of heaven may be compared to a man who sowed good seed in his field,
+25 but while his men were sleeping, his enemy came and sowed weedsfn among the wheat and went away.
+26 So when the plants came up and bore grain, then the weeds appeared also.
+27 And the servantsfn of the master of the house came and said to him, ‘Master, did you not sow good seed in your field? How then does it have weeds?’
+28 He said to them, ‘An enemy has done this.’ So the servants said to him, ‘Then do you want us to go and gather them?’
+29 But he said, ‘No, lest in gathering the weeds you root up the wheat along with them.
+30 Let both grow together until the harvest, and at harvest time I will tell the reapers, “Gather the weeds first and bind them in bundles to be burned, but gather the wheat into my barn.”’”').
 
 % Command: do_not_sow_vineyard_with_mixed_seed
 command(do_not_sow_vineyard_with_mixed_seed).
@@ -274,7 +291,6 @@ command_title(give_certificate_of_divorce, 'Deu 24:1 - Give a certificate of div
 normal_obedience(give_certificate_of_divorce, 'When the Torah divorce case occurs, write a certificate of divorce and send her out.').
 concerns(give_certificate_of_divorce, marriage_household_procedure).
 scripture_reference(give_certificate_of_divorce, 'Deuteronomy 24:1-4').
-study_note(give_certificate_of_divorce, 'This catalogs the written certificate procedure without expanding beyond the passage.').
 
 % Command: do_not_remarry_former_wife_after_second_marriage
 command(do_not_remarry_former_wife_after_second_marriage).
@@ -283,6 +299,7 @@ normal_obedience(do_not_remarry_former_wife_after_second_marriage, 'A former hus
 concerns(do_not_remarry_former_wife_after_second_marriage, marriage_household_procedure).
 scripture_reference(do_not_remarry_former_wife_after_second_marriage, 'Deuteronomy 24:1-4').
 study_note(do_not_remarry_former_wife_after_second_marriage, 'The command is specific to the case described in Deuteronomy 24.').
+study_note(do_not_remarry_former_wife_after_second_marriage, 'mentioned as an abomination').
 
 % Command: perform_levirate_marriage
 command(perform_levirate_marriage).

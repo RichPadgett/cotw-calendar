@@ -84,19 +84,6 @@
   },
   {
     "year": 2026,
-    "month": 4,
-    "day": 25,
-    "notice": {
-      "year": 2026,
-      "month": 4,
-      "day": 25,
-      "title": "Shabbat at Nate & Jordyn's",
-      "access": "public"
-    },
-    "hasContent": false
-  },
-  {
-    "year": 2026,
     "month": 5,
     "day": 9,
     "notice": {
@@ -212,5 +199,18 @@
       "access": "public"
     },
     "hasContent": true
+  },
+  {
+    "year": 2026,
+    "month": 4,
+    "day": 25,
+    "notice": {
+      "year": 2026,
+      "month": 4,
+      "day": 25,
+      "title": "Shabbat Heather and Micah's",
+      "access": "public"
+    },
+    "hasContent": false
   }
 ]
