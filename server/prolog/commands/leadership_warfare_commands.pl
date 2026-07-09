@@ -245,3 +245,4 @@ normal_obedience(carry_a_digging_tool_with_your_equipment_and_cover_excrement, '
 concerns(carry_a_digging_tool_with_your_equipment_and_cover_excrement, leadership_limits).
 scripture_reference(carry_a_digging_tool_with_your_equipment_and_cover_excrement, 'Deuteronomy 23:13').
 study_note(carry_a_digging_tool_with_your_equipment_and_cover_excrement, 'This command places leaders, kings, courts, and military action under Torah rather than personal power: Carry a digging tool with your equipment and cover excrement.').
+clarification_note(carry_a_digging_tool_with_your_equipment_and_cover_excrement, 'Although this seems to only pertain to soldiers or those moving about in the wilderness, this can still be observed by those who may be nomadic or in the wilderness as it is a cleanliness observance. Good for hygene.').

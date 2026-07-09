@@ -69,6 +69,9 @@ normal_obedience(passover_lamb_without_blemish, 'Select and slaughter a lamb or 
 concerns(passover_lamb_without_blemish, passover_memorial).
 scripture_reference(passover_lamb_without_blemish, 'Exodus 12:3-6').
 story_reference(passover_lamb_without_blemish, '2 Chronicles 35:7-9', 'Josiah and the leaders provide lambs, kids, and bulls for the Passover offerings.').
+translation_note(passover_lamb_without_blemish, 'Speak ye unto all the congregation of Israel, saying, In the tenth day of this month they shall take to them every man a lamb, according to the house of their fathers, a lamb for an house:
+
+This verse indicates that the lamb needs to be taken to someone. Perhaps a person (priest) of authority.').
 
 % Command: eat_passover_with_unleavened_bread_and_bitter_herbs
 command(eat_passover_with_unleavened_bread_and_bitter_herbs).
@@ -363,4 +366,3 @@ command_title(eat_unleavened_bread_from_the_evening_of_the_fourteenth_to_the_eve
 normal_obedience(eat_unleavened_bread_from_the_evening_of_the_fourteenth_to_the_evening_of_the, 'Eat unleavened bread from the evening of the fourteenth to the evening of the twenty-first.').
 concerns(eat_unleavened_bread_from_the_evening_of_the_fourteenth_to_the_evening_of_the, passover_memorial).
 scripture_reference(eat_unleavened_bread_from_the_evening_of_the_fourteenth_to_the_evening_of_the, 'Exodus 12:18').
-study_note(eat_unleavened_bread_from_the_evening_of_the_fourteenth_to_the_evening_of_the, 'This command preserves Passover as a memorial of deliverance and keeps its details tied to the written Torah: Eat unleavened bread from the evening of the fourteenth to the evening of the twenty-first.').

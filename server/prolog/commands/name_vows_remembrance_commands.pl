@@ -99,6 +99,7 @@ concerns(wear_tassels_to_remember_commands, tassel_remembrance).
 scripture_reference(wear_tassels_to_remember_commands, 'Numbers 15:37-41').
 scripture_reference(wear_tassels_to_remember_commands, 'Deuteronomy 22:12').
 study_note(wear_tassels_to_remember_commands, 'This is the inspiration for a daily command reminder in the app.').
+study_note(wear_tassels_to_remember_commands, 'Numbers does not specify four corners, Deuteronomy does specify four corners').
 
 % Command: bind_words_as_sign
 command(bind_words_as_sign).
