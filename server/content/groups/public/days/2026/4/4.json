@@ -4,12 +4,94 @@
   "day": 4,
   "title": "Month 4 Day 4",
   "notes": "",
-  "scriptureReadings": [],
+  "scriptureReadings": [
+    {
+      "label": "Book of The Law",
+      "reference": "Deuteronomy 29:21",
+      "url": "https://www.blueletterbible.org/kjv/deu/29/21/s_182021"
+    },
+    {
+      "label": "Do not turn to the right or the left - Book of the Law",
+      "reference": "Joshua 1:6-9",
+      "url": "https://www.blueletterbible.org/kjv/jos/1/6-9/s_188006"
+    },
+    {
+      "label": "Yahua's chosen place of worship - Be careful to obey",
+      "reference": "Deuteronomy 12:1-9",
+      "url": "https://www.blueletterbible.org/kjv/deu/12/1-9/s_165001"
+    },
+    {
+      "label": "Solomons Sacrifices Accepted",
+      "reference": "1 Kings 3:1",
+      "url": "https://www.blueletterbible.org/kjv/1ki/3/1/s_294001"
+    },
+    {
+      "label": "Cut down Asherah Pole",
+      "reference": "Judges 6:22-26",
+      "url": "https://www.blueletterbible.org/kjv/jdg/6/22-26/s_217022"
+    },
+    {
+      "label": "Manoah offers Yahua accepts",
+      "reference": "Judges 13:18-20",
+      "url": "https://www.blueletterbible.org/kjv/jdg/13/18-20/s_224018"
+    },
+    {
+      "label": "Elijah Offers to Yahua at Yahua's word",
+      "reference": "1 Kings 18:30-40",
+      "url": "https://www.blueletterbible.org/kjv/1ki/18/30-40/s_309030"
+    },
+    {
+      "label": "Research about Sacrifices During Non Temple times",
+      "reference": "Daniel 9",
+      "url": "https://www.blueletterbible.org/kjv/dan/9/1/s_859001"
+    },
+    {
+      "label": "Living Sacrifice",
+      "reference": "Romans 12:1",
+      "url": "https://www.blueletterbible.org/kjv/rom/12/1/s_1058001"
+    },
+    {
+      "label": "Rahab Hides Spies : Measurement to Wall : 5500 yards",
+      "reference": "Joshua 2:1-15",
+      "url": "https://www.blueletterbible.org/kjv/jos/2/1-15/s_189001"
+    }
+  ],
   "sections": [
     {
       "title": "Files / Links / Media",
       "displayStyle": "default",
-      "items": []
+      "items": [
+        {
+          "label": "The More Excellent Way: Love Never Fails",
+          "type": "external-link",
+          "access": "public",
+          "url": "https://open.spotify.com/episode/2lUeu1JtdLfnpl5eJ2SAzr?si=FkgvBk9pSJWwk5qS9hG7Bw"
+        },
+        {
+          "label": "The Place Yahua Chooses: Destroying Idols & Centralized Worship in Deuteronomy",
+          "type": "external-link",
+          "access": "public",
+          "url": "https://open.spotify.com/episode/7qGDEFrpjKzTAn15jjgUh9?si=Du43W98vT-22HbZkqhgPww"
+        },
+        {
+          "label": "Truth in Timeline & Measurements: Tabernacle Locations, Offerings & Ancient Chronology",
+          "type": "external-link",
+          "access": "public",
+          "url": "https://open.spotify.com/episode/0aST1ognp1WS7hbdqFKkXV?si=YFtphpJMS_OQz-bnc9LQrA"
+        },
+        {
+          "label": "Acts of Pilate timeline to help us ID Tower of Babel.pdf",
+          "type": "pdf",
+          "access": "public",
+          "url": "/api/files/groups/church-of-the-word/files/2026/4/4/1782246081472-Acts_of_Pilate_timeline_to_help_us_ID_Tower_of_Babel.pdf"
+        },
+        {
+          "label": "Gilgal PDF for Recordings.pdf",
+          "type": "pdf",
+          "access": "public",
+          "url": "/api/files/groups/church-of-the-word/files/2026/4/4/1782246107888-Gilgal_PDF_for_Recordings.pdf"
+        }
+      ]
     }
   ]
 }

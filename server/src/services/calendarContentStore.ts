@@ -16,6 +16,9 @@ import { updateNoticeIndexForDay } from "./calendarNoticeIndex";
 
 // Constants
 const CONTENT_ROOT = path.join(process.cwd(), "content", "groups");
+const CHURCH_GROUP_CODE = "church-of-the-word";
+const PUBLIC_GROUP_CODE = "public";
+const REPLICATED_GROUP_CODES = [CHURCH_GROUP_CODE, PUBLIC_GROUP_CODE];
 const BASE_ENOCH_YEAR = 2026;
 const BASE_START_DATE = "2026-03-18";
 const BASE_SABBATH_WEEK_START_YEAR = 2025;
@@ -242,6 +245,71 @@ export function saveCalendarDayContent(
   }
 
   return content;
+}
+
+function getReplicatedTargetGroupCode(sourceGroupCode: string): string | null {
+  if (!REPLICATED_GROUP_CODES.includes(sourceGroupCode)) {
+    return null;
+  }
+
+  if (sourceGroupCode === CHURCH_GROUP_CODE) {
+    return PUBLIC_GROUP_CODE;
+  }
+
+  if (sourceGroupCode === PUBLIC_GROUP_CODE) {
+    return CHURCH_GROUP_CODE;
+  }
+
+  return null;
+}
+
+/**
+ * Mirrors shared content between the public and church groups while keeping notices group-specific.
+ * Notes, scripture readings, title, date metadata, and regular media/link sections are replicated.
+ */
+export function syncReplicatedCalendarContent(
+  sourceGroupCode: string,
+  year: string,
+  month: string,
+  day: string,
+  sourceContent: CalendarDayContent
+): CalendarDayContent {
+  const targetGroupCode = getReplicatedTargetGroupCode(sourceGroupCode);
+
+  if (!targetGroupCode) {
+    return sourceContent;
+  }
+
+  const targetContent = getCalendarDayContent(
+    targetGroupCode,
+    year,
+    month,
+    day
+  ) ?? {
+    enochYear: Number(year),
+    month: Number(month),
+    day: Number(day),
+    title: sourceContent.title,
+    sections: [],
+  };
+  const targetNoticeSections = (targetContent.sections ?? []).filter(
+    (section) => section.displayStyle === "notice"
+  );
+  const sourceSharedSections = (sourceContent.sections ?? []).filter(
+    (section) => section.displayStyle !== "notice"
+  );
+
+  return saveCalendarDayContent(targetGroupCode, year, month, day, {
+    ...targetContent,
+    enochYear: sourceContent.enochYear,
+    month: sourceContent.month,
+    day: sourceContent.day,
+    gregorianDate: sourceContent.gregorianDate,
+    title: sourceContent.title,
+    notes: sourceContent.notes,
+    scriptureReadings: sourceContent.scriptureReadings ?? [],
+    sections: [...targetNoticeSections, ...sourceSharedSections],
+  });
 }
 
 /**

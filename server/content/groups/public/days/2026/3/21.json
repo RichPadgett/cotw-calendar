@@ -3,13 +3,42 @@
   "month": 3,
   "day": 21,
   "title": "Month 3 Day 21",
-  "notes": "",
-  "scriptureReadings": [],
+  "notes": "This teaching explores the vital role of teachers within the Body of Messiah, drawing from the order of spiritual gifts in 1 Corinthians 12:28 (Apostles, Prophets, Teachers...) and Ephesians 4. It emphasizes that every believer has gifts for the common good, but teachers play a crucial part in equipping the saints, bringing unity in faith and knowledge of Messiah, and protecting against false teaching. The study contrasts true teachers with false ones (using strong warnings from Matthew 23, 2 Peter 2, and James 3), highlights the danger of lacking knowledge (Hosea 4:6), and stresses that teachers will be judged more strictly while calling the body to maturity beyond milk to solid food.",
+  "scriptureReadings": [
+    {
+      "label": "Paul Going to the Nations, Apollos, First Teacher not an Apostle",
+      "reference": "Acts 18",
+      "url": "https://www.blueletterbible.org/kjv/act/18/1/s_1036001"
+    },
+    {
+      "label": "Spiritual Gifts, ",
+      "reference": "1 Corinthians 12",
+      "url": "https://www.blueletterbible.org/kjv/1co/12/1/s_1074001"
+    },
+    {
+      "label": "False Prophets & False Teachers",
+      "reference": "2 Peter 2",
+      "url": "https://www.blueletterbible.org/kjv/2pe/2/1/s_1158001"
+    }
+  ],
   "sections": [
     {
       "title": "Files / Links / Media",
       "displayStyle": "default",
-      "items": []
+      "items": [
+        {
+          "label": "Song Share - Why does it bother you",
+          "type": "external-link",
+          "access": "public",
+          "url": "https://open.spotify.com/track/1Ay6r3ykwj3Y2GmYYAnmUx?si=PfQJzI0ERBuVo8iWmfq3sg&rowId=e8565a3d5da128d25345&context=spotify%3Aplaylist%3A37i9dQZF1F5p3rmiWPIYgZ"
+        },
+        {
+          "label": "The Crutial Role of Teachers: Equipping the Body & Guarding Against False Teaching",
+          "type": "external-link",
+          "access": "public",
+          "url": "https://open.spotify.com/episode/27U2qv19AryPDL5pS9PIjh"
+        }
+      ]
     }
   ]
 }

@@ -9,6 +9,7 @@ import { requireAdminToken } from "../middleware/requireAdminToken";
 import {
   getCalendarDayContent,
   saveCalendarDayContent,
+  syncReplicatedCalendarContent,
 } from "../services/calendarContentStore";
 
 const router = Router();
@@ -40,6 +41,8 @@ router.put<{
       month: Number(month),
       day: Number(day),
     });
+
+    syncReplicatedCalendarContent(groupCode, year, month, day, savedContent);
 
     res.json(savedContent);
   } catch (error) {
@@ -76,6 +79,8 @@ router.delete<{
       day,
       contentWithoutNotes
     );
+
+    syncReplicatedCalendarContent(groupCode, year, month, day, savedContent);
 
     res.json(savedContent);
   } catch (error) {
@@ -205,6 +210,8 @@ router.delete<{
           (_reading, readingIndex) => readingIndex !== scriptureIndex
         ),
       });
+
+      syncReplicatedCalendarContent(groupCode, year, month, day, savedContent);
 
       res.json(savedContent);
     } catch (error) {
