@@ -54,7 +54,7 @@ import { formatGroupLabel, getAppDateId } from "../src/utils/appDay";
 const DEFAULT_STICKY_HEADER_OFFSET = 220;
 const DEFAULT_YEAR_VIEW_TOP_OFFSET = 685;
 const MONTH_TITLE_BEHIND_HEADER_OFFSET = 32;
-const TODAY_SCROLL_CONTEXT_OFFSET = 96;
+const TODAY_SCROLL_CONTEXT_OFFSET = 24;
 const COMMAND_CONTRIBUTOR_USERNAME_STORAGE_KEY = "commandContributorUsername";
 const DEVICE_USERNAME_PROMPT_DISMISSED_STORAGE_KEY =
   "deviceUsernamePromptDismissed";
@@ -102,7 +102,7 @@ export default function HomeScreen() {
   const monthOffsetsRef = useRef<Record<number, number>>({});
   const currentScrollYRef = useRef(0);
   const latestTeachingAutoCollapsedRef = useRef(false);
-  const hasAutoScrolledToCurrentMonthRef = useRef(false);
+  const hasAutoScrolledToCurrentDayRef = useRef(false);
   const headerHeightRef = useRef(DEFAULT_STICKY_HEADER_OFFSET);
   const yearViewTopOffsetRef = useRef(DEFAULT_YEAR_VIEW_TOP_OFFSET);
   const [stickyHeaderHeight, setStickyHeaderHeight] = useState(
@@ -508,7 +508,7 @@ export default function HomeScreen() {
   useEffect(() => {
     const fallbackId = setTimeout(() => {
       scrollToCurrentMonthFallbackIfNeeded();
-    }, 250);
+    }, 1200);
 
     return () => {
       clearTimeout(fallbackId);
@@ -776,7 +776,7 @@ export default function HomeScreen() {
     const currentMonth = todayNode?.enoch?.month?.number;
 
     if (
-      hasAutoScrolledToCurrentMonthRef.current ||
+      hasAutoScrolledToCurrentDayRef.current ||
       !hasEnteredApp ||
       activeTab !== "calendar" ||
       !currentMonth ||
@@ -785,8 +785,6 @@ export default function HomeScreen() {
       return;
     }
 
-    hasAutoScrolledToCurrentMonthRef.current = true;
-
     requestAnimationFrame(() => {
       scrollToMonth(currentMonth);
     });
@@ -794,7 +792,7 @@ export default function HomeScreen() {
 
   function scrollToCurrentDayIfNeeded(dateId: string, y: number) {
     if (
-      hasAutoScrolledToCurrentMonthRef.current ||
+      hasAutoScrolledToCurrentDayRef.current ||
       !hasEnteredApp ||
       activeTab !== "calendar" ||
       dateId !== todayDateId
@@ -802,7 +800,7 @@ export default function HomeScreen() {
       return;
     }
 
-    hasAutoScrolledToCurrentMonthRef.current = true;
+    hasAutoScrolledToCurrentDayRef.current = true;
 
     requestAnimationFrame(() => {
       scrollViewRef.current?.scrollTo({
