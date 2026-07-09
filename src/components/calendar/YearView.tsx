@@ -5,6 +5,7 @@
  */
 
 // Dependencies
+import { useRef } from "react";
 import { Text, View } from "react-native";
 
 import { hasSabbathWeekBeforeEnochYear } from "../../engine/enochYear";
@@ -17,6 +18,7 @@ import SabbathWeekRow from "./SabbathWeekRow";
 // Types
 type Props = {
   nodes: CalendarNode[];
+  onDayLayout?: (dateId: string, y: number) => void;
   onMonthLayout?: (monthNumber: number, y: number) => void;
   onPressDay?: (node: CalendarNode) => void;
   notices: CalendarDaySummary[];
@@ -85,10 +87,14 @@ export default function YearView({
   nodes,
   notices,
   perpetualMarkers = [],
+  onDayLayout,
   onMonthLayout,
   onPressDay,
   todayDateId,
 }: Props) {
+  const monthLayoutYsRef = useRef<Record<number, number>>({});
+  const monthGridYsRef = useRef<Record<number, number>>({});
+  const dayLayoutYsRef = useRef<Record<string, number>>({});
   const monthGroups = groupByEnochMonth(nodes);
   const firstNode = nodes[0];
   const visibleEnochYear = firstNode?.enoch?.year;
@@ -130,6 +136,24 @@ export default function YearView({
         }
       : undefined;
 
+  function reportDayLayout(dateId: string, monthNumber: number, dayY?: number) {
+    if (dayY !== undefined) {
+      dayLayoutYsRef.current[dateId] = dayY;
+    }
+
+    const monthY = monthLayoutYsRef.current[monthNumber];
+    const gridY = monthGridYsRef.current[monthNumber];
+    const savedDayY = dayLayoutYsRef.current[dateId];
+
+    if (
+      typeof monthY === "number" &&
+      typeof gridY === "number" &&
+      typeof savedDayY === "number"
+    ) {
+      onDayLayout?.(dateId, monthY + gridY + savedDayY);
+    }
+  }
+
   return (
     <View>
       {sabbathWeekNode && (
@@ -141,6 +165,9 @@ export default function YearView({
         const firstMonthNode = monthNodes[0];
         const month = firstMonthNode.enoch?.month;
         const monthColor = month?.themeColor ?? "#cbd5e1";
+        const containsToday = monthNodes.some(
+          (node) => node.gregorianDate === todayDateId
+        );
 
         const leadingOffset =
           ((firstMonthNode.enoch?.dayOfYear ?? 1) - 1 + ENOCH_WEEK_OFFSET) % 7;
@@ -160,7 +187,10 @@ export default function YearView({
           <View
             key={monthNumber}
             onLayout={(event) => {
-              onMonthLayout?.(numericMonth, event.nativeEvent.layout.y);
+              const monthY = event.nativeEvent.layout.y;
+
+              monthLayoutYsRef.current[numericMonth] = monthY;
+              onMonthLayout?.(numericMonth, monthY);
             }}
             style={{
               marginBottom: 24,
@@ -239,7 +269,17 @@ export default function YearView({
                 ))}
               </View>
 
-              <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+              <View
+                onLayout={(event) => {
+                  monthGridYsRef.current[numericMonth] =
+                    event.nativeEvent.layout.y;
+
+                  if (todayDateId && containsToday) {
+                    reportDayLayout(todayDateId, numericMonth);
+                  }
+                }}
+                style={{ flexDirection: "row", flexWrap: "wrap" }}
+              >
                 {leadingBlanks.map((_, index) => (
                   <View
                     key={`blank-${monthNumber}-${index}`}
@@ -282,6 +322,15 @@ export default function YearView({
                   return (
                     <View
                       key={node.id}
+                      onLayout={(event) => {
+                        if (node.gregorianDate === todayDateId) {
+                          reportDayLayout(
+                            node.gregorianDate,
+                            numericMonth,
+                            event.nativeEvent.layout.y
+                          );
+                        }
+                      }}
                       style={{ width: "14.2857%", padding: 2 }}
                     >
                       <DayCell

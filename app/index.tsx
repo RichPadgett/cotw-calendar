@@ -54,6 +54,7 @@ import { formatGroupLabel, getAppDateId } from "../src/utils/appDay";
 const DEFAULT_STICKY_HEADER_OFFSET = 220;
 const DEFAULT_YEAR_VIEW_TOP_OFFSET = 685;
 const MONTH_TITLE_BEHIND_HEADER_OFFSET = 32;
+const TODAY_SCROLL_CONTEXT_OFFSET = 96;
 const COMMAND_CONTRIBUTOR_USERNAME_STORAGE_KEY = "commandContributorUsername";
 const DEVICE_USERNAME_PROMPT_DISMISSED_STORAGE_KEY =
   "deviceUsernamePromptDismissed";
@@ -505,7 +506,13 @@ export default function HomeScreen() {
   }, [activeTab, isTimelineVisible]);
 
   useEffect(() => {
-    scrollToCurrentMonthIfNeeded();
+    const fallbackId = setTimeout(() => {
+      scrollToCurrentMonthFallbackIfNeeded();
+    }, 250);
+
+    return () => {
+      clearTimeout(fallbackId);
+    };
   }, [activeTab, hasEnteredApp, todayDateId, visibleEnochYear]);
 
   useEffect(() => {
@@ -703,7 +710,10 @@ export default function HomeScreen() {
 
   function handleMonthLayout(monthNumber: number, y: number) {
     monthOffsetsRef.current[monthNumber] = y;
-    scrollToCurrentMonthIfNeeded();
+  }
+
+  function handleDayLayout(dateId: string, y: number) {
+    scrollToCurrentDayIfNeeded(dateId, y);
   }
 
   function handleHeaderLayout(height: number) {
@@ -762,7 +772,7 @@ export default function HomeScreen() {
     setActiveMonthNumber(monthNumber);
   }
 
-  function scrollToCurrentMonthIfNeeded() {
+  function scrollToCurrentMonthFallbackIfNeeded() {
     const currentMonth = todayNode?.enoch?.month?.number;
 
     if (
@@ -780,6 +790,34 @@ export default function HomeScreen() {
     requestAnimationFrame(() => {
       scrollToMonth(currentMonth);
     });
+  }
+
+  function scrollToCurrentDayIfNeeded(dateId: string, y: number) {
+    if (
+      hasAutoScrolledToCurrentMonthRef.current ||
+      !hasEnteredApp ||
+      activeTab !== "calendar" ||
+      dateId !== todayDateId
+    ) {
+      return;
+    }
+
+    hasAutoScrolledToCurrentMonthRef.current = true;
+
+    requestAnimationFrame(() => {
+      scrollViewRef.current?.scrollTo({
+        y: Math.max(
+          0,
+          y +
+            yearViewTopOffsetRef.current -
+            headerHeightRef.current -
+            TODAY_SCROLL_CONTEXT_OFFSET
+        ),
+        animated: true,
+      });
+    });
+
+    setActiveMonthNumber(todayNode?.enoch?.month?.number ?? null);
   }
 
   function centerMobileSelectedCommand({
@@ -1042,6 +1080,7 @@ export default function HomeScreen() {
                 notices={yearNotices}
                 perpetualMarkers={perpetualMarkers}
                 todayDateId={todayDateId}
+                onDayLayout={handleDayLayout}
                 onMonthLayout={handleMonthLayout}
                 onPressDay={openDay}
               />
