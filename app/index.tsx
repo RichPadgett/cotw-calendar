@@ -73,12 +73,35 @@ const BIBLE_VERSIONS: BibleVersion[] = [
   "BES",
 ];
 
+function getInitialVisibleEnochYear() {
+  const todayDateId = getAppDateId();
+  const gregorianYear = Number(todayDateId.slice(0, 4));
+
+  for (
+    let enochYear = gregorianYear - 1;
+    enochYear <= gregorianYear + 1;
+    enochYear++
+  ) {
+    const yearNodes = buildEnochYear({
+      enochYear,
+      startsOnGregorianDate: getEnochYearStartDate(enochYear),
+    });
+
+    if (yearNodes.some((node) => node.gregorianDate === todayDateId)) {
+      return enochYear;
+    }
+  }
+
+  return 2026;
+}
+
 export default function HomeScreen() {
   const { height: viewportHeight } = useWindowDimensions();
   const scrollViewRef = useRef<ScrollView>(null);
   const monthOffsetsRef = useRef<Record<number, number>>({});
   const currentScrollYRef = useRef(0);
   const latestTeachingAutoCollapsedRef = useRef(false);
+  const hasAutoScrolledToCurrentMonthRef = useRef(false);
   const headerHeightRef = useRef(DEFAULT_STICKY_HEADER_OFFSET);
   const yearViewTopOffsetRef = useRef(DEFAULT_YEAR_VIEW_TOP_OFFSET);
   const [stickyHeaderHeight, setStickyHeaderHeight] = useState(
@@ -86,7 +109,9 @@ export default function HomeScreen() {
   );
   const [appScrollY, setAppScrollY] = useState(0);
 
-  const [visibleEnochYear, setVisibleEnochYear] = useState(2026);
+  const [visibleEnochYear, setVisibleEnochYear] = useState(
+    getInitialVisibleEnochYear
+  );
   const [activeMonthNumber, setActiveMonthNumber] = useState<number | null>(
     null
   );
@@ -480,6 +505,10 @@ export default function HomeScreen() {
   }, [activeTab, isTimelineVisible]);
 
   useEffect(() => {
+    scrollToCurrentMonthIfNeeded();
+  }, [activeTab, hasEnteredApp, todayDateId, visibleEnochYear]);
+
+  useEffect(() => {
     const intervalId = setInterval(() => {
       setTodayDateId(getAppDateId());
     }, 60_000);
@@ -674,6 +703,7 @@ export default function HomeScreen() {
 
   function handleMonthLayout(monthNumber: number, y: number) {
     monthOffsetsRef.current[monthNumber] = y;
+    scrollToCurrentMonthIfNeeded();
   }
 
   function handleHeaderLayout(height: number) {
@@ -730,6 +760,26 @@ export default function HomeScreen() {
     });
 
     setActiveMonthNumber(monthNumber);
+  }
+
+  function scrollToCurrentMonthIfNeeded() {
+    const currentMonth = todayNode?.enoch?.month?.number;
+
+    if (
+      hasAutoScrolledToCurrentMonthRef.current ||
+      !hasEnteredApp ||
+      activeTab !== "calendar" ||
+      !currentMonth ||
+      typeof monthOffsetsRef.current[currentMonth] !== "number"
+    ) {
+      return;
+    }
+
+    hasAutoScrolledToCurrentMonthRef.current = true;
+
+    requestAnimationFrame(() => {
+      scrollToMonth(currentMonth);
+    });
   }
 
   function centerMobileSelectedCommand({
