@@ -51,6 +51,8 @@ normal_obedience(love_neighbor_as_self, 'Love your neighbor as yourself.').
 concerns(love_neighbor_as_self, neighbor_protection).
 scripture_reference(love_neighbor_as_self, 'Leviticus 19:18').
 story_reference(love_neighbor_as_self, 'Ruth 2:8-16', 'Boaz shows covenant kindness and practical protection to Ruth as a vulnerable neighbor.').
+source_term(love_neighbor_as_self, hebrew, ahav, 'to love; Torah frames neighbor duty as active love, not mere non-harm').
+source_term(love_neighbor_as_self, hebrew, rea, 'neighbor, companion, or fellow member of the community').
 study_note(love_neighbor_as_self, 'This is a foundation command for neighbor-facing obedience.').
 
 % Command: do_not_hate_brother
@@ -59,6 +61,8 @@ command_title(do_not_hate_brother, 'Lev 19:17 - Do not hate your brother.').
 normal_obedience(do_not_hate_brother, 'Do not hate your brother in your heart.').
 concerns(do_not_hate_brother, neighbor_protection).
 scripture_reference(do_not_hate_brother, 'Leviticus 19:17').
+source_term(do_not_hate_brother, hebrew, sane, 'to hate, be hostile toward, or hold aversion').
+source_term(do_not_hate_brother, hebrew, levav, 'heart or inner person; the command addresses inward hatred, not only outward action').
 study_note(do_not_hate_brother, 'Torah addresses inward hatred, not only outward harm.').
 
 % Command: rebuke_neighbor_rightly
@@ -68,6 +72,8 @@ normal_obedience(rebuke_neighbor_rightly, 'Rebuke your neighbor frankly and do n
 concerns(rebuke_neighbor_rightly, neighbor_protection).
 scripture_reference(rebuke_neighbor_rightly, 'Leviticus 19:17').
 story_reference(rebuke_neighbor_rightly, '2 Samuel 12:1-14', 'Nathan rebukes David directly rather than concealing the matter.').
+source_term(rebuke_neighbor_rightly, hebrew, yakach, 'to reprove, correct, or bring a matter into the open for judgment').
+source_term(rebuke_neighbor_rightly, hebrew, nasa, 'to bear, carry, or take up; the verse warns against bearing sin because of a neighbor').
 study_note(rebuke_neighbor_rightly, 'Correction is framed as a loving duty, not private resentment.').
 
 % Command: do_not_bear_grudge_or_take_vengeance
@@ -76,6 +82,8 @@ command_title(do_not_bear_grudge_or_take_vengeance, 'Lev 19:18 - Do not take ven
 normal_obedience(do_not_bear_grudge_or_take_vengeance, 'Do not take vengeance or bear a grudge against your people.').
 concerns(do_not_bear_grudge_or_take_vengeance, neighbor_protection).
 scripture_reference(do_not_bear_grudge_or_take_vengeance, 'Leviticus 19:18').
+source_term(do_not_bear_grudge_or_take_vengeance, hebrew, naqam, 'to avenge or take vengeance').
+source_term(do_not_bear_grudge_or_take_vengeance, hebrew, natar, 'to keep, guard, or hold onto resentment; used for bearing a grudge').
 study_note(do_not_bear_grudge_or_take_vengeance, 'Neighbor love includes releasing vengeance and grudges.').
 
 % Command: do_not_pervert_justice
@@ -87,6 +95,8 @@ scripture_reference(do_not_pervert_justice, 'Leviticus 19:15').
 scripture_reference(do_not_pervert_justice, 'Deuteronomy 16:18-20').
 story_reference(do_not_pervert_justice, '1 Kings 21:8-16', 'Naboth is condemned through corrupted judgment and false witness.').
 story_reference(do_not_pervert_justice, '2 Chronicles 19:5-7', 'Jehoshaphat appoints judges and warns them to judge for YHWH without injustice.').
+source_term(do_not_pervert_justice, hebrew, mishpat, 'justice, judgment, or legal decision').
+source_term(do_not_pervert_justice, hebrew, avah, 'to bend, twist, or pervert; justice must not be distorted').
 study_note(do_not_pervert_justice, 'Justice must not bend toward rich, poor, powerful, or favored people.').
 
 % Command: do_not_bear_false_witness
@@ -97,6 +107,8 @@ concerns(do_not_bear_false_witness, justice_and_truth).
 scripture_reference(do_not_bear_false_witness, 'Exodus 20:16').
 scripture_reference(do_not_bear_false_witness, 'Deuteronomy 5:20').
 story_reference(do_not_bear_false_witness, '1 Kings 21:10-13', 'False witnesses testify against Naboth, leading to his death.').
+source_term(do_not_bear_false_witness, hebrew, ed, 'witness, testimony, or one who gives evidence').
+source_term(do_not_bear_false_witness, hebrew, sheqer, 'falsehood, lie, or deception').
 study_note(do_not_bear_false_witness, 'False witness corrupts both justice and neighbor protection.').
 
 % Command: do_not_spread_false_report
@@ -106,6 +118,8 @@ normal_obedience(do_not_spread_false_report, 'Do not spread a false report or jo
 concerns(do_not_spread_false_report, justice_and_truth).
 scripture_reference(do_not_spread_false_report, 'Exodus 23:1-3').
 story_reference(do_not_spread_false_report, '1 Kings 21:10-13', 'Naboth is destroyed through a false report and malicious witnesses.').
+source_term(do_not_spread_false_report, hebrew, shema, 'report, hearing, or rumor; the command forbids carrying a false report').
+source_term(do_not_spread_false_report, hebrew, chamas, 'violence, wrong, or malicious injustice; used of the harmful witness').
 study_note(do_not_spread_false_report, 'Truthfulness protects community judgment.').
 
 % Command: establish_matter_by_two_or_three_witnesses
@@ -114,6 +128,8 @@ command_title(establish_matter_by_two_or_three_witnesses, 'Deu 19:15 - Establish
 normal_obedience(establish_matter_by_two_or_three_witnesses, 'Do not establish guilt by one witness; require two or three witnesses.').
 concerns(establish_matter_by_two_or_three_witnesses, justice_and_truth).
 scripture_reference(establish_matter_by_two_or_three_witnesses, 'Deuteronomy 19:15').
+source_term(establish_matter_by_two_or_three_witnesses, hebrew, qum, 'to arise, stand, or be established; a matter stands by two or three witnesses').
+source_term(establish_matter_by_two_or_three_witnesses, hebrew, dabar, 'word, matter, or case under judgment').
 study_note(establish_matter_by_two_or_three_witnesses, 'The witness standard protects against unjust accusation.').
 
 % -----------------------------------------------------------------------------
@@ -127,6 +143,9 @@ normal_obedience(appoint_judges_and_officers_in_your_gates, 'Appoint judges and 
 concerns(appoint_judges_and_officers_in_your_gates, justice_and_truth).
 scripture_reference(appoint_judges_and_officers_in_your_gates, 'Deuteronomy 16:18').
 story_reference(appoint_judges_and_officers_in_your_gates, '2 Chronicles 19:5-7', 'Jehoshaphat sets judges in the fortified cities of Judah.').
+source_term(appoint_judges_and_officers_in_your_gates, hebrew, shaphat, 'judge or governor; one who renders judgment').
+source_term(appoint_judges_and_officers_in_your_gates, hebrew, shoter, 'officer, official, or overseer associated with public order').
+source_term(appoint_judges_and_officers_in_your_gates, hebrew, shaar, 'gate; the public place where local judgment and civic business occurred').
 study_note(appoint_judges_and_officers_in_your_gates, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Appoint judges and officers in your gates.').
 
 % Command: judges_must_judge_righteously
@@ -137,6 +156,8 @@ concerns(judges_must_judge_righteously, justice_and_truth).
 scripture_reference(judges_must_judge_righteously, 'Deuteronomy 16:18-20').
 story_reference(judges_must_judge_righteously, '1 Kings 3:16-28', 'Solomon judges wisely between the two women and all Israel recognizes his God-given wisdom.').
 story_reference(judges_must_judge_righteously, '2 Chronicles 19:6-7', 'Jehoshaphat charges judges to judge carefully because they judge for YHWH.').
+source_term(judges_must_judge_righteously, hebrew, tsedeq, 'righteousness, justice, or what is right; judgment must be righteous').
+source_term(judges_must_judge_righteously, hebrew, mishpat, 'judgment, justice, or legal decision').
 study_note(judges_must_judge_righteously, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Judges must judge righteously.').
 
 % Command: do_not_show_partiality_in_judgment
@@ -147,6 +168,7 @@ concerns(do_not_show_partiality_in_judgment, justice_and_truth).
 scripture_reference(do_not_show_partiality_in_judgment, 'Leviticus 19:15').
 scripture_reference(do_not_show_partiality_in_judgment, 'Deuteronomy 1:17').
 story_reference(do_not_show_partiality_in_judgment, '2 Chronicles 19:7', 'Jehoshaphat warns that with YHWH there is no injustice, partiality, or taking bribes.').
+source_term(do_not_show_partiality_in_judgment, hebrew, panim, 'face or presence; showing partiality is literally lifting or recognizing faces in judgment').
 study_note(do_not_show_partiality_in_judgment, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Do not show partiality in judgment.').
 command_requirement(do_not_show_partiality_in_judgment, 'Israel').
 
@@ -167,6 +189,7 @@ scripture_reference(do_not_take_a_bribe, 'Exodus 23:8').
 scripture_reference(do_not_take_a_bribe, 'Deuteronomy 16:19').
 story_reference(do_not_take_a_bribe, '1 Samuel 8:1-3', 'Samuel''s sons take bribes and pervert justice, showing the violation.').
 story_reference(do_not_take_a_bribe, '2 Chronicles 19:7', 'Jehoshaphat warns judges against bribes.').
+source_term(do_not_take_a_bribe, hebrew, shochad, 'bribe or gift that blinds judgment and twists the words of the righteous').
 study_note(do_not_take_a_bribe, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Do not take a bribe.').
 
 % Command: do_not_follow_the_many_to_do_evil
