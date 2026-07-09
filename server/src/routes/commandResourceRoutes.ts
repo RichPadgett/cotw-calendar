@@ -74,7 +74,9 @@ function getContributionStatus(
     return "all";
   }
 
-  return commandContributionStatuses.includes(value as CommandContributionStatus)
+  return commandContributionStatuses.includes(
+    value as CommandContributionStatus
+  )
     ? (value as CommandContributionStatus)
     : "approved";
 }
@@ -88,7 +90,7 @@ function handleContributionError(res: Response, error: unknown) {
   });
 }
 
-function requireContributionMember(
+function allowPendingContribution(
   req: Request,
   res: Response,
   next: NextFunction
@@ -96,9 +98,14 @@ function requireContributionMember(
   const groupCode =
     getRequestText(req.query.groupCode) || getRequestText(req.body.groupCode);
 
-  if (groupCode !== getContributionGroupCode()) {
+  if (
+    groupCode &&
+    groupCode !== "public" &&
+    groupCode !== getContributionGroupCode()
+  ) {
     return res.status(403).json({
-      error: "Church of the Word membership is required to submit suggestions.",
+      error:
+        "Command suggestions must be submitted to the shared review queue.",
     });
   }
 
@@ -239,8 +246,8 @@ router.get("/contributions", requireCommandContributionAdmin, (req, res) => {
           req.query.promoted === "true"
             ? true
             : req.query.promoted === "false"
-            ? false
-            : undefined,
+              ? false
+              : undefined,
       }),
     });
   } catch (error) {
@@ -327,7 +334,7 @@ router.post(
 
 router.post(
   "/contributions/:contributionId/votes",
-  requireContributionMember,
+  allowPendingContribution,
   (req, res) => {
     try {
       res.status(201).json({
@@ -401,7 +408,7 @@ router.get("/:commandKey/contributions", (req, res) => {
 
 router.delete(
   "/:commandKey/contributions/:contributionId",
-  requireContributionMember,
+  allowPendingContribution,
   (req, res) => {
     try {
       res.json({
@@ -409,7 +416,8 @@ router.delete(
           commandKey: getRouteParam(req.params.commandKey),
           id: getRouteParam(req.params.contributionId),
           username:
-            getRequestText(req.query.username) || getRequestText(req.body.username),
+            getRequestText(req.query.username) ||
+            getRequestText(req.body.username),
         }),
       });
     } catch (error) {
@@ -420,7 +428,7 @@ router.delete(
 
 router.post(
   "/:commandKey/contributions",
-  requireContributionMember,
+  allowPendingContribution,
   (req, res) => {
     try {
       res.status(201).json({

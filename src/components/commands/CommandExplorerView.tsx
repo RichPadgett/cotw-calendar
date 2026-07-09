@@ -190,6 +190,7 @@ type Props = {
     pageY: number;
     height: number;
   }) => void;
+  onRequestContributorUsername?: () => void;
 };
 
 export default function CommandExplorerView({
@@ -205,6 +206,7 @@ export default function CommandExplorerView({
   onNavigationStateChange,
   onResourceStatsChange,
   onMobileSelectedCommandLayout,
+  onRequestContributorUsername,
 }: Props) {
   const { height, width } = useWindowDimensions();
   const selectedCommandRef = useRef<any>(null);
@@ -252,9 +254,9 @@ export default function CommandExplorerView({
     null
   );
   const canModerateContributions = userRole === "admin" && Boolean(adminToken);
-  const canContribute =
-    Boolean(normalizeContributorUsername(contributorUsername)) &&
-    (groupCode === CONTRIBUTION_GROUP_CODE || canModerateContributions);
+  const canContribute = Boolean(
+    normalizeContributorUsername(contributorUsername)
+  );
   const requestUsername = normalizeContributorUsername(contributorUsername);
 
   function commandFetch(input: RequestInfo | URL, init: RequestInit = {}) {
@@ -1229,6 +1231,7 @@ export default function CommandExplorerView({
           contributorUsername={contributorUsername}
           isSubmittingContribution={isSubmittingContribution}
           pendingContributions={commandPendingContributions}
+          onRequestContributorUsername={onRequestContributorUsername}
           onOpenContribution={openContributionDraft}
           onChangeContributionDraft={setContributionDraft}
           onCancelContribution={() => setContributionDraft(null)}
@@ -1428,6 +1431,7 @@ function CommandDetail({
   contributorUsername,
   isSubmittingContribution,
   pendingContributions,
+  onRequestContributorUsername,
   onOpenContribution,
   onChangeContributionDraft,
   onCancelContribution,
@@ -1442,6 +1446,7 @@ function CommandDetail({
   contributorUsername: string;
   isSubmittingContribution: boolean;
   pendingContributions: PendingContribution[];
+  onRequestContributorUsername?: () => void;
   onOpenContribution: (params: {
     mode: CommandContributionMode;
     type: CommandContributionType;
@@ -1497,6 +1502,35 @@ function CommandDetail({
           </View>
         ) : null}
       </View>
+
+      {!canContribute ? (
+        <View style={styles.contributionLoginCard}>
+          <View style={{ flex: 1, minWidth: 0 }}>
+            <Text style={styles.contributionLoginTitle}>
+              Add a public comment
+            </Text>
+            <Text style={styles.contributionLoginText}>
+              Choose a username to suggest notes, source words, references, or
+              clarifications. Every suggestion stays under review until it is
+              approved.
+            </Text>
+          </View>
+
+          <Pressable
+            onPress={onRequestContributorUsername}
+            disabled={!onRequestContributorUsername}
+            style={({ pressed }) => [
+              styles.contributionLoginButton,
+              pressed && { opacity: 0.82 },
+              !onRequestContributorUsername && { opacity: 0.5 },
+            ]}
+          >
+            <Text style={styles.contributionLoginButtonText}>
+              Choose Username
+            </Text>
+          </Pressable>
+        </View>
+      ) : null}
 
       <DetailList
         title="Obedience Requirements"
@@ -4172,6 +4206,42 @@ const styles = {
     fontSize: 11,
     fontWeight: "800" as const,
     color: "#475569",
+  },
+  contributionLoginCard: {
+    flexDirection: "row" as const,
+    flexWrap: "wrap" as const,
+    alignItems: "center" as const,
+    gap: 12,
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: "#f0fdfa",
+    borderWidth: 1,
+    borderColor: "#99f6e4",
+  },
+  contributionLoginTitle: {
+    fontSize: 14,
+    lineHeight: 19,
+    fontWeight: "900" as const,
+    color: "#134e4a",
+  },
+  contributionLoginText: {
+    marginTop: 3,
+    fontSize: 12,
+    lineHeight: 17,
+    color: "#0f766e",
+  },
+  contributionLoginButton: {
+    minHeight: 34,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    backgroundColor: "#0f766e",
+  },
+  contributionLoginButtonText: {
+    fontSize: 12,
+    fontWeight: "900" as const,
+    color: "#ffffff",
   },
   contributionForm: {
     gap: 10,

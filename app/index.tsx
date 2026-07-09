@@ -109,6 +109,8 @@ export default function HomeScreen() {
   const [deviceUsernameDraft, setDeviceUsernameDraft] = useState("");
   const [isDeviceUsernamePromptDismissed, setIsDeviceUsernamePromptDismissed] =
     useState(false);
+  const [isDeviceUsernamePromptForced, setIsDeviceUsernamePromptForced] =
+    useState(false);
   const [commandRandomRequestId, setCommandRandomRequestId] = useState(0);
   const [commandPendingRequestId, setCommandPendingRequestId] = useState(0);
   const [latestTeachingCollapseRequestId, setLatestTeachingCollapseRequestId] =
@@ -377,7 +379,7 @@ export default function HomeScreen() {
     hasEnteredApp &&
     hasLoadedPersistedAppStateRef.current &&
     !commandContributorUsername &&
-    !isDeviceUsernamePromptDismissed;
+    (isDeviceUsernamePromptForced || !isDeviceUsernamePromptDismissed);
 
   async function saveDeviceUsername() {
     const normalizedUsername =
@@ -396,6 +398,7 @@ export default function HomeScreen() {
     setCommandContributorUsername(normalizedUsername);
     setDeviceUsernameDraft(normalizedUsername);
     setIsDeviceUsernamePromptDismissed(true);
+    setIsDeviceUsernamePromptForced(false);
   }
 
   function appFetch(input: RequestInfo | URL, init: RequestInit = {}) {
@@ -425,6 +428,15 @@ export default function HomeScreen() {
     );
 
     setIsDeviceUsernamePromptDismissed(true);
+    setIsDeviceUsernamePromptForced(false);
+  }
+
+  function requestCommandContributorUsername() {
+    setDeviceUsernameDraft(
+      normalizeContributorUsername(commandContributorUsername)
+    );
+    setIsDeviceUsernamePromptForced(true);
+    setIsDeviceUsernamePromptDismissed(false);
   }
 
   useEffect(() => {
@@ -760,7 +772,7 @@ export default function HomeScreen() {
 
   function showCommandContributionHelp() {
     const message =
-      "Command Study can be improved by Church of the Word contributors. You can add new study data, suggest edits to existing information, or suggest that an item be removed. Contributions are saved for review before they become part of the command study resources.\n\nRequirements describe what must be true, available, or in place to properly obey a command.\n\nStudy Notes add Torah context, cross-reference awareness, or practical framing without adding man-made rules.\n\nSource Terms capture original-language words and how they affect understanding.\n\nTranslation Notes explain wording differences, ambiguity, or translation choices.\n\nClarification helps prevent misunderstanding by naming a focused correction, boundary, or distinction.";
+      "Command Study can be improved by public contributors. Choose a username, then add new study data, suggest edits to existing information, or suggest that an item be removed. Contributions are saved for review before they become part of the command study resources.\n\nRequirements describe what must be true, available, or in place to properly obey a command.\n\nStudy Notes add Torah context, cross-reference awareness, or practical framing without adding man-made rules.\n\nSource Terms capture original-language words and how they affect understanding.\n\nTranslation Notes explain wording differences, ambiguity, or translation choices.\n\nClarification helps prevent misunderstanding by naming a focused correction, boundary, or distinction.";
 
     if (Platform.OS === "web" && typeof window.alert === "function") {
       window.alert(message);
@@ -1022,6 +1034,7 @@ export default function HomeScreen() {
             onNavigationStateChange={setCommandNavigation}
             onResourceStatsChange={handleCommandResourceStatsChange}
             onMobileSelectedCommandLayout={centerMobileSelectedCommand}
+            onRequestContributorUsername={requestCommandContributorUsername}
           />
         )}
       </ScrollView>
@@ -1072,7 +1085,7 @@ export default function HomeScreen() {
               }}
             >
               Optional. This helps Church of the Word understand adoption and
-              attribute command suggestions from this device.
+              attribute public command suggestions from this device.
             </Text>
 
             <TextInput
