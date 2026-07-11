@@ -83,6 +83,7 @@ normal_obedience(dwell_in_booths_seven_days, 'Dwell in booths for seven days as 
 concerns(dwell_in_booths_seven_days, tabernacles_rejoicing).
 scripture_reference(dwell_in_booths_seven_days, 'Leviticus 23:42-43').
 story_reference(dwell_in_booths_seven_days, 'Nehemiah 8:14-17', 'The people find the command written, make booths, and dwell in them.').
+source_term(dwell_in_booths_seven_days, hebrew, sukkah, 'booth, hut, or temporary shelter; Israel dwells in booths to remember wilderness provision').
 study_note(dwell_in_booths_seven_days, 'Dwelling in booths teaches remembrance of how YHWH made Israel dwell in booths.').
 
 % Command: rejoice_with_branches_and_fruit
@@ -111,3 +112,31 @@ concerns(public_torah_reading_release_year, teach_children_torah).
 scripture_reference(public_torah_reading_release_year, 'Deuteronomy 31:10-13').
 story_reference(public_torah_reading_release_year, 'Nehemiah 8:18', 'Torah is read day by day during the Feast of Booths.').
 study_note(public_torah_reading_release_year, 'The command gathers men, women, children, and the stranger to hear Torah.').
+
+% -----------------------------------------------------------------------------
+% Source Term Supplements For Booths Commands
+% -----------------------------------------------------------------------------
+
+source_term(keep_feast_of_booths_seven_days, hebrew, chag_hasukkoth, 'Feast of Booths').
+source_term(keep_feast_of_booths_seven_days, hebrew, shibath_yamim, 'seven days').
+source_term(keep_feast_of_booths_seven_days, hebrew, asaph, 'gather in; harvest gathering context').
+
+source_term(first_day_booths_assembly, hebrew, miqra_qodesh, 'holy convocation, called sacred assembly').
+source_term(first_day_booths_assembly, hebrew, rishon, 'first').
+source_term(first_day_booths_assembly, hebrew, melakah, 'work, ordinary labor').
+
+source_term(eighth_day_assembly, hebrew, atsereth, 'solemn assembly, closing assembly').
+source_term(eighth_day_assembly, hebrew, shemini, 'eighth').
+source_term(eighth_day_assembly, hebrew, miqra_qodesh, 'holy convocation, called sacred assembly').
+
+source_term(rejoice_with_branches_and_fruit, hebrew, peri_ets_hadar, 'fruit of splendid trees').
+source_term(rejoice_with_branches_and_fruit, hebrew, kapoth_temarim, 'palm branches').
+source_term(rejoice_with_branches_and_fruit, hebrew, samach, 'rejoice').
+
+source_term(rejoice_at_booths_with_household_and_vulnerable, hebrew, samach, 'rejoice').
+source_term(rejoice_at_booths_with_household_and_vulnerable, hebrew, levi_ger_yathom_almanah, 'Levite, stranger, orphan, and widow').
+source_term(rejoice_at_booths_with_household_and_vulnerable, hebrew, chag, 'feast, pilgrimage festival').
+
+source_term(public_torah_reading_release_year, hebrew, qara, 'read, proclaim').
+source_term(public_torah_reading_release_year, hebrew, torah, 'instruction, Torah').
+source_term(public_torah_reading_release_year, hebrew, shemittah, 'release, remission year').

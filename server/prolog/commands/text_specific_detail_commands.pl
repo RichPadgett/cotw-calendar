@@ -63,23 +63,6 @@ normal_obedience(do_not_sow_field_with_two_kinds_of_seed, 'Do not sow a field wi
 concerns(do_not_sow_field_with_two_kinds_of_seed, mixed_kinds_boundary).
 scripture_reference(do_not_sow_field_with_two_kinds_of_seed, 'Leviticus 19:19').
 study_note(do_not_sow_field_with_two_kinds_of_seed, 'This entry keeps the agricultural seed command distinct from the wool-and-linen garment command.').
-story_reference(do_not_sow_field_with_two_kinds_of_seed, 'Matthew 17:24-30
-The Parable of the Weeds
-24 ¶ He put another parable before them, saying, “The kingdom of heaven may be compared to a man who sowed good seed in his field,
-25 but while his men were sleeping, his enemy came and sowed weedsfn among the wheat and went away.
-26 So when the plants came up and bore grain, then the weeds appeared also.
-27 And the servantsfn of the master of the house came and said to him, ‘Master, did you not sow good seed in your field? How then does it have weeds?’
-28 He said to them, ‘An enemy has done this.’ So the servants said to him, ‘Then do you want us to go and gather them?’
-29 But he said, ‘No, lest in gathering the weeds you root up the wheat along with them.
-30 Let both grow together until the harvest, and at harvest time I will tell the reapers, “Gather the weeds first and bind them in bundles to be burned, but gather the wheat into my barn.”’”', 'Matthew 17:24-30
-The Parable of the Weeds
-24 ¶ He put another parable before them, saying, “The kingdom of heaven may be compared to a man who sowed good seed in his field,
-25 but while his men were sleeping, his enemy came and sowed weedsfn among the wheat and went away.
-26 So when the plants came up and bore grain, then the weeds appeared also.
-27 And the servantsfn of the master of the house came and said to him, ‘Master, did you not sow good seed in your field? How then does it have weeds?’
-28 He said to them, ‘An enemy has done this.’ So the servants said to him, ‘Then do you want us to go and gather them?’
-29 But he said, ‘No, lest in gathering the weeds you root up the wheat along with them.
-30 Let both grow together until the harvest, and at harvest time I will tell the reapers, “Gather the weeds first and bind them in bundles to be burned, but gather the wheat into my barn.”’”').
 
 % Command: do_not_sow_vineyard_with_mixed_seed
 command(do_not_sow_vineyard_with_mixed_seed).
@@ -95,6 +78,7 @@ command_title(do_not_plow_with_ox_and_donkey_together, 'Deu 22:10 - Do not plow 
 normal_obedience(do_not_plow_with_ox_and_donkey_together, 'Do not plow with an ox and donkey together.').
 concerns(do_not_plow_with_ox_and_donkey_together, animal_welfare).
 scripture_reference(do_not_plow_with_ox_and_donkey_together, 'Deuteronomy 22:10').
+story_reference(do_not_plow_with_ox_and_donkey_together, '1 Kings 19:19-21', 'Elisha is found plowing with oxen, an ordinary field-work setting for the kind of labor named in the command.').
 
 % Command: do_not_crossbreed_livestock
 command(do_not_crossbreed_livestock).
@@ -215,6 +199,8 @@ command_title(pay_for_pit_damage, 'Exo 21:33-34 - Pay for pit damage.').
 normal_obedience(pay_for_pit_damage, 'If an opened or dug pit causes animal loss, the responsible person pays restitution.').
 concerns(pay_for_pit_damage, damages_and_restitution).
 scripture_reference(pay_for_pit_damage, 'Exodus 21:33-34').
+source_term(pay_for_pit_damage, hebrew, bor, 'pit, cistern, or open hole; responsibility is assigned when it is opened or dug and not covered').
+source_term(pay_for_pit_damage, hebrew, kasah, 'to cover; the case turns on failing to cover the pit').
 study_note(pay_for_pit_damage, 'Torah assigns responsibility for preventable hazards.').
 
 % Command: pay_for_fire_damage
@@ -223,6 +209,8 @@ command_title(pay_for_fire_damage, 'Exo 22:6 - Pay for fire damage.').
 normal_obedience(pay_for_fire_damage, 'If fire spreads and consumes grain or field, the one who kindled the fire pays restitution.').
 concerns(pay_for_fire_damage, damages_and_restitution).
 scripture_reference(pay_for_fire_damage, 'Exodus 22:6').
+source_term(pay_for_fire_damage, hebrew, esh, 'fire; the case concerns fire spreading and consuming stacked grain, standing grain, or field').
+source_term(pay_for_fire_damage, hebrew, shalam, 'to repay, make whole, or restore for the damage caused').
 study_note(pay_for_fire_damage, 'The command covers damage caused by fire spreading.').
 
 % Command: pay_for_grazing_damage
@@ -231,6 +219,8 @@ command_title(pay_for_grazing_damage, 'Exo 22:5 - Pay for grazing damage.').
 normal_obedience(pay_for_grazing_damage, 'If livestock grazes in another field or vineyard, pay from the best of field or vineyard.').
 concerns(pay_for_grazing_damage, damages_and_restitution).
 scripture_reference(pay_for_grazing_damage, 'Exodus 22:5').
+source_term(pay_for_grazing_damage, hebrew, baar, 'to consume, burn up, or let livestock graze; context concerns damage caused when animals feed in another field').
+source_term(pay_for_grazing_damage, hebrew, meytav, 'the best or choicest; restitution is paid from the best of field or vineyard').
 study_note(pay_for_grazing_damage, 'The command addresses property damage from livestock.').
 
 % Command: judge_goring_ox_case
@@ -275,6 +265,7 @@ command_title(do_not_accept_ransom_for_murderer, 'Num 35:31 - Do not accept rans
 normal_obedience(do_not_accept_ransom_for_murderer, 'Do not accept ransom for the life of a murderer guilty of death.').
 concerns(do_not_accept_ransom_for_murderer, refuge_and_bloodguilt).
 scripture_reference(do_not_accept_ransom_for_murderer, 'Numbers 35:31').
+source_term(do_not_accept_ransom_for_murderer, hebrew, 'kōp̄er', 'The kjv uses satisfaction which can also mean ransom, bribe or a sum of money').
 study_note(do_not_accept_ransom_for_murderer, 'This command belongs to public judgment and bloodguilt law.').
 
 % Command: do_not_accept_ransom_to_leave_refuge
@@ -411,17 +402,160 @@ normal_obedience(do_not_round_the_side_growth_of_the_head, 'Do not round the sid
 concerns(do_not_round_the_side_growth_of_the_head, mixed_kinds_boundary).
 scripture_reference(do_not_round_the_side_growth_of_the_head, 'Leviticus 19:27').
 source_term(do_not_round_the_side_growth_of_the_head, hebrew, naqaph, 'round / strike around').
+source_term(do_not_round_the_side_growth_of_the_head, hebrew, peah, 'edge, corner, or side; Leviticus 19:27 speaks of the side-growth or corners of the head').
+source_term(do_not_round_the_side_growth_of_the_head, hebrew, rosh, 'head; the command concerns the side-growth or corners of the head').
 translation_note(do_not_round_the_side_growth_of_the_head, 'KJV says, "Ye shall not round the corners of your heads."').
 clarification_note(do_not_round_the_side_growth_of_the_head, 'The Hebrew naqaph can carry the sense of going around, striking, or cutting off around; this entry should not be broadened beyond the wording of Leviticus 19:27 without further study.').
 study_note(do_not_round_the_side_growth_of_the_head, 'Catalog wording preserves the text-specific command rather than turning it into a general hairstyle rule.').
 
 % Command: do_not_destroy_the_edge_of_the_beard
 command(do_not_destroy_the_edge_of_the_beard).
-command_title(do_not_destroy_the_edge_of_the_beard, 'Leviticus 19:27 - Do not destroy the edge of the beard.').
-normal_obedience(do_not_destroy_the_edge_of_the_beard, 'Do not destroy the edge of the beard.').
-concerns(do_not_destroy_the_edge_of_the_beard, mixed_kinds_boundary).
+command_title(do_not_destroy_the_edge_of_the_beard, 'Leviticus 19:27 - Do not destroy the edge of the beard for the dead.').
+normal_obedience(do_not_destroy_the_edge_of_the_beard, 'Do not destroy the edge of the beard in the mourning-for-the-dead context.').
+concerns(do_not_destroy_the_edge_of_the_beard, reject_idolatry).
 scripture_reference(do_not_destroy_the_edge_of_the_beard, 'Leviticus 19:27').
-source_term(do_not_destroy_the_edge_of_the_beard, hebrew, shachath, 'mar / ruin / destroy').
+source_term(do_not_destroy_the_edge_of_the_beard, hebrew, shachath, 'to spoil, ruin, corrupt, or destroy; the action applied to the beard edge in the mourning context').
+source_term(do_not_destroy_the_edge_of_the_beard, hebrew, peah, 'edge, corner, or side; used of the beard edge in Leviticus 19:27').
+source_term(do_not_destroy_the_edge_of_the_beard, hebrew, zaqan, 'beard; the command concerns the edge of the beard').
 translation_note(do_not_destroy_the_edge_of_the_beard, 'KJV says, "neither shalt thou mar the corners of thy beard."').
-clarification_note(do_not_destroy_the_edge_of_the_beard, 'The Hebrew shachath means to spoil, ruin, corrupt, or destroy; this supports wording the command as destruction of the beard edge rather than a broad ban on all trimming.').
-study_note(do_not_destroy_the_edge_of_the_beard, 'Catalog wording stays close to the Hebrew action word and avoids adding a man-made fence.').
+clarification_note(do_not_destroy_the_edge_of_the_beard, 'This entry is scoped to the mourning-for-the-dead context around Leviticus 19:27-28 and should not be broadened into a general beard-trimming rule.').
+study_note(do_not_destroy_the_edge_of_the_beard, 'Catalog wording keeps the source-language action word and the death-mourning context together.').
+
+% -----------------------------------------------------------------------------
+% Source Term Supplements For Text-Specific Commands
+% -----------------------------------------------------------------------------
+
+source_term(do_not_wear_wool_and_linen_together, hebrew, shaatnez, 'mixed wool-and-linen fabric named in Deuteronomy 22:11').
+source_term(do_not_wear_wool_and_linen_together, hebrew, tsemer, 'wool').
+source_term(do_not_wear_wool_and_linen_together, hebrew, pishtim, 'linen, flax').
+
+source_term(do_not_sow_field_with_two_kinds_of_seed, hebrew, zara, 'sow seed').
+source_term(do_not_sow_field_with_two_kinds_of_seed, hebrew, kilayim, 'two kinds, mixed kinds').
+source_term(do_not_sow_field_with_two_kinds_of_seed, hebrew, sadeh, 'field').
+
+source_term(do_not_sow_vineyard_with_mixed_seed, hebrew, kerem, 'vineyard').
+source_term(do_not_sow_vineyard_with_mixed_seed, hebrew, kilayim, 'two kinds, mixed kinds').
+source_term(do_not_sow_vineyard_with_mixed_seed, hebrew, qadash, 'be forfeited or made holy/set apart in this consequence context').
+
+source_term(do_not_plow_with_ox_and_donkey_together, hebrew, charash, 'plow').
+source_term(do_not_plow_with_ox_and_donkey_together, hebrew, shor, 'ox').
+source_term(do_not_plow_with_ox_and_donkey_together, hebrew, chamor, 'donkey').
+
+source_term(do_not_crossbreed_livestock, hebrew, raba, 'breed, mate').
+source_term(do_not_crossbreed_livestock, hebrew, behemah, 'livestock, animal').
+source_term(do_not_crossbreed_livestock, hebrew, kilayim, 'mixed kinds').
+
+source_term(make_parapet_for_roof, hebrew, maaqeh, 'parapet, guardrail').
+source_term(make_parapet_for_roof, hebrew, gag, 'roof').
+source_term(make_parapet_for_roof, hebrew, damim, 'bloodguilt').
+
+source_term(send_mother_bird_away, hebrew, shalach, 'send away, release').
+source_term(send_mother_bird_away, hebrew, em, 'mother').
+source_term(send_mother_bird_away, hebrew, qanna, 'nest').
+
+source_term(do_not_muzzle_ox_while_treading, hebrew, chasam, 'muzzle').
+source_term(do_not_muzzle_ox_while_treading, hebrew, shor, 'ox').
+source_term(do_not_muzzle_ox_while_treading, hebrew, dush, 'tread out grain').
+
+source_term(do_not_boil_kid_in_mothers_milk, hebrew, bashal, 'boil, cook').
+source_term(do_not_boil_kid_in_mothers_milk, hebrew, gedi, 'young goat, kid').
+source_term(do_not_boil_kid_in_mothers_milk, hebrew, chalab, 'milk').
+
+source_term(rest_working_animals_on_sabbath, hebrew, nuach, 'rest, settle, be refreshed').
+source_term(rest_working_animals_on_sabbath, hebrew, shor_chamor, 'ox and donkey').
+source_term(rest_working_animals_on_sabbath, hebrew, naphash, 'be refreshed, recover breath').
+
+source_term(release_hebrew_servant_in_seventh_year, hebrew, ebed_ivri, 'Hebrew servant').
+source_term(release_hebrew_servant_in_seventh_year, hebrew, chophshi, 'free, released').
+source_term(release_hebrew_servant_in_seventh_year, hebrew, shebii, 'seventh').
+
+source_term(furnish_released_servant, hebrew, anaq, 'furnish, supply liberally').
+source_term(furnish_released_servant, hebrew, tson_goren_yeqev, 'flock, threshing floor, and winepress').
+
+source_term(do_not_send_released_servant_empty, hebrew, reyqam, 'empty-handed').
+source_term(do_not_send_released_servant_empty, hebrew, shalach, 'send away, release').
+
+source_term(allow_servant_to_choose_lifelong_service, hebrew, ahav, 'love; the servant says he loves master and household').
+source_term(allow_servant_to_choose_lifelong_service, hebrew, meretsea, 'awl used in the stated ear-piercing procedure').
+source_term(allow_servant_to_choose_lifelong_service, hebrew, olam, 'long duration, lifelong in this servant-service setting').
+
+source_term(do_not_rule_over_servant_ruthlessly, hebrew, radah, 'rule, have dominion').
+source_term(do_not_rule_over_servant_ruthlessly, hebrew, perek, 'harshness, severity, ruthlessness').
+
+source_term(redeem_poor_brother_sold_to_stranger, hebrew, gaal, 'redeem, act as kinsman redeemer').
+source_term(redeem_poor_brother_sold_to_stranger, hebrew, makar, 'sell').
+source_term(redeem_poor_brother_sold_to_stranger, hebrew, ger_toshav, 'sojourner or resident alien').
+
+source_term(pay_restitution_for_theft, hebrew, ganav, 'steal').
+source_term(pay_restitution_for_theft, hebrew, shalam, 'repay, make restitution').
+
+source_term(judge_goring_ox_case, hebrew, nagach, 'gore, strike with horn').
+source_term(judge_goring_ox_case, hebrew, shor, 'ox').
+source_term(judge_goring_ox_case, hebrew, muad, 'known, warned, accustomed to gore').
+
+source_term(repay_borrowed_animal_loss, hebrew, shaal, 'borrow, ask for use').
+source_term(repay_borrowed_animal_loss, hebrew, shalam, 'repay, make restitution').
+
+source_term(establish_cities_of_refuge, hebrew, ir_miqlat, 'city of refuge').
+source_term(establish_cities_of_refuge, hebrew, badal, 'separate, set apart').
+source_term(establish_cities_of_refuge, hebrew, ratsach, 'slay, manslayer context').
+
+source_term(manslayer_flee_to_refuge, hebrew, nus, 'flee').
+source_term(manslayer_flee_to_refuge, hebrew, goel_hadam, 'avenger of blood').
+source_term(manslayer_flee_to_refuge, hebrew, shegagah, 'unintentionally, by mistake').
+
+source_term(do_not_accept_ransom_to_leave_refuge, hebrew, kofer, 'ransom, covering payment').
+source_term(do_not_accept_ransom_to_leave_refuge, hebrew, miqlat, 'refuge').
+source_term(do_not_accept_ransom_to_leave_refuge, hebrew, shuv, 'return').
+
+source_term(give_certificate_of_divorce, hebrew, sepher_kerithuth, 'document of cutting off, certificate of divorce').
+source_term(give_certificate_of_divorce, hebrew, shalach, 'send away').
+source_term(give_certificate_of_divorce, hebrew, bayith, 'house, household').
+
+source_term(do_not_remarry_former_wife_after_second_marriage, hebrew, shuv, 'return, take back').
+source_term(do_not_remarry_former_wife_after_second_marriage, hebrew, baal, 'husband, marry').
+source_term(do_not_remarry_former_wife_after_second_marriage, hebrew, tame, 'be defiled').
+
+source_term(perform_levirate_marriage, hebrew, yabam, 'perform brother-in-law duty, levirate marriage').
+source_term(perform_levirate_marriage, hebrew, shem, 'name, memorial line').
+source_term(perform_levirate_marriage, hebrew, ach, 'brother').
+
+source_term(perform_halitzah_if_levirate_refused, hebrew, chalats, 'draw off, remove').
+source_term(perform_halitzah_if_levirate_refused, hebrew, naal, 'sandal, shoe').
+source_term(perform_halitzah_if_levirate_refused, hebrew, raqaq, 'spit').
+
+source_term(captive_woman_waiting_period, hebrew, shabyah, 'female captive').
+source_term(captive_woman_waiting_period, hebrew, yerach_yamim, 'month of days').
+source_term(captive_woman_waiting_period, hebrew, bakah, 'weep, mourn').
+
+source_term(do_not_sell_captive_woman, hebrew, makar, 'sell').
+source_term(do_not_sell_captive_woman, hebrew, kesef, 'silver, money').
+source_term(do_not_sell_captive_woman, hebrew, shalach, 'send away, release').
+
+source_term(nazirite_abstain_from_wine_and_grape_products, hebrew, nazir, 'Nazirite, one separated by vow').
+source_term(nazirite_abstain_from_wine_and_grape_products, hebrew, yayin_shekar, 'wine and strong drink').
+source_term(nazirite_abstain_from_wine_and_grape_products, hebrew, gefen, 'grapevine').
+
+source_term(nazirite_let_hair_grow, hebrew, pera, 'let hair grow long or loose').
+source_term(nazirite_let_hair_grow, hebrew, sear_rosh, 'hair of the head').
+source_term(nazirite_let_hair_grow, hebrew, nazir, 'Nazirite, one separated by vow').
+
+source_term(nazirite_avoid_corpse_impurity, hebrew, nephesh_meth, 'dead person, corpse').
+source_term(nazirite_avoid_corpse_impurity, hebrew, tame, 'be unclean').
+source_term(nazirite_avoid_corpse_impurity, hebrew, nazir, 'Nazirite, one separated by vow').
+
+source_term(nazirite_complete_vow_offerings, hebrew, neder, 'vow').
+source_term(nazirite_complete_vow_offerings, hebrew, torah_hanazir, 'law of the Nazirite').
+source_term(nazirite_complete_vow_offerings, hebrew, korban, 'offering brought near').
+
+source_term(sotah_bitter_water_procedure, hebrew, sotah, 'woman who turns aside; jealousy-test case').
+source_term(sotah_bitter_water_procedure, hebrew, me_hammarim, 'bitter waters').
+source_term(sotah_bitter_water_procedure, hebrew, qinah, 'jealousy').
+
+source_term(priestly_blessing, hebrew, barak, 'bless').
+source_term(priestly_blessing, hebrew, shamar, 'keep, guard').
+source_term(priestly_blessing, hebrew, shalom, 'peace, wholeness').
+
+source_term(do_not_wear_what_pertains_to_a_man_woman_as_stated_in_torah, hebrew, keli_geber, 'article, gear, or apparel of a man').
+source_term(do_not_wear_what_pertains_to_a_man_woman_as_stated_in_torah, hebrew, simlath_ishshah, 'woman''s garment').
+source_term(do_not_wear_what_pertains_to_a_man_woman_as_stated_in_torah, hebrew, toevah, 'abomination, detestable thing').

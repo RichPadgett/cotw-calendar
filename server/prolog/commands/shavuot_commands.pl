@@ -53,6 +53,8 @@ scripture_reference(keep_feast_of_weeks, 'Exodus 34:22').
 scripture_reference(keep_feast_of_weeks, 'Leviticus 23:15-21').
 scripture_reference(keep_feast_of_weeks, 'Deuteronomy 16:9-12').
 story_reference(keep_feast_of_weeks, '2 Chronicles 8:13', 'Solomon observes the yearly appointed feasts, including the Feast of Weeks.').
+source_term(keep_feast_of_weeks, hebrew, shabua, 'week or seven; Shavuot is the Feast of Weeks').
+source_term(keep_feast_of_weeks, hebrew, chag, 'feast or pilgrimage festival; used of the Feast of Weeks').
 study_note(keep_feast_of_weeks, 'Shavuot is reached through the commanded count from Firstfruits.').
 
 % Command: bring_new_grain_offering
@@ -63,6 +65,8 @@ concerns(bring_new_grain_offering, firstfruits_and_counting).
 scripture_reference(bring_new_grain_offering, 'Leviticus 23:16-17').
 scripture_reference(bring_new_grain_offering, 'Numbers 28:26').
 story_reference(bring_new_grain_offering, '2 Chronicles 31:5', 'Israel brings firstfruits of grain, wine, oil, honey, and field produce abundantly.').
+source_term(bring_new_grain_offering, hebrew, minchah, 'grain offering or tribute offering; Shavuot includes a new grain offering').
+source_term(bring_new_grain_offering, hebrew, chadash, 'new; the offering is from new grain').
 study_note(bring_new_grain_offering, 'The offering marks the completion of the count.').
 
 % Command: shavuot_sacred_assembly
@@ -72,6 +76,9 @@ normal_obedience(shavuot_sacred_assembly, 'Hold a sacred assembly and do no ordi
 concerns(shavuot_sacred_assembly, sacred_assembly).
 scripture_reference(shavuot_sacred_assembly, 'Leviticus 23:21').
 scripture_reference(shavuot_sacred_assembly, 'Numbers 28:26').
+source_term(shavuot_sacred_assembly, hebrew, miqra, 'convocation or called assembly; Shavuot is a sacred assembly').
+source_term(shavuot_sacred_assembly, hebrew, qodesh, 'holy or set apart; the assembly is holy').
+source_term(shavuot_sacred_assembly, hebrew, melakah, 'work, occupation, or service; ordinary work is forbidden on the day').
 study_note(shavuot_sacred_assembly, 'The day is set apart as a sacred assembly.').
 
 % Command: rejoice_at_shavuot
@@ -80,4 +87,6 @@ command_title(rejoice_at_shavuot, 'Deu 16:10-12 - Rejoice at Shavuot.').
 normal_obedience(rejoice_at_shavuot, 'Rejoice before YHWH with household, servants, Levite, stranger, orphan, and widow.').
 concerns(rejoice_at_shavuot, include_vulnerable_neighbors).
 scripture_reference(rejoice_at_shavuot, 'Deuteronomy 16:10-12').
+source_term(rejoice_at_shavuot, hebrew, samach, 'to rejoice or be glad; the feast command includes rejoicing before YHWH').
+source_term(rejoice_at_shavuot, hebrew, ger, 'sojourner or stranger; included among those sharing feast joy').
 study_note(rejoice_at_shavuot, 'The feast includes joy that extends beyond the individual household.').

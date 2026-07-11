@@ -52,6 +52,8 @@ concerns(memorial_of_blowing, appointed_times).
 scripture_reference(memorial_of_blowing, 'Leviticus 23:23-25').
 scripture_reference(memorial_of_blowing, 'Numbers 29:1').
 story_reference(memorial_of_blowing, 'Nehemiah 8:2', 'The people gather for Torah reading on the first day of the seventh month.').
+source_term(memorial_of_blowing, hebrew, zikron, 'memorial or remembrance; Leviticus names the day a memorial of blowing').
+source_term(memorial_of_blowing, hebrew, teruah, 'shout, alarm, or trumpet-blast; the day is marked by blowing').
 study_note(memorial_of_blowing, 'The day is remembered through blowing and sacred assembly.').
 
 % Command: trumpets_sacred_assembly
@@ -62,4 +64,7 @@ concerns(trumpets_sacred_assembly, sacred_assembly).
 scripture_reference(trumpets_sacred_assembly, 'Leviticus 23:24-25').
 scripture_reference(trumpets_sacred_assembly, 'Numbers 29:1').
 story_reference(trumpets_sacred_assembly, 'Nehemiah 8:1-12', 'A public assembly gathers in the seventh month to hear and understand Torah.').
+source_term(trumpets_sacred_assembly, hebrew, miqra, 'convocation or called assembly; the day is a sacred assembly').
+source_term(trumpets_sacred_assembly, hebrew, qodesh, 'holy or set apart; the assembly is holy').
+source_term(trumpets_sacred_assembly, hebrew, melakah, 'work, occupation, or service; ordinary work is forbidden on the day').
 study_note(trumpets_sacred_assembly, 'The day is set apart from ordinary work.').

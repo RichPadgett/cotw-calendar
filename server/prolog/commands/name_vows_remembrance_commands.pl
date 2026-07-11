@@ -62,6 +62,7 @@ command_title(do_not_swear_falsely, 'Lev 19:12 - Do not swear falsely by YHWH''s
 normal_obedience(do_not_swear_falsely, 'Do not swear falsely and profane YHWH''s Name.').
 concerns(do_not_swear_falsely, honor_yhwhs_name).
 scripture_reference(do_not_swear_falsely, 'Leviticus 19:12').
+story_reference(do_not_swear_falsely, 'Joshua 9:14-20', 'Israel swears to the Gibeonites and then must reckon with the oath even though it was made without asking YHWH.').
 source_term(do_not_swear_falsely, hebrew, shaba, 'to swear, take an oath, or bind oneself by oath').
 source_term(do_not_swear_falsely, hebrew, sheqer, 'falsehood or deception; the oath misuse profanes the Name').
 study_note(do_not_swear_falsely, 'Truthfulness and reverence are joined when YHWH''s Name is invoked.').
@@ -109,6 +110,7 @@ normal_obedience(wear_tassels_to_remember_commands, 'Make tassels and look at th
 concerns(wear_tassels_to_remember_commands, tassel_remembrance).
 scripture_reference(wear_tassels_to_remember_commands, 'Numbers 15:37-41').
 scripture_reference(wear_tassels_to_remember_commands, 'Deuteronomy 22:12').
+story_reference(wear_tassels_to_remember_commands, 'Numbers 15:32-41', 'The tassel command follows the Sabbath violation case as a visible reminder to do YHWH''s commands.').
 source_term(wear_tassels_to_remember_commands, hebrew, tsitsit, 'tassel, fringe, or visible thread marker for remembering the commands').
 source_term(wear_tassels_to_remember_commands, hebrew, tekhelet, 'blue or violet-blue thread named in the tassel command').
 source_term(wear_tassels_to_remember_commands, hebrew, zakar, 'to remember; looking at the tassels is tied to remembering and doing the commands').

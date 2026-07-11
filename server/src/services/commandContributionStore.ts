@@ -192,6 +192,16 @@ export function createCommandContribution(params: {
     createdBy,
   };
 
+  const existingPendingContribution = file.contributions.find(
+    (item) =>
+      item.status === "pending" &&
+      getContributionIdentity(item) === getContributionIdentity(contribution)
+  );
+
+  if (existingPendingContribution) {
+    return existingPendingContribution;
+  }
+
   file.contributions.push(contribution);
   writeContributionFile(file);
 
@@ -509,6 +519,11 @@ function appendPrologFact(commandKey: string, prologFact: string) {
   for (const fileName of commandFiles) {
     const filePath = path.join(PROLOG_COMMANDS_ROOT, fileName);
     const content = fs.readFileSync(filePath, "utf-8");
+
+    if (content.split(/\r?\n/).some((line) => line.trim() === prologFact)) {
+      return path.relative(SERVER_ROOT, filePath);
+    }
+
     const lines = content.split(/\r?\n/);
     const commandIndexes = lines
       .map((line, index) => (line.includes(commandKey) ? index : -1))
@@ -814,6 +829,23 @@ function getUnresolvedConcernVotes(contribution: CommandContribution) {
   return (contribution.votes ?? []).filter(
     (vote) => vote.type === "concern" && !vote.resolvedAt
   );
+}
+
+function getContributionIdentity(contribution: CommandContribution) {
+  return JSON.stringify({
+    commandKey: contribution.commandKey,
+    mode: contribution.mode,
+    type: contribution.type,
+    text: normalizeIdentityText(contribution.text),
+    suggestedText: normalizeIdentityText(contribution.suggestedText),
+    reason: normalizeIdentityText(contribution.reason),
+    target: contribution.target ?? null,
+    createdBy: contribution.createdBy,
+  });
+}
+
+function normalizeIdentityText(value?: string) {
+  return value?.trim().replace(/\s+/g, " ") ?? "";
 }
 
 function normalizeContributionTarget(

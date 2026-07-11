@@ -52,6 +52,8 @@ concerns(observe_day_of_atonement, atonement_rest).
 scripture_reference(observe_day_of_atonement, 'Leviticus 16').
 scripture_reference(observe_day_of_atonement, 'Leviticus 23:26-32').
 scripture_reference(observe_day_of_atonement, 'Numbers 29:7-11').
+story_reference(observe_day_of_atonement, 'Leviticus 16:1-34', 'After the death of Aaron''s sons, YHWH gives the Day of Atonement service and appointed-day instructions.').
+source_term(observe_day_of_atonement, hebrew, kippurim, 'atonements or coverings; the appointed day is Yom ha-Kippurim').
 study_note(observe_day_of_atonement, 'The Day of Atonement is a solemn appointed day of rest and affliction.').
 
 % Command: afflict_yourselves_on_atonement
@@ -65,7 +67,9 @@ scripture_reference(afflict_yourselves_on_atonement, 'Leviticus 23:27').
 scripture_reference(afflict_yourselves_on_atonement, 'Leviticus 23:29').
 scripture_reference(afflict_yourselves_on_atonement, 'Leviticus 23:32').
 scripture_reference(afflict_yourselves_on_atonement, 'Numbers 29:7').
-source_term(do_not_destroy_the_edge_of_the_beard, 'hebrew', 'ʿānâ', 'to afflict, oppress, humble, be afflicted, be bowed down').
+story_reference(afflict_yourselves_on_atonement, 'Leviticus 16:29-34', 'The Atonement service is given with the command for Israel and the stranger to afflict themselves.').
+source_term(afflict_yourselves_on_atonement, hebrew, anah, 'to afflict, humble, or bow down; used for afflicting the soul on Atonement').
+source_term(afflict_yourselves_on_atonement, hebrew, nephesh, 'soul, life, or person; Leviticus speaks of afflicting your souls').
 study_note(afflict_yourselves_on_atonement, 'The command emphasizes humility and seriousness before YHWH.').
 study_note(afflict_yourselves_on_atonement, 'Leviticus 16:29 describes afflicting your souls. ').
 
@@ -78,6 +82,9 @@ scripture_reference(no_work_on_atonement, 'Leviticus 16:29').
 scripture_reference(no_work_on_atonement, 'Leviticus 16:31').
 scripture_reference(no_work_on_atonement, 'Leviticus 23:28').
 scripture_reference(no_work_on_atonement, 'Leviticus 23:30-32').
+story_reference(no_work_on_atonement, 'Leviticus 16:29-34', 'The Atonement service instructions include the command to do no work on that appointed day.').
+source_term(no_work_on_atonement, hebrew, melakah, 'work, occupation, or service; the day forbids work').
+source_term(no_work_on_atonement, hebrew, shabbathon, 'complete rest or solemn rest; Atonement is called a sabbath of rest').
 study_note(no_work_on_atonement, 'The day is treated as complete rest before YHWH.').
 
 % Command: observe_atonement_evening_to_evening
@@ -86,4 +93,6 @@ command_title(observe_atonement_evening_to_evening, 'Lev 23:32 - Observe evening
 normal_obedience(observe_atonement_evening_to_evening, 'Observe the Day of Atonement from evening to evening.').
 concerns(observe_atonement_evening_to_evening, atonement_rest).
 scripture_reference(observe_atonement_evening_to_evening, 'Leviticus 23:32').
+story_reference(observe_atonement_evening_to_evening, 'Leviticus 16:29-34', 'The Atonement ordinance supplies the narrative setting for the solemn day that Leviticus 23 bounds from evening to evening.').
+source_term(observe_atonement_evening_to_evening, hebrew, ereb, 'evening; the text sets the observance from evening to evening').
 study_note(observe_atonement_evening_to_evening, 'The text gives a boundary for observing the day.').

@@ -77,8 +77,6 @@ story_reference(monthly_offerings, 'Ezra 3:5', 'The returned exiles offer for ne
 study_note(monthly_offerings, 'The new month offerings mark month-level appointed rhythm.').
 command_requirement(monthly_offerings, 'Priests').
 command_requirement(monthly_offerings, 'Temple or Tabernacle').
-story_reference(monthly_offerings, 'Romans 12:1 - I appeal to you therefore, brothers,fn by the mercies of God, to present your bodies as a living sacrifice, holy and acceptable to God, which is your spiritual worship.', 'Romans 12:1 - I appeal to you therefore, brothers,fn by the mercies of God, to present your bodies as a living sacrifice, holy and acceptable to God, which is your spiritual worship.').
-command_requirement(monthly_offerings, 'Do we have a Priest in Yeshua and a Tabernacle in our bodies?').
 
 % Command: passover_unleavened_bread_offerings
 command(passover_unleavened_bread_offerings).
@@ -113,6 +111,7 @@ command_title(atonement_offerings, 'Num 29:7-11 - Atonement offerings.').
 normal_obedience(atonement_offerings, 'Remember the offerings appointed for the Day of Atonement.').
 concerns(atonement_offerings, atonement_rest).
 scripture_reference(atonement_offerings, 'Numbers 29:7-11').
+story_reference(atonement_offerings, 'Leviticus 16:1-34', 'After the death of Aaron''s sons, YHWH gives the Day of Atonement service and offering order.').
 study_note(atonement_offerings, 'The offering pattern is connected to the solemn appointed day.').
 
 % Command: tabernacles_offerings
@@ -123,3 +122,39 @@ concerns(tabernacles_offerings, tabernacles_rejoicing).
 scripture_reference(tabernacles_offerings, 'Numbers 29:12-40').
 story_reference(tabernacles_offerings, 'Ezra 3:4', 'The returned exiles keep Booths as written and offer the daily burnt offerings by number according to the ordinance.').
 study_note(tabernacles_offerings, 'Numbers records the offering sequence across Booths and the eighth day.').
+
+% -----------------------------------------------------------------------------
+% Source Term Supplements For Offering Summary Commands
+% -----------------------------------------------------------------------------
+
+source_term(daily_offerings, hebrew, olat_tamid, 'continual burnt offering').
+source_term(daily_offerings, hebrew, boqer, 'morning').
+source_term(daily_offerings, hebrew, ereb, 'evening').
+
+source_term(sabbath_offerings, hebrew, shabbath, 'Sabbath, cessation').
+source_term(sabbath_offerings, hebrew, olah, 'burnt offering').
+source_term(sabbath_offerings, hebrew, tamid, 'continual, regular').
+
+source_term(monthly_offerings, hebrew, rosh_chodesh, 'new moon, beginning of the month').
+source_term(monthly_offerings, hebrew, chodesh, 'month, new moon').
+source_term(monthly_offerings, hebrew, olah, 'burnt offering').
+
+source_term(passover_unleavened_bread_offerings, hebrew, pesach, 'Passover').
+source_term(passover_unleavened_bread_offerings, hebrew, matsah, 'unleavened bread').
+source_term(passover_unleavened_bread_offerings, hebrew, ishsheh, 'fire offering').
+
+source_term(firstfruits_shavuot_offerings, hebrew, yom_habikkurim, 'day of firstfruits').
+source_term(firstfruits_shavuot_offerings, hebrew, shavuot, 'Weeks').
+source_term(firstfruits_shavuot_offerings, hebrew, minchah_chadashah, 'new grain offering').
+
+source_term(trumpets_offerings, hebrew, yom_teruah, 'day of trumpet blast/shouting').
+source_term(trumpets_offerings, hebrew, teruah, 'blast, shout, alarm').
+source_term(trumpets_offerings, hebrew, chodesh_hashebii, 'seventh month').
+
+source_term(atonement_offerings, hebrew, yom_hakippurim, 'Day of Atonements').
+source_term(atonement_offerings, hebrew, anah_nephesh, 'afflict/humble the self').
+source_term(atonement_offerings, hebrew, chattat, 'sin offering').
+
+source_term(tabernacles_offerings, hebrew, chag_hasukkoth, 'Feast of Booths').
+source_term(tabernacles_offerings, hebrew, parim, 'bulls; prominent in the Numbers 29 offering sequence').
+source_term(tabernacles_offerings, hebrew, mishpat, 'ordinance, prescribed order').

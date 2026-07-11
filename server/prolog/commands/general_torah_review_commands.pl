@@ -75,6 +75,8 @@ normal_obedience(do_not_add_or_subtract, 'Preserve command integrity by not addi
 concerns(do_not_add_or_subtract, remember_yhwhs_commands).
 scripture_reference(do_not_add_or_subtract, 'Deuteronomy 4:2').
 scripture_reference(do_not_add_or_subtract, 'Deuteronomy 12:32').
+story_reference(do_not_add_or_subtract, '1 Kings 12:25-33', 'Jeroboam makes calves, appoints his own priests, and devises a feast from his own heart.').
+story_reference(do_not_add_or_subtract, '2 Kings 22:8-13', 'Josiah responds with humility when the found book of the Torah exposes covenant failure.').
 study_note(do_not_add_or_subtract, 'This command guards the integrity of the command list itself.').
 
 % Command: love_yhwh_and_keep_commands
@@ -97,3 +99,27 @@ concerns(gather_to_hear_torah, teach_children_torah).
 scripture_reference(gather_to_hear_torah, 'Deuteronomy 31:10-13').
 story_reference(gather_to_hear_torah, 'Nehemiah 8:1-12', 'The people gather as Ezra reads the Torah and the Levites give understanding.').
 study_note(gather_to_hear_torah, 'Public Torah hearing forms a communal rhythm of learning and reverence.').
+
+% -----------------------------------------------------------------------------
+% Source Term Supplements For General Torah Review Commands
+% -----------------------------------------------------------------------------
+
+source_term(teach_children_diligently, hebrew, shanan, 'teach diligently, sharpen by repetition').
+source_term(teach_children_diligently, hebrew, ben, 'child, son').
+source_term(teach_children_diligently, hebrew, dabar, 'speak, word, matter').
+
+source_term(remember_deliverance_from_egypt, hebrew, zakar, 'remember, call to mind').
+source_term(remember_deliverance_from_egypt, hebrew, yatsa, 'go out, be brought out').
+source_term(remember_deliverance_from_egypt, hebrew, mitsrayim, 'Egypt').
+
+source_term(do_not_add_or_subtract, hebrew, yasaph, 'add, increase').
+source_term(do_not_add_or_subtract, hebrew, gara, 'take away, diminish').
+source_term(do_not_add_or_subtract, hebrew, mitsvah, 'commandment').
+
+source_term(love_yhwh_and_keep_commands, hebrew, ahav, 'love').
+source_term(love_yhwh_and_keep_commands, hebrew, shamar, 'keep, guard, observe').
+source_term(love_yhwh_and_keep_commands, hebrew, levav_nephesh_meod, 'heart, soul, and might').
+
+source_term(gather_to_hear_torah, hebrew, qahal, 'assemble, gather as a congregation').
+source_term(gather_to_hear_torah, hebrew, shama, 'hear, listen, obey').
+source_term(gather_to_hear_torah, hebrew, lamad, 'learn, be taught').

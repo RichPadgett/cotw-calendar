@@ -112,6 +112,9 @@ concerns(help_fallen_animal, neighbor_protection).
 scripture_reference(help_fallen_animal, 'Exodus 23:4-5').
 scripture_reference(help_fallen_animal, 'Deuteronomy 22:4').
 study_note(help_fallen_animal, 'Neighbor help includes practical intervention, even with animals.').
+source_term(help_fallen_animal, hebrew, naphal, 'fall, lie fallen').
+source_term(help_fallen_animal, hebrew, qum, 'raise, lift up, establish').
+source_term(help_fallen_animal, hebrew, chamor, 'donkey').
 
 % Command: leave_gleanings_for_poor_and_stranger
 command(leave_gleanings_for_poor_and_stranger).
@@ -131,6 +134,7 @@ command_title(release_debts_in_seventh_year, 'Deu 15:1-2 - Release debts in the 
 normal_obedience(release_debts_in_seventh_year, 'Release debts in the seventh year according to Torah.').
 concerns(release_debts_in_seventh_year, debt_mercy).
 scripture_reference(release_debts_in_seventh_year, 'Deuteronomy 15:1-11').
+story_reference(release_debts_in_seventh_year, 'Nehemiah 5:1-13', 'Nehemiah confronts debt oppression and calls the nobles to restore fields, vineyards, houses, and interest.').
 source_term(release_debts_in_seventh_year, hebrew, shemittah, 'release, remission, or letting drop; the seventh-year release restrains enduring debt pressure').
 study_note(release_debts_in_seventh_year, 'The release year restrains permanent debt bondage among brothers.').
 
@@ -161,6 +165,7 @@ command_title(proclaim_jubilee, 'Lev 25:8-17 - Proclaim Jubilee.').
 normal_obedience(proclaim_jubilee, 'Proclaim Jubilee and return property and liberty according to Torah.').
 concerns(proclaim_jubilee, land_stewardship).
 scripture_reference(proclaim_jubilee, 'Leviticus 25:8-17').
+story_reference(proclaim_jubilee, 'Jeremiah 34:8-17', 'Judah proclaims liberty to Hebrew servants and then violates the release by taking them back.').
 source_term(proclaim_jubilee, hebrew, yovel, 'Jubilee, associated with the ram horn and the fiftieth-year return of liberty and inheritance').
 source_term(proclaim_jubilee, hebrew, deror, 'liberty or release proclaimed through the land in the Jubilee year').
 study_note(proclaim_jubilee, 'Jubilee restores land inheritance and liberty in Israel.').
@@ -188,6 +193,9 @@ concerns(leave_the_corner_of_the_field_for_the_poor_and_stranger, land_stewardsh
 scripture_reference(leave_the_corner_of_the_field_for_the_poor_and_stranger, 'Leviticus 19:9').
 story_reference(leave_the_corner_of_the_field_for_the_poor_and_stranger, 'Ruth 2:2-17', 'Ruth gleans in Boaz''s field as a poor stranger receiving field provision.').
 study_note(leave_the_corner_of_the_field_for_the_poor_and_stranger, 'This command treats land, harvest, inheritance, and provision as matters held under YHWH''s order: Leave the corner of the field for the poor and stranger.').
+source_term(leave_the_corner_of_the_field_for_the_poor_and_stranger, hebrew, peah, 'corner, edge of the field left for provision').
+source_term(leave_the_corner_of_the_field_for_the_poor_and_stranger, hebrew, ani, 'poor, afflicted person').
+source_term(leave_the_corner_of_the_field_for_the_poor_and_stranger, hebrew, ger, 'resident foreigner, sojourner').
 
 % Command: do_not_reap_the_field_corner_completely
 command(do_not_reap_the_field_corner_completely).
@@ -197,6 +205,9 @@ concerns(do_not_reap_the_field_corner_completely, land_stewardship).
 scripture_reference(do_not_reap_the_field_corner_completely, 'Leviticus 19:9').
 story_reference(do_not_reap_the_field_corner_completely, 'Ruth 2:15-16', 'Boaz commands his young men to let Ruth glean and even pull out handfuls for her.').
 study_note(do_not_reap_the_field_corner_completely, 'This command treats land, harvest, inheritance, and provision as matters held under YHWH''s order: Do not reap the field corner completely.').
+source_term(do_not_reap_the_field_corner_completely, hebrew, qatsar, 'reap, harvest').
+source_term(do_not_reap_the_field_corner_completely, hebrew, peah, 'corner, edge of the field').
+source_term(do_not_reap_the_field_corner_completely, hebrew, kalah, 'finish, complete, bring to an end').
 
 % Command: leave_gleanings_of_harvest_for_the_poor_and_stranger
 command(leave_gleanings_of_harvest_for_the_poor_and_stranger).
@@ -206,6 +217,9 @@ concerns(leave_gleanings_of_harvest_for_the_poor_and_stranger, land_stewardship)
 scripture_reference(leave_gleanings_of_harvest_for_the_poor_and_stranger, 'Leviticus 19:9').
 story_reference(leave_gleanings_of_harvest_for_the_poor_and_stranger, 'Ruth 2:7-17', 'Ruth gleans after the reapers in Boaz''s field.').
 study_note(leave_gleanings_of_harvest_for_the_poor_and_stranger, 'This command treats land, harvest, inheritance, and provision as matters held under YHWH''s order: Leave gleanings of harvest for the poor and stranger.').
+source_term(leave_gleanings_of_harvest_for_the_poor_and_stranger, hebrew, leqet, 'gleanings left after harvest').
+source_term(leave_gleanings_of_harvest_for_the_poor_and_stranger, hebrew, qatsir, 'harvest').
+source_term(leave_gleanings_of_harvest_for_the_poor_and_stranger, hebrew, ani_ger, 'poor person and resident foreigner').
 
 % Command: do_not_gather_the_gleanings_of_harvest
 command(do_not_gather_the_gleanings_of_harvest).
@@ -215,6 +229,8 @@ concerns(do_not_gather_the_gleanings_of_harvest, land_stewardship).
 scripture_reference(do_not_gather_the_gleanings_of_harvest, 'Leviticus 19:9').
 story_reference(do_not_gather_the_gleanings_of_harvest, 'Ruth 2:15-16', 'Boaz tells the workers not to reproach Ruth and to let grain fall for her to glean.').
 study_note(do_not_gather_the_gleanings_of_harvest, 'This command treats land, harvest, inheritance, and provision as matters held under YHWH''s order: Do not gather the gleanings of harvest.').
+source_term(do_not_gather_the_gleanings_of_harvest, hebrew, laqat, 'glean, gather stray pieces').
+source_term(do_not_gather_the_gleanings_of_harvest, hebrew, leqet, 'gleaning, what remains after harvest').
 
 % Command: leave_fallen_grapes_for_the_poor_and_stranger
 command(leave_fallen_grapes_for_the_poor_and_stranger).
@@ -222,7 +238,11 @@ command_title(leave_fallen_grapes_for_the_poor_and_stranger, 'Leviticus 19:10 - 
 normal_obedience(leave_fallen_grapes_for_the_poor_and_stranger, 'Leave fallen grapes for the poor and stranger.').
 concerns(leave_fallen_grapes_for_the_poor_and_stranger, land_stewardship).
 scripture_reference(leave_fallen_grapes_for_the_poor_and_stranger, 'Leviticus 19:10').
+story_reference(leave_fallen_grapes_for_the_poor_and_stranger, 'Ruth 2:15-16', 'Boaz tells his workers to let grain fall for Ruth, a narrative example of generous harvest provision for the vulnerable.').
 study_note(leave_fallen_grapes_for_the_poor_and_stranger, 'This command treats land, harvest, inheritance, and provision as matters held under YHWH''s order: Leave fallen grapes for the poor and stranger.').
+source_term(leave_fallen_grapes_for_the_poor_and_stranger, hebrew, peret, 'fallen or separated grapes').
+source_term(leave_fallen_grapes_for_the_poor_and_stranger, hebrew, kerem, 'vineyard').
+source_term(leave_fallen_grapes_for_the_poor_and_stranger, hebrew, ani_ger, 'poor person and resident foreigner').
 
 % Command: do_not_strip_the_vineyard_bare
 command(do_not_strip_the_vineyard_bare).
@@ -230,7 +250,10 @@ command_title(do_not_strip_the_vineyard_bare, 'Leviticus 19:10 - Do not strip th
 normal_obedience(do_not_strip_the_vineyard_bare, 'Do not strip the vineyard bare.').
 concerns(do_not_strip_the_vineyard_bare, land_stewardship).
 scripture_reference(do_not_strip_the_vineyard_bare, 'Leviticus 19:10').
+story_reference(do_not_strip_the_vineyard_bare, 'Ruth 2:15-16', 'Boaz commands his workers to leave extra for Ruth rather than stripping the harvest bare.').
 study_note(do_not_strip_the_vineyard_bare, 'This command treats land, harvest, inheritance, and provision as matters held under YHWH''s order: Do not strip the vineyard bare.').
+source_term(do_not_strip_the_vineyard_bare, hebrew, alal, 'glean, strip, deal thoroughly with').
+source_term(do_not_strip_the_vineyard_bare, hebrew, kerem, 'vineyard').
 
 % Command: let_the_land_rest_in_the_seventh_year
 command(let_the_land_rest_in_the_seventh_year).
@@ -238,7 +261,11 @@ command_title(let_the_land_rest_in_the_seventh_year, 'Leviticus 25:1-7 - Let the
 normal_obedience(let_the_land_rest_in_the_seventh_year, 'Let the land rest in the seventh year.').
 concerns(let_the_land_rest_in_the_seventh_year, land_stewardship).
 scripture_reference(let_the_land_rest_in_the_seventh_year, 'Leviticus 25:1-7').
+story_reference(let_the_land_rest_in_the_seventh_year, '2 Chronicles 36:20-21', 'The exile is described as allowing the land to enjoy its Sabbaths.').
 study_note(let_the_land_rest_in_the_seventh_year, 'This command treats land, harvest, inheritance, and provision as matters held under YHWH''s order: Let the land rest in the seventh year.').
+source_term(let_the_land_rest_in_the_seventh_year, hebrew, shabbath_shabbathon, 'complete Sabbath rest').
+source_term(let_the_land_rest_in_the_seventh_year, hebrew, erets, 'land').
+source_term(let_the_land_rest_in_the_seventh_year, hebrew, shebii, 'seventh').
 
 % Command: do_not_sow_the_field_in_the_seventh_year
 command(do_not_sow_the_field_in_the_seventh_year).
@@ -246,7 +273,11 @@ command_title(do_not_sow_the_field_in_the_seventh_year, 'Leviticus 25:4 - Do not
 normal_obedience(do_not_sow_the_field_in_the_seventh_year, 'Do not sow the field in the seventh year.').
 concerns(do_not_sow_the_field_in_the_seventh_year, land_stewardship).
 scripture_reference(do_not_sow_the_field_in_the_seventh_year, 'Leviticus 25:4').
+story_reference(do_not_sow_the_field_in_the_seventh_year, '2 Chronicles 36:20-21', 'The exile is tied to the land enjoying its Sabbaths after Israel failed to give the land rest.').
 study_note(do_not_sow_the_field_in_the_seventh_year, 'This command treats land, harvest, inheritance, and provision as matters held under YHWH''s order: Do not sow the field in the seventh year.').
+source_term(do_not_sow_the_field_in_the_seventh_year, hebrew, zara, 'sow seed').
+source_term(do_not_sow_the_field_in_the_seventh_year, hebrew, sadeh, 'field').
+source_term(do_not_sow_the_field_in_the_seventh_year, hebrew, shebii, 'seventh').
 
 % Command: do_not_prune_the_vineyard_in_the_seventh_year
 command(do_not_prune_the_vineyard_in_the_seventh_year).
@@ -254,7 +285,11 @@ command_title(do_not_prune_the_vineyard_in_the_seventh_year, 'Leviticus 25:4 - D
 normal_obedience(do_not_prune_the_vineyard_in_the_seventh_year, 'Do not prune the vineyard in the seventh year.').
 concerns(do_not_prune_the_vineyard_in_the_seventh_year, land_stewardship).
 scripture_reference(do_not_prune_the_vineyard_in_the_seventh_year, 'Leviticus 25:4').
+story_reference(do_not_prune_the_vineyard_in_the_seventh_year, '2 Chronicles 36:20-21', 'The exile is described as paying back the land Sabbath rests.').
 study_note(do_not_prune_the_vineyard_in_the_seventh_year, 'This command treats land, harvest, inheritance, and provision as matters held under YHWH''s order: Do not prune the vineyard in the seventh year.').
+source_term(do_not_prune_the_vineyard_in_the_seventh_year, hebrew, zamar, 'prune').
+source_term(do_not_prune_the_vineyard_in_the_seventh_year, hebrew, kerem, 'vineyard').
+source_term(do_not_prune_the_vineyard_in_the_seventh_year, hebrew, shebii, 'seventh').
 
 % Command: do_not_reap_aftergrowth_as_ordinary_harvest_in_the_seventh_year
 command(do_not_reap_aftergrowth_as_ordinary_harvest_in_the_seventh_year).
@@ -263,6 +298,8 @@ normal_obedience(do_not_reap_aftergrowth_as_ordinary_harvest_in_the_seventh_year
 concerns(do_not_reap_aftergrowth_as_ordinary_harvest_in_the_seventh_year, land_stewardship).
 scripture_reference(do_not_reap_aftergrowth_as_ordinary_harvest_in_the_seventh_year, 'Leviticus 25:5').
 study_note(do_not_reap_aftergrowth_as_ordinary_harvest_in_the_seventh_year, 'This command treats land, harvest, inheritance, and provision as matters held under YHWH''s order: Do not reap aftergrowth as ordinary harvest in the seventh year.').
+source_term(do_not_reap_aftergrowth_as_ordinary_harvest_in_the_seventh_year, hebrew, saphiach, 'aftergrowth, volunteer crop').
+source_term(do_not_reap_aftergrowth_as_ordinary_harvest_in_the_seventh_year, hebrew, qatsar, 'reap, harvest').
 
 % Command: do_not_gather_unpruned_grapes_as_ordinary_harvest_in_the_seventh_year
 command(do_not_gather_unpruned_grapes_as_ordinary_harvest_in_the_seventh_year).
@@ -270,7 +307,11 @@ command_title(do_not_gather_unpruned_grapes_as_ordinary_harvest_in_the_seventh_y
 normal_obedience(do_not_gather_unpruned_grapes_as_ordinary_harvest_in_the_seventh_year, 'Do not gather unpruned grapes as ordinary harvest in the seventh year.').
 concerns(do_not_gather_unpruned_grapes_as_ordinary_harvest_in_the_seventh_year, land_stewardship).
 scripture_reference(do_not_gather_unpruned_grapes_as_ordinary_harvest_in_the_seventh_year, 'Leviticus 25:5').
+story_reference(do_not_gather_unpruned_grapes_as_ordinary_harvest_in_the_seventh_year, '2 Chronicles 36:20-21', 'The land enjoys its Sabbaths during exile, showing the seriousness of seventh-year land rest.').
 study_note(do_not_gather_unpruned_grapes_as_ordinary_harvest_in_the_seventh_year, 'This command treats land, harvest, inheritance, and provision as matters held under YHWH''s order: Do not gather unpruned grapes as ordinary harvest in the seventh year.').
+source_term(do_not_gather_unpruned_grapes_as_ordinary_harvest_in_the_seventh_year, hebrew, nazir, 'unpruned, undressed vine').
+source_term(do_not_gather_unpruned_grapes_as_ordinary_harvest_in_the_seventh_year, hebrew, anab, 'grapes').
+source_term(do_not_gather_unpruned_grapes_as_ordinary_harvest_in_the_seventh_year, hebrew, batsar, 'gather grapes, vintage').
 
 % Command: count_seven_sabbatical_cycles_toward_jubilee
 command(count_seven_sabbatical_cycles_toward_jubilee).
@@ -278,6 +319,7 @@ command_title(count_seven_sabbatical_cycles_toward_jubilee, 'Leviticus 25:8 - Co
 normal_obedience(count_seven_sabbatical_cycles_toward_jubilee, 'Count seven sabbatical cycles toward Jubilee.').
 concerns(count_seven_sabbatical_cycles_toward_jubilee, land_stewardship).
 scripture_reference(count_seven_sabbatical_cycles_toward_jubilee, 'Leviticus 25:8').
+story_reference(count_seven_sabbatical_cycles_toward_jubilee, '2 Chronicles 36:20-21', 'The exile reckons with missed land Sabbaths, showing the importance of counting and observing the sabbatical rhythm.').
 source_term(count_seven_sabbatical_cycles_toward_jubilee, hebrew, shabbat, 'Sabbath or cessation; the Jubilee count is built from seven Sabbath-year cycles').
 study_note(count_seven_sabbatical_cycles_toward_jubilee, 'This command treats land, harvest, inheritance, and provision as matters held under YHWH''s order: Count seven sabbatical cycles toward Jubilee.').
 
@@ -287,6 +329,7 @@ command_title(sound_the_shofar_for_jubilee_on_day_of_atonement, 'Leviticus 25:9 
 normal_obedience(sound_the_shofar_for_jubilee_on_day_of_atonement, 'Sound the shofar for Jubilee on Day of Atonement.').
 concerns(sound_the_shofar_for_jubilee_on_day_of_atonement, land_stewardship).
 scripture_reference(sound_the_shofar_for_jubilee_on_day_of_atonement, 'Leviticus 25:9').
+story_reference(sound_the_shofar_for_jubilee_on_day_of_atonement, 'Jeremiah 34:8-17', 'Judah proclaims liberty but then reverses the release, giving a narrative failure around liberty proclamation.').
 source_term(sound_the_shofar_for_jubilee_on_day_of_atonement, hebrew, shofar, 'ram horn; the Jubilee announcement is sounded with a shofar on Day of Atonement').
 study_note(sound_the_shofar_for_jubilee_on_day_of_atonement, 'This command treats land, harvest, inheritance, and provision as matters held under YHWH''s order: Sound the shofar for Jubilee on Day of Atonement.').
 
@@ -296,6 +339,7 @@ command_title(proclaim_liberty_in_the_jubilee_year, 'Leviticus 25:10 - Proclaim 
 normal_obedience(proclaim_liberty_in_the_jubilee_year, 'Proclaim liberty in the Jubilee year.').
 concerns(proclaim_liberty_in_the_jubilee_year, land_stewardship).
 scripture_reference(proclaim_liberty_in_the_jubilee_year, 'Leviticus 25:10').
+story_reference(proclaim_liberty_in_the_jubilee_year, 'Jeremiah 34:8-17', 'The leaders proclaim liberty to Hebrew servants and then profane the covenant by enslaving them again.').
 source_term(proclaim_liberty_in_the_jubilee_year, hebrew, qara, 'to call out, proclaim, or announce publicly').
 source_term(proclaim_liberty_in_the_jubilee_year, hebrew, deror, 'liberty, release, or free flowing; the Jubilee proclamation releases people back to inheritance and household').
 study_note(proclaim_liberty_in_the_jubilee_year, 'This command treats land, harvest, inheritance, and provision as matters held under YHWH''s order: Proclaim liberty in the Jubilee year.').
@@ -306,6 +350,7 @@ command_title(return_each_man_to_his_property_in_jubilee, 'Leviticus 25:10 - Ret
 normal_obedience(return_each_man_to_his_property_in_jubilee, 'Return each man to his property in Jubilee.').
 concerns(return_each_man_to_his_property_in_jubilee, land_stewardship).
 scripture_reference(return_each_man_to_his_property_in_jubilee, 'Leviticus 25:10').
+story_reference(return_each_man_to_his_property_in_jubilee, 'Nehemiah 5:1-13', 'Nehemiah commands nobles to restore fields, vineyards, oliveyards, and houses taken through debt oppression.').
 source_term(return_each_man_to_his_property_in_jubilee, hebrew, shuv, 'to return or turn back; Jubilee reverses loss of family inheritance').
 source_term(return_each_man_to_his_property_in_jubilee, hebrew, achuzzah, 'possession, holding, or inherited property').
 study_note(return_each_man_to_his_property_in_jubilee, 'This command treats land, harvest, inheritance, and provision as matters held under YHWH''s order: Return each man to his property in Jubilee.').
@@ -316,7 +361,11 @@ command_title(do_not_sow_or_reap_ordinary_harvest_in_jubilee, 'Leviticus 25:11 -
 normal_obedience(do_not_sow_or_reap_ordinary_harvest_in_jubilee, 'Do not sow or reap ordinary harvest in Jubilee.').
 concerns(do_not_sow_or_reap_ordinary_harvest_in_jubilee, land_stewardship).
 scripture_reference(do_not_sow_or_reap_ordinary_harvest_in_jubilee, 'Leviticus 25:11').
+story_reference(do_not_sow_or_reap_ordinary_harvest_in_jubilee, '2 Chronicles 36:20-21', 'The land Sabbath judgment background relates to the Jubilee cycle of release and rest.').
 study_note(do_not_sow_or_reap_ordinary_harvest_in_jubilee, 'This command treats land, harvest, inheritance, and provision as matters held under YHWH''s order: Do not sow or reap ordinary harvest in Jubilee.').
+source_term(do_not_sow_or_reap_ordinary_harvest_in_jubilee, hebrew, yovel, 'Jubilee').
+source_term(do_not_sow_or_reap_ordinary_harvest_in_jubilee, hebrew, zara, 'sow seed').
+source_term(do_not_sow_or_reap_ordinary_harvest_in_jubilee, hebrew, qatsar, 'reap, harvest').
 
 % Command: do_not_sell_land_permanently
 command(do_not_sell_land_permanently).
@@ -324,6 +373,7 @@ command_title(do_not_sell_land_permanently, 'Leviticus 25:23 - Do not sell land 
 normal_obedience(do_not_sell_land_permanently, 'Do not sell land permanently.').
 concerns(do_not_sell_land_permanently, land_stewardship).
 scripture_reference(do_not_sell_land_permanently, 'Leviticus 25:23').
+story_reference(do_not_sell_land_permanently, '1 Kings 21:1-3', 'Naboth refuses to give Ahab his fathers'' inheritance, showing concern for ancestral land.').
 source_term(do_not_sell_land_permanently, hebrew, tsemithuth, 'permanence or finality; the land was not to be sold as a permanent alienation').
 study_note(do_not_sell_land_permanently, 'This command treats land, harvest, inheritance, and provision as matters held under YHWH''s order: Do not sell land permanently.').
 
@@ -333,6 +383,7 @@ command_title(redeem_land_according_to_torah_redemption_law, 'Leviticus 25:24-34
 normal_obedience(redeem_land_according_to_torah_redemption_law, 'Redeem land according to Torah redemption law.').
 concerns(redeem_land_according_to_torah_redemption_law, land_stewardship).
 scripture_reference(redeem_land_according_to_torah_redemption_law, 'Leviticus 25:24-34').
+story_reference(redeem_land_according_to_torah_redemption_law, 'Ruth 4:1-10', 'Boaz acts as redeemer for Elimelech''s land and Ruth before the elders at the gate.').
 source_term(redeem_land_according_to_torah_redemption_law, hebrew, gaal, 'to redeem or act as kinsman-redeemer, restoring what was lost or sold').
 source_term(redeem_land_according_to_torah_redemption_law, hebrew, geullah, 'redemption right or redemption process for land and persons').
 study_note(redeem_land_according_to_torah_redemption_law, 'This command treats land, harvest, inheritance, and provision as matters held under YHWH''s order: Redeem land according to Torah redemption law.').
@@ -355,6 +406,7 @@ normal_obedience(give_the_tithe_to_levite_stranger_orphan_and_widow_in_the_third
 concerns(give_the_tithe_to_levite_stranger_orphan_and_widow_in_the_third_year, land_stewardship).
 scripture_reference(give_the_tithe_to_levite_stranger_orphan_and_widow_in_the_third_year, 'Deuteronomy 14:28-29').
 scripture_reference(give_the_tithe_to_levite_stranger_orphan_and_widow_in_the_third_year, '26:12').
+story_reference(give_the_tithe_to_levite_stranger_orphan_and_widow_in_the_third_year, 'Nehemiah 13:10-12', 'Nehemiah restores the tithe storehouses after the Levites had been neglected.').
 source_term(give_the_tithe_to_levite_stranger_orphan_and_widow_in_the_third_year, hebrew, maaser, 'tithe or tenth portion, here stored for Levite, stranger, orphan, and widow').
 source_term(give_the_tithe_to_levite_stranger_orphan_and_widow_in_the_third_year, hebrew, ger, 'sojourner or stranger included with vulnerable households in the third-year tithe').
 study_note(give_the_tithe_to_levite_stranger_orphan_and_widow_in_the_third_year, 'This command treats land, harvest, inheritance, and provision as matters held under YHWH''s order: Give the tithe to Levite, stranger, orphan, and widow in the third year.').
@@ -369,21 +421,13 @@ story_reference(do_not_neglect_the_levite, 'Nehemiah 13:10-12', 'Nehemiah restor
 source_term(do_not_neglect_the_levite, hebrew, azav, 'to leave, forsake, abandon, or neglect; the Levite is not to be left without provision').
 study_note(do_not_neglect_the_levite, 'This command treats land, harvest, inheritance, and provision as matters held under YHWH''s order: Do not neglect the Levite.').
 
-% Command: do_not_steal_2
-command(do_not_steal_2).
-command_title(do_not_steal_2, 'Exodus 20:15 - Do not steal.').
-normal_obedience(do_not_steal_2, 'Do not steal.').
-concerns(do_not_steal_2, damages_and_restitution).
-scripture_reference(do_not_steal_2, 'Exodus 20:15').
-source_term(do_not_steal_2, hebrew, ganav, 'to steal, take by stealth, or carry away what belongs to another').
-study_note(do_not_steal_2, 'This command assigns responsibility for loss or damage and turns wrongdoing toward restitution where Torah requires it: Do not steal.').
-
 % Command: do_not_deny_falsely_about_a_deposit_pledge_robbery_or_oppression
 command(do_not_deny_falsely_about_a_deposit_pledge_robbery_or_oppression).
 command_title(do_not_deny_falsely_about_a_deposit_pledge_robbery_or_oppression, 'Leviticus 6:1-7 - Do not deny falsely about a deposit, pledge, robbery, or oppression.').
 normal_obedience(do_not_deny_falsely_about_a_deposit_pledge_robbery_or_oppression, 'Do not deny falsely about a deposit, pledge, robbery, or oppression.').
 concerns(do_not_deny_falsely_about_a_deposit_pledge_robbery_or_oppression, damages_and_restitution).
 scripture_reference(do_not_deny_falsely_about_a_deposit_pledge_robbery_or_oppression, 'Leviticus 6:1-7').
+story_reference(do_not_deny_falsely_about_a_deposit_pledge_robbery_or_oppression, 'Joshua 7:20-26', 'Achan first hides and then confesses what he took from the devoted things.').
 source_term(do_not_deny_falsely_about_a_deposit_pledge_robbery_or_oppression, hebrew, kachash, 'to deny, deceive, or deal falsely').
 source_term(do_not_deny_falsely_about_a_deposit_pledge_robbery_or_oppression, hebrew, piqqadon, 'deposit or entrusted property placed in another person''s care').
 source_term(do_not_deny_falsely_about_a_deposit_pledge_robbery_or_oppression, hebrew, tesumeth_yad, 'a pledge, security, or thing put into the hand as collateral').
@@ -397,6 +441,8 @@ command_title(do_not_lie_to_one_another, 'Leviticus 19:11 - Do not lie to one an
 normal_obedience(do_not_lie_to_one_another, 'Do not lie to one another.').
 concerns(do_not_lie_to_one_another, damages_and_restitution).
 scripture_reference(do_not_lie_to_one_another, 'Leviticus 19:11').
+story_reference(do_not_lie_to_one_another, 'Joshua 7:19-21', 'Achan confesses after hiding what he took from Jericho.').
+story_reference(do_not_lie_to_one_another, '2 Kings 5:20-27', 'Gehazi lies to Naaman and Elisha after taking silver and garments.').
 source_term(do_not_lie_to_one_another, hebrew, shaqar, 'to lie, deceive, or deal falsely').
 study_note(do_not_lie_to_one_another, 'This command assigns responsibility for loss or damage and turns wrongdoing toward restitution where Torah requires it: Do not lie to one another.').
 
@@ -406,6 +452,7 @@ command_title(restore_stolen_or_withheld_property_and_add_a_fifth_in_the_guilt_c
 normal_obedience(restore_stolen_or_withheld_property_and_add_a_fifth_in_the_guilt_case, 'Restore stolen or withheld property and add a fifth in the guilt case.').
 concerns(restore_stolen_or_withheld_property_and_add_a_fifth_in_the_guilt_case, damages_and_restitution).
 scripture_reference(restore_stolen_or_withheld_property_and_add_a_fifth_in_the_guilt_case, 'Leviticus 6:1-7').
+story_reference(restore_stolen_or_withheld_property_and_add_a_fifth_in_the_guilt_case, 'Nehemiah 5:10-13', 'Nehemiah calls the nobles to restore what they have taken from their brothers.').
 source_term(restore_stolen_or_withheld_property_and_add_a_fifth_in_the_guilt_case, hebrew, shalam, 'to make whole, repay, restore, or complete restitution').
 source_term(restore_stolen_or_withheld_property_and_add_a_fifth_in_the_guilt_case, hebrew, chamishit, 'a fifth part added to restitution in the guilt case').
 study_note(restore_stolen_or_withheld_property_and_add_a_fifth_in_the_guilt_case, 'This command assigns responsibility for loss or damage and turns wrongdoing toward restitution where Torah requires it: Restore stolen or withheld property and add a fifth in the guilt case.').
@@ -416,38 +463,9 @@ command_title(pay_restitution_for_theft_according_to_the_case, 'Exodus 22:1-4 - 
 normal_obedience(pay_restitution_for_theft_according_to_the_case, 'Pay restitution for theft according to the case.').
 concerns(pay_restitution_for_theft_according_to_the_case, damages_and_restitution).
 scripture_reference(pay_restitution_for_theft_according_to_the_case, 'Exodus 22:1-4').
+story_reference(pay_restitution_for_theft_according_to_the_case, '2 Samuel 12:1-6', 'David says the rich man in Nathan''s parable must restore fourfold for taking the poor man''s lamb.').
 source_term(pay_restitution_for_theft_according_to_the_case, hebrew, shalam, 'to repay or make restitution; theft is answered by making the loss whole according to the case').
 study_note(pay_restitution_for_theft_according_to_the_case, 'This command assigns responsibility for loss or damage and turns wrongdoing toward restitution where Torah requires it: Pay restitution for theft according to the case.').
-
-% Command: pay_for_grazing_damage_2
-command(pay_for_grazing_damage_2).
-command_title(pay_for_grazing_damage_2, 'Exodus 22:5 - Pay for grazing damage.').
-normal_obedience(pay_for_grazing_damage_2, 'Pay for grazing damage.').
-concerns(pay_for_grazing_damage_2, damages_and_restitution).
-scripture_reference(pay_for_grazing_damage_2, 'Exodus 22:5').
-source_term(pay_for_grazing_damage_2, hebrew, baar, 'to consume, burn up, or let livestock graze; context concerns damage caused when animals feed in another field').
-source_term(pay_for_grazing_damage_2, hebrew, meytav, 'the best or choicest; restitution is paid from the best of field or vineyard').
-study_note(pay_for_grazing_damage_2, 'This command assigns responsibility for loss or damage and turns wrongdoing toward restitution where Torah requires it: Pay for grazing damage.').
-
-% Command: pay_for_fire_damage_2
-command(pay_for_fire_damage_2).
-command_title(pay_for_fire_damage_2, 'Exodus 22:6 - Pay for fire damage.').
-normal_obedience(pay_for_fire_damage_2, 'Pay for fire damage.').
-concerns(pay_for_fire_damage_2, damages_and_restitution).
-scripture_reference(pay_for_fire_damage_2, 'Exodus 22:6').
-source_term(pay_for_fire_damage_2, hebrew, esh, 'fire; the case concerns fire spreading and consuming stacked grain, standing grain, or field').
-source_term(pay_for_fire_damage_2, hebrew, shalam, 'to repay, make whole, or restore for the damage caused').
-study_note(pay_for_fire_damage_2, 'This command assigns responsibility for loss or damage and turns wrongdoing toward restitution where Torah requires it: Pay for fire damage.').
-
-% Command: pay_for_pit_damage_2
-command(pay_for_pit_damage_2).
-command_title(pay_for_pit_damage_2, 'Exodus 21:33-34 - Pay for pit damage.').
-normal_obedience(pay_for_pit_damage_2, 'Pay for pit damage.').
-concerns(pay_for_pit_damage_2, damages_and_restitution).
-scripture_reference(pay_for_pit_damage_2, 'Exodus 21:33-34').
-source_term(pay_for_pit_damage_2, hebrew, bor, 'pit, cistern, or open hole; responsibility is assigned when it is opened or dug and not covered').
-source_term(pay_for_pit_damage_2, hebrew, kasah, 'to cover; the case turns on failing to cover the pit').
-study_note(pay_for_pit_damage_2, 'This command assigns responsibility for loss or damage and turns wrongdoing toward restitution where Torah requires it: Pay for pit damage.').
 
 % Command: pay_for_borrowed_animal_loss_when_torah_assigns_responsibility
 command(pay_for_borrowed_animal_loss_when_torah_assigns_responsibility).
@@ -475,6 +493,7 @@ command_title(do_not_oppress_your_neighbor, 'Leviticus 19:13 - Do not oppress yo
 normal_obedience(do_not_oppress_your_neighbor, 'Do not oppress your neighbor.').
 concerns(do_not_oppress_your_neighbor, damages_and_restitution).
 scripture_reference(do_not_oppress_your_neighbor, 'Leviticus 19:13').
+story_reference(do_not_oppress_your_neighbor, 'Nehemiah 5:1-13', 'Nehemiah rebukes nobles and officials for oppressing their brothers through debt and seizure of property.').
 source_term(do_not_oppress_your_neighbor, hebrew, ashaq, 'to oppress, extort, exploit, or wrongfully withhold what is due').
 study_note(do_not_oppress_your_neighbor, 'This command assigns responsibility for loss or damage and turns wrongdoing toward restitution where Torah requires it: Do not oppress your neighbor.').
 
@@ -484,6 +503,8 @@ command_title(do_not_rob, 'Leviticus 19:13 - Do not rob.').
 normal_obedience(do_not_rob, 'Do not rob.').
 concerns(do_not_rob, damages_and_restitution).
 scripture_reference(do_not_rob, 'Leviticus 19:13').
+story_reference(do_not_rob, 'Micah 2:1-2', 'The prophet rebukes those who covet fields, seize houses, and oppress a man and his inheritance.').
+story_reference(do_not_rob, '2 Samuel 12:1-6', 'Nathan''s parable exposes robbery through the rich man taking the poor man''s lamb.').
 source_term(do_not_rob, hebrew, gazal, 'to rob, seize, tear away, or take by force').
 study_note(do_not_rob, 'This command assigns responsibility for loss or damage and turns wrongdoing toward restitution where Torah requires it: Do not rob.').
 
@@ -493,6 +514,7 @@ command_title(do_not_keep_a_hired_worker_s_wages_overnight, 'Leviticus 19:13 - D
 normal_obedience(do_not_keep_a_hired_worker_s_wages_overnight, 'Do not keep a hired worker''s wages overnight.').
 concerns(do_not_keep_a_hired_worker_s_wages_overnight, damages_and_restitution).
 scripture_reference(do_not_keep_a_hired_worker_s_wages_overnight, 'Leviticus 19:13').
+story_reference(do_not_keep_a_hired_worker_s_wages_overnight, 'Jeremiah 22:13', 'The prophet rebukes the one who makes his neighbor serve without wages.').
 source_term(do_not_keep_a_hired_worker_s_wages_overnight, hebrew, lun, 'to lodge or remain overnight; wages must not stay with the employer until morning').
 source_term(do_not_keep_a_hired_worker_s_wages_overnight, hebrew, peullah, 'wages, work, or recompense owed for labor').
 study_note(do_not_keep_a_hired_worker_s_wages_overnight, 'This command assigns responsibility for loss or damage and turns wrongdoing toward restitution where Torah requires it: Do not keep a hired worker''s wages overnight.').
@@ -503,6 +525,7 @@ command_title(pay_a_poor_hired_worker_the_same_day, 'Deuteronomy 24:14-15 - Pay 
 normal_obedience(pay_a_poor_hired_worker_the_same_day, 'Pay a poor hired worker the same day.').
 concerns(pay_a_poor_hired_worker_the_same_day, damages_and_restitution).
 scripture_reference(pay_a_poor_hired_worker_the_same_day, 'Deuteronomy 24:14-15').
+story_reference(pay_a_poor_hired_worker_the_same_day, 'Jeremiah 22:13', 'The prophet rebukes building by unrighteousness and using a neighbor''s labor without paying wages.').
 source_term(pay_a_poor_hired_worker_the_same_day, hebrew, sakir, 'a hired worker or wage laborer').
 source_term(pay_a_poor_hired_worker_the_same_day, hebrew, evyon, 'needy or poor; the worker is vulnerable to delayed wages').
 study_note(pay_a_poor_hired_worker_the_same_day, 'This command assigns responsibility for loss or damage and turns wrongdoing toward restitution where Torah requires it: Pay a poor hired worker the same day.').
@@ -514,6 +537,7 @@ normal_obedience(do_not_charge_interest_to_your_brother, 'Do not charge interest
 concerns(do_not_charge_interest_to_your_brother, damages_and_restitution).
 scripture_reference(do_not_charge_interest_to_your_brother, 'Exodus 22:25').
 scripture_reference(do_not_charge_interest_to_your_brother, 'Deuteronomy 23:19').
+story_reference(do_not_charge_interest_to_your_brother, 'Nehemiah 5:7-12', 'Nehemiah rebukes nobles for exacting interest from their brothers and calls them to restore it.').
 source_term(do_not_charge_interest_to_your_brother, hebrew, neshek, 'interest or usury, literally biting; money charged on a loan to a brother is forbidden here').
 source_term(do_not_charge_interest_to_your_brother, hebrew, tarbit, 'increase or profit taken from a loan').
 study_note(do_not_charge_interest_to_your_brother, 'This command assigns responsibility for loss or damage and turns wrongdoing toward restitution where Torah requires it: Do not charge interest to your brother.').
@@ -545,6 +569,7 @@ command_title(do_not_enter_a_borrower_s_house_to_take_a_pledge, 'Deuteronomy 24:
 normal_obedience(do_not_enter_a_borrower_s_house_to_take_a_pledge, 'Do not enter a borrower''s house to take a pledge.').
 concerns(do_not_enter_a_borrower_s_house_to_take_a_pledge, damages_and_restitution).
 scripture_reference(do_not_enter_a_borrower_s_house_to_take_a_pledge, 'Deuteronomy 24:10-11').
+story_reference(do_not_enter_a_borrower_s_house_to_take_a_pledge, 'Nehemiah 5:1-13', 'Nehemiah addresses oppressive lending practices that had stripped families of fields, houses, and children.').
 source_term(do_not_enter_a_borrower_s_house_to_take_a_pledge, hebrew, mashshah, 'loan or debt; the borrower is approached as a debtor, but his house boundary remains protected').
 source_term(do_not_enter_a_borrower_s_house_to_take_a_pledge, hebrew, avot, 'pledge or security taken for a loan').
 study_note(do_not_enter_a_borrower_s_house_to_take_a_pledge, 'This command assigns responsibility for loss or damage and turns wrongdoing toward restitution where Torah requires it: Do not enter a borrower''s house to take a pledge.').
@@ -556,6 +581,7 @@ normal_obedience(return_a_poor_man_s_pledge_by_sunset, 'Return a poor man''s ple
 concerns(return_a_poor_man_s_pledge_by_sunset, damages_and_restitution).
 scripture_reference(return_a_poor_man_s_pledge_by_sunset, 'Exodus 22:26-27').
 scripture_reference(return_a_poor_man_s_pledge_by_sunset, 'Deuteronomy 24:12-13').
+story_reference(return_a_poor_man_s_pledge_by_sunset, 'Amos 2:6-8', 'The prophet rebukes those who lie beside every altar on garments taken in pledge.').
 source_term(return_a_poor_man_s_pledge_by_sunset, hebrew, chabal, 'to take as a pledge or collateral').
 source_term(return_a_poor_man_s_pledge_by_sunset, hebrew, salmah, 'outer garment or cloak; in context it may be the poor man''s only covering at night').
 source_term(return_a_poor_man_s_pledge_by_sunset, hebrew, shemesh, 'sun; the pledge is returned before the sun goes down').
@@ -580,6 +606,7 @@ command_title(do_not_move_your_neighbor_s_boundary_marker, 'Deuteronomy 19:14 - 
 normal_obedience(do_not_move_your_neighbor_s_boundary_marker, 'Do not move your neighbor''s boundary marker.').
 concerns(do_not_move_your_neighbor_s_boundary_marker, damages_and_restitution).
 scripture_reference(do_not_move_your_neighbor_s_boundary_marker, 'Deuteronomy 19:14').
+story_reference(do_not_move_your_neighbor_s_boundary_marker, 'Hosea 5:10', 'The princes of Judah are compared to those who move a boundary marker.').
 source_term(do_not_move_your_neighbor_s_boundary_marker, hebrew, gevul, 'border, boundary, or territory marker that protects a neighbor inheritance').
 source_term(do_not_move_your_neighbor_s_boundary_marker, hebrew, nasag, 'to move back, remove, or shift a boundary').
 study_note(do_not_move_your_neighbor_s_boundary_marker, 'This command assigns responsibility for loss or damage and turns wrongdoing toward restitution where Torah requires it: Do not move your neighbor''s boundary marker.').

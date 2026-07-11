@@ -62,6 +62,7 @@ command_title(do_not_hate_brother, 'Lev 19:17 - Do not hate your brother.').
 normal_obedience(do_not_hate_brother, 'Do not hate your brother in your heart.').
 concerns(do_not_hate_brother, neighbor_protection).
 scripture_reference(do_not_hate_brother, 'Leviticus 19:17').
+story_reference(do_not_hate_brother, 'Genesis 37:4-8', 'Joseph''s brothers hate him, and the hatred grows toward later harm.').
 source_term(do_not_hate_brother, hebrew, sane, 'to hate, be hostile toward, or hold aversion').
 source_term(do_not_hate_brother, hebrew, levav, 'heart or inner person; the command addresses inward hatred, not only outward action').
 study_note(do_not_hate_brother, 'Torah addresses inward hatred, not only outward harm.').
@@ -83,6 +84,8 @@ command_title(do_not_bear_grudge_or_take_vengeance, 'Lev 19:18 - Do not take ven
 normal_obedience(do_not_bear_grudge_or_take_vengeance, 'Do not take vengeance or bear a grudge against your people.').
 concerns(do_not_bear_grudge_or_take_vengeance, neighbor_protection).
 scripture_reference(do_not_bear_grudge_or_take_vengeance, 'Leviticus 19:18').
+story_reference(do_not_bear_grudge_or_take_vengeance, 'Genesis 50:15-21', 'Joseph refuses vengeance against his brothers and speaks kindly to them.').
+story_reference(do_not_bear_grudge_or_take_vengeance, '1 Samuel 24:4-7', 'David refuses to take vengeance on Saul when he has opportunity.').
 source_term(do_not_bear_grudge_or_take_vengeance, hebrew, naqam, 'to avenge or take vengeance').
 source_term(do_not_bear_grudge_or_take_vengeance, hebrew, natar, 'to keep, guard, or hold onto resentment; used for bearing a grudge').
 study_note(do_not_bear_grudge_or_take_vengeance, 'Neighbor love includes releasing vengeance and grudges.').
@@ -129,6 +132,7 @@ command_title(establish_matter_by_two_or_three_witnesses, 'Deu 19:15 - Establish
 normal_obedience(establish_matter_by_two_or_three_witnesses, 'Do not establish guilt by one witness; require two or three witnesses.').
 concerns(establish_matter_by_two_or_three_witnesses, justice_and_truth).
 scripture_reference(establish_matter_by_two_or_three_witnesses, 'Deuteronomy 19:15').
+story_reference(establish_matter_by_two_or_three_witnesses, '1 Kings 21:10-13', 'Naboth is condemned by two false witnesses, showing the witness standard being abused.').
 source_term(establish_matter_by_two_or_three_witnesses, hebrew, qum, 'to arise, stand, or be established; a matter stands by two or three witnesses').
 source_term(establish_matter_by_two_or_three_witnesses, hebrew, dabar, 'word, matter, or case under judgment').
 study_note(establish_matter_by_two_or_three_witnesses, 'The witness standard protects against unjust accusation.').
@@ -179,7 +183,11 @@ command_title(do_not_fear_man_in_judgment, 'Deuteronomy 1:17 - Do not fear man i
 normal_obedience(do_not_fear_man_in_judgment, 'Do not fear man in judgment.').
 concerns(do_not_fear_man_in_judgment, justice_and_truth).
 scripture_reference(do_not_fear_man_in_judgment, 'Deuteronomy 1:17').
+story_reference(do_not_fear_man_in_judgment, '2 Chronicles 19:5-7', 'Jehoshaphat charges judges to judge for YHWH and not for man.').
 study_note(do_not_fear_man_in_judgment, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Do not fear man in judgment.').
+source_term(do_not_fear_man_in_judgment, hebrew, gur, 'fear, be afraid, shrink back').
+source_term(do_not_fear_man_in_judgment, hebrew, ish, 'man, person').
+source_term(do_not_fear_man_in_judgment, hebrew, mishpat, 'judgment, justice, legal case').
 
 % Command: do_not_take_a_bribe
 command(do_not_take_a_bribe).
@@ -199,7 +207,12 @@ command_title(do_not_follow_the_many_to_do_evil, 'Exodus 23:2 - Do not follow th
 normal_obedience(do_not_follow_the_many_to_do_evil, 'Do not follow the many to do evil.').
 concerns(do_not_follow_the_many_to_do_evil, justice_and_truth).
 scripture_reference(do_not_follow_the_many_to_do_evil, 'Exodus 23:2').
+story_reference(do_not_follow_the_many_to_do_evil, 'Exodus 32:1-6', 'Aaron and the people follow the crowd into the golden calf sin.').
+story_reference(do_not_follow_the_many_to_do_evil, 'Numbers 14:1-10', 'The congregation follows the fearful report and refuses to enter the land.').
 study_note(do_not_follow_the_many_to_do_evil, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Do not follow the many to do evil.').
+source_term(do_not_follow_the_many_to_do_evil, hebrew, rabbim, 'many, multitude').
+source_term(do_not_follow_the_many_to_do_evil, hebrew, raah, 'evil, harm, wrongdoing').
+source_term(do_not_follow_the_many_to_do_evil, hebrew, natah, 'turn aside, incline after').
 
 % Command: do_not_testify_in_a_way_that_bends_justice_after_the_many
 command(do_not_testify_in_a_way_that_bends_justice_after_the_many).
@@ -207,7 +220,11 @@ command_title(do_not_testify_in_a_way_that_bends_justice_after_the_many, 'Exodus
 normal_obedience(do_not_testify_in_a_way_that_bends_justice_after_the_many, 'Do not testify in a way that bends justice after the many.').
 concerns(do_not_testify_in_a_way_that_bends_justice_after_the_many, justice_and_truth).
 scripture_reference(do_not_testify_in_a_way_that_bends_justice_after_the_many, 'Exodus 23:2').
+story_reference(do_not_testify_in_a_way_that_bends_justice_after_the_many, '1 Kings 21:10-13', 'False witnesses join a corrupt public case against Naboth.').
 study_note(do_not_testify_in_a_way_that_bends_justice_after_the_many, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Do not testify in a way that bends justice after the many.').
+source_term(do_not_testify_in_a_way_that_bends_justice_after_the_many, hebrew, anah, 'answer, testify, respond as witness').
+source_term(do_not_testify_in_a_way_that_bends_justice_after_the_many, hebrew, rib, 'case, dispute, controversy').
+source_term(do_not_testify_in_a_way_that_bends_justice_after_the_many, hebrew, natah, 'turn aside, bend, pervert').
 
 % Command: do_not_favor_the_poor_in_his_dispute
 command(do_not_favor_the_poor_in_his_dispute).
@@ -215,7 +232,11 @@ command_title(do_not_favor_the_poor_in_his_dispute, 'Exodus 23:3 - Do not favor 
 normal_obedience(do_not_favor_the_poor_in_his_dispute, 'Do not favor the poor in his dispute.').
 concerns(do_not_favor_the_poor_in_his_dispute, justice_and_truth).
 scripture_reference(do_not_favor_the_poor_in_his_dispute, 'Exodus 23:3').
+story_reference(do_not_favor_the_poor_in_his_dispute, '2 Chronicles 19:5-7', 'Jehoshaphat warns judges that with YHWH there is no partiality.').
 study_note(do_not_favor_the_poor_in_his_dispute, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Do not favor the poor in his dispute.').
+source_term(do_not_favor_the_poor_in_his_dispute, hebrew, dal, 'poor, weak, lowly').
+source_term(do_not_favor_the_poor_in_his_dispute, hebrew, hadar, 'honor, show preference, favor').
+source_term(do_not_favor_the_poor_in_his_dispute, hebrew, rib, 'case, dispute, controversy').
 
 % Command: do_not_pervert_justice_for_the_stranger_orphan_or_widow
 command(do_not_pervert_justice_for_the_stranger_orphan_or_widow).
@@ -223,7 +244,11 @@ command_title(do_not_pervert_justice_for_the_stranger_orphan_or_widow, 'Deuteron
 normal_obedience(do_not_pervert_justice_for_the_stranger_orphan_or_widow, 'Do not pervert justice for the stranger, orphan, or widow.').
 concerns(do_not_pervert_justice_for_the_stranger_orphan_or_widow, justice_and_truth).
 scripture_reference(do_not_pervert_justice_for_the_stranger_orphan_or_widow, 'Deuteronomy 24:17').
+story_reference(do_not_pervert_justice_for_the_stranger_orphan_or_widow, 'Jeremiah 22:3', 'The prophet calls Judah to do justice and not wrong the stranger, orphan, or widow.').
 study_note(do_not_pervert_justice_for_the_stranger_orphan_or_widow, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Do not pervert justice for the stranger, orphan, or widow.').
+source_term(do_not_pervert_justice_for_the_stranger_orphan_or_widow, hebrew, natah, 'turn aside, bend, pervert').
+source_term(do_not_pervert_justice_for_the_stranger_orphan_or_widow, hebrew, mishpat, 'justice, judgment, legal right').
+source_term(do_not_pervert_justice_for_the_stranger_orphan_or_widow, hebrew, ger_yathom_almanah, 'stranger, orphan, and widow').
 
 % Command: do_not_punish_children_for_fathers_or_fathers_for_children
 command(do_not_punish_children_for_fathers_or_fathers_for_children).
@@ -233,6 +258,9 @@ concerns(do_not_punish_children_for_fathers_or_fathers_for_children, justice_and
 scripture_reference(do_not_punish_children_for_fathers_or_fathers_for_children, 'Deuteronomy 24:16').
 story_reference(do_not_punish_children_for_fathers_or_fathers_for_children, '2 Kings 14:5-6', 'Amaziah executes his father''s servants but does not put their children to death, according to Torah.').
 study_note(do_not_punish_children_for_fathers_or_fathers_for_children, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Do not punish children for fathers or fathers for children.').
+source_term(do_not_punish_children_for_fathers_or_fathers_for_children, hebrew, muth, 'die, be put to death in judgment context').
+source_term(do_not_punish_children_for_fathers_or_fathers_for_children, hebrew, av, 'father').
+source_term(do_not_punish_children_for_fathers_or_fathers_for_children, hebrew, ben, 'son, child').
 
 % Command: establish_matters_by_two_or_three_witnesses
 command(establish_matters_by_two_or_three_witnesses).
@@ -240,7 +268,11 @@ command_title(establish_matters_by_two_or_three_witnesses, 'Deuteronomy 19:15 - 
 normal_obedience(establish_matters_by_two_or_three_witnesses, 'Establish matters by two or three witnesses.').
 concerns(establish_matters_by_two_or_three_witnesses, justice_and_truth).
 scripture_reference(establish_matters_by_two_or_three_witnesses, 'Deuteronomy 19:15').
+story_reference(establish_matters_by_two_or_three_witnesses, '1 Kings 21:10-13', 'Naboth is condemned by two false witnesses, showing the witness structure being abused.').
 study_note(establish_matters_by_two_or_three_witnesses, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Establish matters by two or three witnesses.').
+source_term(establish_matters_by_two_or_three_witnesses, hebrew, qum, 'stand, be established').
+source_term(establish_matters_by_two_or_three_witnesses, hebrew, ed, 'witness').
+source_term(establish_matters_by_two_or_three_witnesses, hebrew, dabar, 'word, matter, case').
 
 % Command: do_to_a_false_witness_as_he_intended_to_do
 command(do_to_a_false_witness_as_he_intended_to_do).
@@ -250,6 +282,9 @@ concerns(do_to_a_false_witness_as_he_intended_to_do, justice_and_truth).
 scripture_reference(do_to_a_false_witness_as_he_intended_to_do, 'Deuteronomy 19:16-21').
 story_reference(do_to_a_false_witness_as_he_intended_to_do, '1 Kings 21:10-13', 'The Naboth account gives a clear example of the kind of false-witness evil this command addresses.').
 study_note(do_to_a_false_witness_as_he_intended_to_do, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Do to a false witness as he intended to do.').
+source_term(do_to_a_false_witness_as_he_intended_to_do, hebrew, ed_chamas, 'malicious or violent witness').
+source_term(do_to_a_false_witness_as_he_intended_to_do, hebrew, zamam, 'plan, devise, intend').
+source_term(do_to_a_false_witness_as_he_intended_to_do, hebrew, ach, 'brother, fellow Israelite in legal context').
 
 % Command: do_not_pity_in_the_false_witness_case
 command(do_not_pity_in_the_false_witness_case).
@@ -257,15 +292,9 @@ command_title(do_not_pity_in_the_false_witness_case, 'Deuteronomy 19:21 - Do not
 normal_obedience(do_not_pity_in_the_false_witness_case, 'Do not pity in the false witness case.').
 concerns(do_not_pity_in_the_false_witness_case, justice_and_truth).
 scripture_reference(do_not_pity_in_the_false_witness_case, 'Deuteronomy 19:21').
-
-% Command: do_not_accept_ransom_for_a_murderer
-command(do_not_accept_ransom_for_a_murderer).
-command_title(do_not_accept_ransom_for_a_murderer, 'Numbers 35:31 - Do not accept ransom for a murderer.').
-normal_obedience(do_not_accept_ransom_for_a_murderer, 'Do not accept ransom for a murderer.').
-concerns(do_not_accept_ransom_for_a_murderer, justice_and_truth).
-scripture_reference(do_not_accept_ransom_for_a_murderer, 'Numbers 35:31').
-study_note(do_not_accept_ransom_for_a_murderer, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Do not accept ransom for a murderer.').
-source_term(do_not_accept_ransom_for_a_murderer, hebrew, 'kōp̄er', 'The kjv uses satisfaction which can also mean ransom, bribe or a sum of money').
+story_reference(do_not_pity_in_the_false_witness_case, '1 Kings 21:10-13', 'The Naboth case shows the destruction caused when false witnesses are allowed to prevail.').
+source_term(do_not_pity_in_the_false_witness_case, hebrew, chus, 'pity, spare, look with compassion in a judicial exception').
+source_term(do_not_pity_in_the_false_witness_case, hebrew, ed_chamas, 'malicious or violent witness').
 
 % Command: do_not_accept_ransom_for_one_in_refuge_to_return_early
 command(do_not_accept_ransom_for_one_in_refuge_to_return_early).
@@ -273,7 +302,11 @@ command_title(do_not_accept_ransom_for_one_in_refuge_to_return_early, 'Numbers 3
 normal_obedience(do_not_accept_ransom_for_one_in_refuge_to_return_early, 'Do not accept ransom for one in refuge to return early.').
 concerns(do_not_accept_ransom_for_one_in_refuge_to_return_early, justice_and_truth).
 scripture_reference(do_not_accept_ransom_for_one_in_refuge_to_return_early, 'Numbers 35:32').
+story_reference(do_not_accept_ransom_for_one_in_refuge_to_return_early, 'Joshua 20:1-9', 'Joshua appoints refuge cities so the manslayer remains under the stated refuge process.').
 study_note(do_not_accept_ransom_for_one_in_refuge_to_return_early, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Do not accept ransom for one in refuge to return early.').
+source_term(do_not_accept_ransom_for_one_in_refuge_to_return_early, hebrew, kofer, 'ransom, covering payment').
+source_term(do_not_accept_ransom_for_one_in_refuge_to_return_early, hebrew, nus, 'flee').
+source_term(do_not_accept_ransom_for_one_in_refuge_to_return_early, hebrew, ir_miqlat, 'city of refuge').
 
 % Command: do_not_pollute_the_land_with_blood
 command(do_not_pollute_the_land_with_blood).
@@ -281,7 +314,11 @@ command_title(do_not_pollute_the_land_with_blood, 'Numbers 35:33-34 - Do not pol
 normal_obedience(do_not_pollute_the_land_with_blood, 'Do not pollute the land with blood.').
 concerns(do_not_pollute_the_land_with_blood, justice_and_truth).
 scripture_reference(do_not_pollute_the_land_with_blood, 'Numbers 35:33-34').
+story_reference(do_not_pollute_the_land_with_blood, '2 Samuel 21:1-14', 'David addresses bloodguilt connected with Saul''s violence against the Gibeonites.').
 study_note(do_not_pollute_the_land_with_blood, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Do not pollute the land with blood.').
+source_term(do_not_pollute_the_land_with_blood, hebrew, chaneph, 'pollute, profane, make morally corrupt').
+source_term(do_not_pollute_the_land_with_blood, hebrew, dam, 'blood, bloodshed').
+source_term(do_not_pollute_the_land_with_blood, hebrew, erets, 'land').
 
 % Command: execute_judgment_for_intentional_murder_when_lawful_court_system_applies
 command(execute_judgment_for_intentional_murder_when_lawful_court_system_applies).
@@ -290,7 +327,12 @@ normal_obedience(execute_judgment_for_intentional_murder_when_lawful_court_syste
 concerns(execute_judgment_for_intentional_murder_when_lawful_court_system_applies, justice_and_truth).
 scripture_reference(execute_judgment_for_intentional_murder_when_lawful_court_system_applies, 'Exodus 21:12').
 scripture_reference(execute_judgment_for_intentional_murder_when_lawful_court_system_applies, 'Numbers 35').
+story_reference(execute_judgment_for_intentional_murder_when_lawful_court_system_applies, 'Genesis 9:5-6', 'After the flood, YHWH states the principle of accounting for human bloodshed.').
+story_reference(execute_judgment_for_intentional_murder_when_lawful_court_system_applies, '2 Samuel 21:1-14', 'David addresses bloodguilt connected with Saul''s violence against the Gibeonites.').
 study_note(execute_judgment_for_intentional_murder_when_lawful_court_system_applies, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Execute judgment for intentional murder when lawful court system applies.').
+source_term(execute_judgment_for_intentional_murder_when_lawful_court_system_applies, hebrew, ratsach, 'murder, unlawfully slay').
+source_term(execute_judgment_for_intentional_murder_when_lawful_court_system_applies, hebrew, muth, 'die, be put to death in judgment context').
+source_term(execute_judgment_for_intentional_murder_when_lawful_court_system_applies, hebrew, edah, 'congregation, assembly involved in the Numbers 35 court setting').
 
 % Command: execute_judgment_for_kidnapping_when_lawful_court_system_applies
 command(execute_judgment_for_kidnapping_when_lawful_court_system_applies).
@@ -298,7 +340,11 @@ command_title(execute_judgment_for_kidnapping_when_lawful_court_system_applies, 
 normal_obedience(execute_judgment_for_kidnapping_when_lawful_court_system_applies, 'Execute judgment for kidnapping when lawful court system applies.').
 concerns(execute_judgment_for_kidnapping_when_lawful_court_system_applies, justice_and_truth).
 scripture_reference(execute_judgment_for_kidnapping_when_lawful_court_system_applies, 'Exodus 21:16').
+story_reference(execute_judgment_for_kidnapping_when_lawful_court_system_applies, 'Genesis 37:23-28', 'Joseph''s brothers seize and sell him, a narrative example of kidnapping and slave-trading evil.').
 study_note(execute_judgment_for_kidnapping_when_lawful_court_system_applies, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Execute judgment for kidnapping when lawful court system applies.').
+source_term(execute_judgment_for_kidnapping_when_lawful_court_system_applies, hebrew, ganav, 'steal, kidnap in person-theft context').
+source_term(execute_judgment_for_kidnapping_when_lawful_court_system_applies, hebrew, makar, 'sell').
+source_term(execute_judgment_for_kidnapping_when_lawful_court_system_applies, hebrew, nephesh, 'person, life').
 
 % Command: execute_judgment_for_striking_or_cursing_father_or_mother_when_lawful_court_sy
 command(execute_judgment_for_striking_or_cursing_father_or_mother_when_lawful_court_sy).
@@ -306,7 +352,11 @@ command_title(execute_judgment_for_striking_or_cursing_father_or_mother_when_law
 normal_obedience(execute_judgment_for_striking_or_cursing_father_or_mother_when_lawful_court_sy, 'Execute judgment for striking or cursing father or mother when lawful court system applies.').
 concerns(execute_judgment_for_striking_or_cursing_father_or_mother_when_lawful_court_sy, justice_and_truth).
 scripture_reference(execute_judgment_for_striking_or_cursing_father_or_mother_when_lawful_court_sy, 'Exodus 21:15, 17').
+story_reference(execute_judgment_for_striking_or_cursing_father_or_mother_when_lawful_court_sy, '2 Samuel 15:1-12', 'Absalom rebels against David his father, showing a household-order violation in narrative form.').
 study_note(execute_judgment_for_striking_or_cursing_father_or_mother_when_lawful_court_sy, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Execute judgment for striking or cursing father or mother when lawful court system applies.').
+source_term(execute_judgment_for_striking_or_cursing_father_or_mother_when_lawful_court_sy, hebrew, nakah, 'strike, smite').
+source_term(execute_judgment_for_striking_or_cursing_father_or_mother_when_lawful_court_sy, hebrew, qalal, 'curse, treat lightly, dishonor').
+source_term(execute_judgment_for_striking_or_cursing_father_or_mother_when_lawful_court_sy, hebrew, av_em, 'father and mother').
 
 % Command: execute_judgment_for_blaspheming_the_name_when_lawful_court_system_applies
 command(execute_judgment_for_blaspheming_the_name_when_lawful_court_system_applies).
@@ -314,7 +364,11 @@ command_title(execute_judgment_for_blaspheming_the_name_when_lawful_court_system
 normal_obedience(execute_judgment_for_blaspheming_the_name_when_lawful_court_system_applies, 'Execute judgment for blaspheming the Name when lawful court system applies.').
 concerns(execute_judgment_for_blaspheming_the_name_when_lawful_court_system_applies, justice_and_truth).
 scripture_reference(execute_judgment_for_blaspheming_the_name_when_lawful_court_system_applies, 'Leviticus 24:10-16').
+story_reference(execute_judgment_for_blaspheming_the_name_when_lawful_court_system_applies, 'Leviticus 24:10-23', 'The son of the Israelite woman blasphemes the Name, and YHWH gives the judgment for the case.').
 study_note(execute_judgment_for_blaspheming_the_name_when_lawful_court_system_applies, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Execute judgment for blaspheming the Name when lawful court system applies.').
+source_term(execute_judgment_for_blaspheming_the_name_when_lawful_court_system_applies, hebrew, naqab, 'pierce, pronounce, blaspheme in Leviticus 24 context').
+source_term(execute_judgment_for_blaspheming_the_name_when_lawful_court_system_applies, hebrew, shem, 'Name').
+source_term(execute_judgment_for_blaspheming_the_name_when_lawful_court_system_applies, hebrew, qalal, 'curse').
 
 % Command: execute_judgment_for_idolatry_cases_when_lawful_court_system_applies
 command(execute_judgment_for_idolatry_cases_when_lawful_court_system_applies).
@@ -323,7 +377,12 @@ normal_obedience(execute_judgment_for_idolatry_cases_when_lawful_court_system_ap
 concerns(execute_judgment_for_idolatry_cases_when_lawful_court_system_applies, justice_and_truth).
 scripture_reference(execute_judgment_for_idolatry_cases_when_lawful_court_system_applies, 'Deuteronomy 13').
 scripture_reference(execute_judgment_for_idolatry_cases_when_lawful_court_system_applies, '17:2-7').
+story_reference(execute_judgment_for_idolatry_cases_when_lawful_court_system_applies, 'Exodus 32:25-29', 'Judgment falls after the golden calf rebellion.').
+story_reference(execute_judgment_for_idolatry_cases_when_lawful_court_system_applies, '1 Kings 18:40', 'Elijah commands judgment on the prophets of Baal after YHWH answers by fire.').
 study_note(execute_judgment_for_idolatry_cases_when_lawful_court_system_applies, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Execute judgment for idolatry cases when lawful court system applies.').
+source_term(execute_judgment_for_idolatry_cases_when_lawful_court_system_applies, hebrew, avad, 'serve, worship').
+source_term(execute_judgment_for_idolatry_cases_when_lawful_court_system_applies, hebrew, elohim_acherim, 'other gods').
+source_term(execute_judgment_for_idolatry_cases_when_lawful_court_system_applies, hebrew, baer_hara, 'purge the evil').
 
 % Command: execute_judgment_for_specific_sexual_violations_when_lawful_court_system_appli
 command(execute_judgment_for_specific_sexual_violations_when_lawful_court_system_appli).
@@ -332,7 +391,11 @@ normal_obedience(execute_judgment_for_specific_sexual_violations_when_lawful_cou
 concerns(execute_judgment_for_specific_sexual_violations_when_lawful_court_system_appli, justice_and_truth).
 scripture_reference(execute_judgment_for_specific_sexual_violations_when_lawful_court_system_appli, 'Leviticus 20').
 scripture_reference(execute_judgment_for_specific_sexual_violations_when_lawful_court_system_appli, 'Deuteronomy 22').
+story_reference(execute_judgment_for_specific_sexual_violations_when_lawful_court_system_appli, '2 Samuel 13:1-22', 'Amnon violates Tamar, showing the destructive seriousness of sexual violation.').
 study_note(execute_judgment_for_specific_sexual_violations_when_lawful_court_system_appli, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Execute judgment for specific sexual violations when lawful court system applies.').
+source_term(execute_judgment_for_specific_sexual_violations_when_lawful_court_system_appli, hebrew, galah_ervah, 'uncover nakedness; forbidden sexual exposure idiom').
+source_term(execute_judgment_for_specific_sexual_violations_when_lawful_court_system_appli, hebrew, toevah, 'abomination, detestable thing').
+source_term(execute_judgment_for_specific_sexual_violations_when_lawful_court_system_appli, hebrew, zimmah, 'lewdness, grave sexual offense').
 
 % Command: do_not_degrade_your_brother_with_excessive_lashes
 command(do_not_degrade_your_brother_with_excessive_lashes).
@@ -341,6 +404,9 @@ normal_obedience(do_not_degrade_your_brother_with_excessive_lashes, 'Do not degr
 concerns(do_not_degrade_your_brother_with_excessive_lashes, justice_and_truth).
 scripture_reference(do_not_degrade_your_brother_with_excessive_lashes, 'Deuteronomy 25:1-3').
 study_note(do_not_degrade_your_brother_with_excessive_lashes, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Do not degrade your brother with excessive lashes.').
+source_term(do_not_degrade_your_brother_with_excessive_lashes, hebrew, qalal, 'be light, dishonored, degraded').
+source_term(do_not_degrade_your_brother_with_excessive_lashes, hebrew, makkah, 'blow, stripe, wound').
+source_term(do_not_degrade_your_brother_with_excessive_lashes, hebrew, ach, 'brother, fellow member of the people').
 
 % Command: limit_lashes_to_forty
 command(limit_lashes_to_forty).
@@ -349,3 +415,6 @@ normal_obedience(limit_lashes_to_forty, 'Limit lashes to forty.').
 concerns(limit_lashes_to_forty, justice_and_truth).
 scripture_reference(limit_lashes_to_forty, 'Deuteronomy 25:3').
 study_note(limit_lashes_to_forty, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Limit lashes to forty.').
+source_term(limit_lashes_to_forty, hebrew, arbaim, 'forty').
+source_term(limit_lashes_to_forty, hebrew, makkah, 'blow, stripe, wound').
+source_term(limit_lashes_to_forty, hebrew, yasaph, 'add, exceed, continue beyond').

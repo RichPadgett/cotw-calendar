@@ -68,6 +68,7 @@ scripture_reference(follow_appointed_calendar_rhythm, 'Exodus 12:1-2').
 scripture_reference(follow_appointed_calendar_rhythm, 'Leviticus 23').
 scripture_reference(follow_appointed_calendar_rhythm, 'Numbers 28-29').
 source_term(follow_appointed_calendar_rhythm, hebrew, chodesh, 'month or new moon/month cycle; Exodus 12 marks the head of months for Israel').
+story_reference(follow_appointed_calendar_rhythm, 'Exodus 12:1-14', 'YHWH gives Israel the beginning of months and the Passover timing before the exodus.').
 study_note(follow_appointed_calendar_rhythm, 'The calendar rhythm gives the app its structure for remembering appointed days.').
 
 % Command: observe_weekly_sabbath
@@ -95,6 +96,7 @@ scripture_reference(sabbath_as_covenant_sign, 'Exodus 31:13').
 scripture_reference(sabbath_as_covenant_sign, 'Exodus 31:16-17').
 source_term(sabbath_as_covenant_sign, hebrew, oth, 'sign, mark, or token; Sabbath is called a covenant sign').
 source_term(sabbath_as_covenant_sign, hebrew, qadash, 'to set apart, consecrate, or sanctify; Sabbath teaches that YHWH sanctifies His people').
+story_reference(sabbath_as_covenant_sign, 'Exodus 16:22-30', 'The manna account teaches Israel the seventh-day rest before Sinai.').
 study_note(sabbath_as_covenant_sign, 'The Sabbath sign teaches remembrance, identity, and sanctification.').
 
 % Command: do_not_kindle_fire_on_sabbath
@@ -105,6 +107,7 @@ concerns(do_not_kindle_fire_on_sabbath, sabbath_rest).
 scripture_reference(do_not_kindle_fire_on_sabbath, 'Exodus 35:3').
 source_term(do_not_kindle_fire_on_sabbath, hebrew, baar, 'to burn, consume, or kindle; used here for kindling fire on Sabbath').
 source_term(do_not_kindle_fire_on_sabbath, hebrew, moshav, 'dwelling place or settlement; the command names fire in your dwellings').
+story_reference(do_not_kindle_fire_on_sabbath, 'Numbers 15:32-36', 'The man gathering sticks on the Sabbath shows the seriousness of Sabbath work boundaries.').
 study_note(do_not_kindle_fire_on_sabbath, 'This command belongs to the practical boundaries around Sabbath rest.').
 
 % -----------------------------------------------------------------------------
@@ -117,6 +120,9 @@ command_title(do_not_go_out_to_gather_manna_on_the_sabbath, 'Exodus 16:29 - Do n
 normal_obedience(do_not_go_out_to_gather_manna_on_the_sabbath, 'Do not go out to gather manna on the Sabbath.').
 concerns(do_not_go_out_to_gather_manna_on_the_sabbath, appointed_times).
 scripture_reference(do_not_go_out_to_gather_manna_on_the_sabbath, 'Exodus 16:29').
+story_reference(do_not_go_out_to_gather_manna_on_the_sabbath, 'Exodus 16:22-30', 'Some of the people go out to gather on the seventh day and find none.').
+source_term(do_not_go_out_to_gather_manna_on_the_sabbath, hebrew, yatsa, 'to go out; the people are told not to go out to gather on the seventh day').
+source_term(do_not_go_out_to_gather_manna_on_the_sabbath, hebrew, man, 'manna; the wilderness food used to teach Sabbath rhythm').
 study_note(do_not_go_out_to_gather_manna_on_the_sabbath, 'This command anchors appointed time practice in the dates and rhythms given by Torah: Do not go out to gather manna on the Sabbath.').
 
 % Command: prepare_the_sabbath_portion_before_sabbath_in_the_manna_context
@@ -125,6 +131,9 @@ command_title(prepare_the_sabbath_portion_before_sabbath_in_the_manna_context, '
 normal_obedience(prepare_the_sabbath_portion_before_sabbath_in_the_manna_context, 'Prepare the Sabbath portion before Sabbath in the manna context.').
 concerns(prepare_the_sabbath_portion_before_sabbath_in_the_manna_context, appointed_times).
 scripture_reference(prepare_the_sabbath_portion_before_sabbath_in_the_manna_context, 'Exodus 16:23').
+story_reference(prepare_the_sabbath_portion_before_sabbath_in_the_manna_context, 'Exodus 16:22-30', 'Israel gathers a double portion on the sixth day and keeps it for the Sabbath.').
+source_term(prepare_the_sabbath_portion_before_sabbath_in_the_manna_context, hebrew, kun, 'to prepare or make ready; the sixth-day portion is prepared before Sabbath').
+source_term(prepare_the_sabbath_portion_before_sabbath_in_the_manna_context, hebrew, mishneh, 'double or second portion; the sixth-day gathering for Sabbath preparation').
 study_note(prepare_the_sabbath_portion_before_sabbath_in_the_manna_context, 'This command anchors appointed time practice in the dates and rhythms given by Torah: Prepare the Sabbath portion before Sabbath in the manna context.').
 
 % Command: do_not_do_work_on_the_sabbath
@@ -134,6 +143,8 @@ normal_obedience(do_not_do_work_on_the_sabbath, 'Do not do work on the Sabbath.'
 concerns(do_not_do_work_on_the_sabbath, appointed_times).
 scripture_reference(do_not_do_work_on_the_sabbath, 'Exodus 20:10').
 scripture_reference(do_not_do_work_on_the_sabbath, 'Deuteronomy 5:14').
+story_reference(do_not_do_work_on_the_sabbath, 'Exodus 16:22-30', 'The manna account teaches Israel to rest and not gather food on the seventh day.').
+story_reference(do_not_do_work_on_the_sabbath, 'Nehemiah 13:15-22', 'Nehemiah corrects Sabbath buying, selling, and burden-bearing in Jerusalem.').
 source_term(do_not_do_work_on_the_sabbath, hebrew, melakah, 'ordinary work, labor, or craftsmanship restricted on Sabbath').
 study_note(do_not_do_work_on_the_sabbath, 'This command anchors appointed time practice in the dates and rhythms given by Torah: Do not do work on the Sabbath.').
 
@@ -144,6 +155,7 @@ normal_obedience(let_son_daughter_servants_animals_and_stranger_rest_on_sabbath,
 concerns(let_son_daughter_servants_animals_and_stranger_rest_on_sabbath, appointed_times).
 scripture_reference(let_son_daughter_servants_animals_and_stranger_rest_on_sabbath, 'Exodus 20:10').
 scripture_reference(let_son_daughter_servants_animals_and_stranger_rest_on_sabbath, 'Deuteronomy 5:14').
+story_reference(let_son_daughter_servants_animals_and_stranger_rest_on_sabbath, 'Nehemiah 13:15-22', 'Nehemiah shuts the gates and corrects Sabbath commerce involving workers and merchants.').
 source_term(let_son_daughter_servants_animals_and_stranger_rest_on_sabbath, hebrew, nuach, 'to rest, settle, or be given relief; Sabbath rest extends to household, animals, and stranger').
 source_term(let_son_daughter_servants_animals_and_stranger_rest_on_sabbath, hebrew, ger, 'sojourner or stranger within the gates, included in Sabbath rest').
 study_note(let_son_daughter_servants_animals_and_stranger_rest_on_sabbath, 'This command anchors appointed time practice in the dates and rhythms given by Torah: Let son, daughter, servants, animals, and stranger rest on Sabbath.').
@@ -154,6 +166,10 @@ command_title(keep_the_sabbath_throughout_generations_as_a_covenant, 'Exodus 31:
 normal_obedience(keep_the_sabbath_throughout_generations_as_a_covenant, 'Keep the Sabbath throughout generations as a covenant.').
 concerns(keep_the_sabbath_throughout_generations_as_a_covenant, appointed_times).
 scripture_reference(keep_the_sabbath_throughout_generations_as_a_covenant, 'Exodus 31:16').
+story_reference(keep_the_sabbath_throughout_generations_as_a_covenant, 'Exodus 16:22-30', 'The manna account trains Israel in Sabbath rhythm before the covenant sign language is given at Sinai.').
+story_reference(keep_the_sabbath_throughout_generations_as_a_covenant, 'Nehemiah 13:15-22', 'Nehemiah restores Sabbath boundaries for the post-exile community.').
+source_term(keep_the_sabbath_throughout_generations_as_a_covenant, hebrew, dor, 'generation; the Sabbath is kept throughout generations').
+source_term(keep_the_sabbath_throughout_generations_as_a_covenant, hebrew, berith, 'covenant; Sabbath is framed as covenantal in Exodus 31').
 study_note(keep_the_sabbath_throughout_generations_as_a_covenant, 'This command anchors appointed time practice in the dates and rhythms given by Torah: Keep the Sabbath throughout generations as a covenant.').
 
 % Command: keep_the_sabbath_as_a_sign
@@ -162,6 +178,9 @@ command_title(keep_the_sabbath_as_a_sign, 'Exodus 31:13 - Keep the Sabbath as a 
 normal_obedience(keep_the_sabbath_as_a_sign, 'Keep the Sabbath as a sign.').
 concerns(keep_the_sabbath_as_a_sign, appointed_times).
 scripture_reference(keep_the_sabbath_as_a_sign, 'Exodus 31:13').
+story_reference(keep_the_sabbath_as_a_sign, 'Exodus 16:22-30', 'The manna account shows Sabbath as a visible rhythm marking Israel''s obedience to YHWH.').
+source_term(keep_the_sabbath_as_a_sign, hebrew, oth, 'sign, mark, or token; Sabbath is called a sign between YHWH and His people').
+source_term(keep_the_sabbath_as_a_sign, hebrew, qadash, 'to set apart or sanctify; Sabbath teaches that YHWH sanctifies His people').
 study_note(keep_the_sabbath_as_a_sign, 'This command anchors appointed time practice in the dates and rhythms given by Torah: Keep the Sabbath as a sign.').
 
 % Command: keep_yom_teruah_as_a_memorial_of_blowing
@@ -170,6 +189,7 @@ command_title(keep_yom_teruah_as_a_memorial_of_blowing, 'Leviticus 23:24 - Keep 
 normal_obedience(keep_yom_teruah_as_a_memorial_of_blowing, 'Keep Yom Teruah as a memorial of blowing.').
 concerns(keep_yom_teruah_as_a_memorial_of_blowing, appointed_times).
 scripture_reference(keep_yom_teruah_as_a_memorial_of_blowing, 'Leviticus 23:24').
+story_reference(keep_yom_teruah_as_a_memorial_of_blowing, 'Nehemiah 8:1-12', 'The people gather for Torah reading on the first day of the seventh month.').
 source_term(keep_yom_teruah_as_a_memorial_of_blowing, hebrew, teruah, 'alarm, shout, blast, or loud sounding associated with the day').
 source_term(keep_yom_teruah_as_a_memorial_of_blowing, hebrew, zikron, 'memorial or remembrance; the day is a memorial of sounding').
 study_note(keep_yom_teruah_as_a_memorial_of_blowing, 'This command anchors appointed time practice in the dates and rhythms given by Torah: Keep Yom Teruah as a memorial of blowing.').
@@ -181,6 +201,8 @@ normal_obedience(do_no_ordinary_work_on_yom_teruah, 'Do no ordinary work on Yom 
 concerns(do_no_ordinary_work_on_yom_teruah, appointed_times).
 scripture_reference(do_no_ordinary_work_on_yom_teruah, 'Leviticus 23:25').
 scripture_reference(do_no_ordinary_work_on_yom_teruah, 'Numbers 29:1').
+source_term(do_no_ordinary_work_on_yom_teruah, hebrew, melakah, 'work or ordinary labor prohibited on Yom Teruah').
+source_term(do_no_ordinary_work_on_yom_teruah, hebrew, teruah, 'blast, alarm, or shout; the sound-memory theme of the day').
 study_note(do_no_ordinary_work_on_yom_teruah, 'This command anchors appointed time practice in the dates and rhythms given by Torah: Do no ordinary work on Yom Teruah.').
 
 % Command: afflict_yourselves_on_the_day_of_atonement
@@ -200,6 +222,8 @@ command_title(do_no_work_at_all_on_the_day_of_atonement, 'Leviticus 23:28 - Do n
 normal_obedience(do_no_work_at_all_on_the_day_of_atonement, 'Do no work at all on the Day of Atonement.').
 concerns(do_no_work_at_all_on_the_day_of_atonement, appointed_times).
 scripture_reference(do_no_work_at_all_on_the_day_of_atonement, 'Leviticus 23:28').
+source_term(do_no_work_at_all_on_the_day_of_atonement, hebrew, melakah, 'work or labor; the Day of Atonement forbids work').
+source_term(do_no_work_at_all_on_the_day_of_atonement, hebrew, kippurim, 'atonements; the day is set apart for atonement before YHWH').
 study_note(do_no_work_at_all_on_the_day_of_atonement, 'This command anchors appointed time practice in the dates and rhythms given by Torah: Do no work at all on the Day of Atonement.').
 
 % Command: observe_the_day_of_atonement_from_evening_to_evening
@@ -208,6 +232,8 @@ command_title(observe_the_day_of_atonement_from_evening_to_evening, 'Leviticus 2
 normal_obedience(observe_the_day_of_atonement_from_evening_to_evening, 'Observe the Day of Atonement from evening to evening.').
 concerns(observe_the_day_of_atonement_from_evening_to_evening, appointed_times).
 scripture_reference(observe_the_day_of_atonement_from_evening_to_evening, 'Leviticus 23:32').
+source_term(observe_the_day_of_atonement_from_evening_to_evening, hebrew, ereb, 'evening; the stated boundary from evening to evening').
+source_term(observe_the_day_of_atonement_from_evening_to_evening, hebrew, shabbath, 'Sabbath or rest; the day is observed as a Sabbath of solemn rest').
 study_note(observe_the_day_of_atonement_from_evening_to_evening, 'This command anchors appointed time practice in the dates and rhythms given by Torah: Observe the Day of Atonement from evening to evening.').
 clarification_note(observe_the_day_of_atonement_from_evening_to_evening, 'Day of Atonement begins on the evening of the 9th all the way to the evening of the 10th. This fortifies that the biblical day begins at dawn as it is still the 9th when it is evening.').
 
@@ -221,21 +247,15 @@ source_term(take_fruit_of_splendid_trees_and_branches_for_booths, hebrew, peri_e
 source_term(take_fruit_of_splendid_trees_and_branches_for_booths, hebrew, aravah, 'willow or brook branch named among the Booths branches').
 study_note(take_fruit_of_splendid_trees_and_branches_for_booths, 'This command anchors appointed time practice in the dates and rhythms given by Torah: Take fruit of splendid trees and branches for Booths.').
 
-% Command: dwell_in_booths_seven_days_2
-command(dwell_in_booths_seven_days_2).
-command_title(dwell_in_booths_seven_days_2, 'Leviticus 23:42 - Dwell in booths seven days.').
-normal_obedience(dwell_in_booths_seven_days_2, 'Dwell in booths seven days.').
-concerns(dwell_in_booths_seven_days_2, appointed_times).
-scripture_reference(dwell_in_booths_seven_days_2, 'Leviticus 23:42').
-source_term(dwell_in_booths_seven_days_2, hebrew, sukkah, 'booth, hut, or temporary shelter; Israel dwells in booths to remember wilderness provision').
-study_note(dwell_in_booths_seven_days_2, 'This command anchors appointed time practice in the dates and rhythms given by Torah: Dwell in booths seven days.').
-
 % Command: rejoice_at_the_appointed_feasts_with_household_and_vulnerable_neighbors
 command(rejoice_at_the_appointed_feasts_with_household_and_vulnerable_neighbors).
 command_title(rejoice_at_the_appointed_feasts_with_household_and_vulnerable_neighbors, 'Deuteronomy 16:11, 14 - Rejoice at the appointed feasts with household and vulnerable neighbors.').
 normal_obedience(rejoice_at_the_appointed_feasts_with_household_and_vulnerable_neighbors, 'Rejoice at the appointed feasts with household and vulnerable neighbors.').
 concerns(rejoice_at_the_appointed_feasts_with_household_and_vulnerable_neighbors, appointed_times).
 scripture_reference(rejoice_at_the_appointed_feasts_with_household_and_vulnerable_neighbors, 'Deuteronomy 16:11, 14').
+source_term(rejoice_at_the_appointed_feasts_with_household_and_vulnerable_neighbors, hebrew, samach, 'to rejoice or be glad; the commanded posture at the feast').
+source_term(rejoice_at_the_appointed_feasts_with_household_and_vulnerable_neighbors, hebrew, ger, 'sojourner or stranger included among vulnerable neighbors in feast rejoicing').
+source_term(rejoice_at_the_appointed_feasts_with_household_and_vulnerable_neighbors, hebrew, yathom_almanah, 'orphan and widow; vulnerable neighbors included in the feast joy').
 study_note(rejoice_at_the_appointed_feasts_with_household_and_vulnerable_neighbors, 'This command anchors appointed time practice in the dates and rhythms given by Torah: Rejoice at the appointed feasts with household and vulnerable neighbors.').
 
 % Command: appear_before_yhwh_at_the_three_pilgrimage_feasts
@@ -244,6 +264,8 @@ command_title(appear_before_yhwh_at_the_three_pilgrimage_feasts, 'Deuteronomy 16
 normal_obedience(appear_before_yhwh_at_the_three_pilgrimage_feasts, 'Appear before YHWH at the three pilgrimage feasts.').
 concerns(appear_before_yhwh_at_the_three_pilgrimage_feasts, appointed_times).
 scripture_reference(appear_before_yhwh_at_the_three_pilgrimage_feasts, 'Deuteronomy 16:16').
+source_term(appear_before_yhwh_at_the_three_pilgrimage_feasts, hebrew, raah, 'to appear or be seen; the males appear before YHWH at the pilgrimage feasts').
+source_term(appear_before_yhwh_at_the_three_pilgrimage_feasts, hebrew, shalosh_regalim, 'three pilgrimage times or three feet; the three annual appearing feasts').
 study_note(appear_before_yhwh_at_the_three_pilgrimage_feasts, 'This command anchors appointed time practice in the dates and rhythms given by Torah: Appear before YHWH at the three pilgrimage feasts.').
 
 % Command: do_not_appear_before_yhwh_empty_handed_at_the_pilgrimage_feasts
@@ -252,4 +274,6 @@ command_title(do_not_appear_before_yhwh_empty_handed_at_the_pilgrimage_feasts, '
 normal_obedience(do_not_appear_before_yhwh_empty_handed_at_the_pilgrimage_feasts, 'Do not appear before YHWH empty-handed at the pilgrimage feasts.').
 concerns(do_not_appear_before_yhwh_empty_handed_at_the_pilgrimage_feasts, appointed_times).
 scripture_reference(do_not_appear_before_yhwh_empty_handed_at_the_pilgrimage_feasts, 'Deuteronomy 16:16-17').
+source_term(do_not_appear_before_yhwh_empty_handed_at_the_pilgrimage_feasts, hebrew, reyqam, 'empty-handed or in vain; the pilgrim must not appear before YHWH empty-handed').
+source_term(do_not_appear_before_yhwh_empty_handed_at_the_pilgrimage_feasts, hebrew, mattanah, 'gift; each brings according to YHWH''s blessing').
 study_note(do_not_appear_before_yhwh_empty_handed_at_the_pilgrimage_feasts, 'This command anchors appointed time practice in the dates and rhythms given by Torah: Do not appear before YHWH empty-handed at the pilgrimage feasts.').

@@ -51,6 +51,8 @@ normal_obedience(bring_firstfruits_sheaf, 'Bring the sheaf of firstfruits to the
 concerns(bring_firstfruits_sheaf, firstfruits_and_counting).
 scripture_reference(bring_firstfruits_sheaf, 'Leviticus 23:9-11').
 story_reference(bring_firstfruits_sheaf, '2 Chronicles 31:5', 'Israel brings firstfruits abundantly during Hezekiah''s reforms.').
+source_term(bring_firstfruits_sheaf, hebrew, omer, 'sheaf or measured bundle; the firstfruits sheaf is brought to the priest').
+source_term(bring_firstfruits_sheaf, hebrew, reshith, 'first, beginning, or firstfruits; used for the first portion of harvest').
 study_note(bring_firstfruits_sheaf, 'The sheaf begins the count toward Shavuot.').
 
 % Command: wave_firstfruits_sheaf
@@ -59,6 +61,9 @@ command_title(wave_firstfruits_sheaf, 'Lev 23:11 - Wave the sheaf before YHWH.')
 normal_obedience(wave_firstfruits_sheaf, 'The priest waves the sheaf before YHWH.').
 concerns(wave_firstfruits_sheaf, firstfruits_and_counting).
 scripture_reference(wave_firstfruits_sheaf, 'Leviticus 23:11').
+story_reference(wave_firstfruits_sheaf, '2 Chronicles 31:5', 'Israel brings firstfruits abundantly during Hezekiah''s reforms, showing the firstfruits setting for priestly presentation.').
+source_term(wave_firstfruits_sheaf, hebrew, nuph, 'to wave or move to and fro; the priest waves the sheaf before YHWH').
+source_term(wave_firstfruits_sheaf, hebrew, omer, 'sheaf or measured bundle; the item waved in Leviticus 23').
 study_note(wave_firstfruits_sheaf, 'The wave sheaf marks acceptance and begins the appointed count.').
 
 % Command: do_not_eat_new_grain_before_offering
@@ -68,6 +73,9 @@ normal_obedience(do_not_eat_new_grain_before_offering, 'Do not eat bread, parche
 concerns(do_not_eat_new_grain_before_offering, firstfruits_and_counting).
 scripture_reference(do_not_eat_new_grain_before_offering, 'Leviticus 23:14').
 story_reference(do_not_eat_new_grain_before_offering, 'Joshua 5:11-12', 'Israel eats from the produce of the land after Passover as the manna ceases.').
+source_term(do_not_eat_new_grain_before_offering, hebrew, lechem, 'bread; one of the foods not eaten before the offering').
+source_term(do_not_eat_new_grain_before_offering, hebrew, qali, 'parched or roasted grain; one of the foods named in the restriction').
+source_term(do_not_eat_new_grain_before_offering, hebrew, karmel, 'fresh grain or full ears; one of the foods named in the restriction').
 study_note(do_not_eat_new_grain_before_offering, 'The firstfruits offering sets the boundary before eating from the new grain.').
 
 % Command: count_seven_sabbaths_to_shavuot
@@ -77,4 +85,8 @@ normal_obedience(count_seven_sabbaths_to_shavuot, 'Count from the wave sheaf to 
 concerns(count_seven_sabbaths_to_shavuot, firstfruits_and_counting).
 scripture_reference(count_seven_sabbaths_to_shavuot, 'Leviticus 23:15-16').
 scripture_reference(count_seven_sabbaths_to_shavuot, 'Deuteronomy 16:9').
+story_reference(count_seven_sabbaths_to_shavuot, '2 Chronicles 8:13', 'Solomon keeps the yearly appointed feasts, including the Feast of Weeks reached by the count.').
+source_term(count_seven_sabbaths_to_shavuot, hebrew, saphar, 'to count, number, or recount; used for counting toward Shavuot').
+source_term(count_seven_sabbaths_to_shavuot, hebrew, sheba, 'seven; the count is seven complete Sabbaths or weeks').
+source_term(count_seven_sabbaths_to_shavuot, hebrew, shabbath, 'sabbath or rest; Leviticus counts seven Sabbaths in this command').
 study_note(count_seven_sabbaths_to_shavuot, 'Counting creates the bridge from Firstfruits to Shavuot.').
