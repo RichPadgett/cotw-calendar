@@ -329,6 +329,7 @@ normal_obedience(do_not_eat_anything_that_dies_of_itself, 'Do not eat anything t
 concerns(do_not_eat_anything_that_dies_of_itself, clean_and_unclean_distinction).
 scripture_reference(do_not_eat_anything_that_dies_of_itself, 'Deuteronomy 14:21').
 study_note(do_not_eat_anything_that_dies_of_itself, 'This command preserves the Torah distinction between clean and unclean and treats eating as part of set-apart living: Do not eat anything that dies of itself.').
+source_term(do_not_eat_anything_that_dies_of_itself, hebrew, 'נְבֵלָה nᵉbêlâh, neb-ay-law''; from H5034; a flabby thing, i.e. a carcase or carrion (human or bestial, often collectively); figuratively, an idol:—(dead) body, (dead) carcase, dead of itself, which died, (beast) that (which) dieth of itself.', 'נְבֵלָה nᵉbêlâh, neb-ay-law''; from H5034; a flabby thing, i.e. a carcase or carrion (human or bestial, often collectively); figuratively, an idol:—(dead) body, (dead) carcase, dead of itself, which died, (beast) that (which) dieth of itself.').
 
 % Command: give_or_sell_what_dies_of_itself_to_the_stranger_foreigner_as_stated
 command(give_or_sell_what_dies_of_itself_to_the_stranger_foreigner_as_stated).

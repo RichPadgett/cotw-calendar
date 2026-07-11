@@ -114,6 +114,7 @@ concerns(do_not_take_millstone_as_pledge, neighbor_protection).
 scripture_reference(do_not_take_millstone_as_pledge, 'Deuteronomy 24:6').
 study_note(do_not_take_millstone_as_pledge, 'The command protects a household''s means of life.').
 command_requirement(do_not_take_millstone_as_pledge, 'Lender, Someone who Lends').
+source_term(do_not_take_millstone_as_pledge, hebrew, 'châbal khaw-bal', 'a primitive root; to wind tightly (as a rope), i.e. to bind; specifically, by a pledge; figuratively, to pervert, destroy; also to writhe in pain (especially of parturition):—× at all, band, bring forth, (deal) corrupt(-ly), destroy, offend, lay to (take a) pledge, spoil, travail, × very, withhold.').
 
 % Command: do_not_return_runaway_slave
 command(do_not_return_runaway_slave).
@@ -273,6 +274,7 @@ concerns(perform_levirate_marriage_in_the_stated_brother_childless_case, marriag
 scripture_reference(perform_levirate_marriage_in_the_stated_brother_childless_case, 'Deuteronomy 25:5-6').
 story_reference(perform_levirate_marriage_in_the_stated_brother_childless_case, 'Genesis 38:6-11', 'Judah tells Onan to perform the brother-in-law duty for Tamar.').
 story_reference(perform_levirate_marriage_in_the_stated_brother_childless_case, 'Ruth 4:1-10', 'Boaz redeems Ruth and raises up the name of the dead on the inheritance.').
+study_note(perform_levirate_marriage_in_the_stated_brother_childless_case, 'Tanner covered this in this April 2026 marriage study part 3. The brothers fulfil the duty of carrying on the lineage, but the woman is still married to her husband although he is dead.').
 
 % Command: perform_the_shoe_removal_procedure_if_levirate_duty_is_refused
 command(perform_the_shoe_removal_procedure_if_levirate_duty_is_refused).

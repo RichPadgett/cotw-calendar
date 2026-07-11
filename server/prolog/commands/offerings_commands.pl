@@ -78,6 +78,7 @@ study_note(monthly_offerings, 'The new month offerings mark month-level appointe
 command_requirement(monthly_offerings, 'Priests').
 command_requirement(monthly_offerings, 'Temple or Tabernacle').
 story_reference(monthly_offerings, 'Romans 12:1 - I appeal to you therefore, brothers,fn by the mercies of God, to present your bodies as a living sacrifice, holy and acceptable to God, which is your spiritual worship.', 'Romans 12:1 - I appeal to you therefore, brothers,fn by the mercies of God, to present your bodies as a living sacrifice, holy and acceptable to God, which is your spiritual worship.').
+command_requirement(monthly_offerings, 'Do we have a Priest in Yeshua and a Tabernacle in our bodies?').
 
 % Command: passover_unleavened_bread_offerings
 command(passover_unleavened_bread_offerings).

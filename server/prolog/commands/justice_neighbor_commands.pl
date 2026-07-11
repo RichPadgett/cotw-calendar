@@ -54,6 +54,7 @@ story_reference(love_neighbor_as_self, 'Ruth 2:8-16', 'Boaz shows covenant kindn
 source_term(love_neighbor_as_self, hebrew, ahav, 'to love; Torah frames neighbor duty as active love, not mere non-harm').
 source_term(love_neighbor_as_self, hebrew, rea, 'neighbor, companion, or fellow member of the community').
 study_note(love_neighbor_as_self, 'This is a foundation command for neighbor-facing obedience.').
+study_note(love_neighbor_as_self, 'The hebrew words found in this passage indicates not bearing a grudge against a fellow Israelite or believer.').
 
 % Command: do_not_hate_brother
 command(do_not_hate_brother).
