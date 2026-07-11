@@ -51,6 +51,7 @@ normal_obedience(priests_keep_holy_status, 'Priests keep the holiness requiremen
 concerns(priests_keep_holy_status, priestly_holiness).
 scripture_reference(priests_keep_holy_status, 'Leviticus 21').
 story_reference(priests_keep_holy_status, 'Ezekiel 44:15-31', 'Ezekiel describes faithful priestly service and priestly holiness boundaries.').
+non_canonical_story_reference(priests_keep_holy_status, 'Sirach 45:6-13', 'Sirach recounts God exalting Aaron, clothing him with glory and the sacred vestments, and setting him apart as holy to minister as priest.').
 study_note(priests_keep_holy_status, 'This command applies specifically to priestly role and service.').
 
 command_requirement(priests_keep_holy_status, 'Priests').
@@ -127,6 +128,7 @@ concerns(levites_receive_tithe, priestly_holiness).
 scripture_reference(levites_receive_tithe, 'Numbers 18:21-32').
 story_reference(levites_receive_tithe, 'Nehemiah 13:10-12', 'Nehemiah restores the portions for the Levites so they can return to their service.').
 story_reference(levites_receive_tithe, 'Hebrews 7:5', 'The author states that the sons of Levi who receive the priesthood have a commandment in the Law to take tithes from the people.').
+non_canonical_story_reference(levites_receive_tithe, 'Tobit 1:6-8', 'Tobit describes journeying alone to Jerusalem for the festivals and giving the firstfruits, tithes, and firstlings to the priests and Levites at the altar.').
 study_note(levites_receive_tithe, 'This command belongs to the Levitical support system.').
 
 command_requirement(levites_receive_tithe, 'Levites').

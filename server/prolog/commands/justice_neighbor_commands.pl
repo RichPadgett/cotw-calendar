@@ -167,6 +167,8 @@ study_note(judges_must_judge_righteously, 'This command guards public justice by
 
 story_reference(judges_must_judge_righteously, 'John 7:24', 'Jesus says not to judge according to appearance, but to judge righteous judgment, closely echoing the Deuteronomy 16:18 charge to judge the people with just judgment.').
 
+non_canonical_story_reference(judges_must_judge_righteously, 'Sirach 7:6', 'Sirach warns not to seek to become a judge unless able to root out injustice, lest partiality to the powerful compromise one''s integrity.').
+
 command_requirement(judges_must_judge_righteously, 'Judges').
 
 % Command: do_not_show_partiality_in_judgment
@@ -289,6 +291,7 @@ normal_obedience(do_to_a_false_witness_as_he_intended_to_do, 'Do to a false witn
 concerns(do_to_a_false_witness_as_he_intended_to_do, justice_and_truth).
 scripture_reference(do_to_a_false_witness_as_he_intended_to_do, 'Deuteronomy 19:16-21').
 story_reference(do_to_a_false_witness_as_he_intended_to_do, '1 Kings 21:10-13', 'The Naboth account gives a clear example of the kind of false-witness evil this command addresses.').
+non_canonical_story_reference(do_to_a_false_witness_as_he_intended_to_do, 'Susanna 1:61-62', 'The two elders, convicted of false witness against Susanna by their own contradictory testimony, are put to death according to the law of Moses, in the manner they maliciously intended for her.').
 study_note(do_to_a_false_witness_as_he_intended_to_do, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Do to a false witness as he intended to do.').
 source_term(do_to_a_false_witness_as_he_intended_to_do, hebrew, ed_chamas, 'malicious or violent witness').
 source_term(do_to_a_false_witness_as_he_intended_to_do, hebrew, zamam, 'plan, devise, intend').

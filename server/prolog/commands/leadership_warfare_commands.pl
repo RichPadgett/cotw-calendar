@@ -82,6 +82,8 @@ source_term(king_do_not_multiply_horses_wives_wealth, hebrew, ishshah, 'wife or 
 source_term(king_do_not_multiply_horses_wives_wealth, hebrew, kesef_zahav, 'silver and gold; wealth the king must not greatly multiply for himself').
 study_note(king_do_not_multiply_horses_wives_wealth, 'Torah limits royal power and temptation.').
 
+non_canonical_story_reference(king_do_not_multiply_horses_wives_wealth, 'Sirach 47:19-21', 'Sirach recounts that Solomon amassed gold and silver but gave his loins to women and let them dominate his body, staining his honor and bringing division on his kingdom.').
+
 command_requirement(king_do_not_multiply_horses_wives_wealth, 'King').
 
 % Command: do_not_return_to_egypt_for_horses
@@ -269,6 +271,8 @@ source_term(exempt_from_battle_the_man_with_new_house_vineyard_betrothal_or_fear
 source_term(exempt_from_battle_the_man_with_new_house_vineyard_betrothal_or_fear, hebrew, kerem, 'vineyard; one of the livelihood reasons for battle exemption').
 source_term(exempt_from_battle_the_man_with_new_house_vineyard_betrothal_or_fear, hebrew, aras, 'to betroth; a betrothed man is included in the exemptions').
 study_note(exempt_from_battle_the_man_with_new_house_vineyard_betrothal_or_fear, 'This command places leaders, kings, courts, and military action under Torah rather than personal power: Exempt from battle the man with new house, vineyard, betrothal, or fear.').
+
+non_canonical_story_reference(exempt_from_battle_the_man_with_new_house_vineyard_betrothal_or_fear, '1 Maccabees 3:55-56', 'Before battle, Judas Maccabeus appoints leaders over thousands, hundreds, fifties, and tens, and sends home those who had built new houses, planted vineyards, or were newly betrothed, according to the law.').
 
 % Command: do_not_fear_enemies_in_battle_when_priest_gives_the_torah_exhortation
 command(do_not_fear_enemies_in_battle_when_priest_gives_the_torah_exhortation).

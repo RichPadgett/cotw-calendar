@@ -97,6 +97,8 @@ study_note(pay_wages_on_time, 'The command protects workers from delayed pay.').
 
 story_reference(pay_wages_on_time, 'James 5:4', 'James condemns landowners because the wages of the laborers, kept back by fraud, cry out, echoing the Leviticus 19:13 and Deuteronomy 24:14-15 concern about withheld wages.').
 
+non_canonical_story_reference(pay_wages_on_time, 'Sirach 34:22', 'Sirach states that to deprive a laborer of his wages is to shed blood, equating wage theft with murder.').
+
 command_requirement(pay_wages_on_time, 'Employers').
 
 % Command: return_lost_property

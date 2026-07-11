@@ -77,6 +77,15 @@ scripture_reference(do_not_add_or_subtract, 'Deuteronomy 4:2').
 scripture_reference(do_not_add_or_subtract, 'Deuteronomy 12:32').
 story_reference(do_not_add_or_subtract, '1 Kings 12:25-33', 'Jeroboam makes calves, appoints his own priests, and devises a feast from his own heart.').
 story_reference(do_not_add_or_subtract, '2 Kings 22:8-13', 'Josiah responds with humility when the found book of the Torah exposes covenant failure.').
+story_reference(do_not_add_or_subtract, 'Matthew 5:17-19', 'Jesus says He did not come to destroy the law or the prophets but to fulfill them, that not one jot or tittle will pass from the law until all is fulfilled, and whoever breaks or teaches others to break the least of these commandments will be called least in the kingdom of heaven.').
+story_reference(do_not_add_or_subtract, 'Luke 16:17', 'Jesus says it is easier for heaven and earth to pass away than for one tittle of the law to fail.').
+story_reference(do_not_add_or_subtract, 'Romans 3:31', 'Paul asks whether faith makes the law void, and answers, "God forbid: yea, we establish the law."').
+story_reference(do_not_add_or_subtract, 'Romans 7:12', 'Paul states that the law is holy, and the commandment holy, and just, and good.').
+story_reference(do_not_add_or_subtract, '1 Corinthians 7:19', 'Paul writes that circumcision and uncircumcision are nothing, but keeping the commandments of God is what matters.').
+story_reference(do_not_add_or_subtract, 'James 2:10-11', 'James teaches that whoever keeps the whole law yet stumbles at one point is guilty of breaking all of it.').
+story_reference(do_not_add_or_subtract, 'Revelation 12:17', 'The dragon goes to make war with the rest of the woman''s offspring, who keep the commandments of God and hold the testimony of Jesus Christ.').
+story_reference(do_not_add_or_subtract, 'Revelation 14:12', 'John describes the patience of the saints as those who keep the commandments of God and the faith of Jesus.').
+story_reference(do_not_add_or_subtract, 'Revelation 22:14', 'John writes, "Blessed are they that do his commandments, that they may have right to the tree of life."').
 study_note(do_not_add_or_subtract, 'This command guards the integrity of the command list itself.').
 
 % Command: love_yhwh_and_keep_commands
@@ -89,6 +98,13 @@ scripture_reference(love_yhwh_and_keep_commands, 'Deuteronomy 10:12-13').
 scripture_reference(love_yhwh_and_keep_commands, 'Deuteronomy 11:1').
 story_reference(love_yhwh_and_keep_commands, 'Joshua 22:5', 'Joshua exhorts the tribes to love YHWH, walk in His ways, and keep His commandments.').
 story_reference(love_yhwh_and_keep_commands, '2 Kings 23:25', 'Josiah is remembered as turning to YHWH with all his heart, soul, and might.').
+story_reference(love_yhwh_and_keep_commands, 'John 14:15', 'Jesus tells His disciples, "If ye love me, keep my commandments."').
+story_reference(love_yhwh_and_keep_commands, 'John 14:21', 'Jesus says the one who has His commandments and keeps them is the one who loves Him.').
+story_reference(love_yhwh_and_keep_commands, 'John 15:10', 'Jesus says if you keep His commandments you will abide in His love, just as He has kept His Father''s commandments and abides in His love.').
+story_reference(love_yhwh_and_keep_commands, '1 John 2:3-4', 'John writes that we know we know Him if we keep His commandments, and calls anyone who claims to know Him without keeping His commandments a liar.').
+story_reference(love_yhwh_and_keep_commands, '1 John 5:3', 'John states that the love of God is this, that we keep His commandments, and His commandments are not burdensome.').
+story_reference(love_yhwh_and_keep_commands, '2 John 1:6', 'John writes that love is walking according to His commandments, and this is the commandment heard from the beginning.').
+story_reference(love_yhwh_and_keep_commands, 'Matthew 19:17', 'Jesus tells the rich young man that if he wants to enter into life, he should keep the commandments.').
 study_note(love_yhwh_and_keep_commands, 'The command reminder feature can point daily obedience back to love for YHWH.').
 
 % Command: gather_to_hear_torah

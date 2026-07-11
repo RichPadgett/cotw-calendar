@@ -87,6 +87,9 @@ source_term(observe_weekly_sabbath, hebrew, shabbat, 'Sabbath or cessation from 
 source_term(observe_weekly_sabbath, hebrew, melakah, 'work, occupation, or craftsmanship; the Sabbath command restricts ordinary work').
 study_note(observe_weekly_sabbath, 'Weekly Sabbath rest is a recurring command of remembrance and covenant rhythm.').
 
+non_canonical_story_reference(observe_weekly_sabbath, '1 Maccabees 2:29-41', 'A group of pious Jews who fled to the wilderness refuse to defend themselves when attacked on the Sabbath and are killed, after which Mattathias and his companions decide they will fight back if attacked on the Sabbath to avoid annihilation.').
+non_canonical_story_reference(observe_weekly_sabbath, 'Jubilees 50:6-13', 'Jubilees gives an expanded Sabbath law listing specific forbidden acts, including kindling fire, drawing water, carrying burdens, and warfare, and prescribes death for violators.').
+
 % Command: sabbath_as_covenant_sign
 command(sabbath_as_covenant_sign).
 command_title(sabbath_as_covenant_sign, 'Exo 31:13 - Sabbath is a sign.').

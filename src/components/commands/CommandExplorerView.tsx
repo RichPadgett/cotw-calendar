@@ -46,6 +46,7 @@ type CommandResource = {
   embodies?: string[];
   scriptureReferences?: string[];
   storyReferences?: StoryReference[];
+  nonCanonicalStoryReferences?: StoryReference[];
   studyNotes?: string[];
   sourceTerms?: SourceTerm[];
   translationNotes?: string[];
@@ -89,6 +90,7 @@ type CommandContributionType =
   | "requirement"
   | "study_note"
   | "story_reference"
+  | "non_canonical_story_reference"
   | "source_term"
   | "translation_note"
   | "clarification_note";
@@ -1586,6 +1588,24 @@ function CommandDetail({
         onWithdrawContribution={onWithdrawContribution}
       />
 
+      <NonCanonicalStoryReferenceList
+        items={command.nonCanonicalStoryReferences ?? []}
+        bibleVersion={bibleVersion}
+        canContribute={canContribute}
+        contributionDraft={contributionDraft}
+        contributionMessage={contributionMessage}
+        pendingContributions={getPendingContributionsByType(
+          "non_canonical_story_reference"
+        )}
+        contributorUsername={contributorUsername}
+        isSubmittingContribution={isSubmittingContribution}
+        onOpenContribution={onOpenContribution}
+        onChangeContributionDraft={onChangeContributionDraft}
+        onCancelContribution={onCancelContribution}
+        onSubmitContribution={onSubmitContribution}
+        onWithdrawContribution={onWithdrawContribution}
+      />
+
       <SourceTermList
         items={command.sourceTerms ?? []}
         canContribute={canContribute}
@@ -1915,6 +1935,138 @@ function StoryReferenceList({
                 onOpenContribution({
                   mode: "suggest_remove",
                   type: "story_reference",
+                  title,
+                  index,
+                  currentText: `${item.reference}: ${item.label}`,
+                  currentValue: item,
+                })
+              }
+            />
+          ) : null}
+        </View>
+      ))}
+
+      {ownsDraft && contributionDraft ? (
+        <ContributionForm
+          draft={contributionDraft}
+          isSubmitting={isSubmittingContribution}
+          onChange={onChangeContributionDraft}
+          onSubmit={onSubmitContribution}
+        />
+      ) : null}
+
+      {ownsDraft && contributionMessage ? (
+        <Text style={styles.contributionMessage}>{contributionMessage}</Text>
+      ) : null}
+
+      <PendingContributionList
+        items={pendingContributions}
+        username={contributorUsername}
+        onWithdraw={onWithdrawContribution}
+      />
+    </View>
+  );
+}
+
+function NonCanonicalStoryReferenceList({
+  items,
+  bibleVersion,
+  canContribute,
+  contributionDraft,
+  contributionMessage,
+  pendingContributions,
+  contributorUsername,
+  isSubmittingContribution,
+  onOpenContribution,
+  onChangeContributionDraft,
+  onCancelContribution,
+  onSubmitContribution,
+  onWithdrawContribution,
+}: {
+  items: StoryReference[];
+  bibleVersion: BibleVersion;
+  canContribute: boolean;
+  contributionDraft: ContributionDraft | null;
+  contributionMessage: string | null;
+  pendingContributions: PendingContribution[];
+  contributorUsername: string;
+  isSubmittingContribution: boolean;
+  onOpenContribution: (params: {
+    mode: CommandContributionMode;
+    type: CommandContributionType;
+    title: string;
+    currentText?: string;
+    index?: number;
+    currentValue?: unknown;
+  }) => void;
+  onChangeContributionDraft: (draft: ContributionDraft) => void;
+  onCancelContribution: () => void;
+  onSubmitContribution: () => void;
+  onWithdrawContribution: (contributionId: string) => void;
+}) {
+  const title = "Seen In Other Ancient Writings";
+  const ownsDraft = contributionDraft?.type === "non_canonical_story_reference";
+
+  return (
+    <View style={{ gap: 8 }}>
+      <EditableSectionTitle
+        title={title}
+        canContribute={canContribute}
+        isOpen={ownsDraft}
+        onToggle={() => {
+          if (ownsDraft) {
+            onCancelContribution();
+            return;
+          }
+
+          onOpenContribution({
+            mode: "add",
+            type: "non_canonical_story_reference",
+            title,
+          });
+        }}
+      />
+
+      <Text style={styles.sectionHelpText}>
+        Examples from ancient writings outside the 66-book canon (such as
+        Jubilees, Enoch, Meqabyan, or the wider deuterocanon) where this
+        command is practiced, violated, enforced, or illustrated. These are
+        historical and devotional references, not equal in authority to
+        Torah and Tanakh.
+      </Text>
+
+      {items.length === 0 ? (
+        <Text style={styles.mutedText}>No extra-biblical references.</Text>
+      ) : null}
+
+      {items.map((item, index) => (
+        <View
+          key={`${item.reference}-${index}`}
+          style={styles.storyReferenceRow}
+        >
+          <ScriptureReferencePill
+            reference={item.reference}
+            bibleVersion={bibleVersion}
+          />
+
+          <Text style={styles.storyReferenceLabel}>{item.label}</Text>
+
+          {canContribute ? (
+            <ContributionActions
+              onEdit={() =>
+                onOpenContribution({
+                  mode: "suggest_edit",
+                  type: "non_canonical_story_reference",
+                  title,
+                  index,
+                  currentText: `${item.reference}: ${item.label}`,
+                  currentValue: item,
+                })
+              }
+              onRemove={() =>
+                onOpenContribution({
+                  mode: "suggest_remove",
+                  type: "non_canonical_story_reference",
                   title,
                   index,
                   currentText: `${item.reference}: ${item.label}`,
@@ -2895,11 +3047,16 @@ function PromotionForm({
     );
   }
 
-  if (contribution.type === "story_reference") {
+  if (
+    contribution.type === "story_reference" ||
+    contribution.type === "non_canonical_story_reference"
+  ) {
     return (
       <View style={styles.promotionForm}>
         <Text style={styles.promotionFormTitle}>
-          Official Scripture Example
+          {contribution.type === "story_reference"
+            ? "Official Scripture Example"
+            : "Official Extra-Biblical Example"}
         </Text>
         <TextInput
           value={draft.reference}
@@ -3041,7 +3198,8 @@ function ContributionForm({
           value={draft.text}
           onChangeText={(text) => onChange({ ...draft, text })}
           placeholder={
-            draft.type === "story_reference"
+            draft.type === "story_reference" ||
+            draft.type === "non_canonical_story_reference"
               ? "Reference: short label"
               : draft.mode === "add"
                 ? "Add the new information"
@@ -3298,6 +3456,8 @@ function getContributionTypeGuidance(type: CommandContributionType) {
       "Study notes add Torah context, cross-reference awareness, or practical framing without adding man-made rules.",
     story_reference:
       "Seen in Scripture references point to places where the command is practiced, violated, enforced, or illustrated in the biblical text.",
+    non_canonical_story_reference:
+      "Seen in other ancient writings references point to places outside the 66-book canon (Jubilees, Enoch, Meqabyan, the wider deuterocanon, etc.) where the command is practiced, violated, enforced, or illustrated. These carry historical/devotional weight, not scriptural authority.",
     source_term:
       "Source terms capture original-language words, such as Hebrew, Aramaic, or Greek, and how they affect understanding.",
     translation_note:
@@ -3342,7 +3502,10 @@ function createPromotionDraft(
     };
   }
 
-  if (contribution.type === "story_reference") {
+  if (
+    contribution.type === "story_reference" ||
+    contribution.type === "non_canonical_story_reference"
+  ) {
     const [reference, ...labelParts] = text.split(/\s*:\s+/);
 
     return {
@@ -3359,10 +3522,16 @@ function createPromotionDraft(
 }
 
 function getPromotionTextField(
-  type: Exclude<CommandContributionType, "source_term" | "story_reference">
+  type: Exclude<
+    CommandContributionType,
+    "source_term" | "story_reference" | "non_canonical_story_reference"
+  >
 ) {
   const fields: Record<
-    Exclude<CommandContributionType, "source_term" | "story_reference">,
+    Exclude<
+      CommandContributionType,
+      "source_term" | "story_reference" | "non_canonical_story_reference"
+    >,
     keyof PromotionDraft
   > = {
     requirement: "requirementText",

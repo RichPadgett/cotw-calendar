@@ -56,6 +56,8 @@ story_reference(keep_feast_of_booths_seven_days, 'Ezra 3:4', 'The returned exile
 story_reference(keep_feast_of_booths_seven_days, 'Nehemiah 8:14-18', 'The people make booths and keep the feast with great gladness.').
 study_note(keep_feast_of_booths_seven_days, 'Booths is a seven-day feast of remembrance and rejoicing.').
 
+non_canonical_story_reference(keep_feast_of_booths_seven_days, '2 Maccabees 10:6-8', 'After purifying the Temple, the Jews celebrate for eight days "in the manner of the feast of tabernacles," carrying branches and singing hymns, and decree the observance become an annual festival.').
+
 % Command: first_day_booths_assembly
 command(first_day_booths_assembly).
 command_title(first_day_booths_assembly, 'Lev 23:35 - First day Booths assembly.').

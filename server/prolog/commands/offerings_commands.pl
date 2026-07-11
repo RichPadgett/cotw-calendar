@@ -135,6 +135,7 @@ concerns(tabernacles_offerings, tabernacles_rejoicing).
 scripture_reference(tabernacles_offerings, 'Numbers 29:12-40').
 story_reference(tabernacles_offerings, 'Ezra 3:4', 'The returned exiles keep Booths as written and offer the daily burnt offerings by number according to the ordinance.').
 story_reference(tabernacles_offerings, 'John 7:37', 'On the last, great day of the Feast of Booths, Jesus stands up in the temple and cries out an invitation to the thirsty.').
+non_canonical_story_reference(tabernacles_offerings, '1 Maccabees 4:36-59', 'Judas Maccabeus and his brothers cleanse and rededicate the Temple altar, offering sacrifice on the new altar and instituting an eight-day festival of dedication with sacrifice and song.').
 study_note(tabernacles_offerings, 'Numbers records the offering sequence across Booths and the eighth day.').
 command_requirement(tabernacles_offerings, 'Priests').
 command_requirement(tabernacles_offerings, 'Temple or Tabernacle').

@@ -31,6 +31,10 @@ type CommandResourceDetail = {
     reference: string;
     label: string;
   }[];
+  nonCanonicalStoryReferences?: {
+    reference: string;
+    label: string;
+  }[];
   sourceTerms?: {
     language: string;
     term: string;
@@ -191,6 +195,17 @@ function mergeApprovedContributions(command: CommandResourceDetail) {
       ...(command.storyReferences ?? []),
       ...contributions
         .filter((contribution) => contribution.type === "story_reference")
+        .map((contribution) =>
+          parseCommunityStoryReference(contribution.text)
+        ),
+    ],
+    nonCanonicalStoryReferences: [
+      ...(command.nonCanonicalStoryReferences ?? []),
+      ...contributions
+        .filter(
+          (contribution) =>
+            contribution.type === "non_canonical_story_reference"
+        )
         .map((contribution) =>
           parseCommunityStoryReference(contribution.text)
         ),

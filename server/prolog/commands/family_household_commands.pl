@@ -54,6 +54,8 @@ scripture_reference(honor_father_and_mother, 'Deuteronomy 5:16').
 story_reference(honor_father_and_mother, 'Genesis 47:11-12', 'Joseph provides for his father and household in Egypt.').
 story_reference(honor_father_and_mother, 'Genesis 50:12-14', 'Joseph and his brothers honor Jacob by burying him as he commanded.').
 study_note(honor_father_and_mother, 'This command anchors household honor across generations.').
+
+non_canonical_story_reference(honor_father_and_mother, 'Sirach 3:1-16', 'Sirach teaches at length that honoring one''s father atones for sin and brings blessing and long life, and commands care for a father even in his old age.').
 source_term(honor_father_and_mother, hebrew, kabad, 'be heavy, honor, give weight to').
 source_term(honor_father_and_mother, hebrew, av, 'father').
 source_term(honor_father_and_mother, hebrew, em, 'mother').
@@ -91,6 +93,8 @@ scripture_reference(keep_forbidden_relations_boundaries, 'Leviticus 18').
 scripture_reference(keep_forbidden_relations_boundaries, 'Leviticus 20').
 story_reference(keep_forbidden_relations_boundaries, '2 Samuel 13:1-19', 'Amnon violates Tamar, showing the destruction that comes from forbidden sexual sin.').
 study_note(keep_forbidden_relations_boundaries, 'Torah gives detailed sexual boundaries for family and community holiness.').
+
+non_canonical_story_reference(keep_forbidden_relations_boundaries, 'Jubilees 30:7-17', 'In the expanded Dinah narrative, Jubilees forbids Israelites from giving their daughters or taking wives for their sons from among the Gentiles, calling it a defilement of the holy seed punishable by death.').
 source_term(keep_forbidden_relations_boundaries, hebrew, galah_ervah, 'uncover nakedness; idiom for forbidden sexual exposure').
 source_term(keep_forbidden_relations_boundaries, hebrew, sheer_basar, 'near kin, flesh relation').
 
@@ -335,6 +339,8 @@ story_reference(perform_levirate_marriage_in_the_stated_brother_childless_case, 
 study_note(perform_levirate_marriage_in_the_stated_brother_childless_case, 'Tanner covered this in this April 2026 marriage study part 3. The brothers fulfil the duty of carrying on the lineage, but the woman is still married to her husband although he is dead.').
 
 story_reference(perform_levirate_marriage_in_the_stated_brother_childless_case, 'Matthew 22:24', 'The Sadducees pose a hypothetical to Jesus, quoting that Moses said if a man dies having no children, his brother shall marry his wife and raise up offspring for his brother.').
+
+non_canonical_story_reference(perform_levirate_marriage_in_the_stated_brother_childless_case, 'Tobit 7:12-13', 'Raguel writes a marriage contract giving Sarah to Tobias as decreed by the law of Moses, since Tobias is her nearest kinsman with the right to marry her.').
 source_term(perform_levirate_marriage_in_the_stated_brother_childless_case, hebrew, yabam, 'perform brother-in-law duty, levirate marriage').
 source_term(perform_levirate_marriage_in_the_stated_brother_childless_case, hebrew, shem, 'name, memorial line').
 source_term(perform_levirate_marriage_in_the_stated_brother_childless_case, hebrew, ach, 'brother').

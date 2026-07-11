@@ -87,6 +87,8 @@ study_note(do_not_eat_blood, 'The command connects eating practice to reverence 
 
 story_reference(do_not_eat_blood, 'Acts 15:29', 'The Jerusalem council writes to Gentile believers instructing them to abstain from food sacrificed to idols, from blood, from what is strangled, and from sexual immorality.').
 
+non_canonical_story_reference(do_not_eat_blood, 'Jubilees 6:7-14', 'Jubilees narrates God commanding Noah and his sons that no flesh with its blood in it may be eaten, framing the blood prohibition as an eternal ordinance tied to the covenant after the flood.').
+
 % Command: do_not_eat_fat_of_offerings
 command(do_not_eat_fat_of_offerings).
 command_title(do_not_eat_fat_of_offerings, 'Lev 7:22-25 - Do not eat forbidden fat.').
@@ -204,6 +206,8 @@ source_term(observe_childbirth_purification_days, hebrew, zakar_neqebah, 'male a
 study_note(observe_childbirth_purification_days, 'If a woman has a female child, she should remain in the blood of her purifying three and thirty days. If it is a male child, then she will be unclean for two weeks. She should then remain in purification for 66 days or threescore and six days.').
 
 story_reference(observe_childbirth_purification_days, 'Luke 2:22-24', 'When the days of Mary''s purification according to the law of Moses were accomplished, Joseph and Mary bring Jesus to the temple and offer a pair of turtledoves or two young pigeons, exactly as the law required.').
+
+non_canonical_story_reference(observe_childbirth_purification_days, 'Jubilees 3:8-14', 'Jubilees explains that Adam was brought into the Garden after 40 days and Eve after 80 days, grounding the law that a woman is unclean 40 days after a male child and 80 days after a female child.').
 
 command_requirement(observe_childbirth_purification_days, 'Women').
 

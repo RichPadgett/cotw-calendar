@@ -64,6 +64,9 @@ source_term(keep_passover, hebrew, pesach, 'Passover or pass-over offering; the 
 source_term(keep_passover, hebrew, moed, 'appointed time or fixed season; Passover is kept at its appointed time').
 study_note(keep_passover, 'Passover anchors the remembrance of deliverance and covenant identity.').
 
+non_canonical_story_reference(keep_passover, 'Jubilees 49:1-23', 'Jubilees gives a detailed Passover law specifying the exact time, manner of slaughter and roasting, and eating within the house before morning, framing it as a perpetual ordinance.').
+non_canonical_story_reference(keep_passover, '1 Esdras 1:1-22', 'King Josiah keeps the Passover in Jerusalem exactly as prescribed, organizing the priests and Levites and having the Passover lamb prepared and eaten as it is written in the law.').
+
 % Command: passover_lamb_without_blemish
 command(passover_lamb_without_blemish).
 command_title(passover_lamb_without_blemish, 'Exo 12:3-6 - Select the Passover lamb.').
@@ -360,6 +363,8 @@ concerns(do_not_break_a_bone_of_the_passover_lamb, passover_memorial).
 scripture_reference(do_not_break_a_bone_of_the_passover_lamb, 'Exodus 12:46').
 story_reference(do_not_break_a_bone_of_the_passover_lamb, 'Exodus 12:46-50', 'Israel is told to keep the Passover in one house and not break a bone, and the people do as YHWH commanded.').
 story_reference(do_not_break_a_bone_of_the_passover_lamb, 'John 19:36', 'The soldiers do not break Jesus'' legs at the crucifixion, and John states this happened so that the scripture would be fulfilled: "A bone of him shall not be broken."').
+
+non_canonical_story_reference(do_not_break_a_bone_of_the_passover_lamb, 'Jubilees 49:13', 'Jubilees states explicitly that they should not break a bone of the Passover offering, for not one bone of it shall be broken.').
 source_term(do_not_break_a_bone_of_the_passover_lamb, hebrew, etsem, 'bone; the Passover animal''s bone must not be broken').
 source_term(do_not_break_a_bone_of_the_passover_lamb, hebrew, shabar, 'to break; the prohibited action against the Passover bone').
 

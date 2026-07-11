@@ -131,6 +131,7 @@ command_detail_json(Command, json([
     embodies=GreatCommands,
     scriptureReferences=ScriptureReferences,
     storyReferences=StoryReferences,
+    nonCanonicalStoryReferences=NonCanonicalStoryReferences,
     studyNotes=StudyNotes,
     sourceTerms=SourceTerms,
     translationNotes=TranslationNotes,
@@ -150,6 +151,10 @@ command_detail_json(Command, json([
         reference=Reference,
         label=Label
     ]), story_reference(Command, Reference, Label), StoryReferences),
+    findall(json([
+        reference=NonCanonicalReference,
+        label=NonCanonicalLabel
+    ]), non_canonical_story_reference(Command, NonCanonicalReference, NonCanonicalLabel), NonCanonicalStoryReferences),
     findall(Note, study_note(Command, Note), StudyNotes),
     findall(json([
         language=Language,

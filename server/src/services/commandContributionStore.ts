@@ -26,6 +26,7 @@ export const commandContributionTypes = [
   "requirement",
   "study_note",
   "story_reference",
+  "non_canonical_story_reference",
   "source_term",
   "translation_note",
   "clarification_note",
@@ -598,6 +599,11 @@ function buildRemovalPrologFact(contribution: CommandContribution) {
       return buildSourceTermRemovalFact(contribution);
     case "story_reference":
       return buildStoryReferenceRemovalFact(contribution);
+    case "non_canonical_story_reference":
+      return buildStoryReferenceRemovalFact(
+        contribution,
+        "non_canonical_story_reference"
+      );
     default:
       throw new Error("Unsupported contribution type.");
   }
@@ -626,7 +632,10 @@ function buildSourceTermRemovalFact(contribution: CommandContribution) {
   )}).`;
 }
 
-function buildStoryReferenceRemovalFact(contribution: CommandContribution) {
+function buildStoryReferenceRemovalFact(
+  contribution: CommandContribution,
+  factName: "story_reference" | "non_canonical_story_reference" = "story_reference"
+) {
   const storyReference =
     typeof contribution.target?.currentValue === "object" &&
     contribution.target.currentValue !== null
@@ -641,7 +650,7 @@ function buildStoryReferenceRemovalFact(contribution: CommandContribution) {
     throw new Error("Story-reference removal requires the current reference.");
   }
 
-  return `story_reference(${contribution.commandKey}, ${toPrologString(
+  return `${factName}(${contribution.commandKey}, ${toPrologString(
     storyReference.reference.trim()
   )}, ${toPrologString(storyReference.label.trim())}).`;
 }
@@ -669,6 +678,10 @@ function buildPrologFact(
       )}).`;
     case "story_reference":
       return `story_reference(${contribution.commandKey}, ${toPrologString(
+        getOfficialText(official, "reference")
+      )}, ${toPrologString(getOfficialText(official, "label"))}).`;
+    case "non_canonical_story_reference":
+      return `non_canonical_story_reference(${contribution.commandKey}, ${toPrologString(
         getOfficialText(official, "reference")
       )}, ${toPrologString(getOfficialText(official, "label"))}).`;
     case "source_term":

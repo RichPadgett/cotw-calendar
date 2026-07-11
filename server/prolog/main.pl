@@ -26,6 +26,7 @@
 :- multifile concerns/2.
 :- multifile scripture_reference/2.
 :- multifile story_reference/3.
+:- multifile non_canonical_story_reference/3.
 :- multifile study_note/2.
 :- multifile source_term/4.
 :- multifile clarification_note/2.

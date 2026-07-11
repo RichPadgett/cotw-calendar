@@ -383,6 +383,7 @@ concerns(priestly_blessing, priestly_holiness).
 scripture_reference(priestly_blessing, 'Numbers 6:22-27').
 story_reference(priestly_blessing, 'Leviticus 9:22', 'Aaron lifts his hands toward the people and blesses them after the offerings.').
 story_reference(priestly_blessing, '2 Chronicles 30:27', 'The priests and Levites bless the people, and their voice is heard.').
+non_canonical_story_reference(priestly_blessing, 'Sirach 50:20-21', 'Simon son of Onias, the high priest, lifts his hands over the whole congregation to pronounce the blessing of the Lord, and the people bow down to receive it.').
 study_note(priestly_blessing, 'The blessing wording is given directly in Torah and belongs to priestly service.').
 
 command_requirement(priestly_blessing, 'Priests').

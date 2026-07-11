@@ -92,3 +92,5 @@ source_term(count_seven_sabbaths_to_shavuot, hebrew, saphar, 'to count, number, 
 source_term(count_seven_sabbaths_to_shavuot, hebrew, sheba, 'seven; the count is seven complete Sabbaths or weeks').
 source_term(count_seven_sabbaths_to_shavuot, hebrew, shabbath, 'sabbath or rest; Leviticus counts seven Sabbaths in this command').
 study_note(count_seven_sabbaths_to_shavuot, 'Counting creates the bridge from Firstfruits to Shavuot.').
+
+non_canonical_story_reference(count_seven_sabbaths_to_shavuot, 'Jubilees 6:17-22', 'Jubilees commands that the Festival of Weeks be observed to renew the covenant every year, tying it to the covenant God made with Noah and later renewed with Abraham, Isaac, and Jacob.').

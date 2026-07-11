@@ -70,6 +70,8 @@ source_term(do_not_make_idols, hebrew, pesel, 'carved image or idol made for wor
 source_term(do_not_make_idols, hebrew, temunah, 'form, likeness, or representation; the image category named in the command').
 study_note(do_not_make_idols, 'The command guards worship from being redirected through images.').
 
+non_canonical_story_reference(do_not_make_idols, 'Letter of Jeremiah 1:8-16', 'The Letter of Jeremiah argues at length that idols of wood, stone, and precious metal are powerless, cannot speak, move, or protect themselves, and therefore should not be feared or worshiped.').
+
 % Command: do_not_worship_like_nations
 command(do_not_worship_like_nations).
 command_title(do_not_worship_like_nations, 'Deu 12:29-32 - Do not worship like the nations.').
@@ -135,6 +137,8 @@ source_term(do_not_practice_divination, hebrew, anan, 'to practice soothsaying, 
 source_term(do_not_practice_divination, hebrew, kashaph, 'to practice sorcery or witchcraft').
 study_note(do_not_practice_divination, 'Torah directs dependence away from occult practices and toward YHWH.').
 
+non_canonical_story_reference(do_not_practice_divination, 'Jubilees 12:16-18', 'Abram, while observing the stars to predict the year''s rain, recognizes that all such astrological determination belongs to God alone and abandons the practice, turning instead to prayer.').
+
 % Command: listen_to_prophet_like_moses
 command(listen_to_prophet_like_moses).
 command_title(listen_to_prophet_like_moses, 'Deu 18:15-19 - Listen to the prophet like Moses.').
@@ -193,6 +197,8 @@ scripture_reference(do_not_bow_down_to_other_gods, 'Deuteronomy 5:9').
 story_reference(do_not_bow_down_to_other_gods, 'Daniel 3:12-18', 'Hananiah, Mishael, and Azariah refuse to bow to Nebuchadnezzar''s image.').
 source_term(do_not_bow_down_to_other_gods, hebrew, shachah, 'to bow down, prostrate, or worship; the bodily worship action forbidden toward other gods').
 study_note(do_not_bow_down_to_other_gods, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not bow down to other gods.').
+
+non_canonical_story_reference(do_not_bow_down_to_other_gods, 'Bel and the Dragon 1:1-22', 'Daniel proves to King Cyrus that the idol Bel does not eat the food offerings by exposing priests secretly consuming them, demonstrating the idol is lifeless and undeserving of worship.').
 
 % Command: do_not_serve_other_gods
 command(do_not_serve_other_gods).
@@ -513,6 +519,8 @@ story_reference(do_not_practice_sorcery, '2 Kings 21:6', 'Manasseh practices wit
 story_reference(do_not_practice_sorcery, '2 Chronicles 33:6', 'Manasseh uses witchcraft, divination, and sorcery, doing much evil before YHWH.').
 source_term(do_not_practice_sorcery, hebrew, kashaph, 'to practice sorcery or witchcraft').
 study_note(do_not_practice_sorcery, 'Deuteronomy strictly prohibits doing anything that has to do with sorcery, divination, or witchcraft.').
+
+non_canonical_story_reference(do_not_practice_sorcery, '1 Enoch 8:3', 'The fallen Watchers teach humanity forbidden arts including enchantments, root-cuttings, and sorcery, corrupting the earth.').
 
 % Command: do_not_cast_spells
 command(do_not_cast_spells).
