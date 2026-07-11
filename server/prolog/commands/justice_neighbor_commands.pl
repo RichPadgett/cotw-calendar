@@ -165,6 +165,8 @@ source_term(judges_must_judge_righteously, hebrew, tsedeq, 'righteousness, justi
 source_term(judges_must_judge_righteously, hebrew, mishpat, 'judgment, justice, or legal decision').
 study_note(judges_must_judge_righteously, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Judges must judge righteously.').
 
+story_reference(judges_must_judge_righteously, 'John 7:24', 'Jesus says not to judge according to appearance, but to judge righteous judgment, closely echoing the Deuteronomy 16:18 charge to judge the people with just judgment.').
+
 command_requirement(judges_must_judge_righteously, 'Judges').
 
 % Command: do_not_show_partiality_in_judgment
@@ -177,6 +179,8 @@ scripture_reference(do_not_show_partiality_in_judgment, 'Deuteronomy 1:17').
 story_reference(do_not_show_partiality_in_judgment, '2 Chronicles 19:7', 'Jehoshaphat warns that with YHWH there is no injustice, partiality, or taking bribes.').
 source_term(do_not_show_partiality_in_judgment, hebrew, panim, 'face or presence; showing partiality is literally lifting or recognizing faces in judgment').
 study_note(do_not_show_partiality_in_judgment, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Do not show partiality in judgment.').
+
+story_reference(do_not_show_partiality_in_judgment, 'James 2:1-9', 'James rebukes believers for showing favoritism to a rich man over a poor man in the assembly, warning that if they have respect of persons they commit sin, while citing the neighboring Leviticus 19:18 command.').
 command_requirement(do_not_show_partiality_in_judgment, 'Israel').
 
 % Command: do_not_fear_man_in_judgment

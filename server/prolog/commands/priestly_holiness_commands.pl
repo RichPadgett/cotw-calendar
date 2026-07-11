@@ -126,6 +126,7 @@ normal_obedience(levites_receive_tithe, 'Give the tithe assigned to the Levites,
 concerns(levites_receive_tithe, priestly_holiness).
 scripture_reference(levites_receive_tithe, 'Numbers 18:21-32').
 story_reference(levites_receive_tithe, 'Nehemiah 13:10-12', 'Nehemiah restores the portions for the Levites so they can return to their service.').
+story_reference(levites_receive_tithe, 'Hebrews 7:5', 'The author states that the sons of Levi who receive the priesthood have a commandment in the Law to take tithes from the people.').
 study_note(levites_receive_tithe, 'This command belongs to the Levitical support system.').
 
 command_requirement(levites_receive_tithe, 'Levites').
@@ -210,6 +211,7 @@ normal_obedience(make_the_incense_altar, 'Make the incense altar.').
 concerns(make_the_incense_altar, priestly_holiness).
 scripture_reference(make_the_incense_altar, 'Exodus 30:1-10').
 story_reference(make_the_incense_altar, 'Exodus 37:25-29', 'The incense altar, anointing oil, and incense are made.').
+story_reference(make_the_incense_altar, 'Luke 1:9-11', 'Zechariah enters the temple to burn incense at the altar of incense, and an angel appears standing at the right side of that altar.').
 study_note(make_the_incense_altar, 'This command belongs to priestly and sanctuary service, where access, offerings, portions, and holiness are ordered by Torah: Make the incense altar.').
 command_requirement(make_the_incense_altar, 'Tabernacle Builders').
 
@@ -466,6 +468,8 @@ source_term(the_high_priest_must_not_enter_the_most_holy_place_at_any_time_but_a
 source_term(the_high_priest_must_not_enter_the_most_holy_place_at_any_time_but_according_t, hebrew, paroketh, 'veil or curtain; the boundary before the mercy seat').
 source_term(the_high_priest_must_not_enter_the_most_holy_place_at_any_time_but_according_t, hebrew, kapporeth, 'mercy seat or atonement cover; the object before which unauthorized entry is forbidden').
 study_note(the_high_priest_must_not_enter_the_most_holy_place_at_any_time_but_according_t, 'This command belongs to priestly and sanctuary service, where access, offerings, portions, and holiness are ordered by Torah: The high priest must not enter the Most Holy Place at any time, but according to Torah.').
+
+story_reference(the_high_priest_must_not_enter_the_most_holy_place_at_any_time_but_according_t, 'Hebrews 9:7', 'The author notes that only the high priest enters the second, inner room, and only once a year, taking blood to offer for himself and the sins of the people.').
 
 command_requirement(the_high_priest_must_not_enter_the_most_holy_place_at_any_time_but_according_t, 'High Priest').
 
@@ -726,6 +730,8 @@ scripture_reference(levites_receive_the_tithe_for_their_service, 'Numbers 18:21-
 source_term(levites_receive_the_tithe_for_their_service, hebrew, maaser, 'tithe or tenth portion received by Levites for their service').
 source_term(levites_receive_the_tithe_for_their_service, hebrew, cheleq, 'portion or share; the tithe functions as the Levites'' portion').
 study_note(levites_receive_the_tithe_for_their_service, 'This command belongs to priestly and sanctuary service, where access, offerings, portions, and holiness are ordered by Torah: Levites receive the tithe for their service.').
+
+story_reference(levites_receive_the_tithe_for_their_service, 'Hebrews 7:5', 'The author states that the sons of Levi who receive the priesthood have a commandment in the Law to take tithes from the people.').
 
 command_requirement(levites_receive_the_tithe_for_their_service, 'Levites').
 

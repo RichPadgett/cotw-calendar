@@ -53,6 +53,7 @@ scripture_reference(daily_offerings, 'Exodus 29:38-42').
 scripture_reference(daily_offerings, 'Numbers 28:1-8').
 story_reference(daily_offerings, '1 Chronicles 16:39-40', 'David appoints priests to offer burnt offerings continually morning and evening.').
 story_reference(daily_offerings, 'Ezra 3:3-5', 'The returned exiles offer burnt offerings morning and evening.').
+story_reference(daily_offerings, 'Luke 1:8-11', 'Zechariah, serving in the order of his priestly division, is chosen by lot to enter the temple and burn incense as part of the regular priestly service.').
 study_note(daily_offerings, 'The daily offering command shows the regular rhythm around the sanctuary service.').
 command_requirement(daily_offerings, 'Temple or Tabernacle').
 command_requirement(daily_offerings, 'Priests').
@@ -87,6 +88,7 @@ normal_obedience(passover_unleavened_bread_offerings, 'Remember the offerings ap
 concerns(passover_unleavened_bread_offerings, passover_memorial).
 scripture_reference(passover_unleavened_bread_offerings, 'Numbers 28:16-25').
 story_reference(passover_unleavened_bread_offerings, '2 Chronicles 35:10-16', 'Josiah''s Passover service is prepared according to the command.').
+story_reference(passover_unleavened_bread_offerings, 'Luke 22:7', 'Luke records that the day of Unleavened Bread came, on which the Passover lamb had to be sacrificed.').
 study_note(passover_unleavened_bread_offerings, 'Numbers records the offering pattern attached to the feast days.').
 command_requirement(passover_unleavened_bread_offerings, 'Priests').
 command_requirement(passover_unleavened_bread_offerings, 'Temple or Tabernacle').
@@ -120,6 +122,7 @@ normal_obedience(atonement_offerings, 'Remember the offerings appointed for the 
 concerns(atonement_offerings, atonement_rest).
 scripture_reference(atonement_offerings, 'Numbers 29:7-11').
 story_reference(atonement_offerings, 'Leviticus 16:1-34', 'After the death of Aaron''s sons, YHWH gives the Day of Atonement service and offering order.').
+story_reference(atonement_offerings, 'Hebrews 9:7', 'The author describes the high priest entering the inner sanctuary once a year with blood, offered for himself and the sins of the people, per the Day of Atonement service.').
 study_note(atonement_offerings, 'The offering pattern is connected to the solemn appointed day.').
 command_requirement(atonement_offerings, 'Priests').
 command_requirement(atonement_offerings, 'Temple or Tabernacle').
@@ -131,6 +134,7 @@ normal_obedience(tabernacles_offerings, 'Remember the offerings appointed across
 concerns(tabernacles_offerings, tabernacles_rejoicing).
 scripture_reference(tabernacles_offerings, 'Numbers 29:12-40').
 story_reference(tabernacles_offerings, 'Ezra 3:4', 'The returned exiles keep Booths as written and offer the daily burnt offerings by number according to the ordinance.').
+story_reference(tabernacles_offerings, 'John 7:37', 'On the last, great day of the Feast of Booths, Jesus stands up in the temple and cries out an invitation to the thirsty.').
 study_note(tabernacles_offerings, 'Numbers records the offering sequence across Booths and the eighth day.').
 command_requirement(tabernacles_offerings, 'Priests').
 command_requirement(tabernacles_offerings, 'Temple or Tabernacle').

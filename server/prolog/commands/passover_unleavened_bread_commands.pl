@@ -359,6 +359,7 @@ normal_obedience(do_not_break_a_bone_of_the_passover_lamb, 'Do not break a bone 
 concerns(do_not_break_a_bone_of_the_passover_lamb, passover_memorial).
 scripture_reference(do_not_break_a_bone_of_the_passover_lamb, 'Exodus 12:46').
 story_reference(do_not_break_a_bone_of_the_passover_lamb, 'Exodus 12:46-50', 'Israel is told to keep the Passover in one house and not break a bone, and the people do as YHWH commanded.').
+story_reference(do_not_break_a_bone_of_the_passover_lamb, 'John 19:36', 'The soldiers do not break Jesus'' legs at the crucifixion, and John states this happened so that the scripture would be fulfilled: "A bone of him shall not be broken."').
 source_term(do_not_break_a_bone_of_the_passover_lamb, hebrew, etsem, 'bone; the Passover animal''s bone must not be broken').
 source_term(do_not_break_a_bone_of_the_passover_lamb, hebrew, shabar, 'to break; the prohibited action against the Passover bone').
 

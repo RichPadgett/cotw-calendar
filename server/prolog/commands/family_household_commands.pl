@@ -316,6 +316,8 @@ normal_obedience(do_not_remarry_a_former_wife_after_she_became_another_man_s_wif
 concerns(do_not_remarry_a_former_wife_after_she_became_another_man_s_wife, marriage_household_procedure).
 scripture_reference(do_not_remarry_a_former_wife_after_she_became_another_man_s_wife, 'Deuteronomy 24:1-4').
 study_note(do_not_remarry_a_former_wife_after_she_became_another_man_s_wife, 'This command addresses a defined household, marriage, or servant case and keeps the procedure bounded by the Torah text: Do not remarry a former wife after she became another man''s wife.').
+
+story_reference(do_not_remarry_a_former_wife_after_she_became_another_man_s_wife, 'Matthew 19:7-9', 'The Pharisees ask Jesus why Moses commanded a man to give his wife a writing of divorcement, directly citing the Deuteronomy 24:1 law, and Jesus responds concerning its meaning and limits.').
 source_term(do_not_remarry_a_former_wife_after_she_became_another_man_s_wife, hebrew, shuv, 'return, turn back').
 source_term(do_not_remarry_a_former_wife_after_she_became_another_man_s_wife, hebrew, baal, 'husband, marry, rule as husband').
 source_term(do_not_remarry_a_former_wife_after_she_became_another_man_s_wife, hebrew, tame, 'be unclean, be defiled').
@@ -331,6 +333,8 @@ scripture_reference(perform_levirate_marriage_in_the_stated_brother_childless_ca
 story_reference(perform_levirate_marriage_in_the_stated_brother_childless_case, 'Genesis 38:6-11', 'Judah tells Onan to perform the brother-in-law duty for Tamar.').
 story_reference(perform_levirate_marriage_in_the_stated_brother_childless_case, 'Ruth 4:1-10', 'Boaz redeems Ruth and raises up the name of the dead on the inheritance.').
 study_note(perform_levirate_marriage_in_the_stated_brother_childless_case, 'Tanner covered this in this April 2026 marriage study part 3. The brothers fulfil the duty of carrying on the lineage, but the woman is still married to her husband although he is dead.').
+
+story_reference(perform_levirate_marriage_in_the_stated_brother_childless_case, 'Matthew 22:24', 'The Sadducees pose a hypothetical to Jesus, quoting that Moses said if a man dies having no children, his brother shall marry his wife and raise up offspring for his brother.').
 source_term(perform_levirate_marriage_in_the_stated_brother_childless_case, hebrew, yabam, 'perform brother-in-law duty, levirate marriage').
 source_term(perform_levirate_marriage_in_the_stated_brother_childless_case, hebrew, shem, 'name, memorial line').
 source_term(perform_levirate_marriage_in_the_stated_brother_childless_case, hebrew, ach, 'brother').

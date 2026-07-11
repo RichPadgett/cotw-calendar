@@ -85,6 +85,8 @@ source_term(do_not_eat_blood, hebrew, dam, 'blood; the prohibited food because t
 source_term(do_not_eat_blood, hebrew, nephesh, 'life, soul, or living being; Leviticus connects life with the blood').
 study_note(do_not_eat_blood, 'The command connects eating practice to reverence for life.').
 
+story_reference(do_not_eat_blood, 'Acts 15:29', 'The Jerusalem council writes to Gentile believers instructing them to abstain from food sacrificed to idols, from blood, from what is strangled, and from sexual immorality.').
+
 % Command: do_not_eat_fat_of_offerings
 command(do_not_eat_fat_of_offerings).
 command_title(do_not_eat_fat_of_offerings, 'Lev 7:22-25 - Do not eat forbidden fat.').
@@ -201,6 +203,8 @@ source_term(observe_childbirth_purification_days, hebrew, yeme_tohorah, 'days of
 source_term(observe_childbirth_purification_days, hebrew, zakar_neqebah, 'male and female; Leviticus 12 distinguishes purification periods by child sex').
 study_note(observe_childbirth_purification_days, 'If a woman has a female child, she should remain in the blood of her purifying three and thirty days. If it is a male child, then she will be unclean for two weeks. She should then remain in purification for 66 days or threescore and six days.').
 
+story_reference(observe_childbirth_purification_days, 'Luke 2:22-24', 'When the days of Mary''s purification according to the law of Moses were accomplished, Joseph and Mary bring Jesus to the temple and offer a pair of turtledoves or two young pigeons, exactly as the law required.').
+
 command_requirement(observe_childbirth_purification_days, 'Women').
 
 % Command: bring_childbirth_purification_offerings_when_system_applies
@@ -227,6 +231,8 @@ source_term(the_priest_examines_skin_disease_cases, hebrew, kohen, 'priest; the 
 source_term(the_priest_examines_skin_disease_cases, hebrew, raah, 'to see or inspect; the priest examines the plague condition').
 source_term(the_priest_examines_skin_disease_cases, hebrew, nega, 'plague, mark, or affected spot examined for impurity').
 study_note(the_priest_examines_skin_disease_cases, 'This command belongs to the purity system that protects the camp, sanctuary access, and restoration to clean status: The priest examines skin disease cases.').
+
+story_reference(the_priest_examines_skin_disease_cases, 'Luke 5:14', 'Jesus tells the cleansed leper to show himself to the priest and offer for his cleansing as Moses commanded, directly invoking the Leviticus 13-14 priestly examination and cleansing law.').
 
 command_requirement(the_priest_examines_skin_disease_cases, 'Priests').
 
@@ -307,6 +313,8 @@ scripture_reference(observe_menstrual_impurity_instructions, 'Leviticus 15:19-24
 source_term(observe_menstrual_impurity_instructions, hebrew, niddah, 'menstrual impurity or separation period').
 source_term(observe_menstrual_impurity_instructions, hebrew, dam, 'blood; the bodily source in the menstrual impurity instructions').
 study_note(observe_menstrual_impurity_instructions, 'This command belongs to the purity system that protects the camp, sanctuary access, and restoration to clean status: Observe menstrual impurity instructions.').
+
+story_reference(observe_menstrual_impurity_instructions, 'Mark 5:25-34', 'A woman who had an issue of blood for twelve years secretly touches Jesus'' garment for healing, her condition described in the same terms as the chronic-flow impurity of Leviticus 15.').
 
 command_requirement(observe_menstrual_impurity_instructions, 'Women').
 
