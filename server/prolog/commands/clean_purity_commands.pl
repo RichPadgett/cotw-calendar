@@ -201,6 +201,8 @@ source_term(observe_childbirth_purification_days, hebrew, yeme_tohorah, 'days of
 source_term(observe_childbirth_purification_days, hebrew, zakar_neqebah, 'male and female; Leviticus 12 distinguishes purification periods by child sex').
 study_note(observe_childbirth_purification_days, 'If a woman has a female child, she should remain in the blood of her purifying three and thirty days. If it is a male child, then she will be unclean for two weeks. She should then remain in purification for 66 days or threescore and six days.').
 
+command_requirement(observe_childbirth_purification_days, 'Women').
+
 % Command: bring_childbirth_purification_offerings_when_system_applies
 command(bring_childbirth_purification_offerings_when_system_applies).
 command_title(bring_childbirth_purification_offerings_when_system_applies, 'Leviticus 12:6-8 - Bring childbirth purification offerings when system applies.').
@@ -211,6 +213,8 @@ source_term(bring_childbirth_purification_offerings_when_system_applies, hebrew,
 source_term(bring_childbirth_purification_offerings_when_system_applies, hebrew, chattat, 'sin or purification offering brought after childbirth').
 source_term(bring_childbirth_purification_offerings_when_system_applies, hebrew, tor_ben_yonah, 'turtledove or young pigeon used in the offering provision').
 study_note(bring_childbirth_purification_offerings_when_system_applies, 'A woman shall bring a burnt offering as described in Leviticus 12 to cleanse her from the issue of her blood.').
+
+command_requirement(bring_childbirth_purification_offerings_when_system_applies, 'Women').
 
 % Command: the_priest_examines_skin_disease_cases
 command(the_priest_examines_skin_disease_cases).
@@ -223,6 +227,8 @@ source_term(the_priest_examines_skin_disease_cases, hebrew, kohen, 'priest; the 
 source_term(the_priest_examines_skin_disease_cases, hebrew, raah, 'to see or inspect; the priest examines the plague condition').
 source_term(the_priest_examines_skin_disease_cases, hebrew, nega, 'plague, mark, or affected spot examined for impurity').
 study_note(the_priest_examines_skin_disease_cases, 'This command belongs to the purity system that protects the camp, sanctuary access, and restoration to clean status: The priest examines skin disease cases.').
+
+command_requirement(the_priest_examines_skin_disease_cases, 'Priests').
 
 % Command: isolate_the_person_with_suspected_skin_disease_according_to_torah
 command(isolate_the_person_with_suspected_skin_disease_according_to_torah).
@@ -301,6 +307,8 @@ scripture_reference(observe_menstrual_impurity_instructions, 'Leviticus 15:19-24
 source_term(observe_menstrual_impurity_instructions, hebrew, niddah, 'menstrual impurity or separation period').
 source_term(observe_menstrual_impurity_instructions, hebrew, dam, 'blood; the bodily source in the menstrual impurity instructions').
 study_note(observe_menstrual_impurity_instructions, 'This command belongs to the purity system that protects the camp, sanctuary access, and restoration to clean status: Observe menstrual impurity instructions.').
+
+command_requirement(observe_menstrual_impurity_instructions, 'Women').
 
 % Command: do_not_enter_sanctuary_while_unclean_when_sanctuary_applies
 command(do_not_enter_sanctuary_while_unclean_when_sanctuary_applies).

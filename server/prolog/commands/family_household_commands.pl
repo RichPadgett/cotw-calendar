@@ -120,6 +120,8 @@ source_term(protect_newlywed_household, hebrew, naqiy, 'free, exempt, clear').
 source_term(protect_newlywed_household, hebrew, samach, 'rejoice, gladden').
 source_term(protect_newlywed_household, hebrew, ishshah, 'woman, wife').
 
+command_requirement(protect_newlywed_household, 'Husband, Newly Married Man').
+
 % Command: do_not_take_millstone_as_pledge
 command(do_not_take_millstone_as_pledge).
 command_title(do_not_take_millstone_as_pledge, 'Deu 24:6 - Do not take a millstone as pledge.').
@@ -225,6 +227,7 @@ study_note(a_woman_must_not_stand_before_an_animal_to_mate_with_it, 'This comman
 source_term(a_woman_must_not_stand_before_an_animal_to_mate_with_it, hebrew, amad, 'stand, present oneself').
 source_term(a_woman_must_not_stand_before_an_animal_to_mate_with_it, hebrew, behemah, 'animal, beast, livestock').
 source_term(a_woman_must_not_stand_before_an_animal_to_mate_with_it, hebrew, raba, 'lie down sexually, mate').
+command_requirement(a_woman_must_not_stand_before_an_animal_to_mate_with_it, 'Women').
 
 % Command: do_not_give_offspring_to_molech
 command(do_not_give_offspring_to_molech).
@@ -264,6 +267,8 @@ source_term(follow_the_accused_bride_case_procedure, hebrew, bethulim, 'virginit
 source_term(follow_the_accused_bride_case_procedure, hebrew, shem_ra, 'bad name, evil report').
 source_term(follow_the_accused_bride_case_procedure, hebrew, avi_naar, 'father of the young woman').
 
+command_requirement(follow_the_accused_bride_case_procedure, 'Husband').
+
 % Command: follow_the_betrothed_virgin_violation_case_procedure
 command(follow_the_betrothed_virgin_violation_case_procedure).
 command_title(follow_the_betrothed_virgin_violation_case_procedure, 'Deuteronomy 22:23-27 - Follow the betrothed virgin violation case procedure.').
@@ -274,6 +279,8 @@ study_note(follow_the_betrothed_virgin_violation_case_procedure, 'This command a
 source_term(follow_the_betrothed_virgin_violation_case_procedure, hebrew, aras, 'betroth, be pledged for marriage').
 source_term(follow_the_betrothed_virgin_violation_case_procedure, hebrew, naarah_betulah, 'young woman, virgin').
 source_term(follow_the_betrothed_virgin_violation_case_procedure, hebrew, tsaaq, 'cry out').
+
+command_requirement(follow_the_betrothed_virgin_violation_case_procedure, 'Betrothed Women').
 
 % Command: follow_the_unbetrothed_virgin_violation_case_procedure
 command(follow_the_unbetrothed_virgin_violation_case_procedure).
@@ -286,6 +293,8 @@ study_note(follow_the_unbetrothed_virgin_violation_case_procedure, 'Placeholder 
 source_term(follow_the_unbetrothed_virgin_violation_case_procedure, hebrew, taphas, 'seize, lay hold of').
 source_term(follow_the_unbetrothed_virgin_violation_case_procedure, hebrew, shakab, 'lie down, have sexual relations').
 source_term(follow_the_unbetrothed_virgin_violation_case_procedure, hebrew, mohar, 'bride-price, marriage payment').
+
+command_requirement(follow_the_unbetrothed_virgin_violation_case_procedure, 'Unbetrothed Virgin').
 
 % Command: do_not_take_your_father_s_wife
 command(do_not_take_your_father_s_wife).
@@ -311,6 +320,8 @@ source_term(do_not_remarry_a_former_wife_after_she_became_another_man_s_wife, he
 source_term(do_not_remarry_a_former_wife_after_she_became_another_man_s_wife, hebrew, baal, 'husband, marry, rule as husband').
 source_term(do_not_remarry_a_former_wife_after_she_became_another_man_s_wife, hebrew, tame, 'be unclean, be defiled').
 
+command_requirement(do_not_remarry_a_former_wife_after_she_became_another_man_s_wife, 'Former Husband').
+
 % Command: perform_levirate_marriage_in_the_stated_brother_childless_case
 command(perform_levirate_marriage_in_the_stated_brother_childless_case).
 command_title(perform_levirate_marriage_in_the_stated_brother_childless_case, 'Deuteronomy 25:5-6 - Perform levirate marriage in the stated brother-childless case.').
@@ -324,6 +335,8 @@ source_term(perform_levirate_marriage_in_the_stated_brother_childless_case, hebr
 source_term(perform_levirate_marriage_in_the_stated_brother_childless_case, hebrew, shem, 'name, memorial line').
 source_term(perform_levirate_marriage_in_the_stated_brother_childless_case, hebrew, ach, 'brother').
 
+command_requirement(perform_levirate_marriage_in_the_stated_brother_childless_case, 'Brother of Deceased').
+
 % Command: perform_the_shoe_removal_procedure_if_levirate_duty_is_refused
 command(perform_the_shoe_removal_procedure_if_levirate_duty_is_refused).
 command_title(perform_the_shoe_removal_procedure_if_levirate_duty_is_refused, 'Deuteronomy 25:7-10 - Perform the shoe-removal procedure if levirate duty is refused.').
@@ -335,6 +348,8 @@ source_term(perform_the_shoe_removal_procedure_if_levirate_duty_is_refused, hebr
 source_term(perform_the_shoe_removal_procedure_if_levirate_duty_is_refused, hebrew, naal, 'sandal, shoe').
 source_term(perform_the_shoe_removal_procedure_if_levirate_duty_is_refused, hebrew, raqaq, 'spit').
 
+command_requirement(perform_the_shoe_removal_procedure_if_levirate_duty_is_refused, 'Widow, Brother of Deceased').
+
 % Command: a_newly_married_man_must_not_go_out_with_the_army_or_be_charged_with_public_du
 command(a_newly_married_man_must_not_go_out_with_the_army_or_be_charged_with_public_du).
 command_title(a_newly_married_man_must_not_go_out_with_the_army_or_be_charged_with_public_du, 'Deuteronomy 24:5 - A newly married man must not go out with the army or be charged with public duty for one year.').
@@ -345,6 +360,8 @@ story_reference(a_newly_married_man_must_not_go_out_with_the_army_or_be_charged_
 source_term(a_newly_married_man_must_not_go_out_with_the_army_or_be_charged_with_public_du, hebrew, chadash, 'new, newly married in context').
 source_term(a_newly_married_man_must_not_go_out_with_the_army_or_be_charged_with_public_du, hebrew, naqiy, 'free, exempt, clear').
 source_term(a_newly_married_man_must_not_go_out_with_the_army_or_be_charged_with_public_du, hebrew, samach, 'rejoice, gladden').
+
+command_requirement(a_newly_married_man_must_not_go_out_with_the_army_or_be_charged_with_public_du, 'Husband, Newly Married Man').
 
 % Command: let_the_runaway_slave_dwell_where_he_chooses_among_you
 command(let_the_runaway_slave_dwell_where_he_chooses_among_you).

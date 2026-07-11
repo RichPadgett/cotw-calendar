@@ -53,6 +53,8 @@ scripture_reference(priests_keep_holy_status, 'Leviticus 21').
 story_reference(priests_keep_holy_status, 'Ezekiel 44:15-31', 'Ezekiel describes faithful priestly service and priestly holiness boundaries.').
 study_note(priests_keep_holy_status, 'This command applies specifically to priestly role and service.').
 
+command_requirement(priests_keep_holy_status, 'Priests').
+
 % Command: high_priest_keep_special_holiness
 command(high_priest_keep_special_holiness).
 command_title(high_priest_keep_special_holiness, 'Lev 21:10-15 - High priest keeps special holiness.').
@@ -60,6 +62,8 @@ normal_obedience(high_priest_keep_special_holiness, 'The high priest keeps the a
 concerns(high_priest_keep_special_holiness, priestly_holiness).
 scripture_reference(high_priest_keep_special_holiness, 'Leviticus 21:10-15').
 study_note(high_priest_keep_special_holiness, 'The high priest has stricter role-specific commands.').
+
+command_requirement(high_priest_keep_special_holiness, 'High Priest').
 
 % Command: priests_do_not_serve_with_defect
 command(priests_do_not_serve_with_defect).
@@ -69,6 +73,8 @@ concerns(priests_do_not_serve_with_defect, priestly_holiness).
 scripture_reference(priests_do_not_serve_with_defect, 'Leviticus 21:16-24').
 study_note(priests_do_not_serve_with_defect, 'This is a role-specific sanctuary service command.').
 
+command_requirement(priests_do_not_serve_with_defect, 'Priests').
+
 % Command: priests_do_not_eat_holy_things_while_unclean
 command(priests_do_not_eat_holy_things_while_unclean).
 command_title(priests_do_not_eat_holy_things_while_unclean, 'Lev 22:1-9 - Priests do not eat holy things while unclean.').
@@ -77,6 +83,8 @@ concerns(priests_do_not_eat_holy_things_while_unclean, priestly_holiness).
 scripture_reference(priests_do_not_eat_holy_things_while_unclean, 'Leviticus 22:1-9').
 story_reference(priests_do_not_eat_holy_things_while_unclean, '1 Samuel 21:4-6', 'The priest only gives holy bread after asking about ritual purity.').
 study_note(priests_do_not_eat_holy_things_while_unclean, 'Holy portions require priestly purity.').
+
+command_requirement(priests_do_not_eat_holy_things_while_unclean, 'Priests').
 
 % Command: offer_unblemished_animals
 command(offer_unblemished_animals).
@@ -97,6 +105,9 @@ story_reference(guard_sanctuary_duties, '1 Chronicles 23:28-32', 'The Levites ar
 story_reference(guard_sanctuary_duties, '2 Chronicles 29:4-19', 'Hezekiah gathers priests and Levites to cleanse and restore the house of YHWH.').
 study_note(guard_sanctuary_duties, 'Sanctuary service has assigned roles and boundaries.').
 
+command_requirement(guard_sanctuary_duties, 'Priests').
+command_requirement(guard_sanctuary_duties, 'Levites').
+
 % Command: give_priestly_portions
 command(give_priestly_portions).
 command_title(give_priestly_portions, 'Num 18 - Give priestly and Levitical portions.').
@@ -116,6 +127,8 @@ concerns(levites_receive_tithe, priestly_holiness).
 scripture_reference(levites_receive_tithe, 'Numbers 18:21-32').
 story_reference(levites_receive_tithe, 'Nehemiah 13:10-12', 'Nehemiah restores the portions for the Levites so they can return to their service.').
 study_note(levites_receive_tithe, 'This command belongs to the Levitical support system.').
+
+command_requirement(levites_receive_tithe, 'Levites').
 
 % -----------------------------------------------------------------------------
 % Additional Priestly Holiness Commands
@@ -238,6 +251,8 @@ scripture_reference(priests_must_wash_hands_and_feet_before_service, 'Exodus 30:
 story_reference(priests_must_wash_hands_and_feet_before_service, 'Exodus 40:30-32', 'Moses, Aaron, and Aaron''s sons wash at the basin when entering the tent or approaching the altar.').
 study_note(priests_must_wash_hands_and_feet_before_service, 'This command belongs to priestly and sanctuary service, where access, offerings, portions, and holiness are ordered by Torah: Priests must wash hands and feet before service.').
 
+command_requirement(priests_must_wash_hands_and_feet_before_service, 'Priests').
+
 % Command: make_the_anointing_oil_according_to_torah
 command(make_the_anointing_oil_according_to_torah).
 command_title(make_the_anointing_oil_according_to_torah, 'Exodus 30:22-33 - Make the anointing oil according to Torah.').
@@ -359,6 +374,8 @@ source_term(priests_eat_certain_grain_offerings_in_a_holy_place, hebrew, matsah,
 source_term(priests_eat_certain_grain_offerings_in_a_holy_place, hebrew, maqom_qadosh, 'holy place; the location where the priests eat the offering').
 study_note(priests_eat_certain_grain_offerings_in_a_holy_place, 'This command belongs to priestly and sanctuary service, where access, offerings, portions, and holiness are ordered by Torah: Priests eat certain grain offerings in a holy place.').
 
+command_requirement(priests_eat_certain_grain_offerings_in_a_holy_place, 'Priests').
+
 % Command: burn_the_priestly_grain_offering_completely
 command(burn_the_priestly_grain_offering_completely).
 command_title(burn_the_priestly_grain_offering_completely, 'Leviticus 6:23 - Burn the priestly grain offering completely.').
@@ -450,6 +467,8 @@ source_term(the_high_priest_must_not_enter_the_most_holy_place_at_any_time_but_a
 source_term(the_high_priest_must_not_enter_the_most_holy_place_at_any_time_but_according_t, hebrew, kapporeth, 'mercy seat or atonement cover; the object before which unauthorized entry is forbidden').
 study_note(the_high_priest_must_not_enter_the_most_holy_place_at_any_time_but_according_t, 'This command belongs to priestly and sanctuary service, where access, offerings, portions, and holiness are ordered by Torah: The high priest must not enter the Most Holy Place at any time, but according to Torah.').
 
+command_requirement(the_high_priest_must_not_enter_the_most_holy_place_at_any_time_but_according_t, 'High Priest').
+
 % Command: follow_the_day_of_atonement_sanctuary_service_procedure
 command(follow_the_day_of_atonement_sanctuary_service_procedure).
 command_title(follow_the_day_of_atonement_sanctuary_service_procedure, 'Leviticus 16 - Follow the Day of Atonement sanctuary service procedure.').
@@ -534,6 +553,8 @@ source_term(priests_must_be_holy_to_yhwh, hebrew, qadosh, 'holy or set apart; th
 source_term(priests_must_be_holy_to_yhwh, hebrew, lechem_elohim, 'bread/food of God; the offerings the priests present in their holy role').
 study_note(priests_must_be_holy_to_yhwh, 'This command belongs to priestly and sanctuary service, where access, offerings, portions, and holiness are ordered by Torah: Priests must be holy to YHWH.').
 
+command_requirement(priests_must_be_holy_to_yhwh, 'Priests').
+
 % Command: ordinary_priests_must_not_become_unclean_for_the_dead_except_close_relatives
 command(ordinary_priests_must_not_become_unclean_for_the_dead_except_close_relatives).
 command_title(ordinary_priests_must_not_become_unclean_for_the_dead_except_close_relatives, 'Leviticus 21:1-4 - Ordinary priests must not become unclean for the dead except close relatives.').
@@ -557,6 +578,8 @@ source_term(priests_must_not_marry_a_prostitute_profaned_woman_or_divorced_woman
 source_term(priests_must_not_marry_a_prostitute_profaned_woman_or_divorced_woman, hebrew, gerushah, 'divorced woman; one forbidden as a priestly wife').
 study_note(priests_must_not_marry_a_prostitute_profaned_woman_or_divorced_woman, 'This command belongs to priestly and sanctuary service, where access, offerings, portions, and holiness are ordered by Torah: Priests must not marry a prostitute, profaned woman, or divorced woman.').
 
+command_requirement(priests_must_not_marry_a_prostitute_profaned_woman_or_divorced_woman, 'Priests').
+
 % Command: the_high_priest_must_not_become_unclean_even_for_father_or_mother
 command(the_high_priest_must_not_become_unclean_even_for_father_or_mother).
 command_title(the_high_priest_must_not_become_unclean_even_for_father_or_mother, 'Leviticus 21:11 - The high priest must not become unclean even for father or mother.').
@@ -566,6 +589,8 @@ scripture_reference(the_high_priest_must_not_become_unclean_even_for_father_or_m
 source_term(the_high_priest_must_not_become_unclean_even_for_father_or_mother, hebrew, kohen_gadol, 'high priest or great priest; the stricter priestly role in view').
 source_term(the_high_priest_must_not_become_unclean_even_for_father_or_mother, hebrew, tame, 'to become unclean; the high priest must not incur corpse impurity even for parents').
 study_note(the_high_priest_must_not_become_unclean_even_for_father_or_mother, 'This command belongs to priestly and sanctuary service, where access, offerings, portions, and holiness are ordered by Torah: The high priest must not become unclean even for father or mother.').
+
+command_requirement(the_high_priest_must_not_become_unclean_even_for_father_or_mother, 'High Priest').
 
 % Command: the_high_priest_must_not_leave_the_sanctuary_in_the_stated_case
 command(the_high_priest_must_not_leave_the_sanctuary_in_the_stated_case).
@@ -577,6 +602,8 @@ source_term(the_high_priest_must_not_leave_the_sanctuary_in_the_stated_case, heb
 source_term(the_high_priest_must_not_leave_the_sanctuary_in_the_stated_case, hebrew, nezer, 'consecration or crown; the anointing consecration of his God is upon him').
 study_note(the_high_priest_must_not_leave_the_sanctuary_in_the_stated_case, 'This command belongs to priestly and sanctuary service, where access, offerings, portions, and holiness are ordered by Torah: The high priest must not leave the sanctuary in the stated case.').
 
+command_requirement(the_high_priest_must_not_leave_the_sanctuary_in_the_stated_case, 'High Priest').
+
 % Command: the_high_priest_must_marry_a_virgin_of_his_people
 command(the_high_priest_must_marry_a_virgin_of_his_people).
 command_title(the_high_priest_must_marry_a_virgin_of_his_people, 'Leviticus 21:13-14 - The high priest must marry a virgin of his people.').
@@ -586,6 +613,8 @@ scripture_reference(the_high_priest_must_marry_a_virgin_of_his_people, 'Leviticu
 source_term(the_high_priest_must_marry_a_virgin_of_his_people, hebrew, betulah, 'virgin; the required wife category for the high priest').
 source_term(the_high_priest_must_marry_a_virgin_of_his_people, hebrew, am, 'people; the wife is from his own people').
 study_note(the_high_priest_must_marry_a_virgin_of_his_people, 'This command belongs to priestly and sanctuary service, where access, offerings, portions, and holiness are ordered by Torah: The high priest must marry a virgin of his people.').
+
+command_requirement(the_high_priest_must_marry_a_virgin_of_his_people, 'High Priest').
 
 % Command: a_priest_with_listed_defect_must_not_approach_to_offer_bread
 command(a_priest_with_listed_defect_must_not_approach_to_offer_bread).
@@ -598,6 +627,8 @@ source_term(a_priest_with_listed_defect_must_not_approach_to_offer_bread, hebrew
 source_term(a_priest_with_listed_defect_must_not_approach_to_offer_bread, hebrew, lechem_elohim, 'bread/food of God; the offering service the priest with defect must not approach to present').
 study_note(a_priest_with_listed_defect_must_not_approach_to_offer_bread, 'This command belongs to priestly and sanctuary service, where access, offerings, portions, and holiness are ordered by Torah: A priest with listed defect must not approach to offer bread.').
 
+command_requirement(a_priest_with_listed_defect_must_not_approach_to_offer_bread, 'Priests').
+
 % Command: priests_who_are_unclean_must_not_eat_holy_things
 command(priests_who_are_unclean_must_not_eat_holy_things).
 command_title(priests_who_are_unclean_must_not_eat_holy_things, 'Leviticus 22:1-9 - Priests who are unclean must not eat holy things.').
@@ -607,6 +638,8 @@ scripture_reference(priests_who_are_unclean_must_not_eat_holy_things, 'Leviticus
 source_term(priests_who_are_unclean_must_not_eat_holy_things, hebrew, tame, 'unclean; the priestly state that bars eating holy things').
 source_term(priests_who_are_unclean_must_not_eat_holy_things, hebrew, qodesh, 'holy thing; the consecrated food the unclean priest must not eat').
 study_note(priests_who_are_unclean_must_not_eat_holy_things, 'This command belongs to priestly and sanctuary service, where access, offerings, portions, and holiness are ordered by Torah: Priests who are unclean must not eat holy things.').
+
+command_requirement(priests_who_are_unclean_must_not_eat_holy_things, 'Priests').
 
 % Command: no_layperson_may_eat_holy_food
 command(no_layperson_may_eat_holy_food).
@@ -669,6 +702,8 @@ source_term(levites_guard_the_tabernacle_service, hebrew, shamar, 'to guard, kee
 source_term(levites_guard_the_tabernacle_service, hebrew, avodah, 'service or work; the Levitical work of the tent').
 study_note(levites_guard_the_tabernacle_service, 'This command belongs to priestly and sanctuary service, where access, offerings, portions, and holiness are ordered by Torah: Levites guard the tabernacle service.').
 
+command_requirement(levites_guard_the_tabernacle_service, 'Levites').
+
 % Command: priests_guard_priesthood_service_and_altar_service
 command(priests_guard_priesthood_service_and_altar_service).
 command_title(priests_guard_priesthood_service_and_altar_service, 'Numbers 18:5-7 - Priests guard priesthood service and altar service.').
@@ -680,6 +715,8 @@ source_term(priests_guard_priesthood_service_and_altar_service, hebrew, kehunah,
 source_term(priests_guard_priesthood_service_and_altar_service, hebrew, mizbeach, 'altar; one of the priestly service boundaries').
 study_note(priests_guard_priesthood_service_and_altar_service, 'This command belongs to priestly and sanctuary service, where access, offerings, portions, and holiness are ordered by Torah: Priests guard priesthood service and altar service.').
 
+command_requirement(priests_guard_priesthood_service_and_altar_service, 'Priests').
+
 % Command: levites_receive_the_tithe_for_their_service
 command(levites_receive_the_tithe_for_their_service).
 command_title(levites_receive_the_tithe_for_their_service, 'Numbers 18:21-24 - Levites receive the tithe for their service.').
@@ -690,6 +727,8 @@ source_term(levites_receive_the_tithe_for_their_service, hebrew, maaser, 'tithe 
 source_term(levites_receive_the_tithe_for_their_service, hebrew, cheleq, 'portion or share; the tithe functions as the Levites'' portion').
 study_note(levites_receive_the_tithe_for_their_service, 'This command belongs to priestly and sanctuary service, where access, offerings, portions, and holiness are ordered by Torah: Levites receive the tithe for their service.').
 
+command_requirement(levites_receive_the_tithe_for_their_service, 'Levites').
+
 % Command: levites_give_a_tithe_from_the_tithe
 command(levites_give_a_tithe_from_the_tithe).
 command_title(levites_give_a_tithe_from_the_tithe, 'Numbers 18:26-32 - Levites give a tithe from the tithe.').
@@ -699,6 +738,8 @@ scripture_reference(levites_give_a_tithe_from_the_tithe, 'Numbers 18:26-32').
 source_term(levites_give_a_tithe_from_the_tithe, hebrew, maaser_min_hamaaser, 'tithe from the tithe; the portion Levites give from what they receive').
 source_term(levites_give_a_tithe_from_the_tithe, hebrew, terumah, 'contribution or offering lifted up; the Levites give YHWH''s contribution from the tithe').
 study_note(levites_give_a_tithe_from_the_tithe, 'This command belongs to priestly and sanctuary service, where access, offerings, portions, and holiness are ordered by Torah: Levites give a tithe from the tithe.').
+
+command_requirement(levites_give_a_tithe_from_the_tithe, 'Levites').
 
 % -----------------------------------------------------------------------------
 % Source Term Supplements For Priestly And Sanctuary Commands

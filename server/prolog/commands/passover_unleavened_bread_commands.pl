@@ -134,6 +134,8 @@ source_term(passover_participation_boundary, hebrew, aral, 'uncircumcised; Exodu
 source_term(passover_participation_boundary, hebrew, ger, 'sojourner or stranger who may participate when brought under the covenant sign named in the passage').
 study_note(passover_participation_boundary, 'The Passover meal includes covenant participation boundaries in the Torah text.').
 
+command_requirement(passover_participation_boundary, 'Uncircumcised excluded').
+
 % Command: remove_leaven
 command(remove_leaven).
 command_title(remove_leaven, 'Exo 12:15 - Remove leaven.').
@@ -335,6 +337,8 @@ source_term(no_uncircumcised_male_may_eat_the_passover, hebrew, aral, 'uncircumc
 source_term(no_uncircumcised_male_may_eat_the_passover, hebrew, zakar, 'male; the covenant-sign condition is stated for males in Exodus 12:48').
 study_note(no_uncircumcised_male_may_eat_the_passover, 'This command preserves Passover as a memorial of deliverance and keeps its details tied to the written Torah: No uncircumcised male may eat the Passover.').
 
+command_requirement(no_uncircumcised_male_may_eat_the_passover, 'Uncircumcised excluded').
+
 % Command: no_foreigner_may_eat_the_passover_unless_joined_under_the_stated_covenant_sign
 command(no_foreigner_may_eat_the_passover_unless_joined_under_the_stated_covenant_sign).
 command_title(no_foreigner_may_eat_the_passover_unless_joined_under_the_stated_covenant_sign, 'Exodus 12:43-49 - No foreigner may eat the Passover unless joined under the stated covenant sign.').
@@ -345,6 +349,8 @@ story_reference(no_foreigner_may_eat_the_passover_unless_joined_under_the_stated
 source_term(no_foreigner_may_eat_the_passover_unless_joined_under_the_stated_covenant_sign, hebrew, nekar, 'foreigner or foreigner-status person excluded from eating Passover').
 source_term(no_foreigner_may_eat_the_passover_unless_joined_under_the_stated_covenant_sign, hebrew, ger, 'sojourner who may keep Passover when circumcised according to the passage').
 study_note(no_foreigner_may_eat_the_passover_unless_joined_under_the_stated_covenant_sign, 'This command preserves Passover as a memorial of deliverance and keeps its details tied to the written Torah: No foreigner may eat the Passover unless joined under the stated covenant sign.').
+
+command_requirement(no_foreigner_may_eat_the_passover_unless_joined_under_the_stated_covenant_sign, 'Foreigner excluded unless circumcised').
 
 % Command: do_not_break_a_bone_of_the_passover_lamb
 command(do_not_break_a_bone_of_the_passover_lamb).
@@ -388,6 +394,8 @@ source_term(keep_passover_in_the_second_month_if_unclean_by_corpse_or_on_a_dista
 source_term(keep_passover_in_the_second_month_if_unclean_by_corpse_or_on_a_distant_journey, hebrew, nephesh, 'person or dead body in this context; Numbers 9 concerns impurity by a dead person').
 source_term(keep_passover_in_the_second_month_if_unclean_by_corpse_or_on_a_distant_journey, hebrew, derek, 'road, way, or journey; the provision includes one on a distant journey').
 study_note(keep_passover_in_the_second_month_if_unclean_by_corpse_or_on_a_distant_journey, 'This command preserves Passover as a memorial of deliverance and keeps its details tied to the written Torah: Keep Passover in the second month if unclean by corpse or on a distant journey.').
+
+command_requirement(keep_passover_in_the_second_month_if_unclean_by_corpse_or_on_a_distant_journey, 'Unclean or on a journey').
 
 % Command: do_not_leave_second_passover_until_morning
 command(do_not_leave_second_passover_until_morning).

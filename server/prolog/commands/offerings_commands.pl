@@ -65,6 +65,8 @@ concerns(sabbath_offerings, sabbath_rest).
 scripture_reference(sabbath_offerings, 'Numbers 28:9-10').
 story_reference(sabbath_offerings, '2 Chronicles 8:12-13', 'Solomon offers according to the daily, Sabbath, new moon, and feast appointments.').
 study_note(sabbath_offerings, 'The Sabbath offering belongs to the appointed rhythm of Sabbath.').
+command_requirement(sabbath_offerings, 'Priests').
+command_requirement(sabbath_offerings, 'Temple or Tabernacle').
 
 % Command: monthly_offerings
 command(monthly_offerings).
@@ -86,6 +88,8 @@ concerns(passover_unleavened_bread_offerings, passover_memorial).
 scripture_reference(passover_unleavened_bread_offerings, 'Numbers 28:16-25').
 story_reference(passover_unleavened_bread_offerings, '2 Chronicles 35:10-16', 'Josiah''s Passover service is prepared according to the command.').
 study_note(passover_unleavened_bread_offerings, 'Numbers records the offering pattern attached to the feast days.').
+command_requirement(passover_unleavened_bread_offerings, 'Priests').
+command_requirement(passover_unleavened_bread_offerings, 'Temple or Tabernacle').
 
 % Command: firstfruits_shavuot_offerings
 command(firstfruits_shavuot_offerings).
@@ -95,6 +99,8 @@ concerns(firstfruits_shavuot_offerings, firstfruits_and_counting).
 scripture_reference(firstfruits_shavuot_offerings, 'Numbers 28:26-31').
 story_reference(firstfruits_shavuot_offerings, '2 Chronicles 8:12-13', 'Solomon offers according to the appointed feasts, including the Feast of Weeks.').
 study_note(firstfruits_shavuot_offerings, 'The offering command accompanies the completion of the count.').
+command_requirement(firstfruits_shavuot_offerings, 'Priests').
+command_requirement(firstfruits_shavuot_offerings, 'Temple or Tabernacle').
 
 % Command: trumpets_offerings
 command(trumpets_offerings).
@@ -104,6 +110,8 @@ concerns(trumpets_offerings, appointed_times).
 scripture_reference(trumpets_offerings, 'Numbers 29:1-6').
 story_reference(trumpets_offerings, 'Ezra 3:5', 'The returned exiles offer for new moons and all appointed feasts of YHWH.').
 study_note(trumpets_offerings, 'The offerings sit alongside the memorial of blowing.').
+command_requirement(trumpets_offerings, 'Priests').
+command_requirement(trumpets_offerings, 'Temple or Tabernacle').
 
 % Command: atonement_offerings
 command(atonement_offerings).
@@ -113,6 +121,8 @@ concerns(atonement_offerings, atonement_rest).
 scripture_reference(atonement_offerings, 'Numbers 29:7-11').
 story_reference(atonement_offerings, 'Leviticus 16:1-34', 'After the death of Aaron''s sons, YHWH gives the Day of Atonement service and offering order.').
 study_note(atonement_offerings, 'The offering pattern is connected to the solemn appointed day.').
+command_requirement(atonement_offerings, 'Priests').
+command_requirement(atonement_offerings, 'Temple or Tabernacle').
 
 % Command: tabernacles_offerings
 command(tabernacles_offerings).
@@ -122,6 +132,8 @@ concerns(tabernacles_offerings, tabernacles_rejoicing).
 scripture_reference(tabernacles_offerings, 'Numbers 29:12-40').
 story_reference(tabernacles_offerings, 'Ezra 3:4', 'The returned exiles keep Booths as written and offer the daily burnt offerings by number according to the ordinance.').
 study_note(tabernacles_offerings, 'Numbers records the offering sequence across Booths and the eighth day.').
+command_requirement(tabernacles_offerings, 'Priests').
+command_requirement(tabernacles_offerings, 'Temple or Tabernacle').
 
 % -----------------------------------------------------------------------------
 % Source Term Supplements For Offering Summary Commands

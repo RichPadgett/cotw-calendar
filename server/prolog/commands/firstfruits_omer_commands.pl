@@ -66,6 +66,8 @@ source_term(wave_firstfruits_sheaf, hebrew, nuph, 'to wave or move to and fro; t
 source_term(wave_firstfruits_sheaf, hebrew, omer, 'sheaf or measured bundle; the item waved in Leviticus 23').
 study_note(wave_firstfruits_sheaf, 'The wave sheaf marks acceptance and begins the appointed count.').
 
+command_requirement(wave_firstfruits_sheaf, 'Priests').
+
 % Command: do_not_eat_new_grain_before_offering
 command(do_not_eat_new_grain_before_offering).
 command_title(do_not_eat_new_grain_before_offering, 'Lev 23:14 - Do not eat new grain before the offering.').

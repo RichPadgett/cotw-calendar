@@ -373,6 +373,8 @@ concerns(sotah_bitter_water_procedure, marriage_household_procedure).
 scripture_reference(sotah_bitter_water_procedure, 'Numbers 5:11-31').
 study_note(sotah_bitter_water_procedure, 'This is a priestly/court-adjacent procedure tied to the specific jealousy case in Numbers 5.').
 
+command_requirement(sotah_bitter_water_procedure, 'Priests').
+
 % Command: priestly_blessing
 command(priestly_blessing).
 command_title(priestly_blessing, 'Num 6:22-27 - Priests bless Israel with YHWH''s words.').
@@ -382,6 +384,8 @@ scripture_reference(priestly_blessing, 'Numbers 6:22-27').
 story_reference(priestly_blessing, 'Leviticus 9:22', 'Aaron lifts his hands toward the people and blesses them after the offerings.').
 story_reference(priestly_blessing, '2 Chronicles 30:27', 'The priests and Levites bless the people, and their voice is heard.').
 study_note(priestly_blessing, 'The blessing wording is given directly in Torah and belongs to priestly service.').
+
+command_requirement(priestly_blessing, 'Priests').
 
 % -----------------------------------------------------------------------------
 % Additional Text-Specific Commands

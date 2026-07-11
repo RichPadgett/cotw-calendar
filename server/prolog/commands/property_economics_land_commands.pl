@@ -95,6 +95,8 @@ source_term(pay_wages_on_time, hebrew, sakir, 'a hired worker or wage laborer, o
 source_term(pay_wages_on_time, hebrew, peullah, 'wages, work, or recompense owed for labor').
 study_note(pay_wages_on_time, 'The command protects workers from delayed pay.').
 
+command_requirement(pay_wages_on_time, 'Employers').
+
 % Command: return_lost_property
 command(return_lost_property).
 command_title(return_lost_property, 'Deu 22:1-3 - Return lost property.').
@@ -477,6 +479,8 @@ source_term(pay_for_borrowed_animal_loss_when_torah_assigns_responsibility, hebr
 source_term(pay_for_borrowed_animal_loss_when_torah_assigns_responsibility, hebrew, shalam, 'to repay or make restitution when Torah assigns the loss to the borrower').
 study_note(pay_for_borrowed_animal_loss_when_torah_assigns_responsibility, 'This command assigns responsibility for loss or damage and turns wrongdoing toward restitution where Torah requires it: Pay for borrowed animal loss when Torah assigns responsibility.').
 
+command_requirement(pay_for_borrowed_animal_loss_when_torah_assigns_responsibility, 'Borrowers').
+
 % Command: handle_entrusted_property_loss_according_to_torah
 command(handle_entrusted_property_loss_according_to_torah).
 command_title(handle_entrusted_property_loss_according_to_torah, 'Exodus 22:7-13 - Handle entrusted property loss according to Torah.').
@@ -486,6 +490,8 @@ scripture_reference(handle_entrusted_property_loss_according_to_torah, 'Exodus 2
 source_term(handle_entrusted_property_loss_according_to_torah, hebrew, shamar, 'to keep, guard, or watch; entrusted property is placed under another person''s care').
 source_term(handle_entrusted_property_loss_according_to_torah, hebrew, piqqadon, 'deposit or entrusted item held by another person').
 study_note(handle_entrusted_property_loss_according_to_torah, 'This command assigns responsibility for loss or damage and turns wrongdoing toward restitution where Torah requires it: Handle entrusted property loss according to Torah.').
+
+command_requirement(handle_entrusted_property_loss_according_to_torah, 'Keepers, Bailees').
 
 % Command: do_not_oppress_your_neighbor
 command(do_not_oppress_your_neighbor).
@@ -519,6 +525,8 @@ source_term(do_not_keep_a_hired_worker_s_wages_overnight, hebrew, lun, 'to lodge
 source_term(do_not_keep_a_hired_worker_s_wages_overnight, hebrew, peullah, 'wages, work, or recompense owed for labor').
 study_note(do_not_keep_a_hired_worker_s_wages_overnight, 'This command assigns responsibility for loss or damage and turns wrongdoing toward restitution where Torah requires it: Do not keep a hired worker''s wages overnight.').
 
+command_requirement(do_not_keep_a_hired_worker_s_wages_overnight, 'Employers').
+
 % Command: pay_a_poor_hired_worker_the_same_day
 command(pay_a_poor_hired_worker_the_same_day).
 command_title(pay_a_poor_hired_worker_the_same_day, 'Deuteronomy 24:14-15 - Pay a poor hired worker the same day.').
@@ -529,6 +537,8 @@ story_reference(pay_a_poor_hired_worker_the_same_day, 'Jeremiah 22:13', 'The pro
 source_term(pay_a_poor_hired_worker_the_same_day, hebrew, sakir, 'a hired worker or wage laborer').
 source_term(pay_a_poor_hired_worker_the_same_day, hebrew, evyon, 'needy or poor; the worker is vulnerable to delayed wages').
 study_note(pay_a_poor_hired_worker_the_same_day, 'This command assigns responsibility for loss or damage and turns wrongdoing toward restitution where Torah requires it: Pay a poor hired worker the same day.').
+
+command_requirement(pay_a_poor_hired_worker_the_same_day, 'Employers').
 
 % Command: do_not_charge_interest_to_your_brother
 command(do_not_charge_interest_to_your_brother).
@@ -542,6 +552,8 @@ source_term(do_not_charge_interest_to_your_brother, hebrew, neshek, 'interest or
 source_term(do_not_charge_interest_to_your_brother, hebrew, tarbit, 'increase or profit taken from a loan').
 study_note(do_not_charge_interest_to_your_brother, 'This command assigns responsibility for loss or damage and turns wrongdoing toward restitution where Torah requires it: Do not charge interest to your brother.').
 
+command_requirement(do_not_charge_interest_to_your_brother, 'Lenders').
+
 % Command: you_may_charge_interest_to_a_foreigner_as_stated
 command(you_may_charge_interest_to_a_foreigner_as_stated).
 command_title(you_may_charge_interest_to_a_foreigner_as_stated, 'Deuteronomy 23:20 - You may charge interest to a foreigner as stated.').
@@ -551,6 +563,8 @@ scripture_reference(you_may_charge_interest_to_a_foreigner_as_stated, 'Deuterono
 source_term(you_may_charge_interest_to_a_foreigner_as_stated, hebrew, nokri, 'foreigner or outsider in contrast with brother in the interest laws').
 source_term(you_may_charge_interest_to_a_foreigner_as_stated, hebrew, nashak, 'to lend on interest or charge interest').
 study_note(you_may_charge_interest_to_a_foreigner_as_stated, 'This command assigns responsibility for loss or damage and turns wrongdoing toward restitution where Torah requires it: You may charge interest to a foreigner as stated.').
+
+command_requirement(you_may_charge_interest_to_a_foreigner_as_stated, 'Lenders').
 
 % Command: do_not_take_a_widow_s_garment_in_pledge
 command(do_not_take_a_widow_s_garment_in_pledge).
@@ -563,6 +577,8 @@ source_term(do_not_take_a_widow_s_garment_in_pledge, hebrew, almanah, 'widow; th
 source_term(do_not_take_a_widow_s_garment_in_pledge, hebrew, beged, 'garment or covering, here a prohibited item to take as pledge from a widow').
 study_note(do_not_take_a_widow_s_garment_in_pledge, 'This command assigns responsibility for loss or damage and turns wrongdoing toward restitution where Torah requires it: Do not take a widow''s garment in pledge.').
 
+command_requirement(do_not_take_a_widow_s_garment_in_pledge, 'Lenders').
+
 % Command: do_not_enter_a_borrower_s_house_to_take_a_pledge
 command(do_not_enter_a_borrower_s_house_to_take_a_pledge).
 command_title(do_not_enter_a_borrower_s_house_to_take_a_pledge, 'Deuteronomy 24:10-11 - Do not enter a borrower''s house to take a pledge.').
@@ -573,6 +589,8 @@ story_reference(do_not_enter_a_borrower_s_house_to_take_a_pledge, 'Nehemiah 5:1-
 source_term(do_not_enter_a_borrower_s_house_to_take_a_pledge, hebrew, mashshah, 'loan or debt; the borrower is approached as a debtor, but his house boundary remains protected').
 source_term(do_not_enter_a_borrower_s_house_to_take_a_pledge, hebrew, avot, 'pledge or security taken for a loan').
 study_note(do_not_enter_a_borrower_s_house_to_take_a_pledge, 'This command assigns responsibility for loss or damage and turns wrongdoing toward restitution where Torah requires it: Do not enter a borrower''s house to take a pledge.').
+
+command_requirement(do_not_enter_a_borrower_s_house_to_take_a_pledge, 'Lenders').
 
 % Command: return_a_poor_man_s_pledge_by_sunset
 command(return_a_poor_man_s_pledge_by_sunset).
@@ -586,6 +604,8 @@ source_term(return_a_poor_man_s_pledge_by_sunset, hebrew, chabal, 'to take as a 
 source_term(return_a_poor_man_s_pledge_by_sunset, hebrew, salmah, 'outer garment or cloak; in context it may be the poor man''s only covering at night').
 source_term(return_a_poor_man_s_pledge_by_sunset, hebrew, shemesh, 'sun; the pledge is returned before the sun goes down').
 study_note(return_a_poor_man_s_pledge_by_sunset, 'This command assigns responsibility for loss or damage and turns wrongdoing toward restitution where Torah requires it: Return a poor man''s pledge by sunset.').
+
+command_requirement(return_a_poor_man_s_pledge_by_sunset, 'Lenders').
 
 % Command: do_not_take_both_millstones_or_the_upper_millstone_as_pledge
 command(do_not_take_both_millstones_or_the_upper_millstone_as_pledge).

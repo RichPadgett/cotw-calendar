@@ -165,6 +165,8 @@ source_term(judges_must_judge_righteously, hebrew, tsedeq, 'righteousness, justi
 source_term(judges_must_judge_righteously, hebrew, mishpat, 'judgment, justice, or legal decision').
 study_note(judges_must_judge_righteously, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Judges must judge righteously.').
 
+command_requirement(judges_must_judge_righteously, 'Judges').
+
 % Command: do_not_show_partiality_in_judgment
 command(do_not_show_partiality_in_judgment).
 command_title(do_not_show_partiality_in_judgment, 'Leviticus 19:15 - Do not show partiality in judgment.').
@@ -188,6 +190,8 @@ study_note(do_not_fear_man_in_judgment, 'This command guards public justice by r
 source_term(do_not_fear_man_in_judgment, hebrew, gur, 'fear, be afraid, shrink back').
 source_term(do_not_fear_man_in_judgment, hebrew, ish, 'man, person').
 source_term(do_not_fear_man_in_judgment, hebrew, mishpat, 'judgment, justice, legal case').
+
+command_requirement(do_not_fear_man_in_judgment, 'Judges').
 
 % Command: do_not_take_a_bribe
 command(do_not_take_a_bribe).

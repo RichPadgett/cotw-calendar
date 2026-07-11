@@ -268,6 +268,8 @@ source_term(appear_before_yhwh_at_the_three_pilgrimage_feasts, hebrew, raah, 'to
 source_term(appear_before_yhwh_at_the_three_pilgrimage_feasts, hebrew, shalosh_regalim, 'three pilgrimage times or three feet; the three annual appearing feasts').
 study_note(appear_before_yhwh_at_the_three_pilgrimage_feasts, 'This command anchors appointed time practice in the dates and rhythms given by Torah: Appear before YHWH at the three pilgrimage feasts.').
 
+command_requirement(appear_before_yhwh_at_the_three_pilgrimage_feasts, 'Men').
+
 % Command: do_not_appear_before_yhwh_empty_handed_at_the_pilgrimage_feasts
 command(do_not_appear_before_yhwh_empty_handed_at_the_pilgrimage_feasts).
 command_title(do_not_appear_before_yhwh_empty_handed_at_the_pilgrimage_feasts, 'Deuteronomy 16:16-17 - Do not appear before YHWH empty-handed at the pilgrimage feasts.').
@@ -277,3 +279,5 @@ scripture_reference(do_not_appear_before_yhwh_empty_handed_at_the_pilgrimage_fea
 source_term(do_not_appear_before_yhwh_empty_handed_at_the_pilgrimage_feasts, hebrew, reyqam, 'empty-handed or in vain; the pilgrim must not appear before YHWH empty-handed').
 source_term(do_not_appear_before_yhwh_empty_handed_at_the_pilgrimage_feasts, hebrew, mattanah, 'gift; each brings according to YHWH''s blessing').
 study_note(do_not_appear_before_yhwh_empty_handed_at_the_pilgrimage_feasts, 'This command anchors appointed time practice in the dates and rhythms given by Torah: Do not appear before YHWH empty-handed at the pilgrimage feasts.').
+
+command_requirement(do_not_appear_before_yhwh_empty_handed_at_the_pilgrimage_feasts, 'Men').

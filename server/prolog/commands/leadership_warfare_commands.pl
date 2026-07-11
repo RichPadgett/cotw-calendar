@@ -67,6 +67,8 @@ source_term(king_write_torah_copy, hebrew, mishneh, 'copy or duplicate; the king
 source_term(king_write_torah_copy, hebrew, torah, 'instruction or law; the written standard placed over the king').
 study_note(king_write_torah_copy, 'The king is placed under Torah, not above it.').
 
+command_requirement(king_write_torah_copy, 'King').
+
 % Command: king_do_not_multiply_horses_wives_wealth
 command(king_do_not_multiply_horses_wives_wealth).
 command_title(king_do_not_multiply_horses_wives_wealth, 'Deu 17:16-17 - King must not multiply horses, wives, or wealth.').
@@ -80,6 +82,8 @@ source_term(king_do_not_multiply_horses_wives_wealth, hebrew, ishshah, 'wife or 
 source_term(king_do_not_multiply_horses_wives_wealth, hebrew, kesef_zahav, 'silver and gold; wealth the king must not greatly multiply for himself').
 study_note(king_do_not_multiply_horses_wives_wealth, 'Torah limits royal power and temptation.').
 
+command_requirement(king_do_not_multiply_horses_wives_wealth, 'King').
+
 % Command: do_not_return_to_egypt_for_horses
 command(do_not_return_to_egypt_for_horses).
 command_title(do_not_return_to_egypt_for_horses, 'Deu 17:16 - Do not return to Egypt for horses.').
@@ -90,6 +94,8 @@ story_reference(do_not_return_to_egypt_for_horses, '1 Kings 10:28-29', 'Solomon 
 source_term(do_not_return_to_egypt_for_horses, hebrew, shuv, 'to return or turn back; the king must not cause a return toward Egypt for horses').
 source_term(do_not_return_to_egypt_for_horses, hebrew, mitsrayim, 'Egypt; the place of former bondage named in the royal warning').
 study_note(do_not_return_to_egypt_for_horses, 'The command warns against returning to Egypt-like dependence.').
+
+command_requirement(do_not_return_to_egypt_for_horses, 'King').
 
 % Command: offer_peace_before_war
 command(offer_peace_before_war).
@@ -148,6 +154,8 @@ source_term(appoint_a_king_only_as_torah_allows, hebrew, melek, 'king; the offic
 source_term(appoint_a_king_only_as_torah_allows, hebrew, bachar, 'to choose; the king must be one whom YHWH chooses').
 study_note(appoint_a_king_only_as_torah_allows, 'This command places leaders, kings, courts, and military action under Torah rather than personal power: Appoint a king only as Torah allows.').
 
+command_requirement(appoint_a_king_only_as_torah_allows, 'Israel').
+
 % Command: do_not_appoint_a_foreigner_as_king_over_israel
 command(do_not_appoint_a_foreigner_as_king_over_israel).
 command_title(do_not_appoint_a_foreigner_as_king_over_israel, 'Deuteronomy 17:15 - Do not appoint a foreigner as king over Israel.').
@@ -158,6 +166,8 @@ story_reference(do_not_appoint_a_foreigner_as_king_over_israel, '1 Samuel 10:20-
 source_term(do_not_appoint_a_foreigner_as_king_over_israel, hebrew, nokri, 'foreigner or outsider; one who must not be set as king over Israel').
 source_term(do_not_appoint_a_foreigner_as_king_over_israel, hebrew, ach, 'brother or kinsman; the king is to be from among Israel''s brothers').
 study_note(do_not_appoint_a_foreigner_as_king_over_israel, 'This command places leaders, kings, courts, and military action under Torah rather than personal power: Do not appoint a foreigner as king over Israel.').
+
+command_requirement(do_not_appoint_a_foreigner_as_king_over_israel, 'Israel').
 
 % Command: king_must_not_multiply_horses
 command(king_must_not_multiply_horses).
@@ -170,6 +180,8 @@ source_term(king_must_not_multiply_horses, hebrew, rabah, 'to multiply or increa
 source_term(king_must_not_multiply_horses, hebrew, sus, 'horse; the military resource restricted for the king').
 study_note(king_must_not_multiply_horses, 'This command places leaders, kings, courts, and military action under Torah rather than personal power: King must not multiply horses.').
 
+command_requirement(king_must_not_multiply_horses, 'King').
+
 % Command: king_must_not_cause_the_people_to_return_to_egypt_for_horses
 command(king_must_not_cause_the_people_to_return_to_egypt_for_horses).
 command_title(king_must_not_cause_the_people_to_return_to_egypt_for_horses, 'Deuteronomy 17:16 - King must not cause the people to return to Egypt for horses.').
@@ -180,6 +192,8 @@ story_reference(king_must_not_cause_the_people_to_return_to_egypt_for_horses, '1
 source_term(king_must_not_cause_the_people_to_return_to_egypt_for_horses, hebrew, shuv, 'to return or turn back; the king must not cause the people to return toward Egypt').
 source_term(king_must_not_cause_the_people_to_return_to_egypt_for_horses, hebrew, mitsrayim, 'Egypt; named as the forbidden direction of royal dependence for horses').
 study_note(king_must_not_cause_the_people_to_return_to_egypt_for_horses, 'This command places leaders, kings, courts, and military action under Torah rather than personal power: King must not cause the people to return to Egypt for horses.').
+
+command_requirement(king_must_not_cause_the_people_to_return_to_egypt_for_horses, 'King').
 
 % Command: king_must_not_multiply_wives
 command(king_must_not_multiply_wives).
@@ -192,6 +206,8 @@ source_term(king_must_not_multiply_wives, hebrew, ishshah, 'wife or woman; the k
 source_term(king_must_not_multiply_wives, hebrew, levav, 'heart; Deuteronomy warns that multiplied wives will turn the king''s heart aside').
 study_note(king_must_not_multiply_wives, 'This command places leaders, kings, courts, and military action under Torah rather than personal power: King must not multiply wives.').
 
+command_requirement(king_must_not_multiply_wives, 'King').
+
 % Command: king_must_not_greatly_multiply_silver_and_gold
 command(king_must_not_greatly_multiply_silver_and_gold).
 command_title(king_must_not_greatly_multiply_silver_and_gold, 'Deuteronomy 17:17 - King must not greatly multiply silver and gold.').
@@ -202,6 +218,8 @@ story_reference(king_must_not_greatly_multiply_silver_and_gold, '1 Kings 10:14-2
 source_term(king_must_not_greatly_multiply_silver_and_gold, hebrew, kesef, 'silver; royal wealth the king must not multiply greatly for himself').
 source_term(king_must_not_greatly_multiply_silver_and_gold, hebrew, zahav, 'gold; royal wealth the king must not multiply greatly for himself').
 study_note(king_must_not_greatly_multiply_silver_and_gold, 'This command places leaders, kings, courts, and military action under Torah rather than personal power: King must not greatly multiply silver and gold.').
+
+command_requirement(king_must_not_greatly_multiply_silver_and_gold, 'King').
 
 % Command: king_must_write_a_torah_copy
 command(king_must_write_a_torah_copy).
@@ -214,6 +232,8 @@ source_term(king_must_write_a_torah_copy, hebrew, kathab, 'to write; the king wr
 source_term(king_must_write_a_torah_copy, hebrew, mishneh_torah, 'copy of the Torah or duplicate instruction placed before the king').
 study_note(king_must_write_a_torah_copy, 'This command places leaders, kings, courts, and military action under Torah rather than personal power: King must write a Torah copy.').
 
+command_requirement(king_must_write_a_torah_copy, 'King').
+
 % Command: king_must_read_torah_all_his_days
 command(king_must_read_torah_all_his_days).
 command_title(king_must_read_torah_all_his_days, 'Deuteronomy 17:19 - King must read Torah all his days.').
@@ -224,6 +244,8 @@ story_reference(king_must_read_torah_all_his_days, '2 Kings 23:1-3', 'Josiah rea
 source_term(king_must_read_torah_all_his_days, hebrew, qara, 'to read or call aloud; the king reads Torah all his days').
 source_term(king_must_read_torah_all_his_days, hebrew, yare, 'to fear or revere; reading Torah teaches the king to fear YHWH').
 study_note(king_must_read_torah_all_his_days, 'This command places leaders, kings, courts, and military action under Torah rather than personal power: King must read Torah all his days.').
+
+command_requirement(king_must_read_torah_all_his_days, 'King').
 
 % Command: offer_peace_to_a_city_before_fighting
 command(offer_peace_to_a_city_before_fighting).
