@@ -27,7 +27,102 @@ type CommandSummary = {
   key: string;
   title: string;
   categories?: string[];
+  embodies?: string[];
+  facts?: string[];
+  hasRequirements?: "true" | "false";
+  hasStudyNotes?: "true" | "false";
+  hasSourceTerms?: "true" | "false";
+  hasStoryReferences?: "true" | "false";
+  hasNonCanonicalStoryReferences?: "true" | "false";
+  hasTranslationNotes?: "true" | "false";
+  hasClarificationNotes?: "true" | "false";
 };
+
+type CommandFilterState = boolean | null;
+
+type CommandFilterKey =
+  | "lovesGod"
+  | "lovesNeighbor"
+  | "hasRequirements"
+  | "hasStudyNotes"
+  | "hasSourceTerms"
+  | "hasStoryReferences"
+  | "hasNonCanonicalStoryReferences";
+
+const COMMAND_FILTER_DEFINITIONS: {
+  key: CommandFilterKey;
+  label: string;
+  test: (command: CommandSummary) => boolean;
+}[] = [
+  {
+    key: "lovesGod",
+    label: "Love YHWH",
+    test: (command) => (command.embodies ?? []).includes("love_god"),
+  },
+  {
+    key: "lovesNeighbor",
+    label: "Love Neighbor",
+    test: (command) => (command.embodies ?? []).includes("love_neighbor"),
+  },
+  {
+    key: "hasRequirements",
+    label: "Has Requirements",
+    test: (command) => command.hasRequirements === "true",
+  },
+  {
+    key: "hasStudyNotes",
+    label: "Has Study Notes",
+    test: (command) => command.hasStudyNotes === "true",
+  },
+  {
+    key: "hasSourceTerms",
+    label: "Has Source Terms",
+    test: (command) => command.hasSourceTerms === "true",
+  },
+  {
+    key: "hasStoryReferences",
+    label: "Has Scripture Examples",
+    test: (command) => command.hasStoryReferences === "true",
+  },
+  {
+    key: "hasNonCanonicalStoryReferences",
+    label: "Has Ancient Writings",
+    test: (command) => command.hasNonCanonicalStoryReferences === "true",
+  },
+];
+
+function createEmptyCommandFilters(): Record<CommandFilterKey, CommandFilterState> {
+  return {
+    lovesGod: null,
+    lovesNeighbor: null,
+    hasRequirements: null,
+    hasStudyNotes: null,
+    hasSourceTerms: null,
+    hasStoryReferences: null,
+    hasNonCanonicalStoryReferences: null,
+  };
+}
+
+function cycleCommandFilterState(
+  current: CommandFilterState
+): CommandFilterState {
+  if (current === null) return true;
+  if (current === true) return false;
+  return null;
+}
+
+function commandPassesFilters(
+  command: CommandSummary,
+  filters: Record<CommandFilterKey, CommandFilterState>
+): boolean {
+  return COMMAND_FILTER_DEFINITIONS.every(({ key, test }) => {
+    const desired = filters[key];
+
+    if (desired === null) return true;
+
+    return test(command) === desired;
+  });
+}
 
 type CommandCategoryGroup = {
   key: string;
@@ -298,22 +393,31 @@ export default function CommandExplorerView({
   }, [canContribute]);
 
   const normalizedSearch = searchText.trim().toLowerCase();
+  const [isCommandFilterMenuOpen, setIsCommandFilterMenuOpen] = useState(false);
+  const [commandFilters, setCommandFilters] = useState(
+    createEmptyCommandFilters
+  );
+  const activeCommandFilterCount = Object.values(commandFilters).filter(
+    (value) => value !== null
+  ).length;
 
   const visibleGroups = useMemo(() => {
-    if (!normalizedSearch) return categoryGroups;
-
     return categoryGroups
       .map((group) => ({
         ...group,
-        commands: group.commands.filter((item) =>
-          [item.title, item.key, group.key, ...(item.categories ?? [])]
-            .join(" ")
-            .toLowerCase()
-            .includes(normalizedSearch)
-        ),
+        commands: group.commands
+          .filter(
+            (item) =>
+              !normalizedSearch ||
+              [item.title, item.key, group.key, ...(item.categories ?? [])]
+                .join(" ")
+                .toLowerCase()
+                .includes(normalizedSearch)
+          )
+          .filter((item) => commandPassesFilters(item, commandFilters)),
       }))
       .filter((group) => group.commands.length > 0);
-  }, [categoryGroups, normalizedSearch]);
+  }, [categoryGroups, normalizedSearch, commandFilters]);
 
   const commandCount = useMemo(
     () =>
@@ -1290,6 +1394,22 @@ export default function CommandExplorerView({
               </View>
             )}
 
+            <CommandFilterMenu
+              isOpen={isCommandFilterMenuOpen}
+              filters={commandFilters}
+              activeCount={activeCommandFilterCount}
+              onToggleOpen={() =>
+                setIsCommandFilterMenuOpen((current) => !current)
+              }
+              onCycleFilter={(key) =>
+                setCommandFilters((current) => ({
+                  ...current,
+                  [key]: cycleCommandFilterState(current[key]),
+                }))
+              }
+              onClearFilters={() => setCommandFilters(createEmptyCommandFilters())}
+            />
+
             {isLoading ? (
               <Text style={styles.mutedText}>Loading commands...</Text>
             ) : visibleGroups.length === 0 ? (
@@ -1382,6 +1502,89 @@ function PaneScroll({
     >
       {children}
     </ScrollView>
+  );
+}
+
+function CommandFilterMenu({
+  isOpen,
+  filters,
+  activeCount,
+  onToggleOpen,
+  onCycleFilter,
+  onClearFilters,
+}: {
+  isOpen: boolean;
+  filters: Record<CommandFilterKey, CommandFilterState>;
+  activeCount: number;
+  onToggleOpen: () => void;
+  onCycleFilter: (key: CommandFilterKey) => void;
+  onClearFilters: () => void;
+}) {
+  return (
+    <View style={styles.filterMenuContainer}>
+      <Pressable
+        onPress={onToggleOpen}
+        style={({ pressed }) => [
+          styles.filterMenuToggle,
+          pressed && { opacity: 0.8 },
+        ]}
+      >
+        <Text style={styles.filterMenuToggleText}>
+          Filters{activeCount > 0 ? ` (${activeCount})` : ""}
+        </Text>
+        <MaterialIcons
+          name={isOpen ? "expand-less" : "expand-more"}
+          size={18}
+          color="#334155"
+        />
+      </Pressable>
+
+      {isOpen ? (
+        <View style={styles.filterMenuPanel}>
+          <Text style={styles.filterMenuHelpText}>
+            Tap a filter to require it (✓), tap again to exclude it (✗), tap
+            again to ignore it. Use these to find commands that still need
+            more study.
+          </Text>
+
+          <View style={styles.filterMenuChipRow}>
+            {COMMAND_FILTER_DEFINITIONS.map(({ key, label }) => {
+              const state = filters[key];
+              const chipStyle =
+                state === true
+                  ? styles.filterChipOn
+                  : state === false
+                    ? styles.filterChipOff
+                    : styles.filterChipNeutral;
+              const marker = state === true ? "✓" : state === false ? "✗" : "";
+
+              return (
+                <Pressable
+                  key={key}
+                  onPress={() => onCycleFilter(key)}
+                  style={({ pressed }) => [
+                    styles.filterChip,
+                    chipStyle,
+                    pressed && { opacity: 0.8 },
+                  ]}
+                >
+                  {marker ? (
+                    <Text style={styles.filterChipMarker}>{marker}</Text>
+                  ) : null}
+                  <Text style={styles.filterChipLabel}>{label}</Text>
+                </Pressable>
+              );
+            })}
+          </View>
+
+          {activeCount > 0 ? (
+            <Pressable onPress={onClearFilters} style={styles.filterClearButton}>
+              <Text style={styles.filterClearButtonText}>Clear filters</Text>
+            </Pressable>
+          ) : null}
+        </View>
+      ) : null}
+    </View>
   );
 }
 
@@ -3690,6 +3893,85 @@ const styles = {
     color: "#075985",
     fontSize: 12,
     fontWeight: "900" as const,
+  },
+  filterMenuContainer: {
+    marginBottom: 10,
+  },
+  filterMenuToggle: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    gap: 6,
+    height: 38,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#cbd5e1",
+    backgroundColor: "#f8fafc",
+  },
+  filterMenuToggleText: {
+    fontSize: 13,
+    fontWeight: "800" as const,
+    color: "#334155",
+  },
+  filterMenuPanel: {
+    marginTop: 8,
+    padding: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+    backgroundColor: "#ffffff",
+    gap: 8,
+  },
+  filterMenuHelpText: {
+    fontSize: 12,
+    color: "#64748b",
+  },
+  filterMenuChipRow: {
+    flexDirection: "row" as const,
+    flexWrap: "wrap" as const,
+    gap: 8,
+  },
+  filterChip: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
+    borderWidth: 1,
+  },
+  filterChipNeutral: {
+    backgroundColor: "#f1f5f9",
+    borderColor: "#cbd5e1",
+  },
+  filterChipOn: {
+    backgroundColor: "#dcfce7",
+    borderColor: "#16a34a",
+  },
+  filterChipOff: {
+    backgroundColor: "#fee2e2",
+    borderColor: "#dc2626",
+  },
+  filterChipMarker: {
+    fontSize: 12,
+    fontWeight: "900" as const,
+    color: "#1e293b",
+  },
+  filterChipLabel: {
+    fontSize: 12,
+    fontWeight: "700" as const,
+    color: "#1e293b",
+  },
+  filterClearButton: {
+    alignSelf: "flex-start" as const,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  filterClearButtonText: {
+    fontSize: 12,
+    fontWeight: "700" as const,
+    color: "#b91c1c",
+    textDecorationLine: "underline" as const,
   },
   commandList: {
     padding: 8,

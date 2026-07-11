@@ -82,25 +82,40 @@ api_random_command_in_random_category_json :-
     setof_or_empty(Category, Command^command_category(Command, Category), Categories),
     random_command_in_random_category_json(Categories).
 
-command_summary_json(json([
-    key=Command,
-    title=Title,
-    categories=Categories
-])) :-
+command_summary_json(CommandJson) :-
     command(Command),
-    command_summary_json_for(Command, json([
-        key=Command,
-        title=Title,
-        categories=Categories
-    ])).
+    command_summary_json_for(Command, CommandJson).
 
 command_summary_json_for(Command, json([
     key=Command,
     title=Title,
-    categories=Categories
+    categories=Categories,
+    embodies=GreatCommands,
+    facts=Facts,
+    hasRequirements=HasRequirements,
+    hasStudyNotes=HasStudyNotes,
+    hasSourceTerms=HasSourceTerms,
+    hasStoryReferences=HasStoryReferences,
+    hasNonCanonicalStoryReferences=HasNonCanonicalStoryReferences,
+    hasTranslationNotes=HasTranslationNotes,
+    hasClarificationNotes=HasClarificationNotes
 ])) :-
     command_title(Command, Title),
-    setof_or_empty(Category, command_category(Command, Category), Categories).
+    setof_or_empty(Category, command_category(Command, Category), Categories),
+    embodies_list(Command, GreatCommands),
+    setof_or_empty(Fact, command_fact(Command, Fact), Facts),
+    has_any(command_requirement(Command, _), HasRequirements),
+    has_any(study_note(Command, _), HasStudyNotes),
+    has_any(source_term(Command, _, _, _), HasSourceTerms),
+    has_any(story_reference(Command, _, _), HasStoryReferences),
+    has_any(non_canonical_story_reference(Command, _, _), HasNonCanonicalStoryReferences),
+    has_any(translation_note(Command, _), HasTranslationNotes),
+    has_any(clarification_note(Command, _), HasClarificationNotes).
+
+has_any(Goal, true) :-
+    call(Goal),
+    !.
+has_any(_, false).
 
 commands_for_category_json(Category, json([
     key=Category,
