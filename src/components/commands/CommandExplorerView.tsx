@@ -724,6 +724,25 @@ export default function CommandExplorerView({
       setIsSelectingRandom(true);
       setErrorMessage(null);
 
+      const hasActiveFilterOrSearch =
+        activeCommandFilterCount > 0 || Boolean(normalizedSearch);
+
+      if (hasActiveFilterOrSearch) {
+        if (visibleCommands.length === 0) {
+          setErrorMessage("No matching command resource was found.");
+          return;
+        }
+
+        const randomIndex = Math.floor(Math.random() * visibleCommands.length);
+        const randomCommand = visibleCommands[randomIndex];
+        const firstCategory = randomCommand.categories?.[0];
+
+        await selectCommand(randomCommand.key, firstCategory, {
+          centerOnMobile: true,
+        });
+        return;
+      }
+
       const response = await commandFetch(
         apiUrl(
           "/command-resources/random?facts=reminder_eligible,scripture_backed"
