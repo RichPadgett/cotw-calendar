@@ -1860,8 +1860,6 @@ function CommandDetail({
         onWithdrawContribution={onWithdrawContribution}
       />
 
-      <RelatedTeachingList items={command.relatedTeachings ?? []} />
-
       <SourceTermList
         items={command.sourceTerms ?? []}
         canContribute={canContribute}
@@ -1916,6 +1914,8 @@ function CommandDetail({
         onSubmitContribution={onSubmitContribution}
         onWithdrawContribution={onWithdrawContribution}
       />
+
+      <RelatedTeachingList items={command.relatedTeachings ?? []} />
 
       <DetailTags
         title="Categories"
