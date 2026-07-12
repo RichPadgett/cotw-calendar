@@ -387,7 +387,7 @@ command_title(execute_judgment_for_idolatry_cases_when_lawful_court_system_appli
 normal_obedience(execute_judgment_for_idolatry_cases_when_lawful_court_system_applies, 'Execute judgment for idolatry cases when lawful court system applies.').
 concerns(execute_judgment_for_idolatry_cases_when_lawful_court_system_applies, justice_and_truth).
 scripture_reference(execute_judgment_for_idolatry_cases_when_lawful_court_system_applies, 'Deuteronomy 13').
-scripture_reference(execute_judgment_for_idolatry_cases_when_lawful_court_system_applies, '17:2-7').
+scripture_reference(execute_judgment_for_idolatry_cases_when_lawful_court_system_applies, 'Deuteronomy 17:2-7').
 story_reference(execute_judgment_for_idolatry_cases_when_lawful_court_system_applies, 'Exodus 32:25-29', 'Judgment falls after the golden calf rebellion.').
 story_reference(execute_judgment_for_idolatry_cases_when_lawful_court_system_applies, '1 Kings 18:40', 'Elijah commands judgment on the prophets of Baal after YHWH answers by fire.').
 study_note(execute_judgment_for_idolatry_cases_when_lawful_court_system_applies, 'This command guards public justice by requiring truth, righteous judgment, and restraint in lawful cases: Execute judgment for idolatry cases when lawful court system applies.').

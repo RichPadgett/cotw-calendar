@@ -391,7 +391,7 @@ command_title(do_not_oppress_the_stranger, 'Exodus 22:21 - Do not oppress the st
 normal_obedience(do_not_oppress_the_stranger, 'Do not oppress the stranger.').
 concerns(do_not_oppress_the_stranger, servant_release_mercy).
 scripture_reference(do_not_oppress_the_stranger, 'Exodus 22:21').
-scripture_reference(do_not_oppress_the_stranger, '23:9').
+scripture_reference(do_not_oppress_the_stranger, 'Deuteronomy 23:9').
 story_reference(do_not_oppress_the_stranger, 'Ruth 2:8-16', 'Boaz protects Ruth the Moabite and provides space for her to glean.').
 study_note(do_not_oppress_the_stranger, 'This command limits oppression and protects vulnerable people through release, refuge, provision, or fair treatment: Do not oppress the stranger.').
 source_term(do_not_oppress_the_stranger, hebrew, yanah, 'oppress, mistreat, wrong').

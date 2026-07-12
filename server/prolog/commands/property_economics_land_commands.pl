@@ -411,7 +411,7 @@ command_title(give_the_tithe_to_levite_stranger_orphan_and_widow_in_the_third_ye
 normal_obedience(give_the_tithe_to_levite_stranger_orphan_and_widow_in_the_third_year, 'Give the tithe to Levite, stranger, orphan, and widow in the third year.').
 concerns(give_the_tithe_to_levite_stranger_orphan_and_widow_in_the_third_year, land_stewardship).
 scripture_reference(give_the_tithe_to_levite_stranger_orphan_and_widow_in_the_third_year, 'Deuteronomy 14:28-29').
-scripture_reference(give_the_tithe_to_levite_stranger_orphan_and_widow_in_the_third_year, '26:12').
+scripture_reference(give_the_tithe_to_levite_stranger_orphan_and_widow_in_the_third_year, 'Deuteronomy 26:12').
 story_reference(give_the_tithe_to_levite_stranger_orphan_and_widow_in_the_third_year, 'Nehemiah 13:10-12', 'Nehemiah restores the tithe storehouses after the Levites had been neglected.').
 source_term(give_the_tithe_to_levite_stranger_orphan_and_widow_in_the_third_year, hebrew, maaser, 'tithe or tenth portion, here stored for Levite, stranger, orphan, and widow').
 source_term(give_the_tithe_to_levite_stranger_orphan_and_widow_in_the_third_year, hebrew, ger, 'sojourner or stranger included with vulnerable households in the third-year tithe').

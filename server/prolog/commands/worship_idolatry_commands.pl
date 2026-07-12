@@ -298,7 +298,7 @@ command_title(do_not_add_to_yhwh_s_commands, 'Deuteronomy 4:2 - Do not add to YH
 normal_obedience(do_not_add_to_yhwh_s_commands, 'Do not add to YHWH''s commands.').
 concerns(do_not_add_to_yhwh_s_commands, reject_idolatry).
 scripture_reference(do_not_add_to_yhwh_s_commands, 'Deuteronomy 4:2').
-scripture_reference(do_not_add_to_yhwh_s_commands, '12:32').
+scripture_reference(do_not_add_to_yhwh_s_commands, 'Deuteronomy 12:32').
 story_reference(do_not_add_to_yhwh_s_commands, '1 Kings 12:25-33', 'Jeroboam makes calves, appoints non-Levitical priests, and devises a feast from his own heart.').
 source_term(do_not_add_to_yhwh_s_commands, hebrew, yasaph, 'to add or increase; the command forbids adding to YHWH''s word').
 source_term(do_not_add_to_yhwh_s_commands, hebrew, dabar, 'word, matter, or command; what must not be added to or diminished').
@@ -310,7 +310,7 @@ command_title(do_not_take_away_from_yhwh_s_commands, 'Deuteronomy 4:2 - Do not t
 normal_obedience(do_not_take_away_from_yhwh_s_commands, 'Do not take away from YHWH''s commands.').
 concerns(do_not_take_away_from_yhwh_s_commands, reject_idolatry).
 scripture_reference(do_not_take_away_from_yhwh_s_commands, 'Deuteronomy 4:2').
-scripture_reference(do_not_take_away_from_yhwh_s_commands, '12:32').
+scripture_reference(do_not_take_away_from_yhwh_s_commands, 'Deuteronomy 12:32').
 story_reference(do_not_take_away_from_yhwh_s_commands, '1 Kings 12:25-33', 'Jeroboam replaces YHWH''s appointed worship pattern with his own system.').
 source_term(do_not_take_away_from_yhwh_s_commands, hebrew, gara, 'to diminish, subtract, or take away; the command forbids removing from YHWH''s word').
 source_term(do_not_take_away_from_yhwh_s_commands, hebrew, mitsvah, 'commandment; the divine command is the protected object').
@@ -322,7 +322,7 @@ command_title(destroy_idolatrous_altars_pillars_asherim_and_images_in_the_land, 
 normal_obedience(destroy_idolatrous_altars_pillars_asherim_and_images_in_the_land, 'Destroy idolatrous altars, pillars, Asherim, and images in the land.').
 concerns(destroy_idolatrous_altars_pillars_asherim_and_images_in_the_land, reject_idolatry).
 scripture_reference(destroy_idolatrous_altars_pillars_asherim_and_images_in_the_land, 'Deuteronomy 7:5').
-scripture_reference(destroy_idolatrous_altars_pillars_asherim_and_images_in_the_land, '12:2-3').
+scripture_reference(destroy_idolatrous_altars_pillars_asherim_and_images_in_the_land, 'Deuteronomy 12:2-3').
 story_reference(destroy_idolatrous_altars_pillars_asherim_and_images_in_the_land, '2 Chronicles 34:3-7', 'Josiah breaks down altars, Asherim, carved images, and molten images in his purge of idolatry.').
 story_reference(destroy_idolatrous_altars_pillars_asherim_and_images_in_the_land, '2 Kings 23:4-15', 'Josiah removes and destroys idolatrous objects and places throughout Judah and Bethel.').
 source_term(destroy_idolatrous_altars_pillars_asherim_and_images_in_the_land, hebrew, mizbeach, 'altar; idolatrous altars are among the objects to be torn down').
@@ -397,7 +397,7 @@ command_title(test_a_prophet_by_whether_his_word_comes_to_pass_and_whether_he_tu
 normal_obedience(test_a_prophet_by_whether_his_word_comes_to_pass_and_whether_he_turns_people_f, 'Test a prophet by whether his word comes to pass and whether he turns people from YHWH.').
 concerns(test_a_prophet_by_whether_his_word_comes_to_pass_and_whether_he_turns_people_f, reject_idolatry).
 scripture_reference(test_a_prophet_by_whether_his_word_comes_to_pass_and_whether_he_turns_people_f, 'Deuteronomy 13:1-5').
-scripture_reference(test_a_prophet_by_whether_his_word_comes_to_pass_and_whether_he_turns_people_f, '18:20-22').
+scripture_reference(test_a_prophet_by_whether_his_word_comes_to_pass_and_whether_he_turns_people_f, 'Deuteronomy 18:20-22').
 story_reference(test_a_prophet_by_whether_his_word_comes_to_pass_and_whether_he_turns_people_f, 'Jeremiah 28:10-17', 'Hananiah speaks falsely in YHWH''s name, and Jeremiah exposes the false word.').
 story_reference(test_a_prophet_by_whether_his_word_comes_to_pass_and_whether_he_turns_people_f, '1 Kings 13:11-26', 'A prophet is deceived by a false word and dies for disobeying YHWH''s command.').
 source_term(test_a_prophet_by_whether_his_word_comes_to_pass_and_whether_he_turns_people_f, hebrew, bo, 'to come or come to pass; Deuteronomy 18 tests whether the word happens').
