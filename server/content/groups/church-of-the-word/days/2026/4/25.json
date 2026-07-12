@@ -3,8 +3,74 @@
   "month": 4,
   "day": 25,
   "title": "Month 4 Day 25",
-  "notes": "",
-  "scriptureReadings": [],
+  "notes": "This teaching dives deeply into Deuteronomy 13, outlining the serious test for a prophet or dreamer who performs signs and wonders yet leads people after other gods. It draws powerful parallels to the false accusations against Stephen and Yeshua, the warnings of the man of lawlessness in 2 Thessalonians 2, and the deceptive miracles of the Beast in Revelation 13. The study covers the handling of false prophets and entire idolatrous cities under Torah law, historical examples like Elijah confronting Ahab and Jezebel on Carmel, and the ultimate call to absolute loyalty to Yahweh above all relationships (Matthew 10).",
+  "scriptureReadings": [
+    {
+      "label": "Test of a Prophet, Teaching Rebellion",
+      "reference": "Rebellion Deuteronomy 13:1-5",
+      "url": "https://www.blueletterbible.org/kjv/deu/13/1-5"
+    },
+    {
+      "label": "Signs & Wonders of the Sorcerers, Opposition to Moses",
+      "reference": "Exodus 7:11",
+      "url": "https://www.blueletterbible.org/kjv/exo/7/11"
+    },
+    {
+      "label": "Cursed Is the One Who Rebuilds Jericho",
+      "reference": "Joshua 6:26",
+      "url": "https://www.blueletterbible.org/kjv/jos/6/26"
+    },
+    {
+      "label": "Certain Sons of Belial, Story of the Concubine",
+      "reference": "Judges 19:22-30",
+      "url": "https://www.blueletterbible.org/kjv/jdg/19/22-30"
+    },
+    {
+      "label": "Ahab Building the Altar for Baal",
+      "reference": "1 Kings 16:29-34",
+      "url": "https://www.blueletterbible.org/kjv/1ki/16/29-34"
+    },
+    {
+      "label": "Daniel's Handling of Nebuchadnezzar's Golden Statue",
+      "reference": "Daniel 3:1-6",
+      "url": "https://www.blueletterbible.org/kjv/dan/3/1-6"
+    },
+    {
+      "label": "Jews Telling on Yeshua, False Witnesses for Trial",
+      "reference": "John 11:45-48",
+      "url": "https://www.blueletterbible.org/kjv/jhn/11/45-48"
+    },
+    {
+      "label": "Miracles of Peter & John, Stephen, and Paul's Example",
+      "reference": "Acts 21:17-24",
+      "url": "https://www.blueletterbible.org/kjv/act/21/17-24"
+    },
+    {
+      "label": "Paul's Context: Establishing the Law",
+      "reference": "Romans 3:31",
+      "url": "https://www.blueletterbible.org/kjv/rom/3/31"
+    },
+    {
+      "label": "Current Times: Signs & Wonders, Opposing Moses",
+      "reference": "2 Timothy 3:1-8",
+      "url": "https://www.blueletterbible.org/kjv/2ti/3/1-8"
+    },
+    {
+      "label": "The Rebellion, Man of Lawlessness, Deception",
+      "reference": "2 Thessalonians 2:1-12",
+      "url": "https://www.blueletterbible.org/kjv/2th/2/1-12"
+    },
+    {
+      "label": "Most Important Relationship, Finding Life & Losing It",
+      "reference": "Matthew 10:32-39",
+      "url": "https://www.blueletterbible.org/kjv/mat/10/32-39"
+    },
+    {
+      "label": "The Beast, Signs & Wonders, and the Mark",
+      "reference": "Revelation 13:1-18",
+      "url": "https://www.blueletterbible.org/kjv/rev/13/1-18"
+    }
+  ],
   "sections": [
     {
       "title": "Notices",
@@ -22,7 +88,14 @@
     {
       "title": "Files / Links / Media",
       "displayStyle": "default",
-      "items": []
+      "items": [
+        {
+          "label": "The Deuteronomy 13 Test: False Prophets, Signs & Wonders & Absolute Loyalty to Yahweh",
+          "type": "external-link",
+          "access": "public",
+          "url": "https://open.spotify.com/episode/2Dim5J7G71VohWtbdN5L7Y"
+        }
+      ]
     }
   ]
 }
