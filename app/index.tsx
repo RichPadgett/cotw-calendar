@@ -6,6 +6,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   Alert,
+  Animated,
   Image,
   ImageSourcePropType,
   Modal,
@@ -2081,6 +2082,15 @@ function CommandStickyHeader({
   const isDesktopCollapsedMode =
     !isCompactHeader && isDesktopHeaderCollapsed && Boolean(command);
   const isHeaderCollapsed = isCompactStudyMode || isDesktopCollapsedMode;
+  const headerCollapseAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    Animated.timing(headerCollapseAnim, {
+      toValue: isHeaderCollapsed ? 0 : 1,
+      duration: 260,
+      useNativeDriver: false,
+    }).start();
+  }, [isHeaderCollapsed, headerCollapseAnim]);
 
   return (
     <View
@@ -2286,60 +2296,67 @@ function CommandStickyHeader({
         </View>
       </View>
 
-      {!isHeaderCollapsed ? (
+      <Animated.View
+        style={{
+          marginTop: headerCollapseAnim.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, 16],
+          }),
+          maxHeight: headerCollapseAnim.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, 80],
+          }),
+          opacity: headerCollapseAnim,
+          overflow: "hidden",
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 12,
+        }}
+      >
+        {categoryIcon ? (
+          <Image
+            source={categoryIcon}
+            style={{
+              width: 56,
+              height: 56,
+            }}
+            resizeMode="contain"
+          />
+        ) : null}
+
         <View
           style={{
-            marginTop: 16,
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 12,
+            flex: 1,
           }}
         >
-          {categoryIcon ? (
-            <Image
-              source={categoryIcon}
+          {categoryLabel ? (
+            <Text
+              numberOfLines={1}
               style={{
-                width: 56,
-                height: 56,
+                fontSize: 18,
+                lineHeight: 23,
+                fontWeight: "900",
+                color: "#081a33",
+                textTransform: "capitalize",
               }}
-              resizeMode="contain"
-            />
-          ) : null}
-
-          <View
-            style={{
-              flex: 1,
-            }}
-          >
-            {categoryLabel ? (
-              <Text
-                numberOfLines={1}
-                style={{
-                  fontSize: 18,
-                  lineHeight: 23,
-                  fontWeight: "900",
-                  color: "#081a33",
-                  textTransform: "capitalize",
-                }}
-              >
-                {categoryLabel}
-              </Text>
-            ) : (
-              <Text
-                numberOfLines={1}
-                style={{
-                  fontSize: 18,
-                  lineHeight: 23,
-                  fontWeight: "900",
-                  color: "#081a33",
-                }}
-              >
-                Select a category
-              </Text>
-            )}
-          </View>
+            >
+              {categoryLabel}
+            </Text>
+          ) : (
+            <Text
+              numberOfLines={1}
+              style={{
+                fontSize: 18,
+                lineHeight: 23,
+                fontWeight: "900",
+                color: "#081a33",
+              }}
+            >
+              Select a category
+            </Text>
+          )}
         </View>
-      ) : null}
+      </Animated.View>
 
       <View
         style={{
@@ -2347,7 +2364,16 @@ function CommandStickyHeader({
           gap: isHeaderCollapsed ? 6 : 10,
         }}
       >
-        {!isHeaderCollapsed ? (
+        <Animated.View
+          style={{
+            maxHeight: headerCollapseAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, 20],
+            }),
+            opacity: headerCollapseAnim,
+            overflow: "hidden",
+          }}
+        >
           <Text
             numberOfLines={1}
             style={{
@@ -2359,7 +2385,7 @@ function CommandStickyHeader({
           >
             {categoryCount} categories - {commandCount} commands
           </Text>
-        ) : null}
+        </Animated.View>
 
         <View
           style={{

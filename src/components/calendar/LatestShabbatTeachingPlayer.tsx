@@ -5,6 +5,7 @@
  */
 
 import {
+  Animated,
   Linking,
   Platform,
   Pressable,
@@ -12,7 +13,7 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-import { createElement, useEffect, useMemo, useState } from "react";
+import { createElement, useEffect, useMemo, useRef, useState } from "react";
 
 import { MaterialIcons } from "@expo/vector-icons";
 import { apiUrl } from "../../config/api";
@@ -66,6 +67,15 @@ export default function LatestShabbatTeachingPlayer({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const isWidePlayer = width >= 820;
   const isCompactCollapsed = isCollapsed;
+  const collapseAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    Animated.timing(collapseAnim, {
+      toValue: isCollapsed ? 0 : 1,
+      duration: 260,
+      useNativeDriver: false,
+    }).start();
+  }, [isCollapsed, collapseAnim]);
 
   useEffect(() => {
     let isMounted = true;
@@ -344,9 +354,13 @@ export default function LatestShabbatTeachingPlayer({
         </View>
       </Pressable>
 
-      <View
+      <Animated.View
         style={{
-          height: isCollapsed ? 0 : undefined,
+          maxHeight: collapseAnim.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, latestTeachingEmbed ? (isWidePlayer ? 360 : 160) : 90],
+          }),
+          opacity: collapseAnim,
           overflow: "hidden",
         }}
       >
@@ -379,7 +393,7 @@ export default function LatestShabbatTeachingPlayer({
             <MaterialIcons name="play-circle" size={34} color="#22c55e" />
           </Pressable>
         )}
-      </View>
+      </Animated.View>
     </View>
   );
 }

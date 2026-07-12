@@ -193,6 +193,9 @@ type StoryReference = {
 type RelatedTeaching = {
   title: string;
   url: string;
+  year?: number | null;
+  month?: number | null;
+  day?: number | null;
 };
 
 type CommandContributionType =
@@ -348,8 +351,8 @@ export default function CommandExplorerView({
     PendingContribution[]
   >([]);
   const [voteIndex, setVoteIndex] = useState(0);
-  const [isVoteTasksOpen, setIsVoteTasksOpen] = useState(false);
-  const [isCommunityReviewOpen, setIsCommunityReviewOpen] = useState(false);
+  const [isVoteDockOpen, setIsVoteDockOpen] = useState(false);
+  const [isReviewDockOpen, setIsReviewDockOpen] = useState(false);
   const [voteDraft, setVoteDraft] = useState<{
     contribution: PendingContribution;
     type: "support" | "concern";
@@ -458,7 +461,7 @@ export default function CommandExplorerView({
   useEffect(() => {
     if (pendingRequestId <= 0) return;
 
-    setIsVoteTasksOpen(true);
+    setIsVoteDockOpen(true);
     selectPendingContributionCommand();
   }, [pendingRequestId]);
 
@@ -1281,79 +1284,89 @@ export default function CommandExplorerView({
       total + getContributionVoteCounts(contribution).concern,
     0
   );
-  const renderCommunityReviewTools = () => {
-    if (!canContribute && !canModerateContributions) return null;
+  const renderVoteTools = () => {
+    if (!canContribute) return null;
 
     return (
-      <CommunityReviewDrawer
-        isOpen={isCommunityReviewOpen}
-        voteCount={voteContributions.length}
-        reviewCount={canModerateContributions ? pendingContributions.length : 0}
+      <SectionDock
+        title="Vote"
+        icon="how-to-vote"
+        subtitle="Optional community feedback for suggestions under review."
+        isOpen={isVoteDockOpen}
+        badgeCount={voteContributions.length}
         concernCount={activeVoteConcernCount}
-        canModerate={canModerateContributions}
-        onToggle={() => setIsCommunityReviewOpen((value) => !value)}
+        onToggle={() => setIsVoteDockOpen((value) => !value)}
       >
-        {canContribute ? (
-          <VoteTasksPanel
-            isOpen={isVoteTasksOpen}
-            contribution={voteContribution}
-            currentIndex={voteIndex}
-            totalCount={voteContributions.length}
-            username={contributorUsername}
-            canModerate={canModerateContributions}
-            message={voteMessage}
-            voteDraft={voteDraft}
-            isSubmittingVote={isSubmittingVote}
-            onToggle={() => setIsVoteTasksOpen((value) => !value)}
-            onPrevious={() =>
-              setVoteIndex((current) => Math.max(0, current - 1))
-            }
-            onNext={() =>
-              setVoteIndex((current) =>
-                Math.min(voteContributions.length - 1, current + 1)
-              )
-            }
-            onOpenCommand={(commandKey) => selectCommand(commandKey)}
-            onOpenVote={(contribution, type) =>
-              setVoteDraft({ contribution, type, reason: "" })
-            }
-            onChangeVoteDraft={setVoteDraft}
-            onCloseVote={() => setVoteDraft(null)}
-            onSubmitVote={submitContributionVote}
-            onResolveConcern={resolveContributionConcern}
-          />
-        ) : null}
+        <VoteTasksPanel
+          contribution={voteContribution}
+          currentIndex={voteIndex}
+          totalCount={voteContributions.length}
+          username={contributorUsername}
+          canModerate={canModerateContributions}
+          message={voteMessage}
+          voteDraft={voteDraft}
+          isSubmittingVote={isSubmittingVote}
+          onPrevious={() =>
+            setVoteIndex((current) => Math.max(0, current - 1))
+          }
+          onNext={() =>
+            setVoteIndex((current) =>
+              Math.min(voteContributions.length - 1, current + 1)
+            )
+          }
+          onOpenCommand={(commandKey) => selectCommand(commandKey)}
+          onOpenVote={(contribution, type) =>
+            setVoteDraft({ contribution, type, reason: "" })
+          }
+          onChangeVoteDraft={setVoteDraft}
+          onCloseVote={() => setVoteDraft(null)}
+          onSubmitVote={submitContributionVote}
+          onResolveConcern={resolveContributionConcern}
+        />
+      </SectionDock>
+    );
+  };
 
-        {canModerateContributions ? (
-          <AdminReviewPanel
-            contribution={reviewContribution}
-            reviewMode={reviewMode}
-            currentIndex={reviewIndex}
-            totalCount={pendingContributions.length}
-            onChangeReviewMode={(mode) => {
-              setReviewMode(mode);
-              setReviewIndex(0);
-            }}
-            onPrevious={() =>
-              setReviewIndex((current) => Math.max(0, current - 1))
-            }
-            onNext={() =>
-              setReviewIndex((current) =>
-                Math.min(pendingContributions.length - 1, current + 1)
-              )
-            }
-            onOpenCommand={(commandKey) => selectCommand(commandKey)}
-            onApprove={(contributionId) =>
-              moderateContribution(contributionId, "approve")
-            }
-            onReject={(contributionId) =>
-              moderateContribution(contributionId, "reject")
-            }
-            onPromote={promoteContribution}
-            onResolveConcern={resolveContributionConcern}
-          />
-        ) : null}
-      </CommunityReviewDrawer>
+  const renderAdminReviewTools = () => {
+    if (!canModerateContributions) return null;
+
+    return (
+      <SectionDock
+        title="Review"
+        icon="rate-review"
+        subtitle="Pending community suggestions awaiting admin approval."
+        isOpen={isReviewDockOpen}
+        badgeCount={pendingContributions.length}
+        onToggle={() => setIsReviewDockOpen((value) => !value)}
+      >
+        <AdminReviewPanel
+          contribution={reviewContribution}
+          reviewMode={reviewMode}
+          currentIndex={reviewIndex}
+          totalCount={pendingContributions.length}
+          onChangeReviewMode={(mode) => {
+            setReviewMode(mode);
+            setReviewIndex(0);
+          }}
+          onPrevious={() =>
+            setReviewIndex((current) => Math.max(0, current - 1))
+          }
+          onNext={() =>
+            setReviewIndex((current) =>
+              Math.min(pendingContributions.length - 1, current + 1)
+            )
+          }
+          onOpenCommand={(commandKey) => selectCommand(commandKey)}
+          onApprove={(contributionId) =>
+            moderateContribution(contributionId, "approve")
+          }
+          onReject={(contributionId) =>
+            moderateContribution(contributionId, "reject")
+          }
+          onPromote={promoteContribution}
+          onResolveConcern={resolveContributionConcern}
+        />
+      </SectionDock>
     );
   };
   const renderCommandStudyContent = () => {
@@ -1386,7 +1399,10 @@ export default function CommandExplorerView({
 
   return (
     <View style={{ gap: 14 }}>
-      {renderCommunityReviewTools()}
+      <View style={{ gap: 8 }}>
+        {renderVoteTools()}
+        {renderAdminReviewTools()}
+      </View>
 
       <View style={[styles.studyGrid, usesSplitPane && styles.studyGridSplit]}>
         {usesSplitPane ? (
@@ -1655,6 +1671,8 @@ function CommandListItem({
   inlineContent?: ReactNode;
   onPress: () => void;
 }) {
+  const { reference, description } = splitCommandTitle(item.title);
+
   return (
     <View
       style={[
@@ -1671,7 +1689,12 @@ function CommandListItem({
           pressed && { opacity: 0.86 },
         ]}
       >
-        <Text style={styles.commandTitle}>{item.title}</Text>
+        <Text style={styles.commandTitle}>
+          {reference ? (
+            <Text style={styles.commandTitleReference}>{reference} — </Text>
+          ) : null}
+          {description}
+        </Text>
       </Pressable>
 
       {inlineContent ? (
@@ -2390,7 +2413,11 @@ function RelatedTeachingList({
               ]}
             >
               <Text style={styles.teachingLabel}>{item.title}</Text>
-              <Text style={styles.teachingUrl}>{item.url}</Text>
+              {item.year && item.month && item.day ? (
+                <Text style={styles.teachingUrl}>
+                  Month {item.month}, Day {item.day} ({item.year})
+                </Text>
+              ) : null}
             </Pressable>
 
             <Pressable
@@ -2619,8 +2646,97 @@ function SectionTitle({
   );
 }
 
-function VoteTasksPanel({
+function SectionDock({
+  title,
+  icon,
+  subtitle,
   isOpen,
+  badgeCount,
+  concernCount = 0,
+  onToggle,
+  children,
+}: {
+  title: string;
+  icon: keyof typeof MaterialIcons.glyphMap;
+  subtitle: string;
+  isOpen: boolean;
+  badgeCount: number;
+  concernCount?: number;
+  onToggle: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <View style={styles.communityReviewDock}>
+      <View style={styles.communityReviewDrawer}>
+        <Pressable
+          onPress={onToggle}
+          accessibilityRole="button"
+          accessibilityLabel={
+            isOpen ? `Hide ${title.toLowerCase()} tools` : `Show ${title.toLowerCase()} tools`
+          }
+          style={({ pressed }) => [
+            styles.communityReviewTab,
+            isOpen && styles.communityReviewTabOpen,
+            pressed && { opacity: 0.78 },
+          ]}
+        >
+          <MaterialIcons
+            name={isOpen ? "close" : icon}
+            size={20}
+            color={isOpen ? "#ffffff" : "#0f766e"}
+          />
+          <Text
+            style={[
+              styles.communityReviewTabText,
+              isOpen && styles.communityReviewTabTextOpen,
+            ]}
+          >
+            {title}
+          </Text>
+          {badgeCount > 0 ? (
+            <Text
+              style={[
+                styles.communityReviewTabCount,
+                isOpen && styles.communityReviewTabCountOpen,
+              ]}
+            >
+              {Math.min(badgeCount, 99)}
+            </Text>
+          ) : null}
+          {concernCount > 0 ? (
+            <Text
+              style={[
+                styles.communityReviewTabCount,
+                styles.communityReviewConcernPill,
+                isOpen && styles.communityReviewTabCountOpen,
+              ]}
+            >
+              !{Math.min(concernCount, 99)}
+            </Text>
+          ) : null}
+          <MaterialIcons
+            name={isOpen ? "keyboard-arrow-up" : "keyboard-arrow-down"}
+            size={22}
+            color={isOpen ? "#ffffff" : "#0f766e"}
+          />
+        </Pressable>
+
+        {isOpen ? (
+          <View style={styles.communityReviewSection}>
+            <View style={styles.communityReviewTitleGroup}>
+              <Text style={styles.communityReviewEyebrow}>{title}</Text>
+              <Text style={styles.communityReviewTitle}>{subtitle}</Text>
+            </View>
+
+            <View style={styles.communityReviewBody}>{children}</View>
+          </View>
+        ) : null}
+      </View>
+    </View>
+  );
+}
+
+function VoteTasksPanel({
   contribution,
   currentIndex,
   totalCount,
@@ -2629,7 +2745,6 @@ function VoteTasksPanel({
   message,
   voteDraft,
   isSubmittingVote,
-  onToggle,
   onPrevious,
   onNext,
   onOpenCommand,
@@ -2639,7 +2754,6 @@ function VoteTasksPanel({
   onSubmitVote,
   onResolveConcern,
 }: {
-  isOpen: boolean;
   contribution: PendingContribution | null;
   currentIndex: number;
   totalCount: number;
@@ -2652,7 +2766,6 @@ function VoteTasksPanel({
     reason: string;
   } | null;
   isSubmittingVote: boolean;
-  onToggle: () => void;
   onPrevious: () => void;
   onNext: () => void;
   onOpenCommand: (commandKey: string) => void;
@@ -2675,128 +2788,104 @@ function VoteTasksPanel({
   const existingVote = contribution?.votes?.find(
     (vote) => vote.createdBy === normalizedUsername && !vote.resolvedAt
   );
-  const voteCounts = getContributionVoteCounts(contribution);
 
   return (
     <View style={styles.voteTasksPanel}>
-      <Pressable
-        onPress={onToggle}
-        style={({ pressed }) => [
-          styles.voteTasksHeader,
-          pressed && { opacity: 0.78 },
-        ]}
-      >
-        <View style={{ flex: 1 }}>
-          <Text style={styles.voteTasksTitle}>Vote Tasks</Text>
-          <Text style={styles.voteTasksSubtitle}>
-            Optional community feedback for suggestions under review.
+      <View style={styles.voteTasksBody}>
+        {!contribution ? (
+          <Text style={styles.mutedText}>
+            No pending suggestions to vote on.
           </Text>
-        </View>
+        ) : (
+          <>
+            <View style={styles.adminReviewHeader}>
+              <Text style={styles.adminReviewMeta}>
+                {currentIndex + 1} of {totalCount} -{" "}
+                {formatKey(contribution.commandKey)}
+              </Text>
 
-        <View style={styles.voteSummaryRow}>
-          <Text style={styles.voteSummaryText}>+{voteCounts.support}</Text>
-          <Text style={styles.voteConcernText}>!{voteCounts.concern}</Text>
-          <Text style={styles.voteTasksToggle}>{isOpen ? "-" : "+"}</Text>
-        </View>
-      </Pressable>
-
-      {isOpen ? (
-        <View style={styles.voteTasksBody}>
-          {!contribution ? (
-            <Text style={styles.mutedText}>
-              No pending suggestions to vote on.
-            </Text>
-          ) : (
-            <>
-              <View style={styles.adminReviewHeader}>
-                <Text style={styles.adminReviewMeta}>
-                  {currentIndex + 1} of {totalCount} -{" "}
-                  {formatKey(contribution.commandKey)}
-                </Text>
-
-                <View style={styles.adminReviewStepControls}>
-                  <Pressable
-                    onPress={onPrevious}
-                    disabled={currentIndex <= 0}
-                    style={({ pressed }) => [
-                      styles.adminReviewIconButton,
-                      currentIndex <= 0 && { opacity: 0.38 },
-                      pressed && { opacity: 0.78 },
-                    ]}
-                  >
-                    <Text style={styles.adminReviewIconText}>‹</Text>
-                  </Pressable>
-
-                  <Pressable
-                    onPress={onNext}
-                    disabled={currentIndex >= totalCount - 1}
-                    style={({ pressed }) => [
-                      styles.adminReviewIconButton,
-                      currentIndex >= totalCount - 1 && { opacity: 0.38 },
-                      pressed && { opacity: 0.78 },
-                    ]}
-                  >
-                    <Text style={styles.adminReviewIconText}>›</Text>
-                  </Pressable>
-                </View>
-              </View>
-
-              <ContributionReviewCard contribution={contribution} />
-
-              <VoteBreakdown
-                contribution={contribution}
-                canModerate={canModerate}
-                onResolveConcern={onResolveConcern}
-              />
-
-              {existingVote ? (
-                <Text style={styles.voteExistingText}>
-                  Your current vote:{" "}
-                  {existingVote.type === "support" ? "support" : "concern"}
-                </Text>
-              ) : null}
-
-              <View style={styles.adminReviewActions}>
+              <View style={styles.adminReviewStepControls}>
                 <Pressable
-                  onPress={() => onOpenCommand(contribution.commandKey)}
+                  onPress={onPrevious}
+                  disabled={currentIndex <= 0}
                   style={({ pressed }) => [
-                    styles.adminReviewSecondaryButton,
+                    styles.adminReviewIconButton,
+                    currentIndex <= 0 && { opacity: 0.38 },
                     pressed && { opacity: 0.78 },
                   ]}
                 >
-                  <Text style={styles.adminReviewSecondaryText}>
-                    Open Command
-                  </Text>
+                  <Text style={styles.adminReviewIconText}>‹</Text>
                 </Pressable>
 
                 <Pressable
-                  onPress={() => onOpenVote(contribution, "concern")}
+                  onPress={onNext}
+                  disabled={currentIndex >= totalCount - 1}
                   style={({ pressed }) => [
-                    styles.voteConcernButton,
+                    styles.adminReviewIconButton,
+                    currentIndex >= totalCount - 1 && { opacity: 0.38 },
                     pressed && { opacity: 0.78 },
                   ]}
                 >
-                  <Text style={styles.adminReviewActionText}>! Concern</Text>
-                </Pressable>
-
-                <Pressable
-                  onPress={() => onOpenVote(contribution, "support")}
-                  style={({ pressed }) => [
-                    styles.adminReviewApproveButton,
-                    pressed && { opacity: 0.78 },
-                  ]}
-                >
-                  <Text style={styles.adminReviewActionText}>+ Support</Text>
+                  <Text style={styles.adminReviewIconText}>›</Text>
                 </Pressable>
               </View>
-            </>
-          )}
+            </View>
 
-          {message ? (
-            <Text style={styles.contributionMessage}>{message}</Text>
-          ) : null}
-        </View>
-      ) : null}
+            <ContributionReviewCard contribution={contribution} />
+
+            <VoteBreakdown
+              contribution={contribution}
+              canModerate={canModerate}
+              onResolveConcern={onResolveConcern}
+            />
+
+            {existingVote ? (
+              <Text style={styles.voteExistingText}>
+                Your current vote:{" "}
+                {existingVote.type === "support" ? "support" : "concern"}
+              </Text>
+            ) : null}
+
+            <View style={styles.adminReviewActions}>
+              <Pressable
+                onPress={() => onOpenCommand(contribution.commandKey)}
+                style={({ pressed }) => [
+                  styles.adminReviewSecondaryButton,
+                  pressed && { opacity: 0.78 },
+                ]}
+              >
+                <Text style={styles.adminReviewSecondaryText}>
+                  Open Command
+                </Text>
+              </Pressable>
+
+              <Pressable
+                onPress={() => onOpenVote(contribution, "concern")}
+                style={({ pressed }) => [
+                  styles.voteConcernButton,
+                  pressed && { opacity: 0.78 },
+                ]}
+              >
+                <Text style={styles.adminReviewActionText}>! Concern</Text>
+              </Pressable>
+
+              <Pressable
+                onPress={() => onOpenVote(contribution, "support")}
+                style={({ pressed }) => [
+                  styles.adminReviewApproveButton,
+                  pressed && { opacity: 0.78 },
+                ]}
+              >
+                <Text style={styles.adminReviewActionText}>+ Support</Text>
+              </Pressable>
+            </View>
+          </>
+        )}
+
+        {message ? (
+          <Text style={styles.contributionMessage}>{message}</Text>
+        ) : null}
+      </View>
 
       <VoteModal
         draft={voteDraft}
@@ -2806,145 +2895,6 @@ function VoteTasksPanel({
         onSubmit={onSubmitVote}
       />
     </View>
-  );
-}
-
-function CommunityReviewDrawer({
-  children,
-  isOpen,
-  voteCount,
-  reviewCount,
-  concernCount,
-  canModerate,
-  onToggle,
-}: {
-  children: ReactNode;
-  isOpen: boolean;
-  voteCount: number;
-  reviewCount: number;
-  concernCount: number;
-  canModerate: boolean;
-  onToggle: () => void;
-}) {
-  const totalCount = voteCount + (canModerate ? reviewCount : 0);
-
-  return (
-    <View style={styles.communityReviewDock}>
-      <View style={styles.communityReviewDrawer}>
-        <Pressable
-          onPress={onToggle}
-          accessibilityRole="button"
-          accessibilityLabel={
-            isOpen
-              ? "Hide community review tools"
-              : "Show community review tools"
-          }
-          style={({ pressed }) => [
-            styles.communityReviewTab,
-            isOpen && styles.communityReviewTabOpen,
-            pressed && { opacity: 0.78 },
-          ]}
-        >
-          <MaterialIcons
-            name={isOpen ? "close" : "rate-review"}
-            size={20}
-            color={isOpen ? "#ffffff" : "#0f766e"}
-          />
-          <Text
-            style={[
-              styles.communityReviewTabText,
-              isOpen && styles.communityReviewTabTextOpen,
-            ]}
-          >
-            Review
-          </Text>
-          {totalCount > 0 ? (
-            <Text
-              style={[
-                styles.communityReviewTabCount,
-                isOpen && styles.communityReviewTabCountOpen,
-              ]}
-            >
-              {Math.min(totalCount, 99)}
-            </Text>
-          ) : null}
-          <MaterialIcons
-            name={isOpen ? "keyboard-arrow-up" : "keyboard-arrow-down"}
-            size={22}
-            color={isOpen ? "#ffffff" : "#0f766e"}
-          />
-        </Pressable>
-
-        {isOpen ? (
-          <View style={styles.communityReviewSection}>
-            <CommunityReviewHeader
-              voteCount={voteCount}
-              reviewCount={reviewCount}
-              concernCount={concernCount}
-              canModerate={canModerate}
-              onToggle={onToggle}
-            />
-
-            <View style={styles.communityReviewBody}>{children}</View>
-          </View>
-        ) : null}
-      </View>
-    </View>
-  );
-}
-
-function CommunityReviewHeader({
-  voteCount,
-  reviewCount,
-  concernCount,
-  canModerate,
-  onToggle,
-}: {
-  voteCount: number;
-  reviewCount: number;
-  concernCount: number;
-  canModerate: boolean;
-  onToggle: () => void;
-}) {
-  return (
-    <Pressable
-      onPress={onToggle}
-      accessibilityRole="button"
-      accessibilityLabel="Hide community review tools"
-      style={({ pressed }) => [
-        styles.communityReviewHeader,
-        pressed && { opacity: 0.78 },
-      ]}
-    >
-      <View style={styles.communityReviewTitleGroup}>
-        <Text style={styles.communityReviewEyebrow}>Community Review</Text>
-        <Text style={styles.communityReviewTitle}>
-          Voting and pending suggestions
-        </Text>
-      </View>
-
-      <View style={styles.communityReviewSummary}>
-        <Text style={styles.communityReviewSummaryPill}>
-          Vote {Math.min(voteCount, 99)}
-        </Text>
-        {canModerate ? (
-          <Text style={styles.communityReviewSummaryPill}>
-            Review {Math.min(reviewCount, 99)}
-          </Text>
-        ) : null}
-        {concernCount > 0 ? (
-          <Text
-            style={[
-              styles.communityReviewSummaryPill,
-              styles.communityReviewConcernPill,
-            ]}
-          >
-            !{Math.min(concernCount, 99)}
-          </Text>
-        ) : null}
-        <MaterialIcons name="close" size={20} color="#334155" />
-      </View>
-    </Pressable>
   );
 }
 
@@ -3654,6 +3604,21 @@ function PendingContributionList({
   );
 }
 
+function splitCommandTitle(title: string): {
+  reference: string | null;
+  description: string;
+} {
+  const match = title.match(
+    /^((?:Gen|Exod|Exo|Lev|Num|Deut|Deu|Genesis|Exodus|Leviticus|Numbers|Deuteronomy)\.?\s+\d+(?::\d+(?:-\d+)?)?)\s*[-:]\s*(.+)$/i
+  );
+
+  if (match) {
+    return { reference: match[1], description: match[2] };
+  }
+
+  return { reference: null, description: title };
+}
+
 function formatCommandTitle(title: string, references: string[]) {
   const matchingReference = references.find((reference) =>
     title.toLowerCase().startsWith(reference.toLowerCase())
@@ -4234,6 +4199,12 @@ const styles = {
     lineHeight: 18,
     fontWeight: "900" as const,
     color: "#111827",
+  },
+  commandTitleReference: {
+    fontSize: 12,
+    fontWeight: "600" as const,
+    fontStyle: "italic" as const,
+    color: "#0369a1",
   },
   commandInlineDetail: {
     marginTop: 8,

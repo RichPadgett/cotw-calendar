@@ -102,6 +102,10 @@ function isOpenableUrl(value?: string): boolean {
   );
 }
 
+function isSpotifyEpisodeUrl(value?: string): boolean {
+  return /open\.spotify\.com\/episode\/[a-zA-Z0-9]+/.test(value?.trim() ?? "");
+}
+
 function getOpenUrl(url: string): string {
   const trimmedUrl = url.trim();
 
@@ -199,6 +203,10 @@ export default function AdminDayContentForm({
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
   const [uploadMessage, setUploadMessage] = useState("");
+  const [spotifyFetchIndex, setSpotifyFetchIndex] = useState<number | null>(
+    null
+  );
+  const [spotifyFetchMessage, setSpotifyFetchMessage] = useState("");
 
   /**
    * Rehydrates the editor with the selected day's saved content.
@@ -324,6 +332,91 @@ export default function AdminDayContentForm({
           ? `Upload failed: ${error.message}`
           : "Upload failed."
       );
+    }
+  }
+
+  /**
+   * Fetches a Spotify episode's title and description, then auto-fills the media
+   * row label, appends the description to Notes, and adds any scripture
+   * references parsed from the description as new Scripture Readings rows.
+   * This is what turns "+ Add Spotify" into a one-click weekly upload instead
+   * of retyping everything by hand.
+   */
+  async function fetchSpotifyDetails(index: number, url: string) {
+    try {
+      setSpotifyFetchIndex(index);
+      setSpotifyFetchMessage("Fetching episode details...");
+
+      const response = await fetch(
+        `${API_BASE_URL}/api/admin/calendar/spotify-episode?url=${encodeURIComponent(url)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${adminToken}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setSpotifyFetchMessage(data?.error ?? "Fetch failed.");
+        return;
+      }
+
+      setMediaItems((rows) => {
+        const next = [...rows];
+        const row = next[index];
+
+        if (row) {
+          next[index] = {
+            ...row,
+            label: row.label.trim() || data.title || row.label,
+          };
+        }
+
+        return next;
+      });
+
+      if (data.description) {
+        setNotes((current) =>
+          current.trim() ? `${current}\n\n${data.description}` : data.description
+        );
+      }
+
+      const suggested: ScriptureRow[] = (data.suggestedReadings ?? []).map(
+        (reading: { label: string; reference: string; url: string }) => ({
+          label: reading.label,
+          reference: reading.reference,
+          url: reading.url,
+        })
+      );
+
+      if (suggested.length > 0) {
+        setScriptureReadings((rows) => {
+          const existingReferences = new Set(
+            rows.map((row) => row.reference.trim().toLowerCase())
+          );
+          const nonEmptyRows = rows.filter(
+            (row) => row.label || row.reference || row.url
+          );
+          const newRows = suggested.filter(
+            (row) => !existingReferences.has(row.reference.trim().toLowerCase())
+          );
+
+          return [...nonEmptyRows, ...newRows];
+        });
+      }
+
+      setSpotifyFetchMessage(
+        `Fetched "${data.title}" — ${suggested.length} scripture reference${
+          suggested.length === 1 ? "" : "s"
+        } suggested. Review before saving.`
+      );
+    } catch (error) {
+      console.log("Failed to fetch Spotify episode details", error);
+      setSpotifyFetchMessage("Fetch failed.");
+    } finally {
+      setSpotifyFetchIndex(null);
     }
   }
 
@@ -626,6 +719,23 @@ export default function AdminDayContentForm({
                 </Pressable>
               ) : null}
 
+              {isSpotifyEpisodeUrl(row.url) ? (
+                <Pressable
+                  onPress={() => fetchSpotifyDetails(index, row.url)}
+                  disabled={spotifyFetchIndex !== null}
+                  style={[
+                    styles.spotifyFetchButton,
+                    spotifyFetchIndex !== null && styles.disabledButton,
+                  ]}
+                >
+                  <Text style={styles.spotifyFetchText}>
+                    {spotifyFetchIndex === index
+                      ? "Fetching..."
+                      : "Fetch Notes + Scripture from Spotify"}
+                  </Text>
+                </Pressable>
+              ) : null}
+
               <Pressable
                 onPress={() =>
                   setMediaItems((rows) =>
@@ -652,6 +762,10 @@ export default function AdminDayContentForm({
 
           {uploadMessage ? (
             <Text style={styles.uploadMessage}>{uploadMessage}</Text>
+          ) : null}
+
+          {spotifyFetchMessage ? (
+            <Text style={styles.uploadMessage}>{spotifyFetchMessage}</Text>
           ) : null}
         </View>
 
@@ -776,6 +890,19 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 10,
     backgroundColor: "#eff6ff",
+  },
+
+  spotifyFetchButton: {
+    alignSelf: "flex-start",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
+    backgroundColor: "#dcfce7",
+  },
+
+  spotifyFetchText: {
+    color: "#166534",
+    fontWeight: "900",
   },
 
   uploadMessage: {
