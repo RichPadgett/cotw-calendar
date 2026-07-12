@@ -34,6 +34,7 @@
 :- multifile points_to/2.
 :- multifile podcast_episode/3.
 :- multifile podcast_episode_reference/2.
+:- multifile podcast_episode_date/4.
 
 % -----------------------------------------------------------------------------
 % Shared Facts

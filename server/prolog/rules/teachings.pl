@@ -98,16 +98,35 @@ parse_chapters(_, []).
 % the command's own scripture_reference facts.
 
 related_teaching(Command, Title, Url) :-
+    related_teaching_episode(Command, _EpisodeId, Title, Url).
+
+related_teaching_episode(Command, EpisodeId, Title, Url) :-
     scripture_reference(Command, Reference),
     reference_book_chapters(Reference, BookChapters),
     member(BookChapter, BookChapters),
     podcast_episode_reference(EpisodeId, BookChapter),
     podcast_episode(EpisodeId, Title, Url).
 
+episode_date_or_null(EpisodeId, Year, Month, Day) :-
+    podcast_episode_date(EpisodeId, Year, Month, Day),
+    !.
+episode_date_or_null(_, null, null, null).
+
 related_teachings_list(Command, Teachings) :-
-    findall(Title-Url, related_teaching(Command, Title, Url), Pairs),
-    sort(Pairs, SortedPairs),
-    findall(json([title=Title, url=Url]), member(Title-Url, SortedPairs), Teachings).
+    findall(
+        EpisodeId-Title-Url,
+        related_teaching_episode(Command, EpisodeId, Title, Url),
+        Triples
+    ),
+    sort(Triples, SortedTriples),
+    findall(
+        json([title=Title, url=Url, year=Year, month=Month, day=Day]),
+        (
+            member(EpisodeId-Title-Url, SortedTriples),
+            episode_date_or_null(EpisodeId, Year, Month, Day)
+        ),
+        Teachings
+    ).
 
 has_related_teaching(Command) :-
     related_teaching(Command, _, _),

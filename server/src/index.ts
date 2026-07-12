@@ -4,12 +4,15 @@
  * Author: rpadgett
  */
 
+import "dotenv/config";
+
 import cors from "cors";
 import express from "express";
 
 import { logApiRequest } from "./middleware/logApiRequest";
 import adminCalendarRoutes from "./routes/adminCalendarRoutes";
 import adminFileRoutes from "./routes/adminFileRoutes";
+import adminSpotifyRoutes from "./routes/adminSpotifyRoutes";
 import calendarRoutes from "./routes/calendarRoutes";
 import commandResourceRoutes from "./routes/commandResourceRoutes";
 import groupRoutes from "./routes/groupRoutes";
@@ -30,6 +33,7 @@ app.use("/api/calendar", calendarRoutes);
 app.use("/api/command-resources", commandResourceRoutes);
 app.use("/api/admin/calendar", adminCalendarRoutes);
 app.use("/api/admin/calendar", adminFileRoutes);
+app.use("/api/admin/calendar", adminSpotifyRoutes);
 app.use("/api/files", express.static("content"));
 app.use("/files", express.static("content/files"));
 app.use("/api/groups", groupRoutes);
