@@ -105,7 +105,12 @@ export default function HomeScreen() {
   const latestTeachingAutoCollapsedRef = useRef(false);
   const hasAutoScrolledToCurrentDayRef = useRef(false);
   const headerHeightRef = useRef(DEFAULT_STICKY_HEADER_OFFSET);
+  const hasMeasuredHeaderRef = useRef(false);
   const yearViewTopOffsetRef = useRef(DEFAULT_YEAR_VIEW_TOP_OFFSET);
+  const hasMeasuredYearViewRef = useRef(false);
+  const pendingTodayScrollRef = useRef<{ dateId: string; y: number } | null>(
+    null
+  );
   const [stickyHeaderHeight, setStickyHeaderHeight] = useState(
     DEFAULT_STICKY_HEADER_OFFSET
   );
@@ -724,11 +729,47 @@ export default function HomeScreen() {
 
   function handleHeaderLayout(height: number) {
     headerHeightRef.current = height;
+    hasMeasuredHeaderRef.current = true;
     setStickyHeaderHeight(height);
+    attemptScrollToCurrentDay();
   }
 
   function handleYearViewLayout(y: number) {
     yearViewTopOffsetRef.current = y;
+    hasMeasuredYearViewRef.current = true;
+    attemptScrollToCurrentDay();
+  }
+
+  function attemptScrollToCurrentDay() {
+    if (
+      hasAutoScrolledToCurrentDayRef.current ||
+      !hasEnteredApp ||
+      activeTab !== "calendar" ||
+      !hasMeasuredHeaderRef.current ||
+      !hasMeasuredYearViewRef.current ||
+      !pendingTodayScrollRef.current
+    ) {
+      return;
+    }
+
+    const { y } = pendingTodayScrollRef.current;
+
+    hasAutoScrolledToCurrentDayRef.current = true;
+
+    requestAnimationFrame(() => {
+      scrollViewRef.current?.scrollTo({
+        y: Math.max(
+          0,
+          y +
+            yearViewTopOffsetRef.current -
+            headerHeightRef.current -
+            TODAY_SCROLL_CONTEXT_OFFSET
+        ),
+        animated: true,
+      });
+    });
+
+    setActiveMonthNumber(todayNode?.enoch?.month?.number ?? null);
   }
 
   function getMonthHeaderScrollOffset() {
@@ -806,22 +847,8 @@ export default function HomeScreen() {
       return;
     }
 
-    hasAutoScrolledToCurrentDayRef.current = true;
-
-    requestAnimationFrame(() => {
-      scrollViewRef.current?.scrollTo({
-        y: Math.max(
-          0,
-          y +
-            yearViewTopOffsetRef.current -
-            headerHeightRef.current -
-            TODAY_SCROLL_CONTEXT_OFFSET
-        ),
-        animated: true,
-      });
-    });
-
-    setActiveMonthNumber(todayNode?.enoch?.month?.number ?? null);
+    pendingTodayScrollRef.current = { dateId, y };
+    attemptScrollToCurrentDay();
   }
 
   function centerMobileSelectedCommand({
