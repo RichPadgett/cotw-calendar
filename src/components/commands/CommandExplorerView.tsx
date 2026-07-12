@@ -142,6 +142,7 @@ type CommandResource = {
   scriptureReferences?: string[];
   storyReferences?: StoryReference[];
   nonCanonicalStoryReferences?: StoryReference[];
+  relatedTeachings?: RelatedTeaching[];
   studyNotes?: string[];
   sourceTerms?: SourceTerm[];
   translationNotes?: string[];
@@ -179,6 +180,11 @@ type SourceTerm = {
 type StoryReference = {
   reference: string;
   label: string;
+};
+
+type RelatedTeaching = {
+  title: string;
+  url: string;
 };
 
 type CommandContributionType =
@@ -1417,6 +1423,8 @@ export default function CommandExplorerView({
               isOpen={isCommandFilterMenuOpen}
               filters={commandFilters}
               activeCount={activeCommandFilterCount}
+              matchCount={visibleCommands.length}
+              totalCount={commandCount}
               onToggleOpen={() =>
                 setIsCommandFilterMenuOpen((current) => !current)
               }
@@ -1528,6 +1536,8 @@ function CommandFilterMenu({
   isOpen,
   filters,
   activeCount,
+  matchCount,
+  totalCount,
   onToggleOpen,
   onCycleFilter,
   onClearFilters,
@@ -1535,6 +1545,8 @@ function CommandFilterMenu({
   isOpen: boolean;
   filters: Record<CommandFilterKey, CommandFilterState>;
   activeCount: number;
+  matchCount: number;
+  totalCount: number;
   onToggleOpen: () => void;
   onCycleFilter: (key: CommandFilterKey) => void;
   onClearFilters: () => void;
@@ -1551,6 +1563,13 @@ function CommandFilterMenu({
         <Text style={styles.filterMenuToggleText}>
           Filters{activeCount > 0 ? ` (${activeCount})` : ""}
         </Text>
+
+        {activeCount > 0 ? (
+          <Text style={styles.filterMenuMatchCountText}>
+            {matchCount} of {totalCount} match
+          </Text>
+        ) : null}
+
         <MaterialIcons
           name={isOpen ? "expand-less" : "expand-more"}
           size={18}
@@ -1564,6 +1583,11 @@ function CommandFilterMenu({
             Tap a filter to require it (✓), tap again to exclude it (✗), tap
             again to ignore it. Use these to find commands that still need
             more study.
+          </Text>
+
+          <Text style={styles.filterMenuMatchCountInlineText}>
+            {matchCount} of {totalCount} commands match
+            {activeCount > 0 ? " the active filters" : ""}.
           </Text>
 
           <View style={styles.filterMenuChipRow}>
@@ -1827,6 +1851,8 @@ function CommandDetail({
         onSubmitContribution={onSubmitContribution}
         onWithdrawContribution={onWithdrawContribution}
       />
+
+      <RelatedTeachingList items={command.relatedTeachings ?? []} />
 
       <SourceTermList
         items={command.sourceTerms ?? []}
@@ -2318,6 +2344,42 @@ function NonCanonicalStoryReferenceList({
         username={contributorUsername}
         onWithdraw={onWithdrawContribution}
       />
+    </View>
+  );
+}
+
+function RelatedTeachingList({ items }: { items: RelatedTeaching[] }) {
+  return (
+    <View style={{ gap: 8 }}>
+      <Text style={styles.sectionTitle}>Church of the Word Teachings</Text>
+
+      <Text style={styles.sectionHelpText}>
+        Podcast episodes that cover the same scripture passages (or topic) as
+        this command, matched automatically. Church of the Word covers the
+        Bible on a yearly cycle, so more than one episode per command is
+        expected.
+      </Text>
+
+      {items.length === 0 ? (
+        <Text style={styles.mutedText}>No matching teachings found yet.</Text>
+      ) : (
+        items.map((item) => (
+          <Pressable
+            key={item.url}
+            onPress={() => Linking.openURL(item.url)}
+            style={({ pressed }) => [
+              styles.teachingRow,
+              pressed && { opacity: 0.78 },
+            ]}
+          >
+            <MaterialIcons name="podcasts" size={16} color="#166534" />
+            <View style={{ flex: 1, gap: 2 }}>
+              <Text style={styles.teachingLabel}>{item.title}</Text>
+              <Text style={styles.teachingUrl}>{item.url}</Text>
+            </View>
+          </Pressable>
+        ))
+      )}
     </View>
   );
 }
@@ -3945,6 +4007,16 @@ const styles = {
     fontSize: 12,
     color: "#64748b",
   },
+  filterMenuMatchCountText: {
+    fontSize: 12,
+    fontWeight: "700" as const,
+    color: "#075985",
+  },
+  filterMenuMatchCountInlineText: {
+    fontSize: 12,
+    fontWeight: "700" as const,
+    color: "#075985",
+  },
   filterMenuChipRow: {
     flexDirection: "row" as const,
     flexWrap: "wrap" as const,
@@ -4871,5 +4943,26 @@ const styles = {
     fontSize: 13,
     lineHeight: 18,
     color: "#334155",
+  },
+  teachingRow: {
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    gap: 8,
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: "#f0fdf4",
+    borderWidth: 1,
+    borderColor: "#bbf7d0",
+  },
+  teachingLabel: {
+    fontSize: 13,
+    lineHeight: 18,
+    color: "#166534",
+    fontWeight: "600" as const,
+  },
+  teachingUrl: {
+    fontSize: 11,
+    lineHeight: 14,
+    color: "#4d7c63",
   },
 };

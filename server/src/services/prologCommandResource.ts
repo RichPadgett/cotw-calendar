@@ -8,6 +8,7 @@ import path from "node:path";
 import { promisify } from "node:util";
 
 import { listApprovedCommandContributions } from "./commandContributionStore";
+import { getRelatedTeachings } from "./teachingIndexService";
 
 const execFileAsync = promisify(execFile);
 
@@ -26,6 +27,11 @@ type CommandResourceDetail = {
   key: string;
   requirement?: string | null;
   requirements?: string[];
+  scriptureReferences?: string[];
+  relatedTeachings?: {
+    title: string;
+    url: string;
+  }[];
   studyNotes?: string[];
   storyReferences?: {
     reference: string;
@@ -185,6 +191,10 @@ function mergeApprovedContributions(command: CommandResourceDetail) {
       ...(command.requirements ?? []),
       ...requirementContributions,
     ],
+    relatedTeachings: getRelatedTeachings(
+      command.scriptureReferences ?? [],
+      command.requirement ?? ""
+    ),
     studyNotes: [
       ...(command.studyNotes ?? []),
       ...contributions
