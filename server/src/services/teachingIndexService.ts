@@ -292,3 +292,20 @@ export function getRelatedTeachings(
 
   return Array.from(seen.values()).slice(0, limit);
 }
+
+/**
+ * Strict presence check used for the "Has Teaching" audit filter — scripture
+ * book/chapter matches only. Deliberately excludes the title-keyword
+ * fallback, which is loose enough (common words like "priest" or "offering")
+ * that nearly every command would otherwise register as having a match,
+ * making the flag useless for finding genuine gaps.
+ */
+export function hasRelatedTeaching(scriptureReferences: string[]): boolean {
+  const index = getIndex();
+
+  return scriptureReferences.some((reference) =>
+    extractBookChapters(reference).some((bookChapter) =>
+      index.byBookChapter.has(bookChapter)
+    )
+  );
+}

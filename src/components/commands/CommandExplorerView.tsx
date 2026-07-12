@@ -36,6 +36,7 @@ type CommandSummary = {
   hasNonCanonicalStoryReferences?: "true" | "false";
   hasTranslationNotes?: "true" | "false";
   hasClarificationNotes?: "true" | "false";
+  hasTeaching?: "true" | "false";
 };
 
 type CommandFilterState = boolean | null;
@@ -47,7 +48,8 @@ type CommandFilterKey =
   | "hasStudyNotes"
   | "hasSourceTerms"
   | "hasStoryReferences"
-  | "hasNonCanonicalStoryReferences";
+  | "hasNonCanonicalStoryReferences"
+  | "hasTeaching";
 
 const COMMAND_FILTER_DEFINITIONS: {
   key: CommandFilterKey;
@@ -89,6 +91,11 @@ const COMMAND_FILTER_DEFINITIONS: {
     label: "Has Ancient Writings",
     test: (command) => command.hasNonCanonicalStoryReferences === "true",
   },
+  {
+    key: "hasTeaching",
+    label: "Has Teaching",
+    test: (command) => command.hasTeaching === "true",
+  },
 ];
 
 function createEmptyCommandFilters(): Record<CommandFilterKey, CommandFilterState> {
@@ -100,6 +107,7 @@ function createEmptyCommandFilters(): Record<CommandFilterKey, CommandFilterStat
     hasSourceTerms: null,
     hasStoryReferences: null,
     hasNonCanonicalStoryReferences: null,
+    hasTeaching: null,
   };
 }
 
