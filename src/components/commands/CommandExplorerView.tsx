@@ -1483,6 +1483,12 @@ export default function CommandExplorerView({
                         pressed && { backgroundColor: "#eef2f7" },
                       ]}
                     >
+                      <MaterialIcons
+                        name={getCategoryIcon(group.key)}
+                        size={18}
+                        color="#0f766e"
+                      />
+
                       <Text style={styles.categoryTitle}>
                         {formatKey(group.key)}
                       </Text>
@@ -1665,7 +1671,7 @@ const CATEGORY_ICONS: Record<string, keyof typeof MaterialIcons.glyphMap> = {
   firstfruits_omer: "grass",
   appointed_times: "event",
   sacred_assembly: "groups",
-  atonement: "self-improvement",
+  atonement: "healing",
   tabernacles: "cabin",
   torah_teaching: "menu-book",
   community_care: "volunteer-activism",
