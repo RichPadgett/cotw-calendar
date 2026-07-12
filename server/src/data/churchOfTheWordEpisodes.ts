@@ -12,6 +12,34 @@ export type ChurchOfTheWordEpisode = {
 
 export const churchOfTheWordEpisodes: Record<string, ChurchOfTheWordEpisode> =
 {
+  "2Dim5J7G71VohWtbdN5L7Y": {
+    "title": "The Deuteronomy 13 Test: False Prophets, Signs & Wonders & Absolute Loyalty to Yahweh",
+    "url": "https://open.spotify.com/episode/2Dim5J7G71VohWtbdN5L7Y",
+    "bookChapters": [
+      "Deuteronomy 13",
+      "Acts 6",
+      "Romans 3",
+      "Revelation 13",
+      "Revelation 14",
+      "Revelation 15",
+      "Revelation 16",
+      "Revelation 17",
+      "Revelation 18",
+      "Revelation 19",
+      "Revelation 20",
+      "Revelation 21",
+      "Revelation 22",
+      "Matthew 24",
+      "2 Thessalonians 2",
+      "1 Kings 16",
+      "1 Kings 17",
+      "1 Kings 18",
+      "Daniel 2",
+      "Daniel 3",
+      "Joshua 6",
+      "Matthew 10"
+    ]
+  },
   "7g71m5697lk28EFPrNStps": {
     "title": "Sardis - The Dead Church",
     "url": "https://open.spotify.com/episode/7g71m5697lk28EFPrNStps",
