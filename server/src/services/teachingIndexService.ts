@@ -3,15 +3,7 @@
  * Purpose: Matches Torah commands to Church of the Word podcast episodes by shared book/chapter references.
  */
 
-import fs from "fs";
-import path from "path";
-
-const TEACHINGS_FILE = path.join(
-  process.cwd(),
-  "content",
-  "teachings",
-  "church_of_the_word_episodes.json"
-);
+import { churchOfTheWordEpisodes } from "../data/churchOfTheWordEpisodes";
 
 export type RelatedTeaching = {
   title: string;
@@ -165,11 +157,7 @@ function normalizeBook(book: string): string {
 }
 
 function loadEpisodes(): Record<string, EpisodeRecord> {
-  if (!fs.existsSync(TEACHINGS_FILE)) {
-    return {};
-  }
-
-  return JSON.parse(fs.readFileSync(TEACHINGS_FILE, "utf-8"));
+  return churchOfTheWordEpisodes;
 }
 
 function buildIndex(): TeachingIndex {

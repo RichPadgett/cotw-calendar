@@ -10,18 +10,14 @@
 import fs from "fs";
 import path from "path";
 
+import { churchOfTheWordEpisodes } from "../src/data/churchOfTheWordEpisodes";
+
 const DAYS_ROOT = path.join(
   process.cwd(),
   "content",
   "groups",
   "church-of-the-word",
   "days"
-);
-const TEACHINGS_FILE = path.join(
-  process.cwd(),
-  "content",
-  "teachings",
-  "church_of_the_word_episodes.json"
 );
 
 type DayContentItem = {
@@ -32,12 +28,6 @@ type DayContentItem = {
 
 type DayContent = {
   sections?: { items?: DayContentItem[] }[];
-};
-
-type EpisodeRecord = {
-  title: string;
-  url: string;
-  bookChapters: string[];
 };
 
 function listDayFiles(): string[] {
@@ -89,17 +79,9 @@ function extractEpisodesFromDayFiles(): Map<string, string> {
   return found;
 }
 
-function loadIndexedEpisodes(): Record<string, EpisodeRecord> {
-  if (!fs.existsSync(TEACHINGS_FILE)) {
-    return {};
-  }
-
-  return JSON.parse(fs.readFileSync(TEACHINGS_FILE, "utf-8"));
-}
-
 function main() {
   const dayEpisodes = extractEpisodesFromDayFiles();
-  const indexed = loadIndexedEpisodes();
+  const indexed = churchOfTheWordEpisodes;
 
   const newEpisodes = Array.from(dayEpisodes.entries()).filter(
     ([episodeId]) => !(episodeId in indexed)
