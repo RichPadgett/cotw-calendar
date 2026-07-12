@@ -32,6 +32,8 @@
 :- multifile clarification_note/2.
 :- multifile translation_note/2.
 :- multifile points_to/2.
+:- multifile podcast_episode/3.
+:- multifile podcast_episode_reference/2.
 
 % -----------------------------------------------------------------------------
 % Shared Facts
@@ -39,6 +41,7 @@
 % These files define reusable values that many commands can reference.
 
 :- consult('facts/great_commands.pl').
+:- consult('facts/podcast_episodes.pl').
 
 % -----------------------------------------------------------------------------
 % Shared Rules
@@ -47,6 +50,7 @@
 
 :- consult('rules/embodiment.pl').
 :- consult('rules/catalog.pl').
+:- consult('rules/teachings.pl').
 
 % -----------------------------------------------------------------------------
 % Command Definitions

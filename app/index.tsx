@@ -141,6 +141,11 @@ export default function HomeScreen() {
   const [commandPendingRequestId, setCommandPendingRequestId] = useState(0);
   const [latestTeachingCollapseRequestId, setLatestTeachingCollapseRequestId] =
     useState(0);
+  const [manualTeaching, setManualTeaching] = useState<{
+    title: string;
+    url: string;
+    provider: "spotify";
+  } | null>(null);
   const [selectedTimelineOccurrence, setSelectedTimelineOccurrence] =
     useState<TimelineOccurrence | null>(null);
   const [timelineZoom, setTimelineZoom] = useState<TimelineZoomId>("years-250");
@@ -954,6 +959,8 @@ export default function HomeScreen() {
             groupCode={groupCode}
             username={normalizeContributorUsername(commandContributorUsername)}
             collapseRequestId={latestTeachingCollapseRequestId}
+            overrideTeaching={manualTeaching}
+            onDismissOverride={() => setManualTeaching(null)}
           />
 
           {activeTab === "calendar" && (
@@ -1122,6 +1129,9 @@ export default function HomeScreen() {
             onResourceStatsChange={handleCommandResourceStatsChange}
             onMobileSelectedCommandLayout={centerMobileSelectedCommand}
             onRequestContributorUsername={requestCommandContributorUsername}
+            onPlayTeaching={(teaching) =>
+              setManualTeaching({ ...teaching, provider: "spotify" })
+            }
           />
         )}
       </ScrollView>

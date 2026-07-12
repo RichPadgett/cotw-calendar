@@ -302,6 +302,7 @@ type Props = {
     height: number;
   }) => void;
   onRequestContributorUsername?: () => void;
+  onPlayTeaching?: (teaching: RelatedTeaching) => void;
 };
 
 export default function CommandExplorerView({
@@ -318,6 +319,7 @@ export default function CommandExplorerView({
   onResourceStatsChange,
   onMobileSelectedCommandLayout,
   onRequestContributorUsername,
+  onPlayTeaching,
 }: Props) {
   const { height, width } = useWindowDimensions();
   const selectedCommandRef = useRef<any>(null);
@@ -1376,6 +1378,7 @@ export default function CommandExplorerView({
           onCancelContribution={() => setContributionDraft(null)}
           onSubmitContribution={submitContribution}
           onWithdrawContribution={withdrawContribution}
+          onPlayTeaching={onPlayTeaching}
         />
       </View>
     );
@@ -1693,6 +1696,7 @@ function CommandDetail({
   onCancelContribution,
   onSubmitContribution,
   onWithdrawContribution,
+  onPlayTeaching,
 }: {
   command: CommandResource;
   bibleVersion: BibleVersion;
@@ -1715,6 +1719,7 @@ function CommandDetail({
   onCancelContribution: () => void;
   onSubmitContribution: () => void;
   onWithdrawContribution: (contributionId: string) => void;
+  onPlayTeaching?: (teaching: RelatedTeaching) => void;
 }) {
   const references = command.scriptureReferences ?? [];
   const commandTitle = command.title
@@ -1915,7 +1920,10 @@ function CommandDetail({
         onWithdrawContribution={onWithdrawContribution}
       />
 
-      <RelatedTeachingList items={command.relatedTeachings ?? []} />
+      <RelatedTeachingList
+        items={command.relatedTeachings ?? []}
+        onPlayTeaching={onPlayTeaching}
+      />
 
       <DetailTags
         title="Categories"
@@ -2007,6 +2015,7 @@ function SourceTermList({
     <View style={{ gap: 8 }}>
       <EditableSectionTitle
         title={title}
+        helpText={getContributionTypeGuidance("source_term")}
         canContribute={canContribute}
         isOpen={ownsDraft}
         onToggle={() => {
@@ -2022,10 +2031,6 @@ function SourceTermList({
           });
         }}
       />
-
-      <Text style={styles.sectionHelpText}>
-        {getContributionTypeGuidance("source_term")}
-      </Text>
 
       {items.length === 0 ? (
         <Text style={styles.mutedText}>No source terms.</Text>
@@ -2138,6 +2143,7 @@ function StoryReferenceList({
     <View style={{ gap: 8 }}>
       <EditableSectionTitle
         title={title}
+        helpText="Biblical examples where this command is practiced, violated, enforced, or illustrated."
         canContribute={canContribute}
         isOpen={ownsDraft}
         onToggle={() => {
@@ -2153,11 +2159,6 @@ function StoryReferenceList({
           });
         }}
       />
-
-      <Text style={styles.sectionHelpText}>
-        Biblical examples where this command is practiced, violated, enforced,
-        or illustrated.
-      </Text>
 
       {items.length === 0 ? (
         <Text style={styles.mutedText}>No scripture examples.</Text>
@@ -2267,6 +2268,7 @@ function NonCanonicalStoryReferenceList({
     <View style={{ gap: 8 }}>
       <EditableSectionTitle
         title={title}
+        helpText="Examples from ancient writings outside the 66-book canon (such as Jubilees, Enoch, Meqabyan, or the wider deuterocanon) where this command is practiced, violated, enforced, or illustrated. These are historical and devotional references, not equal in authority to Torah and Tanakh."
         canContribute={canContribute}
         isOpen={ownsDraft}
         onToggle={() => {
@@ -2282,14 +2284,6 @@ function NonCanonicalStoryReferenceList({
           });
         }}
       />
-
-      <Text style={styles.sectionHelpText}>
-        Examples from ancient writings outside the 66-book canon (such as
-        Jubilees, Enoch, Meqabyan, or the wider deuterocanon) where this
-        command is practiced, violated, enforced, or illustrated. These are
-        historical and devotional references, not equal in authority to
-        Torah and Tanakh.
-      </Text>
 
       {items.length === 0 ? (
         <Text style={styles.mutedText}>No extra-biblical references.</Text>
@@ -2356,36 +2350,61 @@ function NonCanonicalStoryReferenceList({
   );
 }
 
-function RelatedTeachingList({ items }: { items: RelatedTeaching[] }) {
+function RelatedTeachingList({
+  items,
+  onPlayTeaching,
+}: {
+  items: RelatedTeaching[];
+  onPlayTeaching?: (teaching: RelatedTeaching) => void;
+}) {
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
+  const helpText =
+    "Podcast episodes that cover the same scripture passages (or topic) as this command, matched automatically. Church of the Word covers the Bible on a yearly cycle, so more than one episode per command is expected. Tap a title to play it inline; use the arrow to open it in Spotify instead.";
+
   return (
     <View style={{ gap: 8 }}>
-      <Text style={styles.sectionTitle}>Church of the Word Teachings</Text>
+      <SectionTitle
+        title="Church of the Word Teachings"
+        helpText={helpText}
+        isInfoOpen={isInfoOpen}
+        onToggleInfo={() => setIsInfoOpen((value) => !value)}
+      />
 
-      <Text style={styles.sectionHelpText}>
-        Podcast episodes that cover the same scripture passages (or topic) as
-        this command, matched automatically. Church of the Word covers the
-        Bible on a yearly cycle, so more than one episode per command is
-        expected.
-      </Text>
+      {isInfoOpen ? (
+        <Text style={styles.sectionHelpText}>{helpText}</Text>
+      ) : null}
 
       {items.length === 0 ? (
         <Text style={styles.mutedText}>No matching teachings found yet.</Text>
       ) : (
         items.map((item) => (
-          <Pressable
-            key={item.url}
-            onPress={() => Linking.openURL(item.url)}
-            style={({ pressed }) => [
-              styles.teachingRow,
-              pressed && { opacity: 0.78 },
-            ]}
-          >
+          <View key={item.url} style={styles.teachingRow}>
             <MaterialIcons name="podcasts" size={16} color="#166534" />
-            <View style={{ flex: 1, gap: 2 }}>
+
+            <Pressable
+              onPress={() => onPlayTeaching?.(item)}
+              disabled={!onPlayTeaching}
+              style={({ pressed }) => [
+                { flex: 1, gap: 2 },
+                pressed && onPlayTeaching && { opacity: 0.78 },
+              ]}
+            >
               <Text style={styles.teachingLabel}>{item.title}</Text>
               <Text style={styles.teachingUrl}>{item.url}</Text>
-            </View>
-          </Pressable>
+            </Pressable>
+
+            <Pressable
+              onPress={() => Linking.openURL(item.url)}
+              accessibilityRole="button"
+              accessibilityLabel="Open in Spotify"
+              style={({ pressed }) => [
+                styles.teachingExternalButton,
+                pressed && { opacity: 0.78 },
+              ]}
+            >
+              <MaterialIcons name="open-in-new" size={16} color="#166534" />
+            </Pressable>
+          </View>
         ))
       )}
     </View>
@@ -2465,12 +2484,14 @@ function DetailList({
     canContribute && Boolean(contributionType) && Boolean(onOpenContribution);
   const ownsDraft =
     Boolean(contributionType) && contributionDraft?.type === contributionType;
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
 
   return (
     <View style={{ gap: 6 }}>
       {canEditSection ? (
         <EditableSectionTitle
           title={title}
+          helpText={helpText}
           canContribute
           isOpen={ownsDraft}
           onToggle={() => {
@@ -2487,10 +2508,19 @@ function DetailList({
           }}
         />
       ) : (
-        <SectionTitle title={title} />
-      )}
+        <>
+          <SectionTitle
+            title={title}
+            helpText={helpText}
+            isInfoOpen={isInfoOpen}
+            onToggleInfo={() => setIsInfoOpen((value) => !value)}
+          />
 
-      {helpText ? <Text style={styles.sectionHelpText}>{helpText}</Text> : null}
+          {isInfoOpen && helpText ? (
+            <Text style={styles.sectionHelpText}>{helpText}</Text>
+          ) : null}
+        </>
+      )}
 
       {items.length === 0 ? (
         <Text style={styles.mutedText}>{emptyText}</Text>
@@ -2555,11 +2585,36 @@ function DetailList({
   );
 }
 
-function SectionTitle({ title }: { title: string }) {
+function SectionTitle({
+  title,
+  helpText,
+  isInfoOpen,
+  onToggleInfo,
+}: {
+  title: string;
+  helpText?: string;
+  isInfoOpen?: boolean;
+  onToggleInfo?: () => void;
+}) {
   return (
     <View style={styles.sectionTitleBlock}>
       <View style={styles.sectionTitleMarker} />
       <Text style={styles.sectionTitle}>{title}</Text>
+
+      {helpText ? (
+        <Pressable
+          onPress={onToggleInfo}
+          hitSlop={6}
+          accessibilityRole="button"
+          accessibilityLabel={isInfoOpen ? "Hide section info" : "Show section info"}
+        >
+          <MaterialIcons
+            name="info-outline"
+            size={16}
+            color={isInfoOpen ? "#0f766e" : "#94a3b8"}
+          />
+        </Pressable>
+      ) : null}
     </View>
   );
 }
@@ -3389,32 +3444,47 @@ function PromotionForm({
 
 function EditableSectionTitle({
   title,
+  helpText,
   canContribute,
   isOpen,
   onToggle,
 }: {
   title: string;
+  helpText?: string;
   canContribute: boolean;
   isOpen: boolean;
   onToggle: () => void;
 }) {
-  return (
-    <View style={styles.sectionTitleRow}>
-      <SectionTitle title={title} />
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
 
-      {canContribute ? (
-        <Pressable
-          onPress={onToggle}
-          style={({ pressed }) => [
-            styles.contributionSmallButton,
-            isOpen && styles.contributionSmallButtonOpen,
-            pressed && { opacity: 0.78 },
-          ]}
-        >
-          <Text style={styles.contributionSmallButtonText}>
-            {isOpen ? "-" : "+"}
-          </Text>
-        </Pressable>
+  return (
+    <View style={{ gap: 6 }}>
+      <View style={styles.sectionTitleRow}>
+        <SectionTitle
+          title={title}
+          helpText={helpText}
+          isInfoOpen={isInfoOpen}
+          onToggleInfo={() => setIsInfoOpen((value) => !value)}
+        />
+
+        {canContribute ? (
+          <Pressable
+            onPress={onToggle}
+            style={({ pressed }) => [
+              styles.contributionSmallButton,
+              isOpen && styles.contributionSmallButtonOpen,
+              pressed && { opacity: 0.78 },
+            ]}
+          >
+            <Text style={styles.contributionSmallButtonText}>
+              {isOpen ? "-" : "+"}
+            </Text>
+          </Pressable>
+        ) : null}
+      </View>
+
+      {isInfoOpen && helpText ? (
+        <Text style={styles.sectionHelpText}>{helpText}</Text>
       ) : null}
     </View>
   );
@@ -4967,6 +5037,14 @@ const styles = {
     lineHeight: 18,
     color: "#166534",
     fontWeight: "600" as const,
+  },
+  teachingExternalButton: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    backgroundColor: "#dcfce7",
   },
   teachingUrl: {
     fontSize: 11,

@@ -99,7 +99,8 @@ command_summary_json_for(Command, json([
     hasStoryReferences=HasStoryReferences,
     hasNonCanonicalStoryReferences=HasNonCanonicalStoryReferences,
     hasTranslationNotes=HasTranslationNotes,
-    hasClarificationNotes=HasClarificationNotes
+    hasClarificationNotes=HasClarificationNotes,
+    hasTeaching=HasTeaching
 ])) :-
     command_title(Command, Title),
     setof_or_empty(Category, command_category(Command, Category), Categories),
@@ -112,7 +113,8 @@ command_summary_json_for(Command, json([
     has_any(story_reference(Command, _, _), HasStoryReferences),
     has_any(non_canonical_story_reference(Command, _, _), HasNonCanonicalStoryReferences),
     has_any(translation_note(Command, _), HasTranslationNotes),
-    has_any(clarification_note(Command, _), HasClarificationNotes).
+    has_any(clarification_note(Command, _), HasClarificationNotes),
+    has_any(has_related_teaching(Command), HasTeaching).
 
 has_any(Goal, true) :-
     call(Goal),
@@ -149,6 +151,7 @@ command_detail_json(Command, json([
     scriptureReferences=ScriptureReferences,
     storyReferences=StoryReferences,
     nonCanonicalStoryReferences=NonCanonicalStoryReferences,
+    relatedTeachings=RelatedTeachings,
     studyNotes=StudyNotes,
     sourceTerms=SourceTerms,
     translationNotes=TranslationNotes,
@@ -172,6 +175,7 @@ command_detail_json(Command, json([
         reference=NonCanonicalReference,
         label=NonCanonicalLabel
     ]), non_canonical_story_reference(Command, NonCanonicalReference, NonCanonicalLabel), NonCanonicalStoryReferences),
+    related_teachings_list(Command, RelatedTeachings),
     findall(Note, study_note(Command, Note), StudyNotes),
     findall(json([
         language=Language,

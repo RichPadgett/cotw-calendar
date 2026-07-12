@@ -8,7 +8,6 @@ import path from "node:path";
 import { promisify } from "node:util";
 
 import { listApprovedCommandContributions } from "./commandContributionStore";
-import { getRelatedTeachings, hasRelatedTeaching } from "./teachingIndexService";
 
 const execFileAsync = promisify(execFile);
 
@@ -54,36 +53,6 @@ type RandomCommandResourceResponse = {
   command: CommandResourceDetail | null;
 };
 
-type CommandSummaryEntry = {
-  key: string;
-  title?: string;
-  scriptureReferences?: string[];
-  hasTeaching?: "true" | "false";
-  [extra: string]: unknown;
-};
-
-type CommandSummaryListResponse = {
-  commands: CommandSummaryEntry[];
-};
-
-function attachHasTeaching(entry: CommandSummaryEntry): CommandSummaryEntry {
-  return {
-    ...entry,
-    hasTeaching: hasRelatedTeaching(entry.scriptureReferences ?? [])
-      ? "true"
-      : "false",
-  };
-}
-
-async function runPrologJsonWithTeachingFlags(goal: string) {
-  const response = await runPrologJson<CommandSummaryListResponse>(goal);
-
-  return {
-    ...response,
-    commands: response.commands.map(attachHasTeaching),
-  };
-}
-
 export function assertSafeAtom(value: string, fieldName: string): void {
   if (!safeAtomPattern.test(value)) {
     throw new Error(`${fieldName} must be a lowercase Prolog atom key.`);
@@ -95,33 +64,29 @@ export async function listCommandResources(
 ) {
   if (filters.category) {
     assertSafeAtom(filters.category, "category");
-    return runPrologJsonWithTeachingFlags(
-      `api_commands_by_category_json(${filters.category})`
-    );
+    return runPrologJson(`api_commands_by_category_json(${filters.category})`);
   }
 
   if (filters.fact) {
     assertSafeAtom(filters.fact, "fact");
-    return runPrologJsonWithTeachingFlags(
-      `api_commands_by_fact_json(${filters.fact})`
-    );
+    return runPrologJson(`api_commands_by_fact_json(${filters.fact})`);
   }
 
   if (filters.facts?.length) {
     filters.facts.forEach((fact) => assertSafeAtom(fact, "facts"));
-    return runPrologJsonWithTeachingFlags(
+    return runPrologJson(
       `api_commands_by_facts_json(${toPrologList(filters.facts)})`
     );
   }
 
   if (filters.appliesIf) {
     assertSafeAtom(filters.appliesIf, "appliesIf");
-    return runPrologJsonWithTeachingFlags(
+    return runPrologJson(
       `api_commands_by_applicability_json(${filters.appliesIf})`
     );
   }
 
-  return runPrologJsonWithTeachingFlags("api_commands_json");
+  return runPrologJson("api_commands_json");
 }
 
 export async function getCommandResource(commandKey: string) {
@@ -225,10 +190,6 @@ function mergeApprovedContributions(command: CommandResourceDetail) {
       ...(command.requirements ?? []),
       ...requirementContributions,
     ],
-    relatedTeachings: getRelatedTeachings(
-      command.scriptureReferences ?? [],
-      command.requirement ?? ""
-    ),
     studyNotes: [
       ...(command.studyNotes ?? []),
       ...contributions

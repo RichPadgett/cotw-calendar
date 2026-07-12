@@ -38,6 +38,8 @@ type Props = {
   groupCode: string;
   username?: string;
   collapseRequestId?: number;
+  overrideTeaching?: LatestShabbatTeachingItem | null;
+  onDismissOverride?: () => void;
 };
 
 function getSpotifyEmbedUrl(url: string): string | null {
@@ -54,6 +56,8 @@ export default function LatestShabbatTeachingPlayer({
   groupCode,
   username = "",
   collapseRequestId = 0,
+  overrideTeaching = null,
+  onDismissOverride,
 }: Props) {
   const { width } = useWindowDimensions();
   const [latestTeaching, setLatestTeaching] =
@@ -103,18 +107,18 @@ export default function LatestShabbatTeachingPlayer({
     }
   }, [collapseRequestId]);
 
-  const latestTeachingEmbedUrl = useMemo(() => {
-    if (!latestTeaching?.url) {
-      return null;
+  const isOverrideActive = Boolean(overrideTeaching);
+
+  useEffect(() => {
+    if (overrideTeaching) {
+      setIsCollapsed(false);
+      setSelectedTeachingIndex(0);
     }
+  }, [overrideTeaching]);
 
-    const selectedTeaching =
-      latestTeaching.teachings?.[selectedTeachingIndex] ?? latestTeaching;
-
-    return getSpotifyEmbedUrl(selectedTeaching.url);
-  }, [latestTeaching, selectedTeachingIndex]);
-  const teachingItems =
-    latestTeaching?.teachings && latestTeaching.teachings.length > 0
+  const teachingItems: LatestShabbatTeachingItem[] = isOverrideActive
+    ? [overrideTeaching as LatestShabbatTeachingItem]
+    : latestTeaching?.teachings && latestTeaching.teachings.length > 0
       ? latestTeaching.teachings
       : latestTeaching
         ? [
@@ -127,11 +131,19 @@ export default function LatestShabbatTeachingPlayer({
         : [];
   const selectedTeaching =
     teachingItems[selectedTeachingIndex] ?? teachingItems[0] ?? null;
-  const hasMultipleTeachings = teachingItems.length > 1;
+  const hasMultipleTeachings = !isOverrideActive && teachingItems.length > 1;
   const selectedTeachingNumber =
     teachingItems.length > 0
       ? Math.min(selectedTeachingIndex + 1, teachingItems.length)
       : 0;
+
+  const latestTeachingEmbedUrl = useMemo(() => {
+    if (!selectedTeaching?.url) {
+      return null;
+    }
+
+    return getSpotifyEmbedUrl(selectedTeaching.url);
+  }, [selectedTeaching]);
 
   const latestTeachingEmbed =
     Platform.OS === "web" && latestTeachingEmbedUrl
@@ -160,7 +172,7 @@ export default function LatestShabbatTeachingPlayer({
     }
   };
 
-  if (!latestTeaching) {
+  if (!latestTeaching && !isOverrideActive) {
     return null;
   }
 
@@ -211,7 +223,11 @@ export default function LatestShabbatTeachingPlayer({
               textTransform: "uppercase",
             }}
           >
-            {isCompactCollapsed ? "Latest Teaching" : "Latest Shabbat Teaching"}
+            {isOverrideActive
+              ? "Now Playing"
+              : isCompactCollapsed
+                ? "Latest Teaching"
+                : "Latest Shabbat Teaching"}
           </Text>
 
           {!isCompactCollapsed ? (
@@ -224,7 +240,7 @@ export default function LatestShabbatTeachingPlayer({
                 color: "#ffffff",
               }}
             >
-              {selectedTeaching?.title ?? latestTeaching.title}
+              {selectedTeaching?.title ?? latestTeaching?.title}
             </Text>
           ) : null}
         </View>
@@ -236,6 +252,30 @@ export default function LatestShabbatTeachingPlayer({
             gap: 8,
           }}
         >
+          {isOverrideActive && !isCompactCollapsed && onDismissOverride ? (
+            <Pressable
+              onPress={(event) => {
+                event.stopPropagation();
+                onDismissOverride();
+              }}
+              accessibilityRole="button"
+              accessibilityLabel="Return to latest Shabbat teaching"
+              style={({ pressed }) => [
+                {
+                  width: 30,
+                  height: 30,
+                  borderRadius: 15,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "#1f2937",
+                },
+                pressed && { opacity: 0.78 },
+              ]}
+            >
+              <MaterialIcons name="close" size={18} color="#e5e7eb" />
+            </Pressable>
+          ) : null}
+
           {hasMultipleTeachings && !isCompactCollapsed ? (
             <>
               <Pressable
@@ -331,7 +371,9 @@ export default function LatestShabbatTeachingPlayer({
                 color: "#d1d5db",
               }}
             >
-              {`M${latestTeaching.month} D${latestTeaching.day} · ${latestTeaching.gregorianDate}`}
+              {isOverrideActive
+                ? (selectedTeaching?.title ?? "Selected teaching")
+                : `M${latestTeaching?.month} D${latestTeaching?.day} · ${latestTeaching?.gregorianDate}`}
             </Text>
 
             <MaterialIcons name="play-circle" size={34} color="#22c55e" />
