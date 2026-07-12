@@ -6,6 +6,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import {
+  Image,
   Linking,
   Modal,
   Platform,
@@ -16,7 +17,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import type { StyleProp, ViewStyle } from "react-native";
+import type { ImageSourcePropType, StyleProp, ViewStyle } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -1483,11 +1484,13 @@ export default function CommandExplorerView({
                         pressed && { backgroundColor: "#eef2f7" },
                       ]}
                     >
-                      <MaterialIcons
-                        name={getCategoryIcon(group.key)}
-                        size={18}
-                        color="#0f766e"
-                      />
+                      {getCategoryIcon(group.key) ? (
+                        <Image
+                          source={getCategoryIcon(group.key)!}
+                          style={styles.categoryHeaderIcon}
+                          resizeMode="contain"
+                        />
+                      ) : null}
 
                       <Text style={styles.categoryTitle}>
                         {formatKey(group.key)}
@@ -1665,38 +1668,36 @@ function CommandFilterMenu({
   );
 }
 
-const CATEGORY_ICONS: Record<string, keyof typeof MaterialIcons.glyphMap> = {
-  sabbath: "brightness-3",
-  passover_unleavened_bread: "egg-alt",
-  firstfruits_omer: "grass",
-  appointed_times: "event",
-  sacred_assembly: "groups",
-  atonement: "healing",
-  tabernacles: "cabin",
-  torah_teaching: "menu-book",
-  community_care: "volunteer-activism",
-  command_remembrance: "bookmark",
-  offerings: "local-fire-department",
-  worship_idolatry: "block",
-  name_vows_remembrance: "record-voice-over",
-  clean_purity: "spa",
-  priestly_holiness: "church",
-  justice_neighbor: "balance",
-  family_household: "home",
-  property_economics_land: "landscape",
-  leadership_warfare: "shield",
-  mixed_kinds: "category",
-  animal_welfare: "pets",
-  servants_release: "free-breakfast",
-  refuge_court_procedure: "gavel",
-  marriage_household: "favorite",
-  vows_separation: "handshake",
+const CATEGORY_ICONS: Record<string, ImageSourcePropType> = {
+  animal_welfare: require("../../../assets/command/icons/animal_welfare.png"),
+  appointed_times: require("../../../assets/command/icons/appointed_times.png"),
+  atonement: require("../../../assets/command/icons/atonement.png"),
+  clean_purity: require("../../../assets/command/icons/clean_purity.png"),
+  command_remembrance: require("../../../assets/command/icons/command_remembrance.png"),
+  community_care: require("../../../assets/command/icons/community_care.png"),
+  family_household: require("../../../assets/command/icons/family_household.png"),
+  firstfruits_omer: require("../../../assets/command/icons/firstfruits_omer.png"),
+  justice_neighbor: require("../../../assets/command/icons/justice_neighbor.png"),
+  leadership_warfare: require("../../../assets/command/icons/leadership_warfare.png"),
+  marriage_household: require("../../../assets/command/icons/marriage_household.png"),
+  mixed_kinds: require("../../../assets/command/icons/mixed_kinds.png"),
+  name_vows_remembrance: require("../../../assets/command/icons/name_vows_remembrance.png"),
+  offerings: require("../../../assets/command/icons/offerings.png"),
+  passover_unleavened_bread: require("../../../assets/command/icons/passover_unleavened_bread.png"),
+  priestly_holiness: require("../../../assets/command/icons/priestly_holiness.png"),
+  property_economics_land: require("../../../assets/command/icons/property_economics_land.png"),
+  refuge_court_procedure: require("../../../assets/command/icons/refuge_court_procedure.png"),
+  sabbath: require("../../../assets/command/icons/sabbath.png"),
+  sacred_assembly: require("../../../assets/command/icons/sacred_assembly.png"),
+  servants_release: require("../../../assets/command/icons/servants_release.png"),
+  tabernacles: require("../../../assets/command/icons/tabernacles.png"),
+  torah_teaching: require("../../../assets/command/icons/torah_teaching.png"),
+  vows_separation: require("../../../assets/command/icons/vows_separation.png"),
+  worship_idolatry: require("../../../assets/command/icons/worship_idolatry.png"),
 };
 
-function getCategoryIcon(
-  categoryKey?: string
-): keyof typeof MaterialIcons.glyphMap {
-  return (categoryKey && CATEGORY_ICONS[categoryKey]) || "label";
+function getCategoryIcon(categoryKey?: string): ImageSourcePropType | null {
+  return (categoryKey && CATEGORY_ICONS[categoryKey]) || null;
 }
 
 function CommandListItem({
@@ -1733,12 +1734,13 @@ function CommandListItem({
         ]}
       >
         <View style={styles.commandItemRow}>
-          <MaterialIcons
-            name={getCategoryIcon(categoryKey)}
-            size={14}
-            color="#94a3b8"
-            style={styles.commandItemCategoryIcon}
-          />
+          {getCategoryIcon(categoryKey) ? (
+            <Image
+              source={getCategoryIcon(categoryKey)!}
+              style={styles.commandItemCategoryIcon}
+              resizeMode="contain"
+            />
+          ) : null}
 
           <Text style={[styles.commandTitle, { flex: 1 }]}>
             {reference ? (
@@ -4248,7 +4250,13 @@ const styles = {
     gap: 6,
   },
   commandItemCategoryIcon: {
-    marginTop: 2,
+    width: 16,
+    height: 16,
+    marginTop: 1,
+  },
+  categoryHeaderIcon: {
+    width: 20,
+    height: 20,
   },
   commandItemSelected: {
     borderColor: "#38bdf8",
