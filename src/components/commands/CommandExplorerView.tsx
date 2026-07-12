@@ -1497,6 +1497,7 @@ export default function CommandExplorerView({
                           <CommandListItem
                             key={`${group.key}-${item.key}`}
                             item={item}
+                            categoryKey={group.key}
                             isSelected={item.key === selectedCommandKey}
                             inlineContent={
                               !usesSplitPane &&
@@ -1658,14 +1659,50 @@ function CommandFilterMenu({
   );
 }
 
+const CATEGORY_ICONS: Record<string, keyof typeof MaterialIcons.glyphMap> = {
+  sabbath: "brightness-3",
+  passover_unleavened_bread: "egg-alt",
+  firstfruits_omer: "grass",
+  appointed_times: "event",
+  sacred_assembly: "groups",
+  atonement: "self-improvement",
+  tabernacles: "cabin",
+  torah_teaching: "menu-book",
+  community_care: "volunteer-activism",
+  command_remembrance: "bookmark",
+  offerings: "local-fire-department",
+  worship_idolatry: "block",
+  name_vows_remembrance: "record-voice-over",
+  clean_purity: "spa",
+  priestly_holiness: "church",
+  justice_neighbor: "balance",
+  family_household: "home",
+  property_economics_land: "landscape",
+  leadership_warfare: "shield",
+  mixed_kinds: "category",
+  animal_welfare: "pets",
+  servants_release: "free-breakfast",
+  refuge_court_procedure: "gavel",
+  marriage_household: "favorite",
+  vows_separation: "handshake",
+};
+
+function getCategoryIcon(
+  categoryKey?: string
+): keyof typeof MaterialIcons.glyphMap {
+  return (categoryKey && CATEGORY_ICONS[categoryKey]) || "label";
+}
+
 function CommandListItem({
   item,
+  categoryKey,
   itemRef,
   isSelected,
   inlineContent,
   onPress,
 }: {
   item: CommandSummary;
+  categoryKey?: string;
   itemRef?: (node: any) => void;
   isSelected: boolean;
   inlineContent?: ReactNode;
@@ -1689,12 +1726,21 @@ function CommandListItem({
           pressed && { opacity: 0.86 },
         ]}
       >
-        <Text style={styles.commandTitle}>
-          {reference ? (
-            <Text style={styles.commandTitleReference}>{reference} — </Text>
-          ) : null}
-          {description}
-        </Text>
+        <View style={styles.commandItemRow}>
+          <MaterialIcons
+            name={getCategoryIcon(categoryKey)}
+            size={14}
+            color="#94a3b8"
+            style={styles.commandItemCategoryIcon}
+          />
+
+          <Text style={[styles.commandTitle, { flex: 1 }]}>
+            {reference ? (
+              <Text style={styles.commandTitleReference}>{reference} — </Text>
+            ) : null}
+            {description}
+          </Text>
+        </View>
       </Pressable>
 
       {inlineContent ? (
@@ -4189,6 +4235,14 @@ const styles = {
     borderWidth: 1,
     borderColor: "#e5e7eb",
     backgroundColor: "#ffffff",
+  },
+  commandItemRow: {
+    flexDirection: "row" as const,
+    alignItems: "flex-start" as const,
+    gap: 6,
+  },
+  commandItemCategoryIcon: {
+    marginTop: 2,
   },
   commandItemSelected: {
     borderColor: "#38bdf8",
