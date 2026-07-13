@@ -237,3 +237,75 @@ glossary_term(ed, hebrew, 'עֵד', 'Ed', 'ED',
     'Witness; testimony.',
     'Torah requires a matter to stand on the testimony of two or three witnesses (Deuteronomy 19:15).').
 
+% -----------------------------------------------------------------------------
+% Feasts and Appointed Times (mo'adim)
+% -----------------------------------------------------------------------------
+
+glossary_term(pesach, hebrew, 'פֶּסַח', 'Pesach (Passover)', 'PEH-sakh',
+    'Passover - the appointed time commemorating YHWH passing over the Israelite homes in Egypt (Exodus 12).',
+    'The name comes from the verb "pasach," to pass over or spare; observed on the 14th day of the first month.').
+
+glossary_term(chag_hamatzot, hebrew, 'חַג הַמַּצּוֹת', 'Chag HaMatzot (Feast of Unleavened Bread)', 'khahg hah-mah-TSOHT',
+    'The Feast of Unleavened Bread - eating unleavened bread for seven days following Passover (Exodus 12:15-20; Leviticus 23:6-8).',
+    'Matzot (unleavened bread) recalls Israel leaving Egypt in haste, without time for bread to rise.').
+
+glossary_term(bikkurim, hebrew, 'בִּכּוּרִים', 'Bikkurim (Firstfruits)', 'bee-koo-REEM',
+    'Firstfruits - the first and best portion of the harvest, waved before YHWH (Leviticus 23:9-14).',
+    'Marks the beginning of the count toward Shavuot, 50 days later.').
+
+glossary_term(shavuot, hebrew, 'שָׁבֻעוֹת', 'Shavuot (Feast of Weeks)', 'shah-voo-OHT',
+    'Feast of Weeks - counted seven complete Sabbaths (49 days) from the firstfruits sheaf, then celebrated on the fiftieth day (Leviticus 23:15-21).',
+    'Called "Pentecost" in Greek (pentekoste, "fiftieth"), the name used for this feast in Acts 2.').
+
+glossary_term(yom_teruah, hebrew, 'יוֹם תְּרוּעָה', 'Yom Teruah (Feast of Trumpets)', 'yohm teh-roo-AH',
+    'The Day of Trumpets/Shouting - an appointed time marked by the blowing of trumpets (Leviticus 23:23-25; Numbers 29:1).',
+    'Later known in Jewish tradition as Rosh Hashanah ("head of the year"), though that specific name is post-biblical.').
+
+glossary_term(yom_kippur, hebrew, 'יוֹם כִּפּוּר', 'Yom Kippur (Day of Atonement)', 'yohm kee-POOR',
+    'The Day of Atonement - the most solemn appointed time, a day of fasting/affliction and atonement for the people (Leviticus 23:26-32).',
+    'Singular form of "kippurim" (atonements); see also the "kippurim" glossary entry.').
+
+glossary_term(sukkot, hebrew, 'סֻכּוֹת', 'Sukkot (Feast of Tabernacles)', 'soo-KOTE',
+    'Feast of Tabernacles/Booths - dwelling in temporary shelters for seven days, commemorating the wilderness wandering (Leviticus 23:33-43).',
+    'Plural of "sukkah" (booth/shelter); one of the three pilgrimage feasts alongside Passover and Shavuot.').
+
+glossary_term(shemini_atzeret, hebrew, 'שְׁמִינִי עֲצֶרֶת', 'Shemini Atzeret (Eighth Day Assembly)', 'shmee-NEE ah-TSEH-ret',
+    'The Eighth Day - a solemn assembly immediately following the seven days of Sukkot (Leviticus 23:36, 39).',
+    '"Atzeret" means a solemn stopping/assembly; observed as its own appointed day, distinct from Sukkot itself.').
+
+glossary_term(moadim, hebrew, 'מוֹעֲדִים', 'Moadim (Appointed Times)', 'moh-ah-DEEM',
+    'Appointed times - plural of "moed"; YHWH''s fixed festival seasons listed in Leviticus 23.',
+    'See also the singular "moed" glossary entry.').
+
+% -----------------------------------------------------------------------------
+% Creation and Time Vocabulary
+% -----------------------------------------------------------------------------
+
+glossary_term(yom, hebrew, 'יוֹם', 'Yom (Day)', 'YOHM',
+    'Day - a 24-hour day, or the daylight portion of a day, depending on context.',
+    'Used in the creation account ("evening and morning were the first day," Genesis 1:5) and throughout Torah for both calendar days and daylight.').
+
+glossary_term(raqia, hebrew, 'רָקִיעַ', 'Raqia (Firmament/Expanse)', 'rah-KEE-ah',
+    'Firmament, expanse, or sky-dome - the expanse YHWH made on the second day of creation to separate the waters (Genesis 1:6-8).',
+    'From a root meaning "to spread out" or "beat out" (like hammered metal); English translations vary between "firmament," "expanse," and "sky."').
+
+glossary_term(shavua, hebrew, 'שָׁבוּעַ', 'Shavua (Week)', 'shah-VOO-ah',
+    'Week - a period of seven days.',
+    'Shares a root with "sheva" (seven) and with "Shavuot" (Feast of Weeks), which is counted in shavuot (weeks) of seven days each.').
+
+glossary_term(layil, hebrew, 'לַיְלָה', 'Layil (Night)', 'LAH-yil',
+    'Night - the dark portion of a day.',
+    'Paired with "yom" (day) throughout the creation account: "YHWH called the light Day, and the darkness He called Night" (Genesis 1:5).').
+
+glossary_term(boqer, hebrew, 'בֹּקֶר', 'Boqer (Morning)', 'BOH-ker',
+    'Morning.',
+    'Paired with "ereb" (evening) to mark the boundary of a day: "and there was evening and there was morning" (Genesis 1:5).').
+
+glossary_term(shamayim, hebrew, 'שָׁמַיִם', 'Shamayim (Heavens/Sky)', 'shah-MAH-yim',
+    'Heavens, sky.',
+    'Grammatically plural in form (like "elohim"); created "in the beginning" alongside the earth (Genesis 1:1).').
+
+glossary_term(eretz, hebrew, 'אֶרֶץ', 'Eretz (Earth/Land)', 'EH-rets',
+    'Earth, land, ground.',
+    'Can mean the whole earth or a specific land/territory depending on context (e.g. "eretz Yisrael," the land of Israel).').
+
