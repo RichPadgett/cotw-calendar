@@ -251,6 +251,12 @@ export default function HebrewStudyView({
     [letters]
   );
 
+  const meaningByOrder = useMemo(() => {
+    const map = new Map<number, string>();
+    letters.forEach((letter) => map.set(letter.order, letter.meaning));
+    return map;
+  }, [letters]);
+
   return (
     <View style={{ gap: 14 }}>
       <View style={styles.subTabRow}>
@@ -340,7 +346,11 @@ export default function HebrewStudyView({
                   <LetterTile key={letter.order} letter={letter} />
                 ))
               : PALEO_HEBREW_LETTERS.map((letter) => (
-                  <PaleoLetterTile key={letter.order} letter={letter} />
+                  <PaleoLetterTile
+                    key={letter.order}
+                    letter={letter}
+                    meaning={meaningByOrder.get(letter.order)}
+                  />
                 ))}
           </View>
         </View>
@@ -740,7 +750,13 @@ function LetterTile({ letter }: { letter: HebrewLetter }) {
   );
 }
 
-function PaleoLetterTile({ letter }: { letter: PaleoHebrewLetter }) {
+function PaleoLetterTile({
+  letter,
+  meaning,
+}: {
+  letter: PaleoHebrewLetter;
+  meaning?: string;
+}) {
   const strokes = PALEO_HEBREW_LETTER_STROKES[letter.order];
   const revealAnim = useRef(new Animated.Value(0)).current;
 
@@ -781,6 +797,9 @@ function PaleoLetterTile({ letter }: { letter: PaleoHebrewLetter }) {
         {letter.transliteration}
       </Text>
       <Text style={styles.letterSound}>Modern: {letter.modern}</Text>
+      {meaning ? (
+        <Text style={styles.letterMeaning}>{meaning}</Text>
+      ) : null}
     </Pressable>
   );
 }
