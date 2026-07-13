@@ -643,7 +643,6 @@ concerns(priests_who_are_unclean_must_not_eat_holy_things, priestly_holiness).
 scripture_reference(priests_who_are_unclean_must_not_eat_holy_things, 'Leviticus 22:1-9').
 source_term(priests_who_are_unclean_must_not_eat_holy_things, hebrew, tame, 'unclean; the priestly state that bars eating holy things').
 source_term(priests_who_are_unclean_must_not_eat_holy_things, hebrew, qodesh, 'holy thing; the consecrated food the unclean priest must not eat').
-study_note(priests_who_are_unclean_must_not_eat_holy_things, 'This command belongs to priestly and sanctuary service, where access, offerings, portions, and holiness are ordered by Torah: Priests who are unclean must not eat holy things.').
 
 command_requirement(priests_who_are_unclean_must_not_eat_holy_things, 'Priests').
 

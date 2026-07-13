@@ -412,7 +412,6 @@ concerns(do_not_fear_a_false_prophet, reject_idolatry).
 scripture_reference(do_not_fear_a_false_prophet, 'Deuteronomy 18:22').
 story_reference(do_not_fear_a_false_prophet, 'Jeremiah 28:10-17', 'Jeremiah does not yield to Hananiah''s false prophecy and declares YHWH''s judgment on him.').
 source_term(do_not_fear_a_false_prophet, hebrew, gur, 'to fear, be afraid of, or stand in dread; the people must not fear the false prophet').
-study_note(do_not_fear_a_false_prophet, 'This command protects exclusive worship by removing practices, objects, covenants, and desires tied to idolatry: Do not fear a false prophet.').
 
 % Command: do_not_prophesy_falsely_in_yhwh_s_name
 command(do_not_prophesy_falsely_in_yhwh_s_name).

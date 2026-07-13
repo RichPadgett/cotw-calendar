@@ -12,14 +12,14 @@
         {
           "label": "Gospel Accounts: The Resurrection Spotify",
           "type": "external-link",
-          "url": "https://open.spotify.com/episode/3n99U263WF46QWU9rFxY50",
-          "access": "public"
+          "access": "public",
+          "url": "https://open.spotify.com/episode/3n99U263WF46QWU9rFxY50"
         },
         {
           "label": "The Resurrection - One of the Sabbaths Spotify",
           "type": "external-link",
-          "url": "https://open.spotify.com/episode/6uXx3lczUIKDoSoTb9f9Ik",
-          "access": "public"
+          "access": "public",
+          "url": "https://open.spotify.com/episode/6uXx3lczUIKDoSoTb9f9Ik"
         }
       ]
     }
