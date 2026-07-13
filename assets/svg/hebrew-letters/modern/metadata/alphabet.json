@@ -1,0 +1,272 @@
+[
+  {
+    "id": "01_aleph",
+    "name": "Aleph",
+    "character": "א",
+    "transliteration": "ʾ",
+    "unicode": "U+05D0",
+    "strokeCount": 3,
+    "style": "Modern Hebrew block-script inspired calligraphic teaching form",
+    "notes": "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system."
+  },
+  {
+    "id": "02_bet",
+    "name": "Bet",
+    "character": "ב",
+    "transliteration": "b/v",
+    "unicode": "U+05D1",
+    "strokeCount": 3,
+    "style": "Modern Hebrew block-script inspired calligraphic teaching form",
+    "notes": "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system."
+  },
+  {
+    "id": "03_gimel",
+    "name": "Gimel",
+    "character": "ג",
+    "transliteration": "g",
+    "unicode": "U+05D2",
+    "strokeCount": 2,
+    "style": "Modern Hebrew block-script inspired calligraphic teaching form",
+    "notes": "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system."
+  },
+  {
+    "id": "04_dalet",
+    "name": "Dalet",
+    "character": "ד",
+    "transliteration": "d",
+    "unicode": "U+05D3",
+    "strokeCount": 2,
+    "style": "Modern Hebrew block-script inspired calligraphic teaching form",
+    "notes": "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system."
+  },
+  {
+    "id": "05_he",
+    "name": "He",
+    "character": "ה",
+    "transliteration": "h",
+    "unicode": "U+05D4",
+    "strokeCount": 3,
+    "style": "Modern Hebrew block-script inspired calligraphic teaching form",
+    "notes": "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system."
+  },
+  {
+    "id": "06_vav",
+    "name": "Vav",
+    "character": "ו",
+    "transliteration": "v/w",
+    "unicode": "U+05D5",
+    "strokeCount": 2,
+    "style": "Modern Hebrew block-script inspired calligraphic teaching form",
+    "notes": "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system."
+  },
+  {
+    "id": "07_zayin",
+    "name": "Zayin",
+    "character": "ז",
+    "transliteration": "z",
+    "unicode": "U+05D6",
+    "strokeCount": 2,
+    "style": "Modern Hebrew block-script inspired calligraphic teaching form",
+    "notes": "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system."
+  },
+  {
+    "id": "08_chet",
+    "name": "Chet",
+    "character": "ח",
+    "transliteration": "ḥ",
+    "unicode": "U+05D7",
+    "strokeCount": 3,
+    "style": "Modern Hebrew block-script inspired calligraphic teaching form",
+    "notes": "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system."
+  },
+  {
+    "id": "09_tet",
+    "name": "Tet",
+    "character": "ט",
+    "transliteration": "ṭ",
+    "unicode": "U+05D8",
+    "strokeCount": 2,
+    "style": "Modern Hebrew block-script inspired calligraphic teaching form",
+    "notes": "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system."
+  },
+  {
+    "id": "10_yod",
+    "name": "Yod",
+    "character": "י",
+    "transliteration": "y",
+    "unicode": "U+05D9",
+    "strokeCount": 2,
+    "style": "Modern Hebrew block-script inspired calligraphic teaching form",
+    "notes": "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system."
+  },
+  {
+    "id": "11_kaf",
+    "name": "Kaf",
+    "character": "כ",
+    "transliteration": "k/kh",
+    "unicode": "U+05DB",
+    "strokeCount": 1,
+    "style": "Modern Hebrew block-script inspired calligraphic teaching form",
+    "notes": "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system."
+  },
+  {
+    "id": "12_lamed",
+    "name": "Lamed",
+    "character": "ל",
+    "transliteration": "l",
+    "unicode": "U+05DC",
+    "strokeCount": 2,
+    "style": "Modern Hebrew block-script inspired calligraphic teaching form",
+    "notes": "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system."
+  },
+  {
+    "id": "13_mem",
+    "name": "Mem",
+    "character": "מ",
+    "transliteration": "m",
+    "unicode": "U+05DE",
+    "strokeCount": 2,
+    "style": "Modern Hebrew block-script inspired calligraphic teaching form",
+    "notes": "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system."
+  },
+  {
+    "id": "14_nun",
+    "name": "Nun",
+    "character": "נ",
+    "transliteration": "n",
+    "unicode": "U+05E0",
+    "strokeCount": 2,
+    "style": "Modern Hebrew block-script inspired calligraphic teaching form",
+    "notes": "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system."
+  },
+  {
+    "id": "15_samekh",
+    "name": "Samekh",
+    "character": "ס",
+    "transliteration": "s",
+    "unicode": "U+05E1",
+    "strokeCount": 1,
+    "style": "Modern Hebrew block-script inspired calligraphic teaching form",
+    "notes": "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system."
+  },
+  {
+    "id": "16_ayin",
+    "name": "Ayin",
+    "character": "ע",
+    "transliteration": "ʿ",
+    "unicode": "U+05E2",
+    "strokeCount": 2,
+    "style": "Modern Hebrew block-script inspired calligraphic teaching form",
+    "notes": "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system."
+  },
+  {
+    "id": "17_pe",
+    "name": "Pe",
+    "character": "פ",
+    "transliteration": "p/f",
+    "unicode": "U+05E4",
+    "strokeCount": 2,
+    "style": "Modern Hebrew block-script inspired calligraphic teaching form",
+    "notes": "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system."
+  },
+  {
+    "id": "18_tsadi",
+    "name": "Tsadi",
+    "character": "צ",
+    "transliteration": "ṣ",
+    "unicode": "U+05E6",
+    "strokeCount": 3,
+    "style": "Modern Hebrew block-script inspired calligraphic teaching form",
+    "notes": "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system."
+  },
+  {
+    "id": "19_qof",
+    "name": "Qof",
+    "character": "ק",
+    "transliteration": "q",
+    "unicode": "U+05E7",
+    "strokeCount": 2,
+    "style": "Modern Hebrew block-script inspired calligraphic teaching form",
+    "notes": "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system."
+  },
+  {
+    "id": "20_resh",
+    "name": "Resh",
+    "character": "ר",
+    "transliteration": "r",
+    "unicode": "U+05E8",
+    "strokeCount": 1,
+    "style": "Modern Hebrew block-script inspired calligraphic teaching form",
+    "notes": "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system."
+  },
+  {
+    "id": "21_shin",
+    "name": "Shin",
+    "character": "ש",
+    "transliteration": "sh/s",
+    "unicode": "U+05E9",
+    "strokeCount": 4,
+    "style": "Modern Hebrew block-script inspired calligraphic teaching form",
+    "notes": "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system."
+  },
+  {
+    "id": "22_tav",
+    "name": "Tav",
+    "character": "ת",
+    "transliteration": "t",
+    "unicode": "U+05EA",
+    "strokeCount": 3,
+    "style": "Modern Hebrew block-script inspired calligraphic teaching form",
+    "notes": "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system."
+  },
+  {
+    "id": "23_final_kaf",
+    "name": "Final Kaf",
+    "character": "ך",
+    "transliteration": "kh",
+    "unicode": "U+05DA",
+    "strokeCount": 2,
+    "style": "Modern Hebrew block-script inspired calligraphic teaching form",
+    "notes": "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system."
+  },
+  {
+    "id": "24_final_mem",
+    "name": "Final Mem",
+    "character": "ם",
+    "transliteration": "m",
+    "unicode": "U+05DD",
+    "strokeCount": 4,
+    "style": "Modern Hebrew block-script inspired calligraphic teaching form",
+    "notes": "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system."
+  },
+  {
+    "id": "25_final_nun",
+    "name": "Final Nun",
+    "character": "ן",
+    "transliteration": "n",
+    "unicode": "U+05DF",
+    "strokeCount": 2,
+    "style": "Modern Hebrew block-script inspired calligraphic teaching form",
+    "notes": "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system."
+  },
+  {
+    "id": "26_final_pe",
+    "name": "Final Pe",
+    "character": "ף",
+    "transliteration": "f",
+    "unicode": "U+05E3",
+    "strokeCount": 3,
+    "style": "Modern Hebrew block-script inspired calligraphic teaching form",
+    "notes": "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system."
+  },
+  {
+    "id": "27_final_tsadi",
+    "name": "Final Tsadi",
+    "character": "ץ",
+    "transliteration": "ṣ",
+    "unicode": "U+05E5",
+    "strokeCount": 3,
+    "style": "Modern Hebrew block-script inspired calligraphic teaching form",
+    "notes": "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system."
+  }
+]

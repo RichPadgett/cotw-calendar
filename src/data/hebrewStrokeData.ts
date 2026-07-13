@@ -1,38 +1,71 @@
 /*
  * File: src/data/hebrewStrokeData.ts
- * Purpose: Real hand-drawn stroke-order path data for the 22 Hebrew letters,
- * extracted from assets/hebrew_animated_stroke_letters/*.svg, for driving true
- * stroke-by-stroke reveal animation via react-native-svg + Animated. Each
- * stroke's arc length is precomputed (sampled) so strokeDasharray/strokeDashoffset
- * reveal it accurately - react-native-svg has no equivalent to SVG's pathLength
- * normalization attribute used in the source files.
+ * Purpose: Real hand-drawn stroke-order path data + letter metadata for the
+ * 22 modern Hebrew letters, extracted from
+ * assets/svg/hebrew-letters/modern/. Each stroke's arc length is
+ * precomputed (sampled) so strokeDasharray/strokeDashoffset reveal it accurately
+ * via react-native-svg + Animated - react-native-svg has no equivalent to SVG's
+ * pathLength normalization attribute used in the source files.
  */
 
-export const HEBREW_STROKE_VIEW_BOX = '0 0 400 400';
+export const HEBREW_STROKE_VIEW_BOX = '0 0 720 720';
 
 export type HebrewStroke = { d: string; length: number };
 
+export type HebrewCalligraphyLetter = {
+  order: number;
+  name: string;
+  character: string;
+  transliteration: string;
+  notes: string;
+};
+
+export const HEBREW_CALLIGRAPHY_LETTERS: HebrewCalligraphyLetter[] = [
+  { order: 1, name: "Aleph", character: "\u05d0", transliteration: "\u02be", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
+  { order: 2, name: "Bet", character: "\u05d1", transliteration: "b/v", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
+  { order: 3, name: "Gimel", character: "\u05d2", transliteration: "g", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
+  { order: 4, name: "Dalet", character: "\u05d3", transliteration: "d", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
+  { order: 5, name: "He", character: "\u05d4", transliteration: "h", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
+  { order: 6, name: "Vav", character: "\u05d5", transliteration: "v/w", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
+  { order: 7, name: "Zayin", character: "\u05d6", transliteration: "z", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
+  { order: 8, name: "Chet", character: "\u05d7", transliteration: "\u1e25", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
+  { order: 9, name: "Tet", character: "\u05d8", transliteration: "\u1e6d", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
+  { order: 10, name: "Yod", character: "\u05d9", transliteration: "y", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
+  { order: 11, name: "Kaf", character: "\u05db", transliteration: "k/kh", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
+  { order: 12, name: "Lamed", character: "\u05dc", transliteration: "l", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
+  { order: 13, name: "Mem", character: "\u05de", transliteration: "m", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
+  { order: 14, name: "Nun", character: "\u05e0", transliteration: "n", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
+  { order: 15, name: "Samekh", character: "\u05e1", transliteration: "s", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
+  { order: 16, name: "Ayin", character: "\u05e2", transliteration: "\u02bf", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
+  { order: 17, name: "Pe", character: "\u05e4", transliteration: "p/f", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
+  { order: 18, name: "Tsadi", character: "\u05e6", transliteration: "\u1e63", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
+  { order: 19, name: "Qof", character: "\u05e7", transliteration: "q", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
+  { order: 20, name: "Resh", character: "\u05e8", transliteration: "r", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
+  { order: 21, name: "Shin", character: "\u05e9", transliteration: "sh/s", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
+  { order: 22, name: "Tav", character: "\u05ea", transliteration: "t", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
+];
+
 export const HEBREW_LETTER_STROKES: Record<number, HebrewStroke[]> = {
-  1: [{ d: "M300 92 C250 142 204 204 154 302", length: 256.9 }, { d: "M118 118 C153 139 184 160 214 182", length: 115.4 }, { d: "M228 221 C254 247 279 276 300 309", length: 113.9 }],
-  2: [{ d: "M302 105 C255 98 207 101 155 108", length: 147.5 }, { d: "M300 106 C308 159 307 217 302 279", length: 173.4 }, { d: "M302 279 C245 286 190 284 128 286", length: 174.2 }],
-  3: [{ d: "M265 100 C272 148 271 198 258 249 C251 276 232 293 202 303", length: 231.6 }, { d: "M202 303 C232 302 263 300 294 306", length: 92.3 }],
-  4: [{ d: "M307 105 C255 99 205 102 145 110", length: 162.5 }, { d: "M284 108 C286 160 285 220 284 302", length: 194.0 }],
-  5: [{ d: "M307 108 C257 102 211 103 156 111", length: 151.5 }, { d: "M291 110 C294 168 292 235 289 305", length: 195.1 }, { d: "M158 150 C158 201 157 250 157 304", length: 154.0 }],
-  6: [{ d: "M248 103 C251 156 250 220 246 307", length: 204.1 }],
-  7: [{ d: "M286 104 C249 98 218 99 183 106", length: 103.6 }, { d: "M247 109 C250 167 249 234 246 307", length: 198.1 }],
-  8: [{ d: "M300 108 C251 102 207 103 154 110", length: 146.4 }, { d: "M291 111 C294 169 292 239 289 306", length: 195.1 }, { d: "M159 111 C158 170 158 238 157 306", length: 195.0 }],
-  9: [{ d: "M294 117 C270 98 237 99 220 122 C200 149 211 189 243 197 C272 204 299 184 301 150", length: 261.3 }, { d: "M301 149 C305 210 293 273 253 300 C218 322 169 308 153 270 C137 232 154 190 188 169", length: 399.9 }],
-  10: [{ d: "M262 109 C261 139 251 160 228 176", length: 78.3 }],
-  11: [{ d: "M294 115 C255 97 208 102 176 129 C144 156 143 203 174 228 C203 251 248 247 293 247", length: 361.5 }],
-  12: [{ d: "M238 64 C245 119 247 172 239 218 C233 254 213 284 178 304", length: 263.8 }, { d: "M178 304 C205 304 232 303 264 307", length: 86.1 }],
-  13: [{ d: "M300 111 C255 103 211 104 162 112", length: 138.7 }, { d: "M292 113 C292 170 291 235 289 303", length: 190.0 }, { d: "M162 112 C185 145 206 181 220 221", length: 123.9 }, { d: "M220 221 C237 181 258 145 288 114", length: 127.5 }, { d: "M160 113 C158 171 158 238 156 304", length: 191.0 }],
-  14: [{ d: "M274 108 C275 159 274 212 261 253 C251 282 229 299 199 306", length: 231.7 }, { d: "M199 306 C230 305 259 304 291 307", length: 92.1 }],
-  15: [{ d: "M281 119 C253 99 207 99 176 121 C145 145 140 202 157 251 C172 294 212 313 250 300 C289 287 303 245 299 192 C296 158 294 135 281 119", length: 572.5 }],
-  16: [{ d: "M289 110 C286 169 277 229 249 273 C234 296 213 307 189 311", length: 242.9 }, { d: "M164 111 C173 170 190 226 219 260", length: 160.7 }, { d: "M219 260 C244 286 269 300 297 307", length: 92.3 }],
-  17: [{ d: "M294 115 C252 98 207 102 177 128 C145 155 144 202 171 228 C196 251 234 251 261 232", length: 333.9 }, { d: "M261 232 C282 217 295 191 293 159 C291 137 291 124 294 115", length: 127.6 }, { d: "M254 151 C238 141 219 142 207 154 C194 168 198 188 214 196", length: 100.7 }],
-  18: [{ d: "M286 111 C278 164 264 211 241 249 C226 275 207 294 181 307", length: 230.8 }, { d: "M167 111 C179 158 199 205 229 235", length: 140.2 }, { d: "M229 235 C252 261 275 286 301 306", length: 101.3 }],
-  19: [{ d: "M294 115 C253 99 208 102 177 128 C145 155 144 204 173 229 C198 251 239 249 288 248", length: 357.1 }, { d: "M264 174 C266 224 263 273 260 326", length: 152.1 }],
-  20: [{ d: "M296 112 C254 99 207 102 173 126 C147 146 141 177 142 209", length: 220.4 }, { d: "M296 112 C299 164 297 229 294 305", length: 193.1 }],
-  21: [{ d: "M154 111 C160 170 171 231 198 276 C211 296 230 306 252 306", length: 236.7 }, { d: "M221 110 C224 160 228 214 247 253", length: 146.2 }, { d: "M294 111 C291 166 282 223 261 268 C251 289 240 300 226 305", length: 213.7 }],
-  22: [{ d: "M302 111 C251 103 205 104 151 112", length: 151.6 }, { d: "M292 113 C295 170 293 237 290 305", length: 192.1 }, { d: "M154 113 C155 160 155 201 158 239 C161 274 178 296 210 306", length: 217.0 }],
+  1: [{ d: "M250 260 C268.3 278.3 323.3 330.0 360 370 C396.7 410.0 451.7 478.3 470 500", length: 325.9 }, { d: "M470 250 C456.7 265.0 418.3 298.3 390 340 C361.7 381.7 315.0 473.3 300 500", length: 304.2 }, { d: "M280 390 L420 360", length: 143.2 }],
+  2: [{ d: "M250 250 C286.7 250.0 428.3 241.7 470 250 C511.7 258.3 495.0 270.0 500 300 C505.0 330.0 500.0 408.3 500 430", length: 418.9 }, { d: "M500 430 C491.7 441.7 490.0 488.3 450 500 C410.0 511.7 291.7 500.0 260 500", length: 280.6 }, { d: "M260 500 L230 455", length: 54.1 }],
+  3: [{ d: "M300 245 C315.0 252.5 369.2 265.8 390 290 C410.8 314.2 423.3 355.0 425 390 C426.7 425.0 404.2 481.7 400 500", length: 322.5 }, { d: "M410 425 L500 500", length: 117.2 }],
+  4: [{ d: "M250 250 L500 250", length: 250.0 }, { d: "M460 250 L430 500", length: 251.8 }],
+  5: [{ d: "M245 250 L480 250", length: 235.0 }, { d: "M475 250 L460 500", length: 250.4 }, { d: "M260 350 L260 500", length: 150.0 }],
+  6: [{ d: "M330 250 L430 250", length: 100.0 }, { d: "M390 250 L375 500", length: 250.4 }],
+  7: [{ d: "M290 250 L455 250", length: 165.0 }, { d: "M385 250 L370 500", length: 250.4 }],
+  8: [{ d: "M255 250 L255 500", length: 250.0 }, { d: "M470 250 L470 500", length: 250.0 }, { d: "M255 250 L470 250", length: 215.0 }],
+  9: [{ d: "M275 260 C275.0 291.7 265.8 410.0 275 450 C284.2 490.0 302.5 491.7 330 500 C357.5 508.3 413.3 508.3 440 500 C466.7 491.7 481.7 478.3 490 450 C498.3 421.7 490.0 350.0 490 330", length: 576.3 }, { d: "M490 330 C480.0 316.7 455.0 263.3 430 250 C405.0 236.7 361.7 241.7 340 250 C318.3 258.3 306.7 291.7 300 300", length: 258.3 }],
+  10: [{ d: "M330 260 L425 260", length: 95.0 }, { d: "M400 260 L365 350", length: 96.6 }],
+  11: [{ d: "M275 250 C304.2 250.0 412.5 240.0 450 250 C487.5 260.0 491.7 280.0 500 310 C508.3 340.0 508.3 398.3 500 430 C491.7 461.7 487.5 488.3 450 500 C412.5 511.7 304.2 500.0 275 500", length: 646.9 }],
+  12: [{ d: "M360 170 C370.0 170.0 409.2 155.0 420 170 C430.8 185.0 424.2 245.0 425 260", length: 153.5 }, { d: "M425 260 C419.2 283.3 407.5 360.0 390 400 C372.5 440.0 331.7 483.3 320 500", length: 266.9 }],
+  13: [{ d: "M260 500 C263.3 458.3 260.0 271.7 280 250 C300.0 228.3 347.5 370.0 380 370 C412.5 370.0 459.2 228.3 475 250 C490.8 271.7 475.0 458.3 475 500", length: 827.9 }, { d: "M260 500 L475 500", length: 215.0 }],
+  14: [{ d: "M320 250 C338.3 250.0 411.7 225.0 430 250 C448.3 275.0 430.0 375.0 430 400", length: 265.7 }, { d: "M430 400 C424.2 416.7 416.7 483.3 395 500 C373.3 516.7 315.8 500.0 300 500", length: 204.3 }],
+  15: [{ d: "M360 240 C376.7 245.0 436.7 250.0 460 270 C483.3 290.0 496.7 329.2 500 360 C503.3 390.8 496.7 430.8 480 455 C463.3 479.2 429.2 497.5 400 505 C370.8 512.5 330.8 512.5 305 500 C279.2 487.5 255.0 457.5 245 430 C235.0 402.5 237.5 361.7 245 335 C252.5 308.3 270.8 285.8 290 270 C309.2 254.2 348.3 245.0 360 240", length: 844.9 }],
+  16: [{ d: "M285 250 C293.3 273.3 322.5 348.3 335 390 C347.5 431.7 355.8 481.7 360 500", length: 261.5 }, { d: "M455 250 C446.7 273.3 420.8 348.3 405 390 C389.2 431.7 367.5 481.7 360 500", length: 267.5 }],
+  17: [{ d: "M270 500 C270.0 458.3 240.8 291.7 270 250 C299.2 208.3 406.7 239.2 445 250 C483.3 260.8 490.8 285.0 500 315 C509.2 345.0 509.2 399.2 500 430 C490.8 460.8 483.3 488.3 445 500 C406.7 511.7 299.2 500.0 270 500", length: 911.9 }, { d: "M350 330 L430 330", length: 80.0 }],
+  18: [{ d: "M280 250 C290.0 269.2 321.7 323.3 340 365 C358.3 406.7 381.7 477.5 390 500", length: 273.7 }, { d: "M470 250 C461.7 270.0 443.3 328.3 420 370 C396.7 411.7 345.0 478.3 330 500", length: 288.3 }, { d: "M330 500 L470 500", length: 140.0 }],
+  19: [{ d: "M270 250 C303.3 250.0 432.5 238.3 470 250 C507.5 261.7 491.7 290.0 495 320 C498.3 350.0 499.2 400.0 490 430 C480.8 460.0 465.8 488.3 440 500 C414.2 511.7 352.5 500.0 335 500", length: 588.3 }, { d: "M390 360 L350 540", length: 184.4 }],
+  20: [{ d: "M260 250 C290.8 250.0 405.0 240.8 445 250 C485.0 259.2 490.8 263.3 500 305 C509.2 346.7 500.0 467.5 500 500", length: 466.4 }],
+  21: [{ d: "M265 250 L300 500", length: 252.4 }, { d: "M365 235 L365 500", length: 265.0 }, { d: "M470 250 L430 500", length: 253.2 }, { d: "M300 500 C310.8 492.5 343.3 455.0 365 455 C386.7 455.0 419.2 492.5 430 500", length: 160.7 }],
+  22: [{ d: "M255 250 L470 250", length: 215.0 }, { d: "M290 250 L280 500", length: 250.2 }, { d: "M470 250 L455 500", length: 250.4 }],
 };

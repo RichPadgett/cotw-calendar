@@ -1,0 +1,11 @@
+{
+  "id": "01_aleph",
+  "name": "Aleph",
+  "paleo": "𐤀",
+  "modern": "א",
+  "transliteration": "ʾ",
+  "unicode": "U+10900",
+  "strokeCount": 3,
+  "style": "Historically inspired educational Paleo-Hebrew calligraphy",
+  "notes": "Stroke order is a pedagogical reconstruction; ancient inscriptions do not preserve a universal standardized stroke order."
+}

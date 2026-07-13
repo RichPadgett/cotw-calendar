@@ -14,6 +14,12 @@ import {
   HEBREW_LETTER_STROKES,
   HEBREW_STROKE_VIEW_BOX,
 } from "../../data/hebrewStrokeData";
+import {
+  PALEO_HEBREW_LETTERS,
+  PALEO_HEBREW_LETTER_STROKES,
+  PALEO_HEBREW_STROKE_VIEW_BOX,
+  type PaleoHebrewLetter,
+} from "../../data/paleoHebrewStrokeData";
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 
@@ -77,6 +83,7 @@ export default function HebrewStudyView({
   const isAdmin = userRole === "admin" && Boolean(adminToken);
 
   const [subTab, setSubTab] = useState<"alphabet" | "glossary">("alphabet");
+  const [script, setScript] = useState<"modern" | "paleo">("modern");
   const [letters, setLetters] = useState<HebrewLetter[]>([]);
   const [terms, setTerms] = useState<GlossaryTerm[]>([]);
   const [searchText, setSearchText] = useState("");
@@ -281,10 +288,59 @@ export default function HebrewStudyView({
       </View>
 
       {subTab === "alphabet" ? (
-        <View style={styles.letterGrid}>
-          {sortedLetters.map((letter) => (
-            <LetterTile key={letter.order} letter={letter} />
-          ))}
+        <View style={{ gap: 12 }}>
+          <View style={styles.languageFilterRow}>
+            <Pressable
+              onPress={() => setScript("modern")}
+              style={[
+                styles.languageFilterChip,
+                script === "modern" && styles.languageFilterChipActive,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.languageFilterText,
+                  script === "modern" && styles.languageFilterTextActive,
+                ]}
+              >
+                Modern Hebrew
+              </Text>
+            </Pressable>
+
+            <Pressable
+              onPress={() => setScript("paleo")}
+              style={[
+                styles.languageFilterChip,
+                script === "paleo" && styles.languageFilterChipActive,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.languageFilterText,
+                  script === "paleo" && styles.languageFilterTextActive,
+                ]}
+              >
+                Paleo-Hebrew
+              </Text>
+            </Pressable>
+          </View>
+
+          {script === "paleo" ? (
+            <Text style={styles.mutedText}>
+              Educational reconstruction of Paleo-Hebrew letterforms and
+              stroke order - not an attested universal ancient standard.
+            </Text>
+          ) : null}
+
+          <View style={styles.letterGrid}>
+            {script === "modern"
+              ? sortedLetters.map((letter) => (
+                  <LetterTile key={letter.order} letter={letter} />
+                ))
+              : PALEO_HEBREW_LETTERS.map((letter) => (
+                  <PaleoLetterTile key={letter.order} letter={letter} />
+                ))}
+          </View>
         </View>
       ) : (
         <View style={{ gap: 12 }}>
@@ -589,6 +645,72 @@ function LetterTile({ letter }: { letter: HebrewLetter }) {
       </Text>
       <Text style={styles.letterSound}>{letter.sound}</Text>
       <Text style={styles.letterMeaning}>{letter.meaning}</Text>
+    </Pressable>
+  );
+}
+
+function PaleoLetterTile({ letter }: { letter: PaleoHebrewLetter }) {
+  const strokes = PALEO_HEBREW_LETTER_STROKES[letter.order];
+  const revealAnim = useRef(new Animated.Value(0)).current;
+
+  function playReveal() {
+    if (!strokes?.length) return;
+
+    revealAnim.setValue(0);
+    Animated.timing(revealAnim, {
+      toValue: strokes.length,
+      duration: strokes.length * STROKE_DURATION_MS,
+      useNativeDriver: false,
+    }).start();
+  }
+
+  return (
+    <Pressable
+      onPress={playReveal}
+      style={({ pressed }) => [
+        styles.letterCard,
+        pressed && { opacity: 0.85 },
+      ]}
+    >
+      <View style={styles.letterGlyphBox}>
+        {strokes?.length ? (
+          <Svg
+            width={GLYPH_BOX_SIZE}
+            height={GLYPH_BOX_SIZE}
+            viewBox={PALEO_HEBREW_STROKE_VIEW_BOX}
+          >
+            {strokes.map((stroke, index) => {
+              const dashoffset = revealAnim.interpolate({
+                inputRange: [index, index + 1],
+                outputRange: [stroke.length, 0],
+                extrapolate: "clamp",
+              });
+
+              return (
+                <AnimatedPath
+                  key={index}
+                  d={stroke.d}
+                  fill="none"
+                  stroke="#24170f"
+                  strokeWidth={40}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeDasharray={[stroke.length, stroke.length] as unknown as number}
+                  strokeDashoffset={dashoffset as unknown as number}
+                />
+              );
+            })}
+          </Svg>
+        ) : (
+          <Text style={styles.letterGlyph}>{letter.paleo}</Text>
+        )}
+      </View>
+
+      <Text style={styles.letterName}>{letter.name}</Text>
+      <Text style={styles.letterTransliteration}>
+        {letter.transliteration}
+      </Text>
+      <Text style={styles.letterSound}>Modern: {letter.modern}</Text>
     </Pressable>
   );
 }

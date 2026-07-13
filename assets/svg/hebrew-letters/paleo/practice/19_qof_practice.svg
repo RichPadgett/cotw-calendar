@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1600">
+  <rect width="1200" height="1600" fill="white"/>
+  <text x="80" y="100" font-family="Georgia,serif" font-size="54" fill="#222">Qof 𐤒 / ק</text>
+  <text x="80" y="150" font-family="Arial,sans-serif" font-size="26" fill="#555">Transliteration: q — Trace the guide, then practice below.</text>
+  <image href="../svg/19_qof.svg" x="90" y="190" width="480" height="480"/>
+  <g opacity=".18">
+    <image href="../svg/19_qof.svg" x="620" y="220" width="360" height="360"/>
+    <image href="../svg/19_qof.svg" x="120" y="730" width="280" height="280"/>
+    <image href="../svg/19_qof.svg" x="460" y="730" width="280" height="280"/>
+    <image href="../svg/19_qof.svg" x="800" y="730" width="280" height="280"/>
+  </g>
+  <g stroke="#bbb" stroke-width="2">
+    <line x1="80" y1="1120" x2="1120" y2="1120"/>
+    <line x1="80" y1="1260" x2="1120" y2="1260"/>
+    <line x1="80" y1="1400" x2="1120" y2="1400"/>
+    <line x1="80" y1="1540" x2="1120" y2="1540"/>
+  </g>
+</svg>
