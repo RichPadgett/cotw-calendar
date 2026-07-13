@@ -7,8 +7,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Animated, Pressable, Text, TextInput, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import Svg, { Path } from "react-native-svg";
 
 import { apiUrl } from "../../config/api";
+import {
+  HEBREW_LETTER_STROKES,
+  HEBREW_STROKE_VIEW_BOX,
+} from "../../data/hebrewStrokeData";
+
+const AnimatedPath = Animated.createAnimatedComponent(Path);
 
 type HebrewLetter = {
   order: number;
@@ -517,41 +524,22 @@ export default function HebrewStudyView({
 }
 
 const GLYPH_BOX_SIZE = 56;
+const STROKE_DURATION_MS = 550;
 
 function LetterTile({ letter }: { letter: HebrewLetter }) {
+  const strokes = HEBREW_LETTER_STROKES[letter.order];
   const revealAnim = useRef(new Animated.Value(0)).current;
 
   function playReveal() {
-    revealAnim.setValue(1);
+    if (!strokes?.length) return;
 
-    const stepDuration = 340;
-    const pauseDuration = 160;
-
-    Animated.sequence([
-      Animated.timing(revealAnim, {
-        toValue: 2 / 3,
-        duration: stepDuration,
-        useNativeDriver: false,
-      }),
-      Animated.delay(pauseDuration),
-      Animated.timing(revealAnim, {
-        toValue: 1 / 3,
-        duration: stepDuration,
-        useNativeDriver: false,
-      }),
-      Animated.delay(pauseDuration),
-      Animated.timing(revealAnim, {
-        toValue: 0,
-        duration: stepDuration,
-        useNativeDriver: false,
-      }),
-    ]).start();
+    revealAnim.setValue(0);
+    Animated.timing(revealAnim, {
+      toValue: strokes.length,
+      duration: strokes.length * STROKE_DURATION_MS,
+      useNativeDriver: false,
+    }).start();
   }
-
-  const maskWidth = revealAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, GLYPH_BOX_SIZE],
-  });
 
   return (
     <Pressable
@@ -562,12 +550,37 @@ function LetterTile({ letter }: { letter: HebrewLetter }) {
       ]}
     >
       <View style={styles.letterGlyphBox}>
-        <Text style={styles.letterGlyph}>{letter.letter}</Text>
+        {strokes?.length ? (
+          <Svg
+            width={GLYPH_BOX_SIZE}
+            height={GLYPH_BOX_SIZE}
+            viewBox={HEBREW_STROKE_VIEW_BOX}
+          >
+            {strokes.map((stroke, index) => {
+              const dashoffset = revealAnim.interpolate({
+                inputRange: [index, index + 1],
+                outputRange: [stroke.length, 0],
+                extrapolate: "clamp",
+              });
 
-        <Animated.View
-          pointerEvents="none"
-          style={[styles.letterGlyphMask, { width: maskWidth }]}
-        />
+              return (
+                <AnimatedPath
+                  key={index}
+                  d={stroke.d}
+                  fill="none"
+                  stroke="#0f172a"
+                  strokeWidth={16}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeDasharray={[stroke.length, stroke.length] as unknown as number}
+                  strokeDashoffset={dashoffset as unknown as number}
+                />
+              );
+            })}
+          </Svg>
+        ) : (
+          <Text style={styles.letterGlyph}>{letter.letter}</Text>
+        )}
       </View>
 
       <Text style={styles.letterName}>{letter.name}</Text>
