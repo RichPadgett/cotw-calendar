@@ -38,6 +38,7 @@ import CommandExplorerView, {
   type CommandHeaderCommand,
   type CommandNavigationState,
 } from "../src/components/commands/CommandExplorerView";
+import WebOnlyActivities from "../src/components/activities/WebOnlyActivities";
 import HebrewStudyView from "../src/components/hebrew/HebrewStudyView";
 import WelcomeScreen from "../src/components/onboarding/WelcomeScreen";
 
@@ -1096,6 +1097,8 @@ export default function HomeScreen() {
 
         {activeTab === "calendar" && (
           <>
+            <WebOnlyActivities />
+
             <YearWheelView
               nodes={nodes}
               perpetualMarkers={perpetualMarkers}
