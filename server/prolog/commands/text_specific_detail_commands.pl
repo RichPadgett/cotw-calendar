@@ -266,7 +266,6 @@ normal_obedience(do_not_accept_ransom_for_murderer, 'Do not accept ransom for th
 concerns(do_not_accept_ransom_for_murderer, refuge_and_bloodguilt).
 scripture_reference(do_not_accept_ransom_for_murderer, 'Numbers 35:31').
 source_term(do_not_accept_ransom_for_murderer, hebrew, 'kōp̄er', 'The kjv uses satisfaction which can also mean ransom, bribe or a sum of money').
-study_note(do_not_accept_ransom_for_murderer, 'This command belongs to public judgment and bloodguilt law.').
 
 % Command: do_not_accept_ransom_to_leave_refuge
 command(do_not_accept_ransom_to_leave_refuge).

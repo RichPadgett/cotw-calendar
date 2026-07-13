@@ -99,7 +99,6 @@ story_reference(do_not_eat_fat_of_offerings, '1 Samuel 2:12-17', 'Eli''s sons se
 source_term(do_not_eat_fat_of_offerings, 'hebrew', 'chêleb', ' fat, whether literally or figuratively - hence, the richest or choice part').
 source_term(do_not_eat_fat_of_offerings, 'lxx', 'τὸ στῆθος τὸ πιόν', 'τὸ στῆθος the breast τὸ πιόν the fat. The fat referred to in these passages is specifically that which covers vital organs, indicating its importance and sanctity. The prohibition serves as a reminder of the distinction between what is acceptable for human consumption and what is reserved for divine offerings.').
 translation_note(do_not_eat_fat_of_offerings, 'Modern versions of the bible seem to indicate any fat of these animals, ox, sheep, or goat. It is possible that due to the LXXs translation that it is only a specific best part of').
-study_note(do_not_eat_fat_of_offerings, 'This command belongs to the sacrificial and priestly holiness system.').
 
 % Command: purify_unclean_articles
 command(purify_unclean_articles).
@@ -234,7 +233,6 @@ story_reference(the_priest_examines_skin_disease_cases, '2 Chronicles 26:19-21',
 source_term(the_priest_examines_skin_disease_cases, hebrew, kohen, 'priest; the authorized examiner in Leviticus 13').
 source_term(the_priest_examines_skin_disease_cases, hebrew, raah, 'to see or inspect; the priest examines the plague condition').
 source_term(the_priest_examines_skin_disease_cases, hebrew, nega, 'plague, mark, or affected spot examined for impurity').
-study_note(the_priest_examines_skin_disease_cases, 'This command belongs to the purity system that protects the camp, sanctuary access, and restoration to clean status: The priest examines skin disease cases.').
 
 story_reference(the_priest_examines_skin_disease_cases, 'Luke 5:14', 'Jesus tells the cleansed leper to show himself to the priest and offer for his cleansing as Moses commanded, directly invoking the Leviticus 13-14 priestly examination and cleansing law.').
 
@@ -249,7 +247,6 @@ scripture_reference(isolate_the_person_with_suspected_skin_disease_according_to_
 story_reference(isolate_the_person_with_suspected_skin_disease_according_to_torah, 'Numbers 12:14-15', 'Miriam is shut outside the camp seven days.').
 source_term(isolate_the_person_with_suspected_skin_disease_according_to_torah, hebrew, sagar, 'to shut up, isolate, or quarantine for examination').
 source_term(isolate_the_person_with_suspected_skin_disease_according_to_torah, hebrew, shibath_yamim, 'seven days; the recurring isolation period in Leviticus 13').
-study_note(isolate_the_person_with_suspected_skin_disease_according_to_torah, 'This command belongs to the purity system that protects the camp, sanctuary access, and restoration to clean status: Isolate the person with suspected skin disease according to Torah.').
 
 % Command: the_person_with_skin_disease_must_dwell_outside_the_camp_and_cry_unclean
 command(the_person_with_skin_disease_must_dwell_outside_the_camp_and_cry_unclean).
@@ -262,7 +259,6 @@ story_reference(the_person_with_skin_disease_must_dwell_outside_the_camp_and_cry
 source_term(the_person_with_skin_disease_must_dwell_outside_the_camp_and_cry_unclean, hebrew, badad, 'alone or isolated; the diseased person dwells apart').
 source_term(the_person_with_skin_disease_must_dwell_outside_the_camp_and_cry_unclean, hebrew, machaneh, 'camp; the person dwells outside the camp').
 source_term(the_person_with_skin_disease_must_dwell_outside_the_camp_and_cry_unclean, hebrew, tame_tame, 'unclean, unclean; the cry required of the person with the condition').
-study_note(the_person_with_skin_disease_must_dwell_outside_the_camp_and_cry_unclean, 'This command belongs to the purity system that protects the camp, sanctuary access, and restoration to clean status: The person with skin disease must dwell outside the camp and cry unclean.').
 
 % Command: purify_the_healed_skin_disease_case_according_to_torah
 command(purify_the_healed_skin_disease_case_according_to_torah).
@@ -274,7 +270,6 @@ story_reference(purify_the_healed_skin_disease_case_according_to_torah, '2 Kings
 source_term(purify_the_healed_skin_disease_case_according_to_torah, hebrew, taher, 'to cleanse or declare clean; the goal of the healed skin-disease procedure').
 source_term(purify_the_healed_skin_disease_case_according_to_torah, hebrew, tsippor, 'bird; two birds are part of the cleansing procedure in Leviticus 14').
 source_term(purify_the_healed_skin_disease_case_according_to_torah, hebrew, ezov, 'hyssop; one of the cleansing materials in Leviticus 14').
-study_note(purify_the_healed_skin_disease_case_according_to_torah, 'This command belongs to the purity system that protects the camp, sanctuary access, and restoration to clean status: Purify the healed skin disease case according to Torah.').
 
 % Command: handle_house_plague_inspection_and_cleansing_according_to_torah
 command(handle_house_plague_inspection_and_cleansing_according_to_torah).
@@ -285,7 +280,6 @@ scripture_reference(handle_house_plague_inspection_and_cleansing_according_to_to
 source_term(handle_house_plague_inspection_and_cleansing_according_to_torah, hebrew, nega, 'plague, mark, or affected spot; used for the house-plague condition').
 source_term(handle_house_plague_inspection_and_cleansing_according_to_torah, hebrew, bayith, 'house; the object inspected and cleansed in Leviticus 14').
 source_term(handle_house_plague_inspection_and_cleansing_according_to_torah, hebrew, chalats, 'to remove or pull out; stones may be removed in the house-plague procedure').
-study_note(handle_house_plague_inspection_and_cleansing_according_to_torah, 'This command belongs to the purity system that protects the camp, sanctuary access, and restoration to clean status: Handle house plague inspection and cleansing according to Torah.').
 
 % Command: observe_bodily_discharge_impurity_instructions
 command(observe_bodily_discharge_impurity_instructions).
@@ -295,7 +289,6 @@ concerns(observe_bodily_discharge_impurity_instructions, purity_and_camp_holines
 scripture_reference(observe_bodily_discharge_impurity_instructions, 'Leviticus 15').
 source_term(observe_bodily_discharge_impurity_instructions, hebrew, zov, 'bodily discharge or flow; the impurity category in Leviticus 15').
 source_term(observe_bodily_discharge_impurity_instructions, hebrew, tame, 'unclean; the status resulting from specified discharges').
-study_note(observe_bodily_discharge_impurity_instructions, 'This command belongs to the purity system that protects the camp, sanctuary access, and restoration to clean status: Observe bodily discharge impurity instructions.').
 
 % Command: bathe_and_wash_garments_after_specified_discharge_impurity
 command(bathe_and_wash_garments_after_specified_discharge_impurity).
@@ -306,7 +299,6 @@ scripture_reference(bathe_and_wash_garments_after_specified_discharge_impurity, 
 source_term(bathe_and_wash_garments_after_specified_discharge_impurity, hebrew, rachats, 'to bathe or wash the body').
 source_term(bathe_and_wash_garments_after_specified_discharge_impurity, hebrew, kabas, 'to wash or launder garments').
 source_term(bathe_and_wash_garments_after_specified_discharge_impurity, hebrew, beged, 'garment or clothing washed after impurity').
-study_note(bathe_and_wash_garments_after_specified_discharge_impurity, 'This command belongs to the purity system that protects the camp, sanctuary access, and restoration to clean status: Bathe and wash garments after specified discharge impurity.').
 
 % Command: observe_menstrual_impurity_instructions
 command(observe_menstrual_impurity_instructions).
@@ -316,7 +308,6 @@ concerns(observe_menstrual_impurity_instructions, purity_and_camp_holiness).
 scripture_reference(observe_menstrual_impurity_instructions, 'Leviticus 15:19-24').
 source_term(observe_menstrual_impurity_instructions, hebrew, niddah, 'menstrual impurity or separation period').
 source_term(observe_menstrual_impurity_instructions, hebrew, dam, 'blood; the bodily source in the menstrual impurity instructions').
-study_note(observe_menstrual_impurity_instructions, 'This command belongs to the purity system that protects the camp, sanctuary access, and restoration to clean status: Observe menstrual impurity instructions.').
 
 story_reference(observe_menstrual_impurity_instructions, 'Mark 5:25-34', 'A woman who had an issue of blood for twelve years secretly touches Jesus'' garment for healing, her condition described in the same terms as the chronic-flow impurity of Leviticus 15.').
 
@@ -331,7 +322,6 @@ scripture_reference(do_not_enter_sanctuary_while_unclean_when_sanctuary_applies,
 source_term(do_not_enter_sanctuary_while_unclean_when_sanctuary_applies, hebrew, tame, 'unclean; the state that must be separated from sanctuary access').
 source_term(do_not_enter_sanctuary_while_unclean_when_sanctuary_applies, hebrew, mishkan, 'tabernacle or dwelling; the sanctuary that must not be defiled').
 source_term(do_not_enter_sanctuary_while_unclean_when_sanctuary_applies, hebrew, tumah, 'uncleanness or impurity; the danger to the sanctuary').
-study_note(do_not_enter_sanctuary_while_unclean_when_sanctuary_applies, 'This command belongs to the purity system that protects the camp, sanctuary access, and restoration to clean status: Do not enter sanctuary while unclean when sanctuary applies.').
 
 % Command: the_unclean_by_corpse_must_be_purified_on_the_third_and_seventh_days
 command(the_unclean_by_corpse_must_be_purified_on_the_third_and_seventh_days).
@@ -343,7 +333,6 @@ story_reference(the_unclean_by_corpse_must_be_purified_on_the_third_and_seventh_
 source_term(the_unclean_by_corpse_must_be_purified_on_the_third_and_seventh_days, hebrew, tame_nephesh, 'unclean by a dead person; the corpse impurity state in Numbers 19').
 source_term(the_unclean_by_corpse_must_be_purified_on_the_third_and_seventh_days, hebrew, chata, 'to purify or decontaminate; the action on the third and seventh days').
 source_term(the_unclean_by_corpse_must_be_purified_on_the_third_and_seventh_days, hebrew, shelishi_shebii, 'third and seventh; the required purification days').
-study_note(the_unclean_by_corpse_must_be_purified_on_the_third_and_seventh_days, 'This command belongs to the purity system that protects the camp, sanctuary access, and restoration to clean status: The unclean by corpse must be purified on the third and seventh days.').
 
 % Command: one_unclean_by_corpse_who_does_not_purify_defiles_the_sanctuary
 command(one_unclean_by_corpse_who_does_not_purify_defiles_the_sanctuary).
@@ -354,7 +343,6 @@ scripture_reference(one_unclean_by_corpse_who_does_not_purify_defiles_the_sanctu
 source_term(one_unclean_by_corpse_who_does_not_purify_defiles_the_sanctuary, hebrew, chata, 'to purify; the missing purification action in Numbers 19:20').
 source_term(one_unclean_by_corpse_who_does_not_purify_defiles_the_sanctuary, hebrew, tame, 'unclean; the unresolved state that defiles the sanctuary').
 source_term(one_unclean_by_corpse_who_does_not_purify_defiles_the_sanctuary, hebrew, miqdash, 'sanctuary; the holy place defiled by unresolved corpse impurity').
-study_note(one_unclean_by_corpse_who_does_not_purify_defiles_the_sanctuary, 'This command belongs to the purity system that protects the camp, sanctuary access, and restoration to clean status: One unclean by corpse who does not purify defiles the sanctuary.').
 
 % Command: eat_only_animals_meeting_torah_clean_animal_signs
 command(eat_only_animals_meeting_torah_clean_animal_signs).

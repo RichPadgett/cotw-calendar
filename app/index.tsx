@@ -38,6 +38,7 @@ import CommandExplorerView, {
   type CommandHeaderCommand,
   type CommandNavigationState,
 } from "../src/components/commands/CommandExplorerView";
+import HebrewStudyView from "../src/components/hebrew/HebrewStudyView";
 import WelcomeScreen from "../src/components/onboarding/WelcomeScreen";
 
 import { buildEnochYear } from "../src/engine/buildEnochYear";
@@ -63,7 +64,7 @@ const COMMAND_BIBLE_VERSION_STORAGE_KEY = "commandBibleVersion";
 const COMMAND_SEARCH_TEXT_STORAGE_KEY = "commandSearchText";
 const ACTIVE_TAB_STORAGE_KEY = "activeAppTab";
 
-type AppTab = "calendar" | "timeline" | "commands";
+type AppTab = "calendar" | "timeline" | "commands" | "hebrew";
 const BIBLE_VERSIONS: BibleVersion[] = [
   "KJV",
   "NKJV",
@@ -383,7 +384,8 @@ export default function HomeScreen() {
       if (
         savedTab === "calendar" ||
         savedTab === "timeline" ||
-        savedTab === "commands"
+        savedTab === "commands" ||
+        savedTab === "hebrew"
       ) {
         setActiveTab(savedTab);
       }
@@ -1162,6 +1164,14 @@ export default function HomeScreen() {
             }
           />
         )}
+
+        {activeTab === "hebrew" && (
+          <HebrewStudyView
+            adminToken={adminToken}
+            groupCode={groupCode}
+            userRole={userRole}
+          />
+        )}
       </ScrollView>
 
       <Modal
@@ -1336,6 +1346,7 @@ function TabSelector({
       ? [{ id: "timeline" as const, label: "Timeline" }]
       : []),
     { id: "commands", label: "Commands" },
+    { id: "hebrew", label: "Hebrew" },
   ];
 
   return (

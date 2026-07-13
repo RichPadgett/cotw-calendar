@@ -111,7 +111,6 @@ scripture_reference(do_not_kindle_fire_on_sabbath, 'Exodus 35:3').
 source_term(do_not_kindle_fire_on_sabbath, hebrew, baar, 'to burn, consume, or kindle; used here for kindling fire on Sabbath').
 source_term(do_not_kindle_fire_on_sabbath, hebrew, moshav, 'dwelling place or settlement; the command names fire in your dwellings').
 story_reference(do_not_kindle_fire_on_sabbath, 'Numbers 15:32-36', 'The man gathering sticks on the Sabbath shows the seriousness of Sabbath work boundaries.').
-study_note(do_not_kindle_fire_on_sabbath, 'This command belongs to the practical boundaries around Sabbath rest.').
 
 % -----------------------------------------------------------------------------
 % Additional Appointed Time Commands
