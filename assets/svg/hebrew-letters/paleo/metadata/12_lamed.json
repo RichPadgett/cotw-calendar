@@ -1,11 +1,28 @@
 {
   "id": "12_lamed",
   "name": "Lamed",
-  "paleo": "𐤋",
-  "modern": "ל",
+  "character": "𐤋",
+  "modernEquivalent": "ל",
   "transliteration": "l",
   "unicode": "U+1090B",
   "strokeCount": 2,
-  "style": "Historically inspired educational Paleo-Hebrew calligraphy",
-  "notes": "Stroke order is a pedagogical reconstruction; ancient inscriptions do not preserve a universal standardized stroke order."
+  "sharedStyle": {
+    "viewbox": 720,
+    "primary_width": 42,
+    "mask_width": 76,
+    "inner_width": 27,
+    "edge_width": 48,
+    "ink": "#24170f",
+    "inner_ink": "#4a3221",
+    "paper": "#f7f1e5",
+    "guide": "#947f61",
+    "accent": "#8a6a3c",
+    "text": "#36271a",
+    "subtext": "#6b5943",
+    "stroke_duration_base": 0.92,
+    "stroke_duration_segment": 0.1,
+    "stroke_gap": 0.2,
+    "first_delay": 0.35,
+    "noise_scale": 1.15
+  }
 }

@@ -2,7 +2,8 @@
  * File: src/data/paleoHebrewStrokeData.ts
  * Purpose: Real hand-drawn stroke-order path data + letter metadata for the
  * 22 Paleo-Hebrew letters, extracted from
- * assets/svg/hebrew-letters/paleo/. Educational reconstruction,
+ * assets/svg/hebrew-letters/paleo_hebrew/ (regenerated as a matched pair with
+ * the modern Hebrew set for visual consistency). Educational reconstruction,
  * not an attested universal ancient standard (see the set's README).
  */
 
@@ -16,32 +17,31 @@ export type PaleoHebrewLetter = {
   paleo: string;
   modern: string;
   transliteration: string;
-  notes: string;
 };
 
 export const PALEO_HEBREW_LETTERS: PaleoHebrewLetter[] = [
-  { order: 1, name: "Aleph", paleo: "\ud802\udd00", modern: "\u05d0", transliteration: "\u02be", notes: "Stroke order is a pedagogical reconstruction; ancient inscriptions do not preserve a universal standardized stroke order." },
-  { order: 2, name: "Bet", paleo: "\ud802\udd01", modern: "\u05d1", transliteration: "b/v", notes: "Stroke order is a pedagogical reconstruction; ancient inscriptions do not preserve a universal standardized stroke order." },
-  { order: 3, name: "Gimel", paleo: "\ud802\udd02", modern: "\u05d2", transliteration: "g", notes: "Stroke order is a pedagogical reconstruction; ancient inscriptions do not preserve a universal standardized stroke order." },
-  { order: 4, name: "Dalet", paleo: "\ud802\udd03", modern: "\u05d3", transliteration: "d", notes: "Stroke order is a pedagogical reconstruction; ancient inscriptions do not preserve a universal standardized stroke order." },
-  { order: 5, name: "He", paleo: "\ud802\udd04", modern: "\u05d4", transliteration: "h", notes: "Stroke order is a pedagogical reconstruction; ancient inscriptions do not preserve a universal standardized stroke order." },
-  { order: 6, name: "Waw", paleo: "\ud802\udd05", modern: "\u05d5", transliteration: "w", notes: "Stroke order is a pedagogical reconstruction; ancient inscriptions do not preserve a universal standardized stroke order." },
-  { order: 7, name: "Zayin", paleo: "\ud802\udd06", modern: "\u05d6", transliteration: "z", notes: "Stroke order is a pedagogical reconstruction; ancient inscriptions do not preserve a universal standardized stroke order." },
-  { order: 8, name: "Het", paleo: "\ud802\udd07", modern: "\u05d7", transliteration: "\u1e25", notes: "Stroke order is a pedagogical reconstruction; ancient inscriptions do not preserve a universal standardized stroke order." },
-  { order: 9, name: "Tet", paleo: "\ud802\udd08", modern: "\u05d8", transliteration: "\u1e6d", notes: "Stroke order is a pedagogical reconstruction; ancient inscriptions do not preserve a universal standardized stroke order." },
-  { order: 10, name: "Yod", paleo: "\ud802\udd09", modern: "\u05d9", transliteration: "y", notes: "Stroke order is a pedagogical reconstruction; ancient inscriptions do not preserve a universal standardized stroke order." },
-  { order: 11, name: "Kaf", paleo: "\ud802\udd0a", modern: "\u05db", transliteration: "k/kh", notes: "Stroke order is a pedagogical reconstruction; ancient inscriptions do not preserve a universal standardized stroke order." },
-  { order: 12, name: "Lamed", paleo: "\ud802\udd0b", modern: "\u05dc", transliteration: "l", notes: "Stroke order is a pedagogical reconstruction; ancient inscriptions do not preserve a universal standardized stroke order." },
-  { order: 13, name: "Mem", paleo: "\ud802\udd0c", modern: "\u05de", transliteration: "m", notes: "Stroke order is a pedagogical reconstruction; ancient inscriptions do not preserve a universal standardized stroke order." },
-  { order: 14, name: "Nun", paleo: "\ud802\udd0d", modern: "\u05e0", transliteration: "n", notes: "Stroke order is a pedagogical reconstruction; ancient inscriptions do not preserve a universal standardized stroke order." },
-  { order: 15, name: "Samekh", paleo: "\ud802\udd0e", modern: "\u05e1", transliteration: "s", notes: "Stroke order is a pedagogical reconstruction; ancient inscriptions do not preserve a universal standardized stroke order." },
-  { order: 16, name: "Ayin", paleo: "\ud802\udd0f", modern: "\u05e2", transliteration: "\u02bf", notes: "Stroke order is a pedagogical reconstruction; ancient inscriptions do not preserve a universal standardized stroke order." },
-  { order: 17, name: "Pe", paleo: "\ud802\udd10", modern: "\u05e4", transliteration: "p/f", notes: "Stroke order is a pedagogical reconstruction; ancient inscriptions do not preserve a universal standardized stroke order." },
-  { order: 18, name: "Tsade", paleo: "\ud802\udd11", modern: "\u05e6", transliteration: "\u1e63", notes: "Stroke order is a pedagogical reconstruction; ancient inscriptions do not preserve a universal standardized stroke order." },
-  { order: 19, name: "Qof", paleo: "\ud802\udd12", modern: "\u05e7", transliteration: "q", notes: "Stroke order is a pedagogical reconstruction; ancient inscriptions do not preserve a universal standardized stroke order." },
-  { order: 20, name: "Resh", paleo: "\ud802\udd13", modern: "\u05e8", transliteration: "r", notes: "Stroke order is a pedagogical reconstruction; ancient inscriptions do not preserve a universal standardized stroke order." },
-  { order: 21, name: "Shin", paleo: "\ud802\udd14", modern: "\u05e9", transliteration: "\u0161", notes: "Stroke order is a pedagogical reconstruction; ancient inscriptions do not preserve a universal standardized stroke order." },
-  { order: 22, name: "Taw", paleo: "\ud802\udd15", modern: "\u05ea", transliteration: "t", notes: "Stroke order is a pedagogical reconstruction; ancient inscriptions do not preserve a universal standardized stroke order." },
+  { order: 1, name: "Aleph", paleo: "\ud802\udd00", modern: "\u05d0", transliteration: "\u02be" },
+  { order: 2, name: "Bet", paleo: "\ud802\udd01", modern: "\u05d1", transliteration: "b/v" },
+  { order: 3, name: "Gimel", paleo: "\ud802\udd02", modern: "\u05d2", transliteration: "g" },
+  { order: 4, name: "Dalet", paleo: "\ud802\udd03", modern: "\u05d3", transliteration: "d" },
+  { order: 5, name: "He", paleo: "\ud802\udd04", modern: "\u05d4", transliteration: "h" },
+  { order: 6, name: "Waw", paleo: "\ud802\udd05", modern: "\u05d5", transliteration: "w" },
+  { order: 7, name: "Zayin", paleo: "\ud802\udd06", modern: "\u05d6", transliteration: "z" },
+  { order: 8, name: "Het", paleo: "\ud802\udd07", modern: "\u05d7", transliteration: "\u1e25" },
+  { order: 9, name: "Tet", paleo: "\ud802\udd08", modern: "\u05d8", transliteration: "\u1e6d" },
+  { order: 10, name: "Yod", paleo: "\ud802\udd09", modern: "\u05d9", transliteration: "y" },
+  { order: 11, name: "Kaf", paleo: "\ud802\udd0a", modern: "\u05db", transliteration: "k/kh" },
+  { order: 12, name: "Lamed", paleo: "\ud802\udd0b", modern: "\u05dc", transliteration: "l" },
+  { order: 13, name: "Mem", paleo: "\ud802\udd0c", modern: "\u05de", transliteration: "m" },
+  { order: 14, name: "Nun", paleo: "\ud802\udd0d", modern: "\u05e0", transliteration: "n" },
+  { order: 15, name: "Samekh", paleo: "\ud802\udd0e", modern: "\u05e1", transliteration: "s" },
+  { order: 16, name: "Ayin", paleo: "\ud802\udd0f", modern: "\u05e2", transliteration: "\u02bf" },
+  { order: 17, name: "Pe", paleo: "\ud802\udd10", modern: "\u05e4", transliteration: "p/f" },
+  { order: 18, name: "Tsade", paleo: "\ud802\udd11", modern: "\u05e6", transliteration: "\u1e63" },
+  { order: 19, name: "Qof", paleo: "\ud802\udd12", modern: "\u05e7", transliteration: "q" },
+  { order: 20, name: "Resh", paleo: "\ud802\udd13", modern: "\u05e8", transliteration: "r" },
+  { order: 21, name: "Shin", paleo: "\ud802\udd14", modern: "\u05e9", transliteration: "\u0161" },
+  { order: 22, name: "Taw", paleo: "\ud802\udd15", modern: "\u05ea", transliteration: "t" },
 ];
 
 export const PALEO_HEBREW_LETTER_STROKES: Record<number, PaleoHebrewStroke[]> = {

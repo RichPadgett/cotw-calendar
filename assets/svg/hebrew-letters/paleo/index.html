@@ -2,224 +2,227 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Animated Paleo-Hebrew Calligraphy</title>
+<title>Consistent Paleo-Hebrew Calligraphy</title>
 <style>
 body{margin:0;background:#d8cfbf;color:#2b2117;font-family:system-ui,sans-serif}
 header{max-width:1200px;margin:auto;padding:32px 20px 12px}
 h1{margin:0 0 8px;font-family:Georgia,serif}
-main{max-width:1200px;margin:auto;padding:20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}
+main{max-width:1200px;margin:auto;padding:20px;display:grid;
+grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}
 .card{background:#fffaf0;border-radius:18px;overflow:hidden;box-shadow:0 10px 30px #0002}
 object{width:100%;display:block}
 .info{display:grid;grid-template-columns:1fr auto;gap:8px 12px;padding:16px;align-items:center}
 .info strong{font-size:22px} .info span{opacity:.72}
 button,a{border:0;border-radius:9px;padding:9px 13px;font-weight:700;text-decoration:none;cursor:pointer}
 button{background:#2b2117;color:white} a{background:#e4d7c1;color:#2b2117;text-align:center}
-.notice{max-width:1200px;margin:0 auto;padding:0 20px 25px;opacity:.8}
+.note{max-width:1200px;margin:0 auto;padding:0 20px 28px;opacity:.8}
 </style>
 </head>
 <body>
-<header><h1>Animated Paleo-Hebrew Calligraphy</h1>
-<p>Twenty-two editable SVG letters with sequential writing animation, reed-pen styling, stroke numbers, arrows, and practice sheets.</p></header>
+<header>
+  <h1>Consistent Paleo-Hebrew Calligraphy</h1>
+  <p>Rendered with the same 42px calligraphic stroke system, ink layers, texture, animation timing, arrows, and guides as the companion alphabet.</p>
+</header>
 <main>
-    <article class="card">
-      <object data="svg/01_aleph.svg" type="image/svg+xml"></object>
-      <div class="info">
-        <strong>Aleph 𐤀</strong>
-        <span>Modern א · 3 strokes</span>
-        <button onclick="replay(this)">Replay</button>
-        <a href="practice/01_aleph_practice.svg">Practice sheet</a>
-      </div>
-    </article>
-    <article class="card">
-      <object data="svg/02_bet.svg" type="image/svg+xml"></object>
-      <div class="info">
-        <strong>Bet 𐤁</strong>
-        <span>Modern ב · 4 strokes</span>
-        <button onclick="replay(this)">Replay</button>
-        <a href="practice/02_bet_practice.svg">Practice sheet</a>
-      </div>
-    </article>
-    <article class="card">
-      <object data="svg/03_gimel.svg" type="image/svg+xml"></object>
-      <div class="info">
-        <strong>Gimel 𐤂</strong>
-        <span>Modern ג · 2 strokes</span>
-        <button onclick="replay(this)">Replay</button>
-        <a href="practice/03_gimel_practice.svg">Practice sheet</a>
-      </div>
-    </article>
-    <article class="card">
-      <object data="svg/04_dalet.svg" type="image/svg+xml"></object>
-      <div class="info">
-        <strong>Dalet 𐤃</strong>
-        <span>Modern ד · 2 strokes</span>
-        <button onclick="replay(this)">Replay</button>
-        <a href="practice/04_dalet_practice.svg">Practice sheet</a>
-      </div>
-    </article>
-    <article class="card">
-      <object data="svg/05_he.svg" type="image/svg+xml"></object>
-      <div class="info">
-        <strong>He 𐤄</strong>
-        <span>Modern ה · 4 strokes</span>
-        <button onclick="replay(this)">Replay</button>
-        <a href="practice/05_he_practice.svg">Practice sheet</a>
-      </div>
-    </article>
-    <article class="card">
-      <object data="svg/06_waw.svg" type="image/svg+xml"></object>
-      <div class="info">
-        <strong>Waw 𐤅</strong>
-        <span>Modern ו · 2 strokes</span>
-        <button onclick="replay(this)">Replay</button>
-        <a href="practice/06_waw_practice.svg">Practice sheet</a>
-      </div>
-    </article>
-    <article class="card">
-      <object data="svg/07_zayin.svg" type="image/svg+xml"></object>
-      <div class="info">
-        <strong>Zayin 𐤆</strong>
-        <span>Modern ז · 3 strokes</span>
-        <button onclick="replay(this)">Replay</button>
-        <a href="practice/07_zayin_practice.svg">Practice sheet</a>
-      </div>
-    </article>
-    <article class="card">
-      <object data="svg/08_het.svg" type="image/svg+xml"></object>
-      <div class="info">
-        <strong>Het 𐤇</strong>
-        <span>Modern ח · 3 strokes</span>
-        <button onclick="replay(this)">Replay</button>
-        <a href="practice/08_het_practice.svg">Practice sheet</a>
-      </div>
-    </article>
-    <article class="card">
-      <object data="svg/09_tet.svg" type="image/svg+xml"></object>
-      <div class="info">
-        <strong>Tet 𐤈</strong>
-        <span>Modern ט · 2 strokes</span>
-        <button onclick="replay(this)">Replay</button>
-        <a href="practice/09_tet_practice.svg">Practice sheet</a>
-      </div>
-    </article>
-    <article class="card">
-      <object data="svg/10_yod.svg" type="image/svg+xml"></object>
-      <div class="info">
-        <strong>Yod 𐤉</strong>
-        <span>Modern י · 2 strokes</span>
-        <button onclick="replay(this)">Replay</button>
-        <a href="practice/10_yod_practice.svg">Practice sheet</a>
-      </div>
-    </article>
-    <article class="card">
-      <object data="svg/11_kaf.svg" type="image/svg+xml"></object>
-      <div class="info">
-        <strong>Kaf 𐤊</strong>
-        <span>Modern כ · 2 strokes</span>
-        <button onclick="replay(this)">Replay</button>
-        <a href="practice/11_kaf_practice.svg">Practice sheet</a>
-      </div>
-    </article>
-    <article class="card">
-      <object data="svg/12_lamed.svg" type="image/svg+xml"></object>
-      <div class="info">
-        <strong>Lamed 𐤋</strong>
-        <span>Modern ל · 2 strokes</span>
-        <button onclick="replay(this)">Replay</button>
-        <a href="practice/12_lamed_practice.svg">Practice sheet</a>
-      </div>
-    </article>
-    <article class="card">
-      <object data="svg/13_mem.svg" type="image/svg+xml"></object>
-      <div class="info">
-        <strong>Mem 𐤌</strong>
-        <span>Modern מ · 2 strokes</span>
-        <button onclick="replay(this)">Replay</button>
-        <a href="practice/13_mem_practice.svg">Practice sheet</a>
-      </div>
-    </article>
-    <article class="card">
-      <object data="svg/14_nun.svg" type="image/svg+xml"></object>
-      <div class="info">
-        <strong>Nun 𐤍</strong>
-        <span>Modern נ · 2 strokes</span>
-        <button onclick="replay(this)">Replay</button>
-        <a href="practice/14_nun_practice.svg">Practice sheet</a>
-      </div>
-    </article>
-    <article class="card">
-      <object data="svg/15_samekh.svg" type="image/svg+xml"></object>
-      <div class="info">
-        <strong>Samekh 𐤎</strong>
-        <span>Modern ס · 3 strokes</span>
-        <button onclick="replay(this)">Replay</button>
-        <a href="practice/15_samekh_practice.svg">Practice sheet</a>
-      </div>
-    </article>
-    <article class="card">
-      <object data="svg/16_ayin.svg" type="image/svg+xml"></object>
-      <div class="info">
-        <strong>Ayin 𐤏</strong>
-        <span>Modern ע · 2 strokes</span>
-        <button onclick="replay(this)">Replay</button>
-        <a href="practice/16_ayin_practice.svg">Practice sheet</a>
-      </div>
-    </article>
-    <article class="card">
-      <object data="svg/17_pe.svg" type="image/svg+xml"></object>
-      <div class="info">
-        <strong>Pe 𐤐</strong>
-        <span>Modern פ · 2 strokes</span>
-        <button onclick="replay(this)">Replay</button>
-        <a href="practice/17_pe_practice.svg">Practice sheet</a>
-      </div>
-    </article>
-    <article class="card">
-      <object data="svg/18_tsade.svg" type="image/svg+xml"></object>
-      <div class="info">
-        <strong>Tsade 𐤑</strong>
-        <span>Modern צ · 3 strokes</span>
-        <button onclick="replay(this)">Replay</button>
-        <a href="practice/18_tsade_practice.svg">Practice sheet</a>
-      </div>
-    </article>
-    <article class="card">
-      <object data="svg/19_qof.svg" type="image/svg+xml"></object>
-      <div class="info">
-        <strong>Qof 𐤒</strong>
-        <span>Modern ק · 2 strokes</span>
-        <button onclick="replay(this)">Replay</button>
-        <a href="practice/19_qof_practice.svg">Practice sheet</a>
-      </div>
-    </article>
-    <article class="card">
-      <object data="svg/20_resh.svg" type="image/svg+xml"></object>
-      <div class="info">
-        <strong>Resh 𐤓</strong>
-        <span>Modern ר · 1 strokes</span>
-        <button onclick="replay(this)">Replay</button>
-        <a href="practice/20_resh_practice.svg">Practice sheet</a>
-      </div>
-    </article>
-    <article class="card">
-      <object data="svg/21_shin.svg" type="image/svg+xml"></object>
-      <div class="info">
-        <strong>Shin 𐤔</strong>
-        <span>Modern ש · 4 strokes</span>
-        <button onclick="replay(this)">Replay</button>
-        <a href="practice/21_shin_practice.svg">Practice sheet</a>
-      </div>
-    </article>
-    <article class="card">
-      <object data="svg/22_taw.svg" type="image/svg+xml"></object>
-      <div class="info">
-        <strong>Taw 𐤕</strong>
-        <span>Modern ת · 2 strokes</span>
-        <button onclick="replay(this)">Replay</button>
-        <a href="practice/22_taw_practice.svg">Practice sheet</a>
-      </div>
-    </article></main>
-<p class="notice">Historical note: these are consistent educational reconstructions inspired by Paleo-Hebrew inscriptional forms. Ancient letterforms varied by period, region, writer, and medium; stroke order is pedagogical rather than directly documented for every glyph.</p>
+      <article class="card">
+        <object data="svg/01_aleph.svg" type="image/svg+xml"></object>
+        <div class="info">
+          <strong>Aleph 𐤀</strong>
+          <span>3 strokes · ʾ</span>
+          <button onclick="replay(this)">Replay</button>
+          <a href="practice/01_aleph_practice.svg">Practice</a>
+        </div>
+      </article>
+      <article class="card">
+        <object data="svg/02_bet.svg" type="image/svg+xml"></object>
+        <div class="info">
+          <strong>Bet 𐤁</strong>
+          <span>4 strokes · b/v</span>
+          <button onclick="replay(this)">Replay</button>
+          <a href="practice/02_bet_practice.svg">Practice</a>
+        </div>
+      </article>
+      <article class="card">
+        <object data="svg/03_gimel.svg" type="image/svg+xml"></object>
+        <div class="info">
+          <strong>Gimel 𐤂</strong>
+          <span>2 strokes · g</span>
+          <button onclick="replay(this)">Replay</button>
+          <a href="practice/03_gimel_practice.svg">Practice</a>
+        </div>
+      </article>
+      <article class="card">
+        <object data="svg/04_dalet.svg" type="image/svg+xml"></object>
+        <div class="info">
+          <strong>Dalet 𐤃</strong>
+          <span>2 strokes · d</span>
+          <button onclick="replay(this)">Replay</button>
+          <a href="practice/04_dalet_practice.svg">Practice</a>
+        </div>
+      </article>
+      <article class="card">
+        <object data="svg/05_he.svg" type="image/svg+xml"></object>
+        <div class="info">
+          <strong>He 𐤄</strong>
+          <span>4 strokes · h</span>
+          <button onclick="replay(this)">Replay</button>
+          <a href="practice/05_he_practice.svg">Practice</a>
+        </div>
+      </article>
+      <article class="card">
+        <object data="svg/06_waw.svg" type="image/svg+xml"></object>
+        <div class="info">
+          <strong>Waw 𐤅</strong>
+          <span>2 strokes · w</span>
+          <button onclick="replay(this)">Replay</button>
+          <a href="practice/06_waw_practice.svg">Practice</a>
+        </div>
+      </article>
+      <article class="card">
+        <object data="svg/07_zayin.svg" type="image/svg+xml"></object>
+        <div class="info">
+          <strong>Zayin 𐤆</strong>
+          <span>3 strokes · z</span>
+          <button onclick="replay(this)">Replay</button>
+          <a href="practice/07_zayin_practice.svg">Practice</a>
+        </div>
+      </article>
+      <article class="card">
+        <object data="svg/08_het.svg" type="image/svg+xml"></object>
+        <div class="info">
+          <strong>Het 𐤇</strong>
+          <span>3 strokes · ḥ</span>
+          <button onclick="replay(this)">Replay</button>
+          <a href="practice/08_het_practice.svg">Practice</a>
+        </div>
+      </article>
+      <article class="card">
+        <object data="svg/09_tet.svg" type="image/svg+xml"></object>
+        <div class="info">
+          <strong>Tet 𐤈</strong>
+          <span>2 strokes · ṭ</span>
+          <button onclick="replay(this)">Replay</button>
+          <a href="practice/09_tet_practice.svg">Practice</a>
+        </div>
+      </article>
+      <article class="card">
+        <object data="svg/10_yod.svg" type="image/svg+xml"></object>
+        <div class="info">
+          <strong>Yod 𐤉</strong>
+          <span>2 strokes · y</span>
+          <button onclick="replay(this)">Replay</button>
+          <a href="practice/10_yod_practice.svg">Practice</a>
+        </div>
+      </article>
+      <article class="card">
+        <object data="svg/11_kaf.svg" type="image/svg+xml"></object>
+        <div class="info">
+          <strong>Kaf 𐤊</strong>
+          <span>2 strokes · k/kh</span>
+          <button onclick="replay(this)">Replay</button>
+          <a href="practice/11_kaf_practice.svg">Practice</a>
+        </div>
+      </article>
+      <article class="card">
+        <object data="svg/12_lamed.svg" type="image/svg+xml"></object>
+        <div class="info">
+          <strong>Lamed 𐤋</strong>
+          <span>2 strokes · l</span>
+          <button onclick="replay(this)">Replay</button>
+          <a href="practice/12_lamed_practice.svg">Practice</a>
+        </div>
+      </article>
+      <article class="card">
+        <object data="svg/13_mem.svg" type="image/svg+xml"></object>
+        <div class="info">
+          <strong>Mem 𐤌</strong>
+          <span>2 strokes · m</span>
+          <button onclick="replay(this)">Replay</button>
+          <a href="practice/13_mem_practice.svg">Practice</a>
+        </div>
+      </article>
+      <article class="card">
+        <object data="svg/14_nun.svg" type="image/svg+xml"></object>
+        <div class="info">
+          <strong>Nun 𐤍</strong>
+          <span>2 strokes · n</span>
+          <button onclick="replay(this)">Replay</button>
+          <a href="practice/14_nun_practice.svg">Practice</a>
+        </div>
+      </article>
+      <article class="card">
+        <object data="svg/15_samekh.svg" type="image/svg+xml"></object>
+        <div class="info">
+          <strong>Samekh 𐤎</strong>
+          <span>3 strokes · s</span>
+          <button onclick="replay(this)">Replay</button>
+          <a href="practice/15_samekh_practice.svg">Practice</a>
+        </div>
+      </article>
+      <article class="card">
+        <object data="svg/16_ayin.svg" type="image/svg+xml"></object>
+        <div class="info">
+          <strong>Ayin 𐤏</strong>
+          <span>2 strokes · ʿ</span>
+          <button onclick="replay(this)">Replay</button>
+          <a href="practice/16_ayin_practice.svg">Practice</a>
+        </div>
+      </article>
+      <article class="card">
+        <object data="svg/17_pe.svg" type="image/svg+xml"></object>
+        <div class="info">
+          <strong>Pe 𐤐</strong>
+          <span>2 strokes · p/f</span>
+          <button onclick="replay(this)">Replay</button>
+          <a href="practice/17_pe_practice.svg">Practice</a>
+        </div>
+      </article>
+      <article class="card">
+        <object data="svg/18_tsade.svg" type="image/svg+xml"></object>
+        <div class="info">
+          <strong>Tsade 𐤑</strong>
+          <span>3 strokes · ṣ</span>
+          <button onclick="replay(this)">Replay</button>
+          <a href="practice/18_tsade_practice.svg">Practice</a>
+        </div>
+      </article>
+      <article class="card">
+        <object data="svg/19_qof.svg" type="image/svg+xml"></object>
+        <div class="info">
+          <strong>Qof 𐤒</strong>
+          <span>2 strokes · q</span>
+          <button onclick="replay(this)">Replay</button>
+          <a href="practice/19_qof_practice.svg">Practice</a>
+        </div>
+      </article>
+      <article class="card">
+        <object data="svg/20_resh.svg" type="image/svg+xml"></object>
+        <div class="info">
+          <strong>Resh 𐤓</strong>
+          <span>1 strokes · r</span>
+          <button onclick="replay(this)">Replay</button>
+          <a href="practice/20_resh_practice.svg">Practice</a>
+        </div>
+      </article>
+      <article class="card">
+        <object data="svg/21_shin.svg" type="image/svg+xml"></object>
+        <div class="info">
+          <strong>Shin 𐤔</strong>
+          <span>4 strokes · š</span>
+          <button onclick="replay(this)">Replay</button>
+          <a href="practice/21_shin_practice.svg">Practice</a>
+        </div>
+      </article>
+      <article class="card">
+        <object data="svg/22_taw.svg" type="image/svg+xml"></object>
+        <div class="info">
+          <strong>Taw 𐤕</strong>
+          <span>2 strokes · t</span>
+          <button onclick="replay(this)">Replay</button>
+          <a href="practice/22_taw_practice.svg">Practice</a>
+        </div>
+      </article></main>
+<p class="note">Stroke order is pedagogical and may vary by teaching or historical tradition.</p>
 <script>
 function replay(btn){
   const o=btn.closest('.card').querySelector('object');

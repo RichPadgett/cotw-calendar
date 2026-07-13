@@ -2,7 +2,8 @@
  * File: src/data/hebrewStrokeData.ts
  * Purpose: Real hand-drawn stroke-order path data + letter metadata for the
  * 22 modern Hebrew letters, extracted from
- * assets/svg/hebrew-letters/modern/. Each stroke's arc length is
+ * assets/svg/hebrew-letters/modern_hebrew/ (regenerated as a matched pair with
+ * the Paleo-Hebrew set for visual consistency). Each stroke's arc length is
  * precomputed (sampled) so strokeDasharray/strokeDashoffset reveal it accurately
  * via react-native-svg + Animated - react-native-svg has no equivalent to SVG's
  * pathLength normalization attribute used in the source files.
@@ -17,32 +18,31 @@ export type HebrewCalligraphyLetter = {
   name: string;
   character: string;
   transliteration: string;
-  notes: string;
 };
 
 export const HEBREW_CALLIGRAPHY_LETTERS: HebrewCalligraphyLetter[] = [
-  { order: 1, name: "Aleph", character: "\u05d0", transliteration: "\u02be", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
-  { order: 2, name: "Bet", character: "\u05d1", transliteration: "b/v", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
-  { order: 3, name: "Gimel", character: "\u05d2", transliteration: "g", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
-  { order: 4, name: "Dalet", character: "\u05d3", transliteration: "d", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
-  { order: 5, name: "He", character: "\u05d4", transliteration: "h", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
-  { order: 6, name: "Vav", character: "\u05d5", transliteration: "v/w", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
-  { order: 7, name: "Zayin", character: "\u05d6", transliteration: "z", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
-  { order: 8, name: "Chet", character: "\u05d7", transliteration: "\u1e25", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
-  { order: 9, name: "Tet", character: "\u05d8", transliteration: "\u1e6d", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
-  { order: 10, name: "Yod", character: "\u05d9", transliteration: "y", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
-  { order: 11, name: "Kaf", character: "\u05db", transliteration: "k/kh", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
-  { order: 12, name: "Lamed", character: "\u05dc", transliteration: "l", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
-  { order: 13, name: "Mem", character: "\u05de", transliteration: "m", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
-  { order: 14, name: "Nun", character: "\u05e0", transliteration: "n", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
-  { order: 15, name: "Samekh", character: "\u05e1", transliteration: "s", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
-  { order: 16, name: "Ayin", character: "\u05e2", transliteration: "\u02bf", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
-  { order: 17, name: "Pe", character: "\u05e4", transliteration: "p/f", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
-  { order: 18, name: "Tsadi", character: "\u05e6", transliteration: "\u1e63", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
-  { order: 19, name: "Qof", character: "\u05e7", transliteration: "q", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
-  { order: 20, name: "Resh", character: "\u05e8", transliteration: "r", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
-  { order: 21, name: "Shin", character: "\u05e9", transliteration: "sh/s", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
-  { order: 22, name: "Tav", character: "\u05ea", transliteration: "t", notes: "Stroke order can vary by handwriting tradition and teacher; this set uses one consistent pedagogical system." },
+  { order: 1, name: "Aleph", character: "\u05d0", transliteration: "\u02be" },
+  { order: 2, name: "Bet", character: "\u05d1", transliteration: "b/v" },
+  { order: 3, name: "Gimel", character: "\u05d2", transliteration: "g" },
+  { order: 4, name: "Dalet", character: "\u05d3", transliteration: "d" },
+  { order: 5, name: "He", character: "\u05d4", transliteration: "h" },
+  { order: 6, name: "Vav", character: "\u05d5", transliteration: "v/w" },
+  { order: 7, name: "Zayin", character: "\u05d6", transliteration: "z" },
+  { order: 8, name: "Chet", character: "\u05d7", transliteration: "\u1e25" },
+  { order: 9, name: "Tet", character: "\u05d8", transliteration: "\u1e6d" },
+  { order: 10, name: "Yod", character: "\u05d9", transliteration: "y" },
+  { order: 11, name: "Kaf", character: "\u05db", transliteration: "k/kh" },
+  { order: 12, name: "Lamed", character: "\u05dc", transliteration: "l" },
+  { order: 13, name: "Mem", character: "\u05de", transliteration: "m" },
+  { order: 14, name: "Nun", character: "\u05e0", transliteration: "n" },
+  { order: 15, name: "Samekh", character: "\u05e1", transliteration: "s" },
+  { order: 16, name: "Ayin", character: "\u05e2", transliteration: "\u02bf" },
+  { order: 17, name: "Pe", character: "\u05e4", transliteration: "p/f" },
+  { order: 18, name: "Tsadi", character: "\u05e6", transliteration: "\u1e63" },
+  { order: 19, name: "Qof", character: "\u05e7", transliteration: "q" },
+  { order: 20, name: "Resh", character: "\u05e8", transliteration: "r" },
+  { order: 21, name: "Shin", character: "\u05e9", transliteration: "sh/s" },
+  { order: 22, name: "Tav", character: "\u05ea", transliteration: "t" },
 ];
 
 export const HEBREW_LETTER_STROKES: Record<number, HebrewStroke[]> = {

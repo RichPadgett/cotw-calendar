@@ -1,7 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1600">
   <rect width="1200" height="1600" fill="white"/>
-  <text x="80" y="100" font-family="Georgia,serif" font-size="54" fill="#222">Pe 𐤐 / פ</text>
-  <text x="80" y="150" font-family="Arial,sans-serif" font-size="26" fill="#555">Transliteration: p/f — Trace the guide, then practice below.</text>
+  <text x="80" y="100" font-family="Georgia,serif" font-size="56" fill="#222">Pe 𐤐</text>
+  <text x="80" y="150" font-family="Arial,sans-serif" font-size="26" fill="#555">
+    Shared calligraphy system • p/f • Trace and practice
+  </text>
   <image href="../svg/17_pe.svg" x="90" y="190" width="480" height="480"/>
   <g opacity=".18">
     <image href="../svg/17_pe.svg" x="620" y="220" width="360" height="360"/>

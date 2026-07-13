@@ -1,63 +1,98 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 720" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 720"
+ role="img" aria-labelledby="title desc">
   <title id="title">Animated Paleo-Hebrew Aleph</title>
-  <desc id="desc">Historically inspired educational calligraphic animation with tapered broad-pen styling and sequential stroke order.</desc>
+  <desc id="desc">Calligraphic teaching animation rendered with the shared Hebrew alphabet visual system.</desc>
   <defs>
     <filter id="inkSoft" x="-10%" y="-10%" width="120%" height="120%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" seed="35" result="noise"/>
-      <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.2" xChannelSelector="R" yChannelSelector="G"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2"
+                    seed="65" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise"
+                         scale="1.15" xChannelSelector="R" yChannelSelector="G"/>
     </filter>
     
     <mask id="reveal1">
-      <path d="M210 500 C220.8 488.3 255.0 455.0 275 430 C295.0 405.0 310.8 381.7 330 350 C349.2 318.3 380.0 258.3 390 240" fill="none" stroke="white" stroke-width="68" stroke-linecap="round"
+      <path d="M210 500 C220.8 488.3 255.0 455.0 275 430 C295.0 405.0 310.8 381.7 330 350 C349.2 318.3 380.0 258.3 390 240" fill="none" stroke="white" stroke-width="76"
+            stroke-linecap="round" stroke-linejoin="round"
             pathLength="1" stroke-dasharray="1" stroke-dashoffset="1">
-        <animate attributeName="stroke-dashoffset" from="1" to="0" dur="1.09s" begin="0.35s" fill="freeze"/>
+        <animate attributeName="stroke-dashoffset" from="1" to="0"
+                 dur="1.12s" begin="0.35s" fill="freeze"/>
       </path>
     </mask>
     <mask id="reveal2">
-      <path d="M505 505 C496.7 491.7 471.7 450.8 455 425 C438.3 399.2 425.8 380.0 405 350 C384.2 320.0 342.5 262.5 330 245" fill="none" stroke="white" stroke-width="68" stroke-linecap="round"
+      <path d="M505 505 C496.7 491.7 471.7 450.8 455 425 C438.3 399.2 425.8 380.0 405 350 C384.2 320.0 342.5 262.5 330 245" fill="none" stroke="white" stroke-width="76"
+            stroke-linecap="round" stroke-linejoin="round"
             pathLength="1" stroke-dasharray="1" stroke-dashoffset="1">
-        <animate attributeName="stroke-dashoffset" from="1" to="0" dur="1.09s" begin="1.62s" fill="freeze"/>
+        <animate attributeName="stroke-dashoffset" from="1" to="0"
+                 dur="1.12s" begin="1.67s" fill="freeze"/>
       </path>
     </mask>
     <mask id="reveal3">
-      <path d="M245 365 C256.7 362.5 290.0 352.5 315 350 C340.0 347.5 368.8 347.5 395 350 C421.2 352.5 459.2 362.5 472 365" fill="none" stroke="white" stroke-width="68" stroke-linecap="round"
+      <path d="M245 365 C256.7 362.5 290.0 352.5 315 350 C340.0 347.5 368.8 347.5 395 350 C421.2 352.5 459.2 362.5 472 365" fill="none" stroke="white" stroke-width="76"
+            stroke-linecap="round" stroke-linejoin="round"
             pathLength="1" stroke-dasharray="1" stroke-dashoffset="1">
-        <animate attributeName="stroke-dashoffset" from="1" to="0" dur="1.09s" begin="2.89s" fill="freeze"/>
+        <animate attributeName="stroke-dashoffset" from="1" to="0"
+                 dur="1.12s" begin="2.99s" fill="freeze"/>
       </path>
     </mask>
     <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
       <path d="M0,0 L0,6 L7,3 z" fill="#8a6a3c"/>
     </marker>
   </defs>
+
   <rect width="720" height="720" fill="#f7f1e5"/>
+
   <g opacity=".30" stroke="#947f61" stroke-width="2">
     <line x1="110" y1="180" x2="610" y2="180"/>
     <line x1="110" y1="535" x2="610" y2="535"/>
     <line x1="360" y1="130" x2="360" y2="575" stroke-dasharray="8 10"/>
   </g>
-  <g opacity=".13"><path d="M210 500 C220.8 488.3 255.0 455.0 275 430 C295.0 405.0 310.8 381.7 330 350 C349.2 318.3 380.0 258.3 390 240" fill="none" stroke="#2c2218" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/><path d="M505 505 C496.7 491.7 471.7 450.8 455 425 C438.3 399.2 425.8 380.0 405 350 C384.2 320.0 342.5 262.5 330 245" fill="none" stroke="#2c2218" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/><path d="M245 365 C256.7 362.5 290.0 352.5 315 350 C340.0 347.5 368.8 347.5 395 350 C421.2 352.5 459.2 362.5 472 365" fill="none" stroke="#2c2218" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/></g>
+
+  <g opacity=".13"><path d="M210 500 C220.8 488.3 255.0 455.0 275 430 C295.0 405.0 310.8 381.7 330 350 C349.2 318.3 380.0 258.3 390 240" fill="none" stroke="#24170f" stroke-width="42" stroke-linecap="round" stroke-linejoin="round"/><path d="M505 505 C496.7 491.7 471.7 450.8 455 425 C438.3 399.2 425.8 380.0 405 350 C384.2 320.0 342.5 262.5 330 245" fill="none" stroke="#24170f" stroke-width="42" stroke-linecap="round" stroke-linejoin="round"/><path d="M245 365 C256.7 362.5 290.0 352.5 315 350 C340.0 347.5 368.8 347.5 395 350 C421.2 352.5 459.2 362.5 472 365" fill="none" stroke="#24170f" stroke-width="42" stroke-linecap="round" stroke-linejoin="round"/></g>
   <g filter="url(#inkSoft)">
       <g mask="url(#reveal1)">
-        <path d="M210 500 C220.8 488.3 255.0 455.0 275 430 C295.0 405.0 310.8 381.7 330 350 C349.2 318.3 380.0 258.3 390 240" fill="none" stroke="#24170f" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M210 500 C220.8 488.3 255.0 455.0 275 430 C295.0 405.0 310.8 381.7 330 350 C349.2 318.3 380.0 258.3 390 240" fill="none" stroke="#3b281a" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" opacity=".34"/>
+        <path d="M210 500 C220.8 488.3 255.0 455.0 275 430 C295.0 405.0 310.8 381.7 330 350 C349.2 318.3 380.0 258.3 390 240" fill="none" stroke="#24170f" stroke-width="48"
+              stroke-linecap="round" stroke-linejoin="round" opacity=".22"/>
+        <path d="M210 500 C220.8 488.3 255.0 455.0 275 430 C295.0 405.0 310.8 381.7 330 350 C349.2 318.3 380.0 258.3 390 240" fill="none" stroke="#24170f" stroke-width="42"
+              stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M210 500 C220.8 488.3 255.0 455.0 275 430 C295.0 405.0 310.8 381.7 330 350 C349.2 318.3 380.0 258.3 390 240" fill="none" stroke="#4a3221" stroke-width="27"
+              stroke-linecap="round" stroke-linejoin="round" opacity=".34"/>
       </g>
       <g mask="url(#reveal2)">
-        <path d="M505 505 C496.7 491.7 471.7 450.8 455 425 C438.3 399.2 425.8 380.0 405 350 C384.2 320.0 342.5 262.5 330 245" fill="none" stroke="#24170f" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M505 505 C496.7 491.7 471.7 450.8 455 425 C438.3 399.2 425.8 380.0 405 350 C384.2 320.0 342.5 262.5 330 245" fill="none" stroke="#3b281a" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" opacity=".34"/>
+        <path d="M505 505 C496.7 491.7 471.7 450.8 455 425 C438.3 399.2 425.8 380.0 405 350 C384.2 320.0 342.5 262.5 330 245" fill="none" stroke="#24170f" stroke-width="48"
+              stroke-linecap="round" stroke-linejoin="round" opacity=".22"/>
+        <path d="M505 505 C496.7 491.7 471.7 450.8 455 425 C438.3 399.2 425.8 380.0 405 350 C384.2 320.0 342.5 262.5 330 245" fill="none" stroke="#24170f" stroke-width="42"
+              stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M505 505 C496.7 491.7 471.7 450.8 455 425 C438.3 399.2 425.8 380.0 405 350 C384.2 320.0 342.5 262.5 330 245" fill="none" stroke="#4a3221" stroke-width="27"
+              stroke-linecap="round" stroke-linejoin="round" opacity=".34"/>
       </g>
       <g mask="url(#reveal3)">
-        <path d="M245 365 C256.7 362.5 290.0 352.5 315 350 C340.0 347.5 368.8 347.5 395 350 C421.2 352.5 459.2 362.5 472 365" fill="none" stroke="#24170f" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M245 365 C256.7 362.5 290.0 352.5 315 350 C340.0 347.5 368.8 347.5 395 350 C421.2 352.5 459.2 362.5 472 365" fill="none" stroke="#3b281a" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" opacity=".34"/>
+        <path d="M245 365 C256.7 362.5 290.0 352.5 315 350 C340.0 347.5 368.8 347.5 395 350 C421.2 352.5 459.2 362.5 472 365" fill="none" stroke="#24170f" stroke-width="48"
+              stroke-linecap="round" stroke-linejoin="round" opacity=".22"/>
+        <path d="M245 365 C256.7 362.5 290.0 352.5 315 350 C340.0 347.5 368.8 347.5 395 350 C421.2 352.5 459.2 362.5 472 365" fill="none" stroke="#24170f" stroke-width="42"
+              stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M245 365 C256.7 362.5 290.0 352.5 315 350 C340.0 347.5 368.8 347.5 395 350 C421.2 352.5 459.2 362.5 472 365" fill="none" stroke="#4a3221" stroke-width="27"
+              stroke-linecap="round" stroke-linejoin="round" opacity=".34"/>
       </g></g>
-  <g fill="none" stroke="#8a6a3c" stroke-width="4" opacity=".9"><path d="M210 500 L245.8 461.5" marker-end="url(#arrow)"/><path d="M505 505 L477.5 461.0" marker-end="url(#arrow)"/><path d="M245 365 L283.5 356.8" marker-end="url(#arrow)"/></g>
-  <g font-family="Arial, sans-serif" font-weight="700" font-size="20" text-anchor="middle">
-      <circle cx="210" cy="500" r="18" fill="#f7f1e5" stroke="#8a6a3c" stroke-width="3"/>
+
+  <g fill="none" stroke="#8a6a3c" stroke-width="4" opacity=".9">
+    <path d="M210 500 L245.8 461.5" marker-end="url(#arrow)"/><path d="M505 505 L477.5 461.0" marker-end="url(#arrow)"/><path d="M245 365 L283.5 356.8" marker-end="url(#arrow)"/>
+  </g>
+
+  <g font-family="Arial,sans-serif" font-weight="700" font-size="20" text-anchor="middle">
+    
+      <circle cx="210" cy="500" r="18" fill="#f7f1e5"
+              stroke="#8a6a3c" stroke-width="3"/>
       <text x="210" y="507" fill="#5f472a">1</text>
-      <circle cx="505" cy="505" r="18" fill="#f7f1e5" stroke="#8a6a3c" stroke-width="3"/>
+      <circle cx="505" cy="505" r="18" fill="#f7f1e5"
+              stroke="#8a6a3c" stroke-width="3"/>
       <text x="505" y="512" fill="#5f472a">2</text>
-      <circle cx="245" cy="365" r="18" fill="#f7f1e5" stroke="#8a6a3c" stroke-width="3"/>
-      <text x="245" y="372" fill="#5f472a">3</text></g>
-  <text x="360" y="620" text-anchor="middle" font-family="Georgia,serif" font-size="29" fill="#36271a">Aleph 𐤀 — Modern א</text>
-  <text x="360" y="656" text-anchor="middle" font-family="Arial,sans-serif" font-size="17" fill="#6b5943">Transliteration: ʾ • 3 strokes • calligraphic teaching form</text>
-  <set attributeName="data-duration" to="4.46" begin="0s"/>
+      <circle cx="245" cy="365" r="18" fill="#f7f1e5"
+              stroke="#8a6a3c" stroke-width="3"/>
+      <text x="245" y="372" fill="#5f472a">3</text>
+  </g>
+
+  <text x="360" y="620" text-anchor="middle" font-family="Georgia,serif"
+        font-size="30" fill="#36271a">Aleph 𐤀</text>
+  <text x="360" y="654" text-anchor="middle" font-family="Arial,sans-serif"
+        font-size="16" fill="#6b5943">Modern א • ʾ • 3 strokes</text>
 </svg>

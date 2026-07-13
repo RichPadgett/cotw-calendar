@@ -1,17 +1,12 @@
-# Animated Modern Hebrew Calligraphy — Full Set
+# Consistent Modern Hebrew Calligraphy
 
-Included:
-- 22 standard Hebrew letters
-- 5 final forms: ך ם ן ף ץ
-- 27 animated, editable SVG files
-- Sequential broad-pen stroke animation
-- Simulated ink-edge irregularity
-- Stroke numbers and direction arrows
-- Interactive HTML gallery with replay controls
-- JSON metadata
-- 27 printable SVG practice sheets
+This set was regenerated through the same shared rendering engine as its companion alphabet.
 
-Open `index.html` in a browser.
-
-## Teaching note
-Modern Hebrew handwriting and calligraphic stroke order vary by tradition and instructor. This set uses one consistent pedagogical construction and should not be presented as the only accepted stroke order.
+Shared specifications:
+- Primary calligraphic width: 42 px
+- Outer ink edge: 48 px at low opacity
+- Inner ink texture: 27 px
+- Reveal mask width: 76 px
+- Identical ink colors, paper color, guide lines, arrows, numbering, easing, and animation timing
+- Editable animated SVG files
+- Printable practice sheets
