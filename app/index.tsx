@@ -1097,8 +1097,6 @@ export default function HomeScreen() {
 
         {activeTab === "calendar" && (
           <>
-            <WebOnlyActivities />
-
             <YearWheelView
               nodes={nodes}
               perpetualMarkers={perpetualMarkers}
@@ -1169,11 +1167,15 @@ export default function HomeScreen() {
         )}
 
         {activeTab === "hebrew" && (
-          <HebrewStudyView
-            adminToken={adminToken}
-            groupCode={groupCode}
-            userRole={userRole}
-          />
+          <>
+            <WebOnlyActivities />
+
+            <HebrewStudyView
+              adminToken={adminToken}
+              groupCode={groupCode}
+              userRole={userRole}
+            />
+          </>
         )}
       </ScrollView>
 
