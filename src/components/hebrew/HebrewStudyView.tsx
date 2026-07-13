@@ -7,16 +7,18 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Animated, Pressable, Text, TextInput, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import Svg, { Path } from "react-native-svg";
+import Svg, { Circle, G, Path, Text as SvgText } from "react-native-svg";
 
 import { apiUrl } from "../../config/api";
 import {
   HEBREW_LETTER_STROKES,
+  HEBREW_STROKE_STYLE,
   HEBREW_STROKE_VIEW_BOX,
 } from "../../data/hebrewStrokeData";
 import {
   PALEO_HEBREW_LETTERS,
   PALEO_HEBREW_LETTER_STROKES,
+  PALEO_HEBREW_STROKE_STYLE,
   PALEO_HEBREW_STROKE_VIEW_BOX,
   type PaleoHebrewLetter,
 } from "../../data/paleoHebrewStrokeData";
@@ -579,8 +581,118 @@ export default function HebrewStudyView({
   );
 }
 
-const GLYPH_BOX_SIZE = 56;
+const GLYPH_BOX_SIZE = 120;
 const STROKE_DURATION_MS = 550;
+
+type StrokeStyle = {
+  primaryWidth: number;
+  edgeWidth: number;
+  innerWidth: number;
+  ink: string;
+  innerInk: string;
+  accent: string;
+  paper: string;
+};
+
+type Stroke = { d: string; length: number; startX: number; startY: number };
+
+function StrokeLetterSvg({
+  strokes,
+  style,
+  viewBox,
+  revealAnim,
+}: {
+  strokes: Stroke[];
+  style: StrokeStyle;
+  viewBox: string;
+  revealAnim: Animated.Value;
+}) {
+  return (
+    <Svg width={GLYPH_BOX_SIZE} height={GLYPH_BOX_SIZE} viewBox={viewBox}>
+      {strokes.map((stroke, index) => (
+        <Path
+          key={`underlay-${index}`}
+          d={stroke.d}
+          fill="none"
+          stroke={style.ink}
+          strokeWidth={style.primaryWidth}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          opacity={0.13}
+        />
+      ))}
+
+      {strokes.map((stroke, index) => {
+        const dashoffset = revealAnim.interpolate({
+          inputRange: [index, index + 1],
+          outputRange: [stroke.length, 0],
+          extrapolate: "clamp",
+        });
+        const dasharray = [stroke.length, stroke.length] as unknown as number;
+
+        return (
+          <G key={index}>
+            <AnimatedPath
+              d={stroke.d}
+              fill="none"
+              stroke={style.ink}
+              strokeWidth={style.edgeWidth}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              opacity={0.22}
+              strokeDasharray={dasharray}
+              strokeDashoffset={dashoffset as unknown as number}
+            />
+            <AnimatedPath
+              d={stroke.d}
+              fill="none"
+              stroke={style.ink}
+              strokeWidth={style.primaryWidth}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeDasharray={dasharray}
+              strokeDashoffset={dashoffset as unknown as number}
+            />
+            <AnimatedPath
+              d={stroke.d}
+              fill="none"
+              stroke={style.innerInk}
+              strokeWidth={style.innerWidth}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              opacity={0.34}
+              strokeDasharray={dasharray}
+              strokeDashoffset={dashoffset as unknown as number}
+            />
+          </G>
+        );
+      })}
+
+      {strokes.map((stroke, index) => (
+        <G key={`marker-${index}`}>
+          <Circle
+            cx={stroke.startX}
+            cy={stroke.startY}
+            r={18}
+            fill={style.paper}
+            stroke={style.accent}
+            strokeWidth={3}
+          />
+          <SvgText
+            x={stroke.startX}
+            y={stroke.startY + 7}
+            fill={style.accent}
+            fontSize={20}
+            fontWeight="700"
+            textAnchor="middle"
+          >
+            {index + 1}
+          </SvgText>
+        </G>
+      ))}
+    </Svg>
+  );
+}
 
 function LetterTile({ letter }: { letter: HebrewLetter }) {
   const strokes = HEBREW_LETTER_STROKES[letter.order];
@@ -607,33 +719,12 @@ function LetterTile({ letter }: { letter: HebrewLetter }) {
     >
       <View style={styles.letterGlyphBox}>
         {strokes?.length ? (
-          <Svg
-            width={GLYPH_BOX_SIZE}
-            height={GLYPH_BOX_SIZE}
+          <StrokeLetterSvg
+            strokes={strokes}
+            style={HEBREW_STROKE_STYLE}
             viewBox={HEBREW_STROKE_VIEW_BOX}
-          >
-            {strokes.map((stroke, index) => {
-              const dashoffset = revealAnim.interpolate({
-                inputRange: [index, index + 1],
-                outputRange: [stroke.length, 0],
-                extrapolate: "clamp",
-              });
-
-              return (
-                <AnimatedPath
-                  key={index}
-                  d={stroke.d}
-                  fill="none"
-                  stroke="#0f172a"
-                  strokeWidth={16}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeDasharray={[stroke.length, stroke.length] as unknown as number}
-                  strokeDashoffset={dashoffset as unknown as number}
-                />
-              );
-            })}
-          </Svg>
+            revealAnim={revealAnim}
+          />
         ) : (
           <Text style={styles.letterGlyph}>{letter.letter}</Text>
         )}
@@ -674,33 +765,12 @@ function PaleoLetterTile({ letter }: { letter: PaleoHebrewLetter }) {
     >
       <View style={styles.letterGlyphBox}>
         {strokes?.length ? (
-          <Svg
-            width={GLYPH_BOX_SIZE}
-            height={GLYPH_BOX_SIZE}
+          <StrokeLetterSvg
+            strokes={strokes}
+            style={PALEO_HEBREW_STROKE_STYLE}
             viewBox={PALEO_HEBREW_STROKE_VIEW_BOX}
-          >
-            {strokes.map((stroke, index) => {
-              const dashoffset = revealAnim.interpolate({
-                inputRange: [index, index + 1],
-                outputRange: [stroke.length, 0],
-                extrapolate: "clamp",
-              });
-
-              return (
-                <AnimatedPath
-                  key={index}
-                  d={stroke.d}
-                  fill="none"
-                  stroke="#24170f"
-                  strokeWidth={40}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeDasharray={[stroke.length, stroke.length] as unknown as number}
-                  strokeDashoffset={dashoffset as unknown as number}
-                />
-              );
-            })}
-          </Svg>
+            revealAnim={revealAnim}
+          />
         ) : (
           <Text style={styles.letterGlyph}>{letter.paleo}</Text>
         )}
@@ -767,7 +837,7 @@ const styles = {
     gap: 10,
   },
   letterCard: {
-    width: 150,
+    width: 170,
     padding: 10,
     borderRadius: 10,
     borderWidth: 1,
