@@ -22,8 +22,11 @@ export type HebrewLetter = {
   meaning: string;
 };
 
+export type GlossaryLanguage = "hebrew" | "greek" | "aramaic";
+
 export type GlossaryTerm = {
   key: string;
+  language: GlossaryLanguage;
   word: string;
   transliteration: string;
   pronunciation: string;
@@ -38,11 +41,19 @@ export async function listHebrewAlphabet(): Promise<{
 }
 
 export async function listGlossaryTerms(
-  search?: string
+  search?: string,
+  language?: string
 ): Promise<{ terms: GlossaryTerm[] }> {
-  if (search?.trim()) {
+  const normalizedLanguage =
+    language && ["hebrew", "greek", "aramaic"].includes(language)
+      ? language
+      : "";
+
+  if (search?.trim() || normalizedLanguage) {
     return runPrologJson(
-      `api_hebrew_glossary_search_json(${toPrologString(search.trim())})`
+      `api_hebrew_glossary_search_json(${toPrologString(
+        search?.trim() ?? ""
+      )}, ${normalizedLanguage || "''"})`
     );
   }
 

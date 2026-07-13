@@ -4,8 +4,8 @@
  * searchable, admin-editable glossary of Hebrew/Aramaic words and names.
  */
 
-import { useEffect, useMemo, useState } from "react";
-import { Pressable, Text, TextInput, View } from "react-native";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Animated, Pressable, Text, TextInput, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import { apiUrl } from "../../config/api";
@@ -19,8 +19,11 @@ type HebrewLetter = {
   meaning: string;
 };
 
+type GlossaryLanguage = "hebrew" | "greek" | "aramaic";
+
 type GlossaryTerm = {
   key: string;
+  language: GlossaryLanguage;
   word: string;
   transliteration: string;
   pronunciation: string;
@@ -30,6 +33,7 @@ type GlossaryTerm = {
 
 type GlossaryDraft = {
   key: string;
+  language: GlossaryLanguage;
   word: string;
   transliteration: string;
   pronunciation: string;
@@ -39,12 +43,20 @@ type GlossaryDraft = {
 
 const EMPTY_DRAFT: GlossaryDraft = {
   key: "",
+  language: "hebrew",
   word: "",
   transliteration: "",
   pronunciation: "",
   definition: "",
   note: "",
 };
+
+const LANGUAGE_FILTERS: { id: GlossaryLanguage | "all"; label: string }[] = [
+  { id: "all", label: "All" },
+  { id: "hebrew", label: "Hebrew" },
+  { id: "greek", label: "Greek" },
+  { id: "aramaic", label: "Aramaic" },
+];
 
 export default function HebrewStudyView({
   adminToken,
@@ -61,6 +73,9 @@ export default function HebrewStudyView({
   const [letters, setLetters] = useState<HebrewLetter[]>([]);
   const [terms, setTerms] = useState<GlossaryTerm[]>([]);
   const [searchText, setSearchText] = useState("");
+  const [languageFilter, setLanguageFilter] = useState<
+    GlossaryLanguage | "all"
+  >("all");
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [draft, setDraft] = useState<GlossaryDraft | null>(null);
@@ -93,10 +108,9 @@ export default function HebrewStudyView({
 
     const timeoutId = setTimeout(async () => {
       try {
-        const query = searchText.trim()
-          ? `?search=${encodeURIComponent(searchText.trim())}`
-          : "";
-        const response = await fetch(apiUrl(`/hebrew/glossary${query}`));
+        const response = await fetch(
+          apiUrl(`/hebrew/glossary${buildGlossaryQuery()}`)
+        );
         const data = await response.json();
 
         if (!isCancelled) {
@@ -117,14 +131,28 @@ export default function HebrewStudyView({
       isCancelled = true;
       clearTimeout(timeoutId);
     };
-  }, [searchText]);
+  }, [searchText, languageFilter]);
+
+  function buildGlossaryQuery() {
+    const params = new URLSearchParams();
+
+    if (searchText.trim()) {
+      params.set("search", searchText.trim());
+    }
+
+    if (languageFilter !== "all") {
+      params.set("language", languageFilter);
+    }
+
+    const query = params.toString();
+    return query ? `?${query}` : "";
+  }
 
   async function refreshGlossary() {
     try {
-      const query = searchText.trim()
-        ? `?search=${encodeURIComponent(searchText.trim())}`
-        : "";
-      const response = await fetch(apiUrl(`/hebrew/glossary${query}`));
+      const response = await fetch(
+        apiUrl(`/hebrew/glossary${buildGlossaryQuery()}`)
+      );
       const data = await response.json();
       setTerms(data.terms ?? []);
     } catch {
@@ -248,15 +276,7 @@ export default function HebrewStudyView({
       {subTab === "alphabet" ? (
         <View style={styles.letterGrid}>
           {sortedLetters.map((letter) => (
-            <View key={letter.order} style={styles.letterCard}>
-              <Text style={styles.letterGlyph}>{letter.letter}</Text>
-              <Text style={styles.letterName}>{letter.name}</Text>
-              <Text style={styles.letterTransliteration}>
-                {letter.transliteration}
-              </Text>
-              <Text style={styles.letterSound}>{letter.sound}</Text>
-              <Text style={styles.letterMeaning}>{letter.meaning}</Text>
-            </View>
+            <LetterTile key={letter.order} letter={letter} />
           ))}
         </View>
       ) : (
@@ -270,6 +290,32 @@ export default function HebrewStudyView({
               placeholderTextColor="#94a3b8"
               style={styles.searchInput}
             />
+          </View>
+
+          <View style={styles.languageFilterRow}>
+            {LANGUAGE_FILTERS.map((option) => {
+              const isActive = languageFilter === option.id;
+
+              return (
+                <Pressable
+                  key={option.id}
+                  onPress={() => setLanguageFilter(option.id)}
+                  style={[
+                    styles.languageFilterChip,
+                    isActive && styles.languageFilterChipActive,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.languageFilterText,
+                      isActive && styles.languageFilterTextActive,
+                    ]}
+                  >
+                    {option.label}
+                  </Text>
+                </Pressable>
+              );
+            })}
           </View>
 
           {isAdmin ? (
@@ -302,6 +348,44 @@ export default function HebrewStudyView({
                 style={styles.draftInput}
                 editable={!terms.some((term) => term.key === draft.key)}
               />
+
+              <View style={styles.languageFilterRow}>
+                {LANGUAGE_FILTERS.filter((option) => option.id !== "all").map(
+                  (option) => {
+                    const isActive = draft.language === option.id;
+
+                    return (
+                      <Pressable
+                        key={option.id}
+                        onPress={() =>
+                          setDraft((current) =>
+                            current
+                              ? {
+                                  ...current,
+                                  language: option.id as GlossaryLanguage,
+                                }
+                              : current
+                          )
+                        }
+                        style={[
+                          styles.languageFilterChip,
+                          isActive && styles.languageFilterChipActive,
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            styles.languageFilterText,
+                            isActive && styles.languageFilterTextActive,
+                          ]}
+                        >
+                          {option.label}
+                        </Text>
+                      </Pressable>
+                    );
+                  }
+                )}
+              </View>
+
               <TextInput
                 value={draft.word}
                 onChangeText={(value) =>
@@ -382,6 +466,9 @@ export default function HebrewStudyView({
                   <Text style={styles.termTransliteration}>
                     {term.transliteration}
                   </Text>
+                  <Text style={styles.termLanguageTag}>
+                    {term.language}
+                  </Text>
                 </View>
 
                 <Text style={styles.termPronunciation}>
@@ -399,6 +486,7 @@ export default function HebrewStudyView({
                       onPress={() =>
                         setDraft({
                           key: term.key,
+                          language: term.language,
                           word: term.word,
                           transliteration: term.transliteration,
                           pronunciation: term.pronunciation,
@@ -428,6 +516,70 @@ export default function HebrewStudyView({
   );
 }
 
+const GLYPH_BOX_SIZE = 56;
+
+function LetterTile({ letter }: { letter: HebrewLetter }) {
+  const revealAnim = useRef(new Animated.Value(0)).current;
+
+  function playReveal() {
+    revealAnim.setValue(1);
+
+    const stepDuration = 340;
+    const pauseDuration = 160;
+
+    Animated.sequence([
+      Animated.timing(revealAnim, {
+        toValue: 2 / 3,
+        duration: stepDuration,
+        useNativeDriver: false,
+      }),
+      Animated.delay(pauseDuration),
+      Animated.timing(revealAnim, {
+        toValue: 1 / 3,
+        duration: stepDuration,
+        useNativeDriver: false,
+      }),
+      Animated.delay(pauseDuration),
+      Animated.timing(revealAnim, {
+        toValue: 0,
+        duration: stepDuration,
+        useNativeDriver: false,
+      }),
+    ]).start();
+  }
+
+  const maskWidth = revealAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, GLYPH_BOX_SIZE],
+  });
+
+  return (
+    <Pressable
+      onPress={playReveal}
+      style={({ pressed }) => [
+        styles.letterCard,
+        pressed && { opacity: 0.85 },
+      ]}
+    >
+      <View style={styles.letterGlyphBox}>
+        <Text style={styles.letterGlyph}>{letter.letter}</Text>
+
+        <Animated.View
+          pointerEvents="none"
+          style={[styles.letterGlyphMask, { width: maskWidth }]}
+        />
+      </View>
+
+      <Text style={styles.letterName}>{letter.name}</Text>
+      <Text style={styles.letterTransliteration}>
+        {letter.transliteration}
+      </Text>
+      <Text style={styles.letterSound}>{letter.sound}</Text>
+      <Text style={styles.letterMeaning}>{letter.meaning}</Text>
+    </Pressable>
+  );
+}
+
 const styles = {
   subTabRow: {
     flexDirection: "row" as const,
@@ -447,6 +599,30 @@ const styles = {
     fontWeight: "700" as const,
     color: "#334155",
   },
+  languageFilterRow: {
+    flexDirection: "row" as const,
+    gap: 6,
+  },
+  languageFilterChip: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+    backgroundColor: "#ffffff",
+  },
+  languageFilterChipActive: {
+    backgroundColor: "#0369a1",
+    borderColor: "#0369a1",
+  },
+  languageFilterText: {
+    fontSize: 12,
+    fontWeight: "700" as const,
+    color: "#334155",
+  },
+  languageFilterTextActive: {
+    color: "#ffffff",
+  },
   subTabTextActive: {
     color: "#ffffff",
   },
@@ -464,10 +640,25 @@ const styles = {
     backgroundColor: "#ffffff",
     gap: 2,
   },
+  letterGlyphBox: {
+    width: GLYPH_BOX_SIZE,
+    height: GLYPH_BOX_SIZE,
+    alignSelf: "center" as const,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    overflow: "hidden" as const,
+  },
   letterGlyph: {
     fontSize: 30,
     textAlign: "center" as const,
     color: "#0f172a",
+  },
+  letterGlyphMask: {
+    position: "absolute" as const,
+    left: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: "#ffffff",
   },
   letterName: {
     fontSize: 13,
@@ -585,6 +776,13 @@ const styles = {
     fontSize: 14,
     fontWeight: "800" as const,
     color: "#0f766e",
+  },
+  termLanguageTag: {
+    marginLeft: "auto" as const,
+    fontSize: 10,
+    fontWeight: "700" as const,
+    textTransform: "uppercase" as const,
+    color: "#94a3b8",
   },
   termPronunciation: {
     fontSize: 12,

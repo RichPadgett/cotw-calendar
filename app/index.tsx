@@ -1346,7 +1346,7 @@ function TabSelector({
       ? [{ id: "timeline" as const, label: "Timeline" }]
       : []),
     { id: "commands", label: "Commands" },
-    { id: "hebrew", label: "Hebrew" },
+    { id: "hebrew", label: "Language" },
   ];
 
   return (

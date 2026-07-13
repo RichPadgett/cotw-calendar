@@ -16,6 +16,7 @@ const safeAtomPattern = /^[a-z][a-z0-9_]*$/;
 
 export type GlossaryTermInput = {
   key: string;
+  language: string;
   word: string;
   transliteration: string;
   pronunciation: string;
@@ -79,11 +80,25 @@ export function deleteGlossaryTerm(key: string) {
 }
 
 function buildFact(key: string, input: GlossaryTermInput) {
-  return `glossary_term(${key}, ${toPrologString(input.word)}, ${toPrologString(
-    input.transliteration
-  )}, ${toPrologString(input.pronunciation)}, ${toPrologString(
-    input.definition
-  )}, ${toPrologString(input.note ?? "")}).`;
+  const language = normalizeLanguage(input.language);
+
+  return `glossary_term(${key}, ${language}, ${toPrologString(
+    input.word
+  )}, ${toPrologString(input.transliteration)}, ${toPrologString(
+    input.pronunciation
+  )}, ${toPrologString(input.definition)}, ${toPrologString(
+    input.note ?? ""
+  )}).`;
+}
+
+function normalizeLanguage(value: string) {
+  const language = value.trim().toLowerCase();
+
+  if (!["hebrew", "greek", "aramaic"].includes(language)) {
+    throw new Error('Language must be "hebrew", "greek", or "aramaic".');
+  }
+
+  return language;
 }
 
 function normalizeKey(value: string) {

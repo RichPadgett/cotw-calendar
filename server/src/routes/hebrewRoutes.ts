@@ -32,8 +32,10 @@ router.get("/glossary", async (req, res) => {
   try {
     const search =
       typeof req.query.search === "string" ? req.query.search : undefined;
+    const language =
+      typeof req.query.language === "string" ? req.query.language : undefined;
 
-    res.json(await listGlossaryTerms(search));
+    res.json(await listGlossaryTerms(search, language));
   } catch (error) {
     console.log("Failed to load Hebrew glossary", error);
     res.status(500).json({ error: "Failed to load Hebrew glossary." });
