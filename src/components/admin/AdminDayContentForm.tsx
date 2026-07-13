@@ -348,7 +348,7 @@ export default function AdminDayContentForm({
       setSpotifyFetchMessage("Fetching episode details...");
 
       const response = await fetch(
-        `${API_BASE_URL}/api/admin/calendar/spotify-episode?url=${encodeURIComponent(url)}`,
+        `${API_BASE_URL}/api/admin/calendar/spotify-episode?url=${encodeURIComponent(url)}&groupCode=${encodeURIComponent(groupCode)}`,
         {
           headers: {
             Authorization: `Bearer ${adminToken}`,
