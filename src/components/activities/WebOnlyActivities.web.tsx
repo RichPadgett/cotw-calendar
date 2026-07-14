@@ -7,7 +7,6 @@ import { Linking, Pressable, Text, View } from "react-native";
 
 const EXODUS_URL = "https://enochscalendar.com/exodus/";
 const EXODUS_QUIZZES_URL = "https://enochscalendar.com/exodus/#quizzes";
-const JERICHO_URL = "https://enochscalendar.com/jericho/";
 
 const activities = [
   {
@@ -23,13 +22,6 @@ const activities = [
       "Practice the Bible questions from the Exodus game without starting the DOS player.",
     url: EXODUS_QUIZZES_URL,
     accessibilityLabel: "Open the Exodus quizzes",
-  },
-  {
-    title: "Jericho Game",
-    description:
-      "Play Joshua and the Battle of Jericho in the browser. Sprite, artifact, and quiz notes will be added as the game data is cataloged.",
-    url: JERICHO_URL,
-    accessibilityLabel: "Open the Jericho game",
   },
 ];
 
