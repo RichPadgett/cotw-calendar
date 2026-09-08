@@ -1,14 +1,17 @@
 import path from "path";
 import { Router } from "express";
 import { requireMemberTokenForGroup } from "../middleware/requireMemberToken";
+import { requireAdminTokenForGroup } from "../middleware/requireAdminToken";
 import {
   consumeRecordingDownloadTicket,
   createRecordingDownloadTicket,
+  deleteShabbatRecording,
   listShabbatRecordings,
 } from "../services/shabbatRecordingStore";
 
 const router = Router();
 const requireChurchMember = requireMemberTokenForGroup("church-of-the-word");
+const requireChurchAdmin = requireAdminTokenForGroup("church-of-the-word");
 
 router.get("/", requireChurchMember, (_req, res) => {
   try {
@@ -44,6 +47,21 @@ router.get("/download/:ticket", (req, res) => {
   }
 
   res.download(filePath, path.basename(filePath));
+});
+
+router.delete("/:bundleId", requireChurchAdmin, (req, res) => {
+  try {
+    const deleted = deleteShabbatRecording(String(req.params.bundleId));
+
+    if (!deleted) {
+      return res.status(404).json({ error: "Recording not found." });
+    }
+
+    res.status(204).send();
+  } catch (error) {
+    console.error("Failed to delete Shabbat recording", error);
+    res.status(500).json({ error: "Unable to delete recording." });
+  }
 });
 
 export default router;

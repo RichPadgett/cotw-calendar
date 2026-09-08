@@ -1154,7 +1154,11 @@ export default function HomeScreen() {
         )}
 
         {activeTab === "shabbat" && isShabbatVisible && (
-          <ShabbatView memberToken={memberToken} />
+          <ShabbatView
+            adminToken={adminToken}
+            memberToken={memberToken}
+            userRole={userRole}
+          />
         )}
 
         {activeTab === "commands" && (

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Linking, Pressable, Text, View } from "react-native";
+import { Alert, Linking, Platform, Pressable, Text, View } from "react-native";
 
 import { API_BASE_URL } from "../../config/api";
 
@@ -30,11 +30,23 @@ function formatFileSize(bytes: number) {
   return `${Math.max(1, Math.round(bytes / 1024))} KB`;
 }
 
-export default function ShabbatView({ memberToken }: { memberToken: string }) {
+type Props = {
+  adminToken: string;
+  memberToken: string;
+  userRole: "member" | "admin";
+};
+
+export default function ShabbatView({
+  adminToken,
+  memberToken,
+  userRole,
+}: Props) {
   const [recordings, setRecordings] = useState<Recording[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [downloadingFile, setDownloadingFile] = useState("");
+  const [deletingRecording, setDeletingRecording] = useState("");
+  const canDeleteRecordings = userRole === "admin" && Boolean(adminToken);
 
   const loadRecordings = useCallback(async () => {
     if (!memberToken) return;
@@ -94,6 +106,57 @@ export default function ShabbatView({ memberToken }: { memberToken: string }) {
     } finally {
       setDownloadingFile("");
     }
+  }
+
+  async function deleteRecording(recording: Recording) {
+    setDeletingRecording(recording.id);
+    setError("");
+
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/shabbat/recordings/${encodeURIComponent(
+          recording.id
+        )}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${adminToken}` },
+        }
+      );
+
+      if (!response.ok) throw new Error("Unable to delete the recording.");
+
+      setRecordings((current) =>
+        current.filter((item) => item.id !== recording.id)
+      );
+    } catch (deleteError) {
+      setError(
+        deleteError instanceof Error
+          ? deleteError.message
+          : "Unable to delete the recording."
+      );
+    } finally {
+      setDeletingRecording("");
+    }
+  }
+
+  function confirmDeleteRecording(recording: Recording) {
+    const message = `Delete “${recording.title}” and all of its audio, video, and metadata files? This cannot be undone.`;
+
+    if (Platform.OS === "web" && typeof window.confirm === "function") {
+      if (window.confirm(message)) {
+        void deleteRecording(recording);
+      }
+      return;
+    }
+
+    Alert.alert("Delete recording?", message, [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: () => void deleteRecording(recording),
+      },
+    ]);
   }
 
   return (
@@ -207,6 +270,29 @@ export default function ShabbatView({ memberToken }: { memberToken: string }) {
               <Text style={{ marginTop: 4, color: "#64748b", fontSize: 13 }}>
                 {new Date(recording.recordedAt).toLocaleString()}
               </Text>
+              {canDeleteRecordings ? (
+                <Pressable
+                  disabled={deletingRecording === recording.id}
+                  onPress={() => confirmDeleteRecording(recording)}
+                  style={({ pressed }) => ({
+                    alignSelf: "flex-start",
+                    marginTop: 10,
+                    paddingHorizontal: 12,
+                    paddingVertical: 7,
+                    borderRadius: 999,
+                    borderWidth: 1,
+                    borderColor: "#fecaca",
+                    backgroundColor: pressed ? "#fee2e2" : "#fff7f7",
+                    opacity: deletingRecording === recording.id ? 0.6 : 1,
+                  })}
+                >
+                  <Text style={{ color: "#b91c1c", fontWeight: "900" }}>
+                    {deletingRecording === recording.id
+                      ? "Deleting…"
+                      : "Delete recording"}
+                  </Text>
+                </Pressable>
+              ) : null}
               <View style={{ marginTop: 12, gap: 8 }}>
                 {recording.files.map((file) => {
                   const downloadId = `${recording.id}/${file.name}`;

@@ -159,3 +159,24 @@ export function consumeRecordingDownloadTicket(ticket: string) {
 
   return record.filePath;
 }
+
+export function deleteShabbatRecording(bundleId: string) {
+  const bundlePath = getBundlePath(bundleId);
+
+  if (!bundlePath) {
+    return false;
+  }
+
+  const realRoot = fs.realpathSync(RECORDINGS_ROOT);
+  const realBundlePath = fs.realpathSync(bundlePath);
+
+  if (
+    path.dirname(realBundlePath) !== realRoot ||
+    !realBundlePath.startsWith(`${realRoot}${path.sep}`)
+  ) {
+    return false;
+  }
+
+  fs.rmSync(realBundlePath, { recursive: true, force: false });
+  return true;
+}
