@@ -11,18 +11,25 @@
       "displayStyle": "notice",
       "items": [
         {
-          "label": "Shabbat at Tommy & Wendy's",
+          "label": "Shabbat at Gary & Eva",
           "type": "note",
           "access": "public",
           "details": "Open link for Address",
-          "url": "https://www.google.com/maps/place/1187+Wicke+Rd,+Adams,+TN+37010/@36.5190672,-87.1902788,17z/data=!3m1!4b1!4m6!3m5!1s0x8864e0e47abe950b:0xab314ef072df14e!8m2!3d36.5190629!4d-87.1876985!16s%2Fg%2F11cp7zv8wp?entry=ttu&g_ep=EgoyMDI2MDYwMS4wIKXMDSoASAFQAw%3D%3D"
+          "url": "https://maps.apple/p/FoPwtCfFMzkjJK"
         }
       ]
     },
     {
       "title": "Files / Links / Media",
       "displayStyle": "default",
-      "items": []
+      "items": [
+        {
+          "label": "Order in the Assembly: Tounges, Prophecy, and the Greater way of Love",
+          "type": "external-link",
+          "access": "public",
+          "url": "https://open.spotify.com/episode/6ZgTLAcbLhZ037hJHTjyWC?si=gUO_2ss7Tnam9TPYQt-neg&utm_source=copy-link"
+        }
+      ]
     }
   ]
 }

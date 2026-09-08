@@ -9,7 +9,14 @@
     {
       "title": "Files / Links / Media",
       "displayStyle": "default",
-      "items": []
+      "items": [
+        {
+          "label": "Clean & Unclean Foods: Deuteronomy 14, Leviticus 11 & Proper New Testament Context",
+          "type": "external-link",
+          "access": "public",
+          "url": "https://open.spotify.com/episode/7ayoTTSTXjv7sJwL5U9O8O?si=cFU7Dge2Qv-F5xigG3YTFA&utm_source=copy-link"
+        }
+      ]
     }
   ]
 }

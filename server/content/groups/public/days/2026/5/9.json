@@ -9,7 +9,14 @@
     {
       "title": "Files / Links / Media",
       "displayStyle": "default",
-      "items": []
+      "items": [
+        {
+          "label": "Order in the Assembly: Tounges, Prophecy, and the Greater way of Love",
+          "type": "external-link",
+          "access": "public",
+          "url": "https://open.spotify.com/episode/6ZgTLAcbLhZ037hJHTjyWC?si=gUO_2ss7Tnam9TPYQt-neg&utm_source=copy-link"
+        }
+      ]
     }
   ]
 }
