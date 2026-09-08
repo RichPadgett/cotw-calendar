@@ -25,7 +25,16 @@ export type JoinOrCreateGroupResult = {
   role: GroupRole;
   createdGroup: boolean;
   adminToken?: string;
+  memberToken: string;
 };
+
+type MemberSession = {
+  groupCode: string;
+  expiresAt: number;
+};
+
+const MEMBER_SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+const memberSessions = new Map<string, MemberSession>();
 
 function normalizeGroupCode(value: string) {
   return value.trim().toLowerCase();
@@ -45,6 +54,17 @@ function hashToken(token: string) {
 
 function createAdminToken() {
   return crypto.randomBytes(32).toString("hex");
+}
+
+function issueMemberToken(groupCode: string) {
+  const memberToken = crypto.randomBytes(32).toString("hex");
+
+  memberSessions.set(hashToken(memberToken), {
+    groupCode: normalizeGroupCode(groupCode),
+    expiresAt: Date.now() + MEMBER_SESSION_TTL_MS,
+  });
+
+  return memberToken;
 }
 
 function getGroupFolder(groupCode: string) {
@@ -127,6 +147,7 @@ export function joinOrCreateGroup(params: {
         groupCode,
         role: "member",
         createdGroup: false,
+        memberToken: issueMemberToken(groupCode),
       };
     }
 
@@ -144,6 +165,7 @@ export function joinOrCreateGroup(params: {
       role: "admin",
       createdGroup: false,
       adminToken,
+      memberToken: issueMemberToken(groupCode),
     };
   }
 
@@ -157,6 +179,7 @@ export function joinOrCreateGroup(params: {
       groupCode,
       role: "member",
       createdGroup: false,
+      memberToken: issueMemberToken(groupCode),
     };
   }
 
@@ -180,7 +203,43 @@ export function joinOrCreateGroup(params: {
     role: "admin",
     createdGroup: true,
     adminToken,
+    memberToken: issueMemberToken(groupCode),
   };
+}
+
+export function refreshMemberSession(groupCode: string) {
+  const normalizedGroupCode = normalizeGroupCode(groupCode);
+
+  if (!groupExists(normalizedGroupCode)) {
+    return null;
+  }
+
+  return issueMemberToken(normalizedGroupCode);
+}
+
+export function verifyMemberToken(params: {
+  groupCode: string;
+  token?: string;
+}) {
+  const token = params.token?.trim() ?? "";
+
+  if (!token) {
+    return false;
+  }
+
+  const tokenHash = hashToken(token);
+  const session = memberSessions.get(tokenHash);
+
+  if (!session) {
+    return false;
+  }
+
+  if (session.expiresAt <= Date.now()) {
+    memberSessions.delete(tokenHash);
+    return false;
+  }
+
+  return session.groupCode === normalizeGroupCode(params.groupCode);
 }
 
 export function verifyAdminToken(params: {

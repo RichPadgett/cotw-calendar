@@ -40,6 +40,7 @@ import CommandExplorerView, {
 } from "../src/components/commands/CommandExplorerView";
 import WebOnlyActivities from "../src/components/activities/WebOnlyActivities";
 import HebrewStudyView from "../src/components/hebrew/HebrewStudyView";
+import ShabbatView from "../src/components/shabbat/ShabbatView";
 import WelcomeScreen from "../src/components/onboarding/WelcomeScreen";
 
 import { buildEnochYear } from "../src/engine/buildEnochYear";
@@ -65,7 +66,7 @@ const COMMAND_BIBLE_VERSION_STORAGE_KEY = "commandBibleVersion";
 const COMMAND_SEARCH_TEXT_STORAGE_KEY = "commandSearchText";
 const ACTIVE_TAB_STORAGE_KEY = "activeAppTab";
 
-type AppTab = "calendar" | "timeline" | "commands" | "hebrew";
+type AppTab = "calendar" | "shabbat" | "timeline" | "commands" | "hebrew";
 const BIBLE_VERSIONS: BibleVersion[] = [
   "KJV",
   "NKJV",
@@ -206,6 +207,7 @@ export default function HomeScreen() {
     joinGroup,
     changeGroup,
     adminToken,
+    memberToken,
   } = useGroupSession();
 
   const config = {
@@ -220,6 +222,7 @@ export default function HomeScreen() {
     groupCode === "church-of-the-word" &&
     Boolean(adminToken);
   const isTimelineVisible = hasEnteredApp;
+  const isShabbatVisible = groupCode === "church-of-the-word";
   const todayNode = nodes.find((node) => {
     return node.gregorianDate === todayDateId;
   });
@@ -384,6 +387,7 @@ export default function HomeScreen() {
 
       if (
         savedTab === "calendar" ||
+        savedTab === "shabbat" ||
         savedTab === "timeline" ||
         savedTab === "commands" ||
         savedTab === "hebrew"
@@ -517,7 +521,10 @@ export default function HomeScreen() {
     if (activeTab === "timeline" && !isTimelineVisible) {
       setActiveTab("calendar");
     }
-  }, [activeTab, isTimelineVisible]);
+    if (activeTab === "shabbat" && !isShabbatVisible) {
+      setActiveTab("calendar");
+    }
+  }, [activeTab, isShabbatVisible, isTimelineVisible]);
 
   useEffect(() => {
     const fallbackId = setTimeout(() => {
@@ -983,6 +990,7 @@ export default function HomeScreen() {
           <TabSelector
             activeTab={activeTab}
             isTimelineVisible={isTimelineVisible}
+            isShabbatVisible={isShabbatVisible}
             onChangeTab={changeActiveTab}
           />
 
@@ -1143,6 +1151,10 @@ export default function HomeScreen() {
             onSelectedOccurrenceChange={setSelectedTimelineOccurrence}
             onSavingChange={setIsSavingTimeline}
           />
+        )}
+
+        {activeTab === "shabbat" && isShabbatVisible && (
+          <ShabbatView memberToken={memberToken} />
         )}
 
         {activeTab === "commands" && (
@@ -1339,14 +1351,17 @@ export default function HomeScreen() {
 function TabSelector({
   activeTab,
   isTimelineVisible,
+  isShabbatVisible,
   onChangeTab,
 }: {
   activeTab: AppTab;
   isTimelineVisible: boolean;
+  isShabbatVisible: boolean;
   onChangeTab: (tab: AppTab) => void;
 }) {
   const tabs: { id: AppTab; label: string }[] = [
     { id: "calendar", label: "Calendar" },
+    ...(isShabbatVisible ? [{ id: "shabbat" as const, label: "Shabbat" }] : []),
     ...(isTimelineVisible
       ? [{ id: "timeline" as const, label: "Timeline" }]
       : []),

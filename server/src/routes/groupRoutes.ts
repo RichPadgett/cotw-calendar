@@ -1,5 +1,8 @@
 import { Router } from "express";
-import { joinOrCreateGroup } from "../services/groupStore";
+import {
+  joinOrCreateGroup,
+  refreshMemberSession,
+} from "../services/groupStore";
 
 const router = Router();
 
@@ -22,6 +25,17 @@ router.post("/join", (req, res) => {
       error: message,
     });
   }
+});
+
+router.post("/session", (req, res) => {
+  const groupCode = String(req.body?.groupCode ?? "");
+  const memberToken = refreshMemberSession(groupCode);
+
+  if (!memberToken) {
+    return res.status(404).json({ error: "Group not found." });
+  }
+
+  res.json({ groupCode: groupCode.trim().toLowerCase(), memberToken });
 });
 
 export default router;

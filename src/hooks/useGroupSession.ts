@@ -6,6 +6,7 @@ import { API_BASE_URL } from "../config/api";
 const GROUP_CODE_STORAGE_KEY = "groupCode";
 const ROLE_STORAGE_KEY = "userRole";
 const ADMIN_TOKEN_STORAGE_KEY = "adminToken";
+const MEMBER_TOKEN_STORAGE_KEY = "memberToken";
 
 export type UserRole = "member" | "admin";
 
@@ -19,6 +20,7 @@ export function useGroupSession() {
 
   const [welcomeError, setWelcomeError] = useState("");
   const [adminToken, setAdminToken] = useState("");
+  const [memberToken, setMemberToken] = useState("");
 
   const deviceName =
     typeof window !== "undefined" ? "Web Browser" : "Mobile App";
@@ -35,6 +37,25 @@ export function useGroupSession() {
         if (savedGroupCode) {
           setGroupCode(savedGroupCode);
           setHasEnteredApp(true);
+
+          try {
+            const response = await fetch(`${API_BASE_URL}/api/groups/session`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ groupCode: savedGroupCode }),
+            });
+            const data = await response.json();
+
+            if (response.ok && data.memberToken) {
+              await AsyncStorage.setItem(
+                MEMBER_TOKEN_STORAGE_KEY,
+                data.memberToken
+              );
+              setMemberToken(data.memberToken);
+            }
+          } catch (error) {
+            console.log("Failed to refresh group session", error);
+          }
         }
 
         if (savedRole === "admin") {
@@ -89,6 +110,8 @@ export function useGroupSession() {
     await AsyncStorage.setItem(GROUP_CODE_STORAGE_KEY, data.groupCode);
 
     await AsyncStorage.setItem(ROLE_STORAGE_KEY, data.role);
+    await AsyncStorage.setItem(MEMBER_TOKEN_STORAGE_KEY, data.memberToken);
+    setMemberToken(data.memberToken);
 
     /*
       Admin tokens are returned only after the server validates the admin code.
@@ -117,11 +140,13 @@ export function useGroupSession() {
     await AsyncStorage.removeItem(GROUP_CODE_STORAGE_KEY);
     await AsyncStorage.removeItem(ROLE_STORAGE_KEY);
     await AsyncStorage.removeItem(ADMIN_TOKEN_STORAGE_KEY);
+    await AsyncStorage.removeItem(MEMBER_TOKEN_STORAGE_KEY);
 
     setGroupCode("public");
     setAdminCode("");
     setUserRole("member");
     setHasEnteredApp(false);
+    setMemberToken("");
   }
 
   return {
@@ -131,6 +156,7 @@ export function useGroupSession() {
     adminCode,
     setAdminCode,
     adminToken,
+    memberToken,
     userRole,
     hasEnteredApp,
     hasLoadedGroupCode,
