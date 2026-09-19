@@ -112,17 +112,36 @@ episode_date_or_null(EpisodeId, Year, Month, Day) :-
     !.
 episode_date_or_null(_, null, null, null).
 
+% Dated teachings sort newest-first. Episodes without an Enoch calendar date
+% remain available after the dated results instead of being discarded.
+teaching_calendar_sort_key(EpisodeId, key(0, NegativeYear, NegativeMonth, NegativeDay, EpisodeId)) :-
+    podcast_episode_date(EpisodeId, Year, Month, Day),
+    !,
+    NegativeYear is -Year,
+    NegativeMonth is -Month,
+    NegativeDay is -Day.
+teaching_calendar_sort_key(EpisodeId, key(1, 0, 0, 0, EpisodeId)).
+
 related_teachings_list(Command, Teachings) :-
     findall(
         EpisodeId-Title-Url,
         related_teaching_episode(Command, EpisodeId, Title, Url),
         Triples
     ),
-    sort(Triples, SortedTriples),
+    sort(Triples, UniqueTriples),
+    findall(
+        SortKey-(EpisodeId-Title-Url),
+        (
+            member(EpisodeId-Title-Url, UniqueTriples),
+            teaching_calendar_sort_key(EpisodeId, SortKey)
+        ),
+        KeyedTriples
+    ),
+    keysort(KeyedTriples, SortedTriples),
     findall(
         json([title=Title, url=Url, year=Year, month=Month, day=Day]),
         (
-            member(EpisodeId-Title-Url, SortedTriples),
+            member(_-(EpisodeId-Title-Url), SortedTriples),
             episode_date_or_null(EpisodeId, Year, Month, Day)
         ),
         Teachings
