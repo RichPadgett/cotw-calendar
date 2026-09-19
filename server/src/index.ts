@@ -19,6 +19,7 @@ import groupRoutes from "./routes/groupRoutes";
 import hebrewRoutes from "./routes/hebrewRoutes";
 import perpetualMarkerRoutes from "./routes/perpetualMarkerRoutes";
 import shabbatRecordingRoutes from "./routes/shabbatRecordingRoutes";
+import shabbatRoutes from "./routes/shabbatRoutes";
 import timelineRoutes from "./routes/timelineRoutes";
 
 const app = express();
@@ -39,6 +40,7 @@ app.use("/api/admin/calendar", adminSpotifyRoutes);
 app.use("/api/files", express.static("content"));
 app.use("/files", express.static("content/files"));
 app.use("/api/groups", groupRoutes);
+app.use("/api/shabbat", shabbatRoutes);
 app.use("/api/shabbat/recordings", shabbatRecordingRoutes);
 app.use("/api/hebrew", hebrewRoutes);
 app.use("/api/calendar/perpetual-markers", perpetualMarkerRoutes);

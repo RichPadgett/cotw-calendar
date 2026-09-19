@@ -207,7 +207,6 @@ export default function HomeScreen() {
     joinGroup,
     changeGroup,
     adminToken,
-    memberToken,
   } = useGroupSession();
 
   const config = {
@@ -1153,13 +1152,7 @@ export default function HomeScreen() {
           />
         )}
 
-        {activeTab === "shabbat" && isShabbatVisible && (
-          <ShabbatView
-            adminToken={adminToken}
-            memberToken={memberToken}
-            userRole={userRole}
-          />
-        )}
+        {activeTab === "shabbat" && isShabbatVisible && <ShabbatView />}
 
         {activeTab === "commands" && (
           <CommandExplorerView
