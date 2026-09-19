@@ -261,32 +261,6 @@
   },
   {
     "year": 2026,
-    "month": 6,
-    "day": 21,
-    "notice": {
-      "year": 2026,
-      "month": 6,
-      "day": 21,
-      "title": "Shabbat at Tommy and Wendy's",
-      "access": "public"
-    },
-    "hasContent": false
-  },
-  {
-    "year": 2026,
-    "month": 6,
-    "day": 28,
-    "notice": {
-      "year": 2026,
-      "month": 6,
-      "day": 28,
-      "title": "Shabbat at The Apa's",
-      "access": "public"
-    },
-    "hasContent": false
-  },
-  {
-    "year": 2026,
     "month": 7,
     "day": 1,
     "notice": {
@@ -323,5 +297,31 @@
       "access": "public"
     },
     "hasContent": false
+  },
+  {
+    "year": 2026,
+    "month": 6,
+    "day": 21,
+    "notice": {
+      "year": 2026,
+      "month": 6,
+      "day": 21,
+      "title": "Shabbat at Tommy and Wendy's",
+      "access": "public"
+    },
+    "hasContent": true
+  },
+  {
+    "year": 2026,
+    "month": 6,
+    "day": 28,
+    "notice": {
+      "year": 2026,
+      "month": 6,
+      "day": 28,
+      "title": "Shabbat at The Apa's",
+      "access": "public"
+    },
+    "hasContent": true
   }
 ]
