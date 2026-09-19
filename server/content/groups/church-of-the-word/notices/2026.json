@@ -262,19 +262,6 @@
   {
     "year": 2026,
     "month": 7,
-    "day": 4,
-    "notice": {
-      "year": 2026,
-      "month": 7,
-      "day": 4,
-      "title": "Shabbat at Nate and Jordyn's",
-      "access": "public"
-    },
-    "hasContent": false
-  },
-  {
-    "year": 2026,
-    "month": 7,
     "day": 11,
     "notice": {
       "year": 2026,
@@ -320,6 +307,19 @@
       "month": 7,
       "day": 1,
       "title": "Day Of Trumpets at Trey and Abby's",
+      "access": "public"
+    },
+    "hasContent": true
+  },
+  {
+    "year": 2026,
+    "month": 7,
+    "day": 4,
+    "notice": {
+      "year": 2026,
+      "month": 7,
+      "day": 4,
+      "title": "Shabbat at Nate and Jordyn's",
       "access": "public"
     },
     "hasContent": true
