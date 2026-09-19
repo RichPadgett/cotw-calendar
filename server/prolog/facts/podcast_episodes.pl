@@ -3507,6 +3507,236 @@ podcast_episode_reference('0F2K4VmZWjv4ucyPV6Wagu', 'Genesis 26').
 podcast_episode_reference('0F2K4VmZWjv4ucyPV6Wagu', 'Isaiah 28').
 podcast_episode_reference('0F2K4VmZWjv4ucyPV6Wagu', 'Leviticus 23').
 
+% -----------------------------------------------------------------------------
+% StudyBox-era teachings added from the Church of the Word Spotify catalog.
+% References come from each episode's published teaching outline. They are kept
+% at book/chapter granularity so rules/teachings.pl can match command passages.
+% -----------------------------------------------------------------------------
+
+podcast_episode('7ayoTTSTXjv7sJwL5U9O8O', 'Clean & Unclean Foods: Deuteronomy 14, Leviticus 11 & Proper New Testament Context', 'https://open.spotify.com/episode/7ayoTTSTXjv7sJwL5U9O8O').
+podcast_episode_reference('7ayoTTSTXjv7sJwL5U9O8O', 'Acts 10').
+podcast_episode_reference('7ayoTTSTXjv7sJwL5U9O8O', 'Acts 11').
+podcast_episode_reference('7ayoTTSTXjv7sJwL5U9O8O', 'Deuteronomy 14').
+podcast_episode_reference('7ayoTTSTXjv7sJwL5U9O8O', 'Genesis 7').
+podcast_episode_reference('7ayoTTSTXjv7sJwL5U9O8O', 'Genesis 8').
+podcast_episode_reference('7ayoTTSTXjv7sJwL5U9O8O', 'Isaiah 65').
+podcast_episode_reference('7ayoTTSTXjv7sJwL5U9O8O', 'Isaiah 66').
+podcast_episode_reference('7ayoTTSTXjv7sJwL5U9O8O', 'Leviticus 11').
+podcast_episode_reference('7ayoTTSTXjv7sJwL5U9O8O', 'Mark 7').
+podcast_episode_reference('7ayoTTSTXjv7sJwL5U9O8O', 'Romans 14').
+podcast_episode_reference('7ayoTTSTXjv7sJwL5U9O8O', '1 Timothy 4').
+
+podcast_episode('6ZgTLAcbLhZ037hJHTjyWC', 'Order in the Assembly: Tongues, Prophecy & the Greater Way of Love', 'https://open.spotify.com/episode/6ZgTLAcbLhZ037hJHTjyWC').
+podcast_episode_reference('6ZgTLAcbLhZ037hJHTjyWC', '1 Corinthians 12').
+podcast_episode_reference('6ZgTLAcbLhZ037hJHTjyWC', '1 Corinthians 13').
+podcast_episode_reference('6ZgTLAcbLhZ037hJHTjyWC', '1 Corinthians 14').
+podcast_episode_reference('6ZgTLAcbLhZ037hJHTjyWC', 'Acts 2').
+podcast_episode_reference('6ZgTLAcbLhZ037hJHTjyWC', 'Genesis 2').
+podcast_episode_reference('6ZgTLAcbLhZ037hJHTjyWC', 'Genesis 11').
+podcast_episode_reference('6ZgTLAcbLhZ037hJHTjyWC', 'Isaiah 28').
+podcast_episode_reference('6ZgTLAcbLhZ037hJHTjyWC', 'John 15').
+podcast_episode_reference('6ZgTLAcbLhZ037hJHTjyWC', 'Matthew 5').
+podcast_episode_reference('6ZgTLAcbLhZ037hJHTjyWC', 'Romans 8').
+
+podcast_episode('6iw3PLpft2UidsFEvCEKsB', 'Tithing, Tongues & Order in the Assembly: Deuteronomy 14 and 1 Corinthians 14', 'https://open.spotify.com/episode/6iw3PLpft2UidsFEvCEKsB').
+podcast_episode_reference('6iw3PLpft2UidsFEvCEKsB', '1 Corinthians 7').
+podcast_episode_reference('6iw3PLpft2UidsFEvCEKsB', '1 Corinthians 14').
+podcast_episode_reference('6iw3PLpft2UidsFEvCEKsB', '1 Timothy 2').
+podcast_episode_reference('6iw3PLpft2UidsFEvCEKsB', '2 Peter 1').
+podcast_episode_reference('6iw3PLpft2UidsFEvCEKsB', 'Deuteronomy 14').
+podcast_episode_reference('6iw3PLpft2UidsFEvCEKsB', 'Deuteronomy 18').
+podcast_episode_reference('6iw3PLpft2UidsFEvCEKsB', 'Ephesians 5').
+podcast_episode_reference('6iw3PLpft2UidsFEvCEKsB', 'Genesis 3').
+podcast_episode_reference('6iw3PLpft2UidsFEvCEKsB', 'Genesis 14').
+podcast_episode_reference('6iw3PLpft2UidsFEvCEKsB', 'Leviticus 27').
+podcast_episode_reference('6iw3PLpft2UidsFEvCEKsB', 'Malachi 3').
+podcast_episode_reference('6iw3PLpft2UidsFEvCEKsB', 'Titus 2').
+
+podcast_episode('4JwBSdguhJseied3PulOck', 'According to the Scriptures: The Gospel, Resurrection & Prophecies in 1 Corinthians 15', 'https://open.spotify.com/episode/4JwBSdguhJseied3PulOck').
+podcast_episode_reference('4JwBSdguhJseied3PulOck', '1 Corinthians 15').
+podcast_episode_reference('4JwBSdguhJseied3PulOck', '2 Chronicles 10').
+podcast_episode_reference('4JwBSdguhJseied3PulOck', 'Deuteronomy 18').
+podcast_episode_reference('4JwBSdguhJseied3PulOck', 'Ezekiel 3').
+podcast_episode_reference('4JwBSdguhJseied3PulOck', 'Ezekiel 11').
+podcast_episode_reference('4JwBSdguhJseied3PulOck', 'Genesis 3').
+podcast_episode_reference('4JwBSdguhJseied3PulOck', 'Genesis 15').
+podcast_episode_reference('4JwBSdguhJseied3PulOck', 'Genesis 22').
+podcast_episode_reference('4JwBSdguhJseied3PulOck', 'Hebrews 11').
+podcast_episode_reference('4JwBSdguhJseied3PulOck', 'Isaiah 52').
+podcast_episode_reference('4JwBSdguhJseied3PulOck', 'Isaiah 53').
+podcast_episode_reference('4JwBSdguhJseied3PulOck', 'John 5').
+podcast_episode_reference('4JwBSdguhJseied3PulOck', 'John 6').
+podcast_episode_reference('4JwBSdguhJseied3PulOck', 'John 7').
+podcast_episode_reference('4JwBSdguhJseied3PulOck', 'John 8').
+podcast_episode_reference('4JwBSdguhJseied3PulOck', 'John 15').
+podcast_episode_reference('4JwBSdguhJseied3PulOck', 'Luke 8').
+podcast_episode_reference('4JwBSdguhJseied3PulOck', 'Matthew 7').
+podcast_episode_reference('4JwBSdguhJseied3PulOck', 'Matthew 12').
+podcast_episode_reference('4JwBSdguhJseied3PulOck', 'Matthew 27').
+podcast_episode_reference('4JwBSdguhJseied3PulOck', 'Psalms 16').
+podcast_episode_reference('4JwBSdguhJseied3PulOck', 'Psalms 22').
+
+podcast_episode('3XpgUMO2wYwf1O889zWVwo', 'The Order of the Resurrections: 1 Corinthians 15 & Timeline of Revelation 20', 'https://open.spotify.com/episode/3XpgUMO2wYwf1O889zWVwo').
+podcast_episode_reference('3XpgUMO2wYwf1O889zWVwo', '1 Corinthians 11').
+podcast_episode_reference('3XpgUMO2wYwf1O889zWVwo', '1 Corinthians 15').
+podcast_episode_reference('3XpgUMO2wYwf1O889zWVwo', '1 Kings 17').
+podcast_episode_reference('3XpgUMO2wYwf1O889zWVwo', '1 Peter 2').
+podcast_episode_reference('3XpgUMO2wYwf1O889zWVwo', '1 Thessalonians 4').
+podcast_episode_reference('3XpgUMO2wYwf1O889zWVwo', '2 Kings 4').
+podcast_episode_reference('3XpgUMO2wYwf1O889zWVwo', '2 Kings 13').
+podcast_episode_reference('3XpgUMO2wYwf1O889zWVwo', 'Daniel 12').
+podcast_episode_reference('3XpgUMO2wYwf1O889zWVwo', 'John 14').
+podcast_episode_reference('3XpgUMO2wYwf1O889zWVwo', 'Matthew 22').
+podcast_episode_reference('3XpgUMO2wYwf1O889zWVwo', 'Revelation 3').
+podcast_episode_reference('3XpgUMO2wYwf1O889zWVwo', 'Revelation 19').
+podcast_episode_reference('3XpgUMO2wYwf1O889zWVwo', 'Revelation 20').
+
+podcast_episode('5ygR5xlQCEWCTKyDVq8HhP', 'The 5,500-Year Timeline: From Creation to Yeshua, Confirmed by the Scriptures', 'https://open.spotify.com/episode/5ygR5xlQCEWCTKyDVq8HhP').
+podcast_episode_reference('5ygR5xlQCEWCTKyDVq8HhP', 'Genesis 5').
+podcast_episode_reference('5ygR5xlQCEWCTKyDVq8HhP', 'Genesis 6').
+podcast_episode_reference('5ygR5xlQCEWCTKyDVq8HhP', 'Genesis 10').
+podcast_episode_reference('5ygR5xlQCEWCTKyDVq8HhP', 'Job 31').
+podcast_episode_reference('5ygR5xlQCEWCTKyDVq8HhP', 'Job 38').
+podcast_episode_reference('5ygR5xlQCEWCTKyDVq8HhP', 'Jude 1').
+podcast_episode_reference('5ygR5xlQCEWCTKyDVq8HhP', 'Luke 3').
+podcast_episode_reference('5ygR5xlQCEWCTKyDVq8HhP', 'Psalms 90').
+podcast_episode_reference('5ygR5xlQCEWCTKyDVq8HhP', 'Revelation 12').
+
+podcast_episode('7izaIWIgeDaRO8wQIaatpd', 'The 5,500-Year Timeline & the Heavens at Yeshua’s Crucifixion', 'https://open.spotify.com/episode/7izaIWIgeDaRO8wQIaatpd').
+podcast_episode_reference('7izaIWIgeDaRO8wQIaatpd', '1 Corinthians 15').
+podcast_episode_reference('7izaIWIgeDaRO8wQIaatpd', '1 Samuel 17').
+podcast_episode_reference('7izaIWIgeDaRO8wQIaatpd', '2 Corinthians 5').
+podcast_episode_reference('7izaIWIgeDaRO8wQIaatpd', 'Genesis 3').
+podcast_episode_reference('7izaIWIgeDaRO8wQIaatpd', 'Isaiah 53').
+podcast_episode_reference('7izaIWIgeDaRO8wQIaatpd', 'Isaiah 59').
+podcast_episode_reference('7izaIWIgeDaRO8wQIaatpd', 'Job 38').
+podcast_episode_reference('7izaIWIgeDaRO8wQIaatpd', 'John 19').
+podcast_episode_reference('7izaIWIgeDaRO8wQIaatpd', 'Luke 19').
+podcast_episode_reference('7izaIWIgeDaRO8wQIaatpd', 'Luke 23').
+podcast_episode_reference('7izaIWIgeDaRO8wQIaatpd', 'Matthew 5').
+podcast_episode_reference('7izaIWIgeDaRO8wQIaatpd', 'Matthew 27').
+podcast_episode_reference('7izaIWIgeDaRO8wQIaatpd', 'Psalms 90').
+podcast_episode_reference('7izaIWIgeDaRO8wQIaatpd', 'Psalms 110').
+podcast_episode_reference('7izaIWIgeDaRO8wQIaatpd', 'Psalms 118').
+podcast_episode_reference('7izaIWIgeDaRO8wQIaatpd', 'Revelation 20').
+
+podcast_episode('4gFlYEgEtcYuMr5bNBBtZP', 'Where Are We in This Timeline? Daniel’s Seventy Sevens & the End of the Age', 'https://open.spotify.com/episode/4gFlYEgEtcYuMr5bNBBtZP').
+podcast_episode_reference('4gFlYEgEtcYuMr5bNBBtZP', 'Acts 1').
+podcast_episode_reference('4gFlYEgEtcYuMr5bNBBtZP', 'Acts 2').
+podcast_episode_reference('4gFlYEgEtcYuMr5bNBBtZP', 'Acts 12').
+podcast_episode_reference('4gFlYEgEtcYuMr5bNBBtZP', 'Colossians 1').
+podcast_episode_reference('4gFlYEgEtcYuMr5bNBBtZP', 'Daniel 9').
+podcast_episode_reference('4gFlYEgEtcYuMr5bNBBtZP', 'Ezra 8').
+podcast_episode_reference('4gFlYEgEtcYuMr5bNBBtZP', 'Luke 9').
+podcast_episode_reference('4gFlYEgEtcYuMr5bNBBtZP', 'Luke 11').
+podcast_episode_reference('4gFlYEgEtcYuMr5bNBBtZP', 'Luke 19').
+podcast_episode_reference('4gFlYEgEtcYuMr5bNBBtZP', 'Mark 8').
+podcast_episode_reference('4gFlYEgEtcYuMr5bNBBtZP', 'Mark 9').
+podcast_episode_reference('4gFlYEgEtcYuMr5bNBBtZP', 'Mark 13').
+podcast_episode_reference('4gFlYEgEtcYuMr5bNBBtZP', 'Matthew 16').
+podcast_episode_reference('4gFlYEgEtcYuMr5bNBBtZP', 'Matthew 24').
+podcast_episode_reference('4gFlYEgEtcYuMr5bNBBtZP', 'Psalms 90').
+podcast_episode_reference('4gFlYEgEtcYuMr5bNBBtZP', 'Revelation 1').
+podcast_episode_reference('4gFlYEgEtcYuMr5bNBBtZP', 'Romans 1').
+podcast_episode_reference('4gFlYEgEtcYuMr5bNBBtZP', 'Romans 10').
+podcast_episode_reference('4gFlYEgEtcYuMr5bNBBtZP', 'Romans 16').
+
+podcast_episode('6rEDaLyojm2fG7qDId4U3G', 'Daniel & Revelation 13: The Beasts, the Ten Kingdoms & This Generation', 'https://open.spotify.com/episode/6rEDaLyojm2fG7qDId4U3G').
+podcast_episode_reference('6rEDaLyojm2fG7qDId4U3G', 'Acts 13').
+podcast_episode_reference('6rEDaLyojm2fG7qDId4U3G', 'Daniel 2').
+podcast_episode_reference('6rEDaLyojm2fG7qDId4U3G', 'Daniel 5').
+podcast_episode_reference('6rEDaLyojm2fG7qDId4U3G', 'Daniel 7').
+podcast_episode_reference('6rEDaLyojm2fG7qDId4U3G', 'Luke 2').
+podcast_episode_reference('6rEDaLyojm2fG7qDId4U3G', 'Matthew 24').
+podcast_episode_reference('6rEDaLyojm2fG7qDId4U3G', 'Revelation 13').
+
+podcast_episode('1xpdaCiRSOpCvCH4cZvMTs', 'The Abomination of Desolation: Josephus, Vespasian & the Fall of Jerusalem', 'https://open.spotify.com/episode/1xpdaCiRSOpCvCH4cZvMTs').
+podcast_episode_reference('1xpdaCiRSOpCvCH4cZvMTs', 'Daniel 9').
+podcast_episode_reference('1xpdaCiRSOpCvCH4cZvMTs', 'Luke 21').
+podcast_episode_reference('1xpdaCiRSOpCvCH4cZvMTs', 'Mark 13').
+podcast_episode_reference('1xpdaCiRSOpCvCH4cZvMTs', 'Matthew 24').
+
+podcast_episode('2Gx5KB9AJoQEu99L3bIchM', 'The Jubilee Cycle & the Abomination of Desolation', 'https://open.spotify.com/episode/2Gx5KB9AJoQEu99L3bIchM').
+podcast_episode_reference('2Gx5KB9AJoQEu99L3bIchM', '2 Chronicles 36').
+podcast_episode_reference('2Gx5KB9AJoQEu99L3bIchM', 'Acts 7').
+podcast_episode_reference('2Gx5KB9AJoQEu99L3bIchM', 'Deuteronomy 15').
+podcast_episode_reference('2Gx5KB9AJoQEu99L3bIchM', 'Ezekiel 23').
+podcast_episode_reference('2Gx5KB9AJoQEu99L3bIchM', 'Exodus 21').
+podcast_episode_reference('2Gx5KB9AJoQEu99L3bIchM', 'Jeremiah 3').
+podcast_episode_reference('2Gx5KB9AJoQEu99L3bIchM', 'Jeremiah 25').
+podcast_episode_reference('2Gx5KB9AJoQEu99L3bIchM', 'John 19').
+podcast_episode_reference('2Gx5KB9AJoQEu99L3bIchM', 'Leviticus 25').
+podcast_episode_reference('2Gx5KB9AJoQEu99L3bIchM', 'Leviticus 26').
+podcast_episode_reference('2Gx5KB9AJoQEu99L3bIchM', 'Luke 13').
+podcast_episode_reference('2Gx5KB9AJoQEu99L3bIchM', 'Luke 21').
+podcast_episode_reference('2Gx5KB9AJoQEu99L3bIchM', 'Mark 13').
+podcast_episode_reference('2Gx5KB9AJoQEu99L3bIchM', 'Matthew 23').
+podcast_episode_reference('2Gx5KB9AJoQEu99L3bIchM', 'Matthew 24').
+podcast_episode_reference('2Gx5KB9AJoQEu99L3bIchM', 'Revelation 16').
+podcast_episode_reference('2Gx5KB9AJoQEu99L3bIchM', 'Revelation 17').
+podcast_episode_reference('2Gx5KB9AJoQEu99L3bIchM', 'Revelation 18').
+
+podcast_episode('1reYQ9lCuPAFQlsVgRTz9j', 'Yeshua the Firstborn: Firstfruits & the Seventieth Week', 'https://open.spotify.com/episode/1reYQ9lCuPAFQlsVgRTz9j').
+podcast_episode_reference('1reYQ9lCuPAFQlsVgRTz9j', '1 Corinthians 15').
+podcast_episode_reference('1reYQ9lCuPAFQlsVgRTz9j', 'Colossians 1').
+podcast_episode_reference('1reYQ9lCuPAFQlsVgRTz9j', 'Deuteronomy 15').
+podcast_episode_reference('1reYQ9lCuPAFQlsVgRTz9j', 'Deuteronomy 16').
+podcast_episode_reference('1reYQ9lCuPAFQlsVgRTz9j', 'Ecclesiastes 12').
+podcast_episode_reference('1reYQ9lCuPAFQlsVgRTz9j', 'Jeremiah 31').
+podcast_episode_reference('1reYQ9lCuPAFQlsVgRTz9j', 'John 6').
+podcast_episode_reference('1reYQ9lCuPAFQlsVgRTz9j', 'Joshua 1').
+podcast_episode_reference('1reYQ9lCuPAFQlsVgRTz9j', 'Luke 22').
+podcast_episode_reference('1reYQ9lCuPAFQlsVgRTz9j', 'Matthew 3').
+podcast_episode_reference('1reYQ9lCuPAFQlsVgRTz9j', 'Matthew 17').
+podcast_episode_reference('1reYQ9lCuPAFQlsVgRTz9j', 'Psalms 1').
+podcast_episode_reference('1reYQ9lCuPAFQlsVgRTz9j', 'Revelation 1').
+podcast_episode_reference('1reYQ9lCuPAFQlsVgRTz9j', 'Revelation 20').
+podcast_episode_reference('1reYQ9lCuPAFQlsVgRTz9j', 'Romans 8').
+
+podcast_episode('4LV3Skxoa8Z9eRvEYhJ3Ux', 'The River of Fire: Vesuvius, Titus & the Fifth Trumpet', 'https://open.spotify.com/episode/4LV3Skxoa8Z9eRvEYhJ3Ux').
+podcast_episode_reference('4LV3Skxoa8Z9eRvEYhJ3Ux', 'Daniel 7').
+podcast_episode_reference('4LV3Skxoa8Z9eRvEYhJ3Ux', 'Revelation 8').
+podcast_episode_reference('4LV3Skxoa8Z9eRvEYhJ3Ux', 'Revelation 9').
+
+podcast_episode('3sU6pJsjIQSQKzQeKGfxbP', 'The Appointed Times: First of the Sabbaths, Trumpets & the Fifth Trumpet', 'https://open.spotify.com/episode/3sU6pJsjIQSQKzQeKGfxbP').
+podcast_episode_reference('3sU6pJsjIQSQKzQeKGfxbP', 'Deuteronomy 16').
+podcast_episode_reference('3sU6pJsjIQSQKzQeKGfxbP', 'Exodus 34').
+podcast_episode_reference('3sU6pJsjIQSQKzQeKGfxbP', 'John 20').
+podcast_episode_reference('3sU6pJsjIQSQKzQeKGfxbP', 'Leviticus 23').
+podcast_episode_reference('3sU6pJsjIQSQKzQeKGfxbP', 'Luke 24').
+podcast_episode_reference('3sU6pJsjIQSQKzQeKGfxbP', 'Mark 16').
+podcast_episode_reference('3sU6pJsjIQSQKzQeKGfxbP', 'Matthew 28').
+podcast_episode_reference('3sU6pJsjIQSQKzQeKGfxbP', 'Revelation 9').
+podcast_episode_reference('3sU6pJsjIQSQKzQeKGfxbP', 'Revelation 12').
+
+podcast_episode('6fqZud1sd8iqSYAnPLfDkY', 'Q&A: Where Are We in This Timeline? The Ten Kings, the Trumpets & What Comes After', 'https://open.spotify.com/episode/6fqZud1sd8iqSYAnPLfDkY').
+podcast_episode_reference('6fqZud1sd8iqSYAnPLfDkY', 'Revelation 8').
+podcast_episode_reference('6fqZud1sd8iqSYAnPLfDkY', 'Revelation 9').
+podcast_episode_reference('6fqZud1sd8iqSYAnPLfDkY', 'Revelation 17').
+podcast_episode_reference('6fqZud1sd8iqSYAnPLfDkY', 'Revelation 20').
+
+podcast_episode('5CUyhhs5WBVoWu8WrBOAed', 'The Day of Atonement: Azazel, the Fast & the Return of the Son of Man', 'https://open.spotify.com/episode/5CUyhhs5WBVoWu8WrBOAed').
+podcast_episode_reference('5CUyhhs5WBVoWu8WrBOAed', '1 Peter 2').
+podcast_episode_reference('5CUyhhs5WBVoWu8WrBOAed', '1 Thessalonians 4').
+podcast_episode_reference('5CUyhhs5WBVoWu8WrBOAed', '2 Thessalonians 2').
+podcast_episode_reference('5CUyhhs5WBVoWu8WrBOAed', 'Acts 27').
+podcast_episode_reference('5CUyhhs5WBVoWu8WrBOAed', 'Deuteronomy 16').
+podcast_episode_reference('5CUyhhs5WBVoWu8WrBOAed', 'Ecclesiastes 12').
+podcast_episode_reference('5CUyhhs5WBVoWu8WrBOAed', 'Ezekiel 38').
+podcast_episode_reference('5CUyhhs5WBVoWu8WrBOAed', 'Ezekiel 39').
+podcast_episode_reference('5CUyhhs5WBVoWu8WrBOAed', 'Isaiah 58').
+podcast_episode_reference('5CUyhhs5WBVoWu8WrBOAed', 'Joel 3').
+podcast_episode_reference('5CUyhhs5WBVoWu8WrBOAed', 'Joshua 1').
+podcast_episode_reference('5CUyhhs5WBVoWu8WrBOAed', 'Leviticus 16').
+podcast_episode_reference('5CUyhhs5WBVoWu8WrBOAed', 'Leviticus 23').
+podcast_episode_reference('5CUyhhs5WBVoWu8WrBOAed', 'Luke 21').
+podcast_episode_reference('5CUyhhs5WBVoWu8WrBOAed', 'Mark 13').
+podcast_episode_reference('5CUyhhs5WBVoWu8WrBOAed', 'Matthew 6').
+podcast_episode_reference('5CUyhhs5WBVoWu8WrBOAed', 'Matthew 24').
+podcast_episode_reference('5CUyhhs5WBVoWu8WrBOAed', 'Micah 4').
+podcast_episode_reference('5CUyhhs5WBVoWu8WrBOAed', 'Revelation 19').
+podcast_episode_reference('5CUyhhs5WBVoWu8WrBOAed', 'Revelation 20').
+
 % =============================================================================
 % Episode upload dates (Enoch calendar year/month/day), recovered from the
 % church-of-the-word day content that first linked each episode.
@@ -3794,3 +4024,5 @@ podcast_episode_date('7qGDEFrpjKzTAn15jjgUh9', 2026, 4, 4).
 podcast_episode_date('0aST1ognp1WS7hbdqFKkXV', 2026, 4, 4).
 podcast_episode_date('6FWzLDc05YutkBvSOqQIKS', 2026, 4, 11).
 podcast_episode_date('2Dim5J7G71VohWtbdN5L7Y', 2026, 4, 25).
+podcast_episode_date('7ayoTTSTXjv7sJwL5U9O8O', 2026, 5, 2).
+podcast_episode_date('6ZgTLAcbLhZ037hJHTjyWC', 2026, 5, 9).
