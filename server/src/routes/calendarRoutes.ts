@@ -15,6 +15,7 @@ import {
   getPerpetualMarkers,
   getPerpetualMarkersChecksum,
 } from "../services/perpetualMarkers";
+import { buildAppointedTimesCalendar } from "../services/appointedTimesCalendar";
 
 const router = Router();
 
@@ -85,6 +86,40 @@ router.get("/latest-shabbat-teaching", (req, res) => {
     });
   }
 });
+
+/**
+ * Returns a stable public iCalendar subscription containing appointed times.
+ * Calendar clients periodically refresh this URL and receive future updates.
+ */
+router.get("/subscriptions/appointed-times.ics", (req, res) => {
+  const startYear = parseOptionalInteger(req.query.startYear, 1900, 2200);
+  const yearCount = parseOptionalInteger(req.query.years, 1, 8);
+  const calendar = buildAppointedTimesCalendar({
+    startYear,
+    yearCount,
+  });
+  const disposition = req.query.download === "1" ? "attachment" : "inline";
+
+  res.set({
+    "Content-Type": "text/calendar; charset=utf-8",
+    "Content-Disposition": `${disposition}; filename="enoch-appointed-times.ics"`,
+    "Cache-Control": "public, max-age=3600",
+  });
+  res.send(calendar);
+});
+
+function parseOptionalInteger(
+  value: unknown,
+  minimum: number,
+  maximum: number
+): number | undefined {
+  if (typeof value !== "string" || !/^-?\d+$/.test(value)) return undefined;
+
+  const parsed = Number(value);
+  return Number.isSafeInteger(parsed) && parsed >= minimum && parsed <= maximum
+    ? parsed
+    : undefined;
+}
 
 /**
  * API endpoint: returns notice and content summaries for a full Enoch year.

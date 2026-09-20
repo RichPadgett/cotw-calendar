@@ -23,6 +23,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import AppHeader from "../src/components/calendar/AppHeader";
+import CalendarSubscriptionCard from "../src/components/calendar/CalendarSubscriptionCard";
 import DayDetailModal from "../src/components/calendar/DayDetailModal";
 import HistoryTimelineView, {
   formatHistoricalDate,
@@ -1104,6 +1105,7 @@ export default function HomeScreen() {
 
         {activeTab === "calendar" && (
           <>
+            <CalendarSubscriptionCard />
             <YearWheelView
               nodes={nodes}
               perpetualMarkers={perpetualMarkers}
