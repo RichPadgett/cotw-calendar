@@ -146,6 +146,15 @@ function getAppointedTimes(yearStart: string): AppointedTimeDefinition[] {
       description: "Feast of Trumpets on Enoch Month 7, Day 1.",
     },
     {
+      id: "atonement-affliction-begins",
+      englishName: "Affliction Begins at Sundown",
+      hebrewName: "Erev Yom Kippur",
+      startDayOfYear: getMonthDayOfYear(7, 9),
+      durationDays: 1,
+      description:
+        "The Day of Atonement period of affliction begins at sundown on Enoch Month 7, Day 9.",
+    },
+    {
       id: "day-of-atonement",
       englishName: "Day of Atonement",
       hebrewName: "Yom Kippur",

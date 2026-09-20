@@ -46,6 +46,11 @@ describe("appointed-times iCalendar feed", () => {
         end: "20260917",
       },
       {
+        summary: "Affliction Begins at Sundown (Erev Yom Kippur)",
+        start: "20260924",
+        end: "20260925",
+      },
+      {
         summary: "Day of Atonement (Yom Kippur)",
         start: "20260925",
         end: "20260926",
@@ -69,7 +74,10 @@ describe("appointed-times iCalendar feed", () => {
       yearCount: 4,
     });
 
-    expect(calendar.match(/BEGIN:VEVENT/g)).toHaveLength(32);
+    expect(calendar.match(/BEGIN:VEVENT/g)).toHaveLength(36);
+    expect(calendar).toContain(
+      "UID:atonement-affliction-begins-2026@enochscalendar.com"
+    );
     expect(calendar).toContain("UID:sukkot-2026@enochscalendar.com");
     expect(calendar).toContain("UID:sukkot-2027@enochscalendar.com");
 
@@ -78,4 +86,3 @@ describe("appointed-times iCalendar feed", () => {
     }
   });
 });
-
