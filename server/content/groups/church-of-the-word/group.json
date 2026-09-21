@@ -102,5 +102,11 @@
       "createdAt": "2026-09-20T02:04:53.248Z",
       "deviceName": "Web Browser"
     }
+  ],
+  "calendarSubscriptions": [
+    {
+      "tokenHash": "b9ded91c4a207ad6e3e5e4d3e38fc65b0f9ccc7a044b96a1cc06fc8ee94c0c95",
+      "createdAt": "2026-09-21T13:03:37.984Z"
+    }
   ]
 }
