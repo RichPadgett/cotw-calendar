@@ -23,6 +23,18 @@ export type AppointedTimesCalendarOptions = {
   startYear?: number;
   yearCount?: number;
   calendarUrl?: string;
+  additionalEvents?: CalendarFeedEvent[];
+};
+
+export type CalendarFeedEvent = {
+  uid: string;
+  startDate: string;
+  summary: string;
+  description?: string;
+  url?: string;
+  startTime?: string;
+  endTime?: string;
+  location?: string;
 };
 
 export function buildAppointedTimesCalendar(
@@ -46,7 +58,11 @@ export function buildAppointedTimesCalendar(
     "X-PUBLISHED-TTL:PT6H",
   ];
 
-  for (let enochYear = startYear; enochYear < startYear + yearCount; enochYear++) {
+  for (
+    let enochYear = startYear;
+    enochYear < startYear + yearCount;
+    enochYear++
+  ) {
     const yearStart = getEnochYearStartDate(enochYear);
 
     const appointedTimes = getAppointedTimes(yearStart).sort(
@@ -80,6 +96,38 @@ export function buildAppointedTimesCalendar(
         "END:VEVENT"
       );
     }
+  }
+
+  for (const event of options.additionalEvents ?? []) {
+    const endDate = addDays(event.startDate, 1);
+    const hasTime = /^\d{2}:\d{2}$/.test(event.startTime ?? "");
+    const timedEnd = hasTime
+      ? getTimedEnd(event.startTime!, event.endTime)
+      : null;
+    const startValue = hasTime
+      ? `DTSTART;TZID=America/Chicago:${formatIcsDate(event.startDate)}T${formatIcsTime(event.startTime!)}`
+      : `DTSTART;VALUE=DATE:${formatIcsDate(event.startDate)}`;
+    const endValue = hasTime
+      ? `DTEND;TZID=America/Chicago:${formatIcsDate(
+          addDays(event.startDate, timedEnd!.dayOffset)
+        )}T${formatIcsTime(timedEnd!.time)}`
+      : `DTEND;VALUE=DATE:${formatIcsDate(endDate)}`;
+
+    lines.push(
+      "BEGIN:VEVENT",
+      `UID:${escapeIcsText(event.uid)}`,
+      `DTSTAMP:${formatIcsDate(event.startDate)}T000000Z`,
+      startValue,
+      endValue,
+      `SUMMARY:${escapeIcsText(event.summary)}`,
+      `DESCRIPTION:${escapeIcsText(event.description ?? "")}`,
+      ...(event.location ? [`LOCATION:${escapeIcsText(event.location)}`] : []),
+      ...(event.url ? [`URL:${escapeIcsText(event.url)}`] : []),
+      "TRANSP:TRANSPARENT",
+      "STATUS:CONFIRMED",
+      "SEQUENCE:0",
+      "END:VEVENT"
+    );
   }
 
   lines.push("END:VCALENDAR");
@@ -135,7 +183,8 @@ function getAppointedTimes(yearStart: string): AppointedTimeDefinition[] {
       hebrewName: "Feast of Weeks",
       startDayOfYear: firstfruitsDayOfYear + 49,
       durationDays: 1,
-      description: "Shavuot, observed after counting seven complete Sabbaths from Firstfruits.",
+      description:
+        "Shavuot, observed after counting seven complete Sabbaths from Firstfruits.",
     },
     {
       id: "feast-of-trumpets",
@@ -160,7 +209,8 @@ function getAppointedTimes(yearStart: string): AppointedTimeDefinition[] {
       hebrewName: "Yom Kippur",
       startDayOfYear: getMonthDayOfYear(7, 10),
       durationDays: 1,
-      description: "Day of Atonement on Enoch Month 7, Day 10. Affliction begins at sundown on Day 9.",
+      description:
+        "Day of Atonement on Enoch Month 7, Day 10. Affliction begins at sundown on Day 9.",
     },
     {
       id: "sukkot",
@@ -184,7 +234,7 @@ function getAppointedTimes(yearStart: string): AppointedTimeDefinition[] {
 function getFirstfruitsDayOfYear(yearStart: string): number {
   const lambSelectionDate = addDays(yearStart, 9);
   const selectionDayOfWeek = getUtcDayOfWeek(lambSelectionDate);
-  const daysUntilSaturday = ((6 - selectionDayOfWeek + 7) % 7) || 7;
+  const daysUntilSaturday = (6 - selectionDayOfWeek + 7) % 7 || 7;
 
   return 10 + daysUntilSaturday + 1;
 }
@@ -232,6 +282,47 @@ function getUtcDayOfWeek(dateString: string): number {
 
 function formatIcsDate(dateString: string): string {
   return dateString.replaceAll("-", "");
+}
+
+function formatIcsTime(time: string): string {
+  return `${time.replace(":", "")}00`;
+}
+
+function getTimedEnd(
+  startTime: string,
+  requestedEndTime?: string
+): { time: string; dayOffset: number } {
+  const endTime = /^\d{2}:\d{2}$/.test(requestedEndTime ?? "")
+    ? requestedEndTime!
+    : addMinutesToTime(startTime, 60).time;
+  const startMinutes = timeToMinutes(startTime);
+  const endMinutes = timeToMinutes(endTime);
+
+  return {
+    time: endTime,
+    dayOffset: endMinutes <= startMinutes ? 1 : 0,
+  };
+}
+
+function addMinutesToTime(
+  time: string,
+  minutesToAdd: number
+): { time: string; dayOffset: number } {
+  const total = timeToMinutes(time) + minutesToAdd;
+  const minutesInDay = 24 * 60;
+  const normalized = total % minutesInDay;
+
+  return {
+    time: `${String(Math.floor(normalized / 60)).padStart(2, "0")}:${String(
+      normalized % 60
+    ).padStart(2, "0")}`,
+    dayOffset: Math.floor(total / minutesInDay),
+  };
+}
+
+function timeToMinutes(time: string): number {
+  const [hours, minutes] = time.split(":").map(Number);
+  return hours * 60 + minutes;
 }
 
 function escapeIcsText(value: string): string {

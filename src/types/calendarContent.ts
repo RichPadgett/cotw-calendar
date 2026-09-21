@@ -17,6 +17,10 @@ export type DayContentItem = {
   details?: string;
   url?: string;
   access?: string;
+  includeInCalendarFeed?: boolean;
+  calendarStartTime?: string;
+  calendarEndTime?: string;
+  calendarLocation?: string;
 };
 
 export type DayContentSection = {
@@ -27,6 +31,10 @@ export type DayContentSection = {
 
 export type DayContent = {
   title?: string;
+  includeInCalendarFeed?: boolean;
+  calendarStartTime?: string;
+  calendarEndTime?: string;
+  calendarLocation?: string;
   notes?: string;
   scriptureReadings?: ScriptureReading[];
   sections?: DayContentSection[];

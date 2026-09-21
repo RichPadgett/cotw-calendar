@@ -16,6 +16,8 @@ import {
   getPerpetualMarkersChecksum,
 } from "../services/perpetualMarkers";
 import { buildAppointedTimesCalendar } from "../services/appointedTimesCalendar";
+import { getPublishedCalendarEvents } from "../services/publishedCalendarEvents";
+import { verifyCalendarSubscriptionToken } from "../services/groupStore";
 
 const router = Router();
 
@@ -92,18 +94,41 @@ router.get("/latest-shabbat-teaching", (req, res) => {
  * Calendar clients periodically refresh this URL and receive future updates.
  */
 router.get("/subscriptions/appointed-times.ics", (req, res) => {
-  const startYear = parseOptionalInteger(req.query.startYear, 1900, 2200);
-  const yearCount = parseOptionalInteger(req.query.years, 1, 8);
+  const requestedGroupCode = String(req.query.group ?? "public")
+    .trim()
+    .toLowerCase();
+  const groupCode = requestedGroupCode || "public";
+
+  if (
+    groupCode !== "public" &&
+    !verifyCalendarSubscriptionToken({
+      groupCode,
+      token: String(req.query.token ?? ""),
+    })
+  ) {
+    return res.status(403).json({ error: "Invalid calendar subscription." });
+  }
+
+  const startYear =
+    parseOptionalInteger(req.query.startYear, 1900, 2200) ??
+    new Date().getUTCFullYear() - 1;
+  const yearCount = parseOptionalInteger(req.query.years, 1, 8) ?? 4;
   const calendar = buildAppointedTimesCalendar({
     startYear,
     yearCount,
+    additionalEvents: getPublishedCalendarEvents(
+      startYear,
+      yearCount,
+      groupCode
+    ),
   });
   const disposition = req.query.download === "1" ? "attachment" : "inline";
 
   res.set({
     "Content-Type": "text/calendar; charset=utf-8",
     "Content-Disposition": `${disposition}; filename="enoch-appointed-times.ics"`,
-    "Cache-Control": "public, max-age=3600",
+    "Cache-Control":
+      groupCode === "public" ? "public, max-age=3600" : "private, no-store",
   });
   res.send(calendar);
 });

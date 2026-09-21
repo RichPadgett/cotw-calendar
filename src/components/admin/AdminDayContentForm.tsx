@@ -11,6 +11,7 @@ import {
   Linking,
   Pressable,
   StyleSheet,
+  Switch,
   Text,
   TextInput,
   View,
@@ -42,6 +43,10 @@ type ContentRow = {
   details: string;
   url: string;
   access: AccessLevel;
+  includeInCalendarFeed: boolean;
+  calendarStartTime: string;
+  calendarEndTime: string;
+  calendarLocation: string;
 };
 
 const emptyScriptureRow: ScriptureRow = {
@@ -56,6 +61,10 @@ const emptyNoticeRow: ContentRow = {
   details: "",
   url: "",
   access: "public",
+  includeInCalendarFeed: false,
+  calendarStartTime: "",
+  calendarEndTime: "",
+  calendarLocation: "",
 };
 
 const emptyMediaRow: ContentRow = {
@@ -64,6 +73,10 @@ const emptyMediaRow: ContentRow = {
   details: "",
   url: "",
   access: "public",
+  includeInCalendarFeed: false,
+  calendarStartTime: "",
+  calendarEndTime: "",
+  calendarLocation: "",
 };
 
 function getEditableRows<T>(rows: T[], emptyRow: T): T[] {
@@ -131,6 +144,10 @@ function getContentRow(item: DayContentItem): ContentRow {
     details: item.details ?? "",
     url: item.url ?? "",
     access: getAccessLevel(item.access),
+    includeInCalendarFeed: item.includeInCalendarFeed === true,
+    calendarStartTime: item.calendarStartTime ?? "",
+    calendarEndTime: item.calendarEndTime ?? "",
+    calendarLocation: item.calendarLocation ?? "",
   };
 }
 
@@ -156,6 +173,16 @@ function getNoticePayload(row: ContentRow) {
     access: row.access,
     ...(details ? { details } : {}),
     ...(url ? { url } : {}),
+    includeInCalendarFeed: row.includeInCalendarFeed,
+    ...(row.calendarStartTime.trim()
+      ? { calendarStartTime: row.calendarStartTime.trim() }
+      : {}),
+    ...(row.calendarEndTime.trim()
+      ? { calendarEndTime: row.calendarEndTime.trim() }
+      : {}),
+    ...(row.calendarLocation.trim()
+      ? { calendarLocation: row.calendarLocation.trim() }
+      : {}),
   };
 }
 
@@ -168,6 +195,16 @@ function getMediaPayload(row: ContentRow) {
     type: row.type,
     access: row.access,
     ...(url ? { url } : {}),
+    includeInCalendarFeed: row.includeInCalendarFeed,
+    ...(row.calendarStartTime.trim()
+      ? { calendarStartTime: row.calendarStartTime.trim() }
+      : {}),
+    ...(row.calendarEndTime.trim()
+      ? { calendarEndTime: row.calendarEndTime.trim() }
+      : {}),
+    ...(row.calendarLocation.trim()
+      ? { calendarLocation: row.calendarLocation.trim() }
+      : {}),
   };
 }
 
@@ -189,6 +226,11 @@ export default function AdminDayContentForm({
   currentContent,
 }: Props) {
   const [notes, setNotes] = useState("");
+  const [includeDayInCalendarFeed, setIncludeDayInCalendarFeed] =
+    useState(false);
+  const [calendarStartTime, setCalendarStartTime] = useState("");
+  const [calendarEndTime, setCalendarEndTime] = useState("");
+  const [calendarLocation, setCalendarLocation] = useState("");
 
   const [scriptureReadings, setScriptureReadings] = useState<ScriptureRow[]>([
     emptyScriptureRow,
@@ -225,6 +267,10 @@ export default function AdminDayContentForm({
       .map(getContentRow);
 
     setNotes(currentContent?.notes ?? "");
+    setIncludeDayInCalendarFeed(currentContent?.includeInCalendarFeed === true);
+    setCalendarStartTime(currentContent?.calendarStartTime ?? "");
+    setCalendarEndTime(currentContent?.calendarEndTime ?? "");
+    setCalendarLocation(currentContent?.calendarLocation ?? "");
     setScriptureReadings(
       getEditableRows(
         (currentContent?.scriptureReadings ?? []).map((reading) => ({
@@ -379,7 +425,9 @@ export default function AdminDayContentForm({
 
       if (data.description) {
         setNotes((current) =>
-          current.trim() ? `${current}\n\n${data.description}` : data.description
+          current.trim()
+            ? `${current}\n\n${data.description}`
+            : data.description
         );
       }
 
@@ -435,6 +483,16 @@ export default function AdminDayContentForm({
         day,
         title: currentContent?.title ?? `Month ${month} Day ${day}`,
         notes,
+        includeInCalendarFeed: includeDayInCalendarFeed,
+        ...(calendarStartTime.trim()
+          ? { calendarStartTime: calendarStartTime.trim() }
+          : {}),
+        ...(calendarEndTime.trim()
+          ? { calendarEndTime: calendarEndTime.trim() }
+          : {}),
+        ...(calendarLocation.trim()
+          ? { calendarLocation: calendarLocation.trim() }
+          : {}),
 
         scriptureReadings: scriptureReadings.filter(
           (row) => row.label || row.reference || row.url
@@ -511,7 +569,7 @@ export default function AdminDayContentForm({
   function updateNoticeRow(
     index: number,
     field: keyof ContentRow,
-    value: string
+    value: ContentRow[keyof ContentRow]
   ) {
     setNoticeItems((rows) => {
       const next = [...rows];
@@ -527,7 +585,7 @@ export default function AdminDayContentForm({
   function updateMediaRow(
     index: number,
     field: keyof ContentRow,
-    value: string
+    value: ContentRow[keyof ContentRow]
   ) {
     setMediaItems((rows) => {
       const next = [...rows];
@@ -563,6 +621,46 @@ export default function AdminDayContentForm({
             multiline
             style={[styles.input, styles.textArea]}
           />
+
+          <View style={styles.calendarSettings}>
+            <View style={styles.switchRow}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.calendarLabel}>
+                  Include this day in calendar feed
+                </Text>
+                <Text style={styles.sectionHelp}>
+                  Sends the title, notes, scriptures, and public links as one
+                  event.
+                </Text>
+              </View>
+              <Switch
+                value={includeDayInCalendarFeed}
+                onValueChange={setIncludeDayInCalendarFeed}
+              />
+            </View>
+            {includeDayInCalendarFeed ? (
+              <>
+                <TextInput
+                  value={calendarStartTime}
+                  onChangeText={setCalendarStartTime}
+                  placeholder="Start time, e.g. 18:00 (blank = all day)"
+                  style={styles.input}
+                />
+                <TextInput
+                  value={calendarEndTime}
+                  onChangeText={setCalendarEndTime}
+                  placeholder="End time, e.g. 20:00"
+                  style={styles.input}
+                />
+                <TextInput
+                  value={calendarLocation}
+                  onChangeText={setCalendarLocation}
+                  placeholder="Location or street address"
+                  style={styles.input}
+                />
+              </>
+            ) : null}
+          </View>
         </View>
 
         {/* Scripture */}
@@ -657,6 +755,13 @@ export default function AdminDayContentForm({
                 style={styles.input}
               />
 
+              <CalendarItemSettings
+                row={row}
+                onChange={(field, value) =>
+                  updateNoticeRow(index, field, value)
+                }
+              />
+
               {isOpenableUrl(row.url) ? (
                 <Pressable
                   onPress={() => Linking.openURL(getOpenUrl(row.url))}
@@ -706,6 +811,11 @@ export default function AdminDayContentForm({
                 onChangeText={(value) => updateMediaRow(index, "url", value)}
                 placeholder="URL or uploaded file path"
                 style={styles.input}
+              />
+
+              <CalendarItemSettings
+                row={row}
+                onChange={(field, value) => updateMediaRow(index, field, value)}
               />
 
               {isOpenableUrl(row.url) ? (
@@ -789,6 +899,80 @@ export default function AdminDayContentForm({
   );
 }
 
+function CalendarItemSettings({
+  row,
+  onChange,
+}: {
+  row: ContentRow;
+  onChange: (
+    field: keyof ContentRow,
+    value: ContentRow[keyof ContentRow]
+  ) => void;
+}) {
+  return (
+    <View style={styles.calendarSettings}>
+      <View style={styles.accessRow}>
+        {(
+          [
+            ["public", "Public"],
+            ["members", "Church members"],
+            ["code-required", "Code required"],
+          ] as const
+        ).map(([value, label]) => (
+          <Pressable
+            key={value}
+            onPress={() => onChange("access", value)}
+            style={[
+              styles.accessOption,
+              row.access === value && styles.accessOptionSelected,
+            ]}
+          >
+            <Text
+              style={[
+                styles.accessOptionText,
+                row.access === value && styles.accessOptionTextSelected,
+              ]}
+            >
+              {label}
+            </Text>
+          </Pressable>
+        ))}
+      </View>
+      <View style={styles.switchRow}>
+        <Text style={[styles.calendarLabel, { flex: 1 }]}>
+          Include in calendar feed
+        </Text>
+        <Switch
+          value={row.includeInCalendarFeed}
+          onValueChange={(value) => onChange("includeInCalendarFeed", value)}
+        />
+      </View>
+      {row.includeInCalendarFeed ? (
+        <>
+          <TextInput
+            value={row.calendarStartTime}
+            onChangeText={(value) => onChange("calendarStartTime", value)}
+            placeholder="Start time, e.g. 18:00 (blank = all day)"
+            style={styles.input}
+          />
+          <TextInput
+            value={row.calendarEndTime}
+            onChangeText={(value) => onChange("calendarEndTime", value)}
+            placeholder="End time, e.g. 20:00"
+            style={styles.input}
+          />
+          <TextInput
+            value={row.calendarLocation}
+            onChangeText={(value) => onChange("calendarLocation", value)}
+            placeholder="Location or street address"
+            style={styles.input}
+          />
+        </>
+      ) : null}
+    </View>
+  );
+}
+
 // Styles
 const styles = StyleSheet.create({
   container: {
@@ -811,6 +995,56 @@ const styles = StyleSheet.create({
   noticeSectionCard: {
     backgroundColor: "#fffbeb",
     borderColor: "#fde68a",
+  },
+
+  calendarSettings: {
+    gap: 10,
+    padding: 12,
+    borderRadius: 12,
+    backgroundColor: "#ecfdf5",
+    borderWidth: 1,
+    borderColor: "#a7f3d0",
+  },
+
+  switchRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+
+  calendarLabel: {
+    color: "#166534",
+    fontWeight: "800",
+  },
+
+  accessRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 6,
+  },
+
+  accessOption: {
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+    borderRadius: 999,
+    backgroundColor: "#ffffff",
+    borderWidth: 1,
+    borderColor: "#a7f3d0",
+  },
+
+  accessOptionSelected: {
+    backgroundColor: "#166534",
+    borderColor: "#166534",
+  },
+
+  accessOptionText: {
+    color: "#166534",
+    fontSize: 12,
+    fontWeight: "700",
+  },
+
+  accessOptionTextSelected: {
+    color: "#ffffff",
   },
 
   sectionTitle: {

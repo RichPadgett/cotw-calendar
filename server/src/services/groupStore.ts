@@ -13,11 +13,17 @@ export type AdminSession = {
   deviceName?: string;
 };
 
+export type CalendarSubscription = {
+  tokenHash: string;
+  createdAt: string;
+};
+
 export type GroupRecord = {
   groupCode: string;
   adminCodeHash: string;
   createdAt: string;
   adminSessions?: AdminSession[];
+  calendarSubscriptions?: CalendarSubscription[];
 };
 
 export type JoinOrCreateGroupResult = {
@@ -240,6 +246,38 @@ export function verifyMemberToken(params: {
   }
 
   return session.groupCode === normalizeGroupCode(params.groupCode);
+}
+
+export function issueCalendarSubscriptionToken(
+  groupCode: string
+): string | null {
+  const group = getGroup(groupCode);
+  if (!group) return null;
+
+  const token = crypto.randomBytes(32).toString("hex");
+  group.calendarSubscriptions = [
+    ...(group.calendarSubscriptions ?? []),
+    { tokenHash: hashToken(token), createdAt: new Date().toISOString() },
+  ];
+  saveGroup(group);
+
+  return token;
+}
+
+export function verifyCalendarSubscriptionToken(params: {
+  groupCode: string;
+  token?: string;
+}): boolean {
+  const group = getGroup(params.groupCode);
+  const token = params.token?.trim() ?? "";
+
+  return Boolean(
+    group &&
+    token &&
+    group.calendarSubscriptions?.some(
+      (subscription) => subscription.tokenHash === hashToken(token)
+    )
+  );
 }
 
 export function verifyAdminToken(params: {

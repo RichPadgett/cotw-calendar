@@ -17,6 +17,10 @@ export type CalendarContentItem = {
   url?: string;
   details?: string;
   access: "public" | "members" | "code-required";
+  includeInCalendarFeed?: boolean;
+  calendarStartTime?: string;
+  calendarEndTime?: string;
+  calendarLocation?: string;
 };
 
 export type CalendarContentSection = {
@@ -55,6 +59,10 @@ export type CalendarDayContent = {
   gregorianDate?: string;
 
   title: string;
+  includeInCalendarFeed?: boolean;
+  calendarStartTime?: string;
+  calendarEndTime?: string;
+  calendarLocation?: string;
 
   /*
     Structured scripture readings

@@ -208,6 +208,7 @@ export default function HomeScreen() {
     joinGroup,
     changeGroup,
     adminToken,
+    memberToken,
   } = useGroupSession();
 
   const config = {
@@ -1105,7 +1106,10 @@ export default function HomeScreen() {
 
         {activeTab === "calendar" && (
           <>
-            <CalendarSubscriptionCard />
+            <CalendarSubscriptionCard
+              groupCode={groupCode}
+              memberToken={memberToken}
+            />
             <YearWheelView
               nodes={nodes}
               perpetualMarkers={perpetualMarkers}

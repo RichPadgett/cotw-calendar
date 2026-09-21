@@ -4,15 +4,9 @@
  */
 
 import { MaterialIcons } from "@expo/vector-icons";
-import { useMemo, useState } from "react";
-import {
-  Linking,
-  Platform,
-  Pressable,
-  Share,
-  Text,
-  View,
-} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect, useMemo, useState } from "react";
+import { Linking, Platform, Pressable, Share, Text, View } from "react-native";
 
 import { API_BASE_URL } from "../../config/api";
 
@@ -26,16 +20,68 @@ function getCalendarOrigin() {
   return "https://enochscalendar.com";
 }
 
-export default function CalendarSubscriptionCard() {
+export default function CalendarSubscriptionCard({
+  groupCode,
+  memberToken,
+}: {
+  groupCode: string;
+  memberToken: string;
+}) {
   const [copied, setCopied] = useState(false);
-  const feedUrl = useMemo(
-    () => `${getCalendarOrigin()}/api/calendar/subscriptions/appointed-times.ics`,
-    []
-  );
-  const downloadUrl = `${feedUrl}?download=1`;
+  const [privateCalendarToken, setPrivateCalendarToken] = useState("");
+  const [subscriptionError, setSubscriptionError] = useState("");
+  const isPublic = groupCode === "public";
+
+  useEffect(() => {
+    if (isPublic || !memberToken) return;
+
+    const storageKey = `calendarSubscriptionToken:${groupCode}`;
+
+    AsyncStorage.getItem(storageKey).then(async (savedToken) => {
+      if (savedToken) {
+        setPrivateCalendarToken(savedToken);
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `${getCalendarOrigin()}/api/groups/calendar-subscription`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-cotw-session": memberToken,
+            },
+            body: JSON.stringify({ groupCode }),
+          }
+        );
+        const data = await response.json();
+
+        if (!response.ok || !data.calendarToken) {
+          throw new Error(data.error ?? "Unable to create subscription.");
+        }
+
+        await AsyncStorage.setItem(storageKey, data.calendarToken);
+        setPrivateCalendarToken(data.calendarToken);
+      } catch (error) {
+        console.log("Failed to create calendar subscription", error);
+        setSubscriptionError("Unable to prepare the group calendar link.");
+      }
+    });
+  }, [groupCode, isPublic, memberToken]);
+
+  const feedUrl = useMemo(() => {
+    const base = `${getCalendarOrigin()}/api/calendar/subscriptions/appointed-times.ics`;
+    if (isPublic) return base;
+    if (!privateCalendarToken) return "";
+
+    return `${base}?group=${encodeURIComponent(groupCode)}&token=${encodeURIComponent(privateCalendarToken)}`;
+  }, [groupCode, isPublic, privateCalendarToken]);
+  const downloadUrl = `${feedUrl}${feedUrl.includes("?") ? "&" : "?"}download=1`;
   const webcalUrl = feedUrl.replace(/^https?:\/\//, "webcal://");
 
   async function copyOrShareFeed() {
+    if (!feedUrl) return;
     if (
       Platform.OS === "web" &&
       typeof navigator !== "undefined" &&
@@ -84,7 +130,8 @@ export default function CalendarSubscriptionCard() {
           </Text>
           <Text style={{ fontSize: 12, lineHeight: 17, color: "#3f6212" }}>
             Subscribe once to receive Passover, Shavuot, Trumpets, Atonement,
-            Sukkot, and future date updates on their Gregorian dates.
+            Sukkot, and {isPublic ? "public" : "Church of the Word"} calendar
+            updates on their Gregorian dates.
           </Text>
         </View>
       </View>
@@ -93,23 +140,31 @@ export default function CalendarSubscriptionCard() {
         <SubscriptionButton
           icon="calendar-month"
           label="Calendar app"
-          onPress={() => Linking.openURL(webcalUrl)}
+          onPress={() => feedUrl && Linking.openURL(webcalUrl)}
         />
         <SubscriptionButton
           icon={copied ? "check" : "content-copy"}
-          label={copied ? "Link copied" : Platform.OS === "web" ? "Copy link" : "Share link"}
+          label={
+            copied
+              ? "Link copied"
+              : Platform.OS === "web"
+                ? "Copy link"
+                : "Share link"
+          }
           onPress={copyOrShareFeed}
         />
         <SubscriptionButton
           icon="download"
           label="Download .ics"
-          onPress={() => Linking.openURL(downloadUrl)}
+          onPress={() => feedUrl && Linking.openURL(downloadUrl)}
         />
       </View>
 
       <Text selectable style={{ fontSize: 11, color: "#4d7c0f" }}>
-        Google Calendar: copy the link, then use Other calendars → From URL on
-        the Google Calendar website.
+        {subscriptionError ||
+          (!feedUrl
+            ? "Preparing your private group subscription link…"
+            : "Google Calendar: copy the link, then use Other calendars → From URL on the Google Calendar website.")}
       </Text>
     </View>
   );
@@ -149,4 +204,3 @@ function SubscriptionButton({
     </Pressable>
   );
 }
-

@@ -38,7 +38,7 @@ export function logApiRequest(req: Request, res: Response, next: NextFunction) {
       [
         "[API]",
         req.method,
-        req.originalUrl,
+        req.path,
         `status=${res.statusCode}`,
         `duration=${durationMs}ms`,
         `group=${groupCode}`,

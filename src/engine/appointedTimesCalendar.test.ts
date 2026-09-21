@@ -85,4 +85,31 @@ describe("appointed-times iCalendar feed", () => {
       expect(Buffer.byteLength(line, "utf8")).toBeLessThanOrEqual(75);
     }
   });
+
+  it("includes published content details, time, location, and URL", () => {
+    const calendar = unfold(
+      buildAppointedTimesCalendar({
+        startYear: 2026,
+        yearCount: 1,
+        additionalEvents: [
+          {
+            uid: "trey-abby-shabbat@enochscalendar.com",
+            startDate: "2026-09-26",
+            startTime: "18:00",
+            endTime: "20:00",
+            summary: "Shabbat at Trey and Abby's",
+            description: "Bring a chair\n\nScripture: Isaiah 58",
+            location: "123 Example Road",
+            url: "https://maps.google.com/example",
+          },
+        ],
+      })
+    );
+
+    expect(calendar).toContain("DTSTART;TZID=America/Chicago:20260926T180000");
+    expect(calendar).toContain("DTEND;TZID=America/Chicago:20260926T200000");
+    expect(calendar).toContain("LOCATION:123 Example Road");
+    expect(calendar).toContain("Scripture: Isaiah 58");
+    expect(calendar).toContain("URL:https://maps.google.com/example");
+  });
 });
