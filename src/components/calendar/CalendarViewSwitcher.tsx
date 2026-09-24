@@ -6,7 +6,7 @@
 import { Pressable, Text, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
-export type CalendarViewMode = "month" | "year" | "day" | "wheel";
+export type CalendarViewMode = "month" | "year" | "day" | "wheel" | "strip";
 
 type Props = {
   value: CalendarViewMode;
@@ -22,6 +22,7 @@ const MODES: {
   { id: "year", label: "Year", icon: "view-module" },
   { id: "day", label: "Day", icon: "today" },
   { id: "wheel", label: "Wheel", icon: "donut-large" },
+  { id: "strip", label: "Strip", icon: "view-week" },
 ];
 
 export default function CalendarViewSwitcher({ value, onChange }: Props) {

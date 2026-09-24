@@ -28,6 +28,7 @@ import CalendarSubscriptionCard from "../src/components/calendar/CalendarSubscri
 import CalendarViewSwitcher, {
   type CalendarViewMode,
 } from "../src/components/calendar/CalendarViewSwitcher";
+import CalendarStripView from "../src/components/calendar/CalendarStripView";
 import DayDetailModal from "../src/components/calendar/DayDetailModal";
 import HistoryTimelineView, {
   formatHistoricalDate,
@@ -1012,7 +1013,11 @@ export default function HomeScreen() {
   }
 
   function goToCalendarPeriod(direction: -1 | 1) {
-    if (calendarViewMode === "year" || calendarViewMode === "wheel") {
+    if (
+      calendarViewMode === "year" ||
+      calendarViewMode === "wheel" ||
+      calendarViewMode === "strip"
+    ) {
       direction < 0 ? goPreviousYear() : goNextYear();
       return;
     }
@@ -1278,6 +1283,17 @@ export default function HomeScreen() {
                     perpetualMarkers={perpetualMarkers}
                     todayDateId={todayDateId}
                     onPressMonth={scrollToMonth}
+                    onPressDay={openDay}
+                    onInteractionChange={setIsWheelInteracting}
+                  />
+                )}
+
+                {calendarViewMode === "strip" && (
+                  <CalendarStripView
+                    nodes={nodes}
+                    notices={yearNotices}
+                    perpetualMarkers={perpetualMarkers}
+                    todayDateId={todayDateId}
                     onPressDay={openDay}
                     onInteractionChange={setIsWheelInteracting}
                   />
