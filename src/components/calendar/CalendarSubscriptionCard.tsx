@@ -23,12 +23,14 @@ function getCalendarOrigin() {
 export default function CalendarSubscriptionCard({
   groupCode,
   memberToken,
+  initiallyExpanded = false,
 }: {
   groupCode: string;
   memberToken: string;
+  initiallyExpanded?: boolean;
 }) {
   const [copied, setCopied] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(initiallyExpanded);
   const [privateCalendarToken, setPrivateCalendarToken] = useState("");
   const [subscriptionError, setSubscriptionError] = useState("");
   const isPublic = groupCode === "public";

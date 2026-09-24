@@ -30,6 +30,7 @@ type Props = {
   onChangeTab: (tab: AppTab) => void;
   onChangeGroup: () => void;
   onOpenLatestTeaching: () => void;
+  onOpenCalendarSubscription: () => void;
 };
 
 const TAB_DEFINITIONS: {
@@ -81,6 +82,16 @@ export default function AppNavigationMenu(props: Props) {
 
   const identityFooter = (
     <View style={{ gap: 8 }}>
+      <NavigationItem
+        icon="event-available"
+        label="Calendar Subscription"
+        showLabel={!isDesktop || isExpanded}
+        onPress={() => {
+          props.onOpenCalendarSubscription();
+          setIsDrawerOpen(false);
+        }}
+      />
+
       <NavigationItem
         icon="podcasts"
         label="Latest Teaching"

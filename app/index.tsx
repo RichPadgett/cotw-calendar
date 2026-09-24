@@ -164,6 +164,8 @@ export default function HomeScreen() {
   const [latestTeachingCollapseRequestId, setLatestTeachingCollapseRequestId] =
     useState(0);
   const [isTeachingPlayerOpen, setIsTeachingPlayerOpen] = useState(false);
+  const [isCalendarSubscriptionOpen, setIsCalendarSubscriptionOpen] =
+    useState(false);
   const [manualTeaching, setManualTeaching] = useState<{
     title: string;
     url: string;
@@ -1098,6 +1100,7 @@ export default function HomeScreen() {
           onChangeTab={changeActiveTab}
           onChangeGroup={confirmChangeGroup}
           onOpenLatestTeaching={() => setIsTeachingPlayerOpen(true)}
+          onOpenCalendarSubscription={() => setIsCalendarSubscriptionOpen(true)}
         />
 
         <ScrollView
@@ -1246,11 +1249,6 @@ export default function HomeScreen() {
 
           {activeTab === "calendar" && (
             <>
-              <CalendarSubscriptionCard
-                groupCode={groupCode}
-                memberToken={memberToken}
-              />
-
               {calendarViewMode === "wheel" && (
                 <YearWheelView
                   nodes={nodes}
@@ -1397,6 +1395,52 @@ export default function HomeScreen() {
           />
         </View>
       ) : null}
+
+      <Modal
+        visible={isCalendarSubscriptionOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setIsCalendarSubscriptionOpen(false)}
+      >
+        <Pressable
+          onPress={() => setIsCalendarSubscriptionOpen(false)}
+          style={{
+            flex: 1,
+            padding: 18,
+            backgroundColor: "rgba(15,23,42,0.52)",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Pressable
+            onPress={(event) => event.stopPropagation()}
+            style={{ width: "100%", maxWidth: 620 }}
+          >
+            <CalendarSubscriptionCard
+              groupCode={groupCode}
+              memberToken={memberToken}
+              initiallyExpanded
+            />
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Close calendar subscription"
+              onPress={() => setIsCalendarSubscriptionOpen(false)}
+              style={({ pressed }) => ({
+                alignSelf: "center",
+                minHeight: 40,
+                paddingHorizontal: 18,
+                borderRadius: 999,
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "#ffffff",
+                opacity: pressed ? 0.8 : 1,
+              })}
+            >
+              <Text style={{ fontWeight: "900", color: "#334155" }}>Close</Text>
+            </Pressable>
+          </Pressable>
+        </Pressable>
+      </Modal>
 
       <Modal
         visible={shouldShowDeviceUsernamePrompt}
