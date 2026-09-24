@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Linking, Pressable, Text, View } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 
 import { API_BASE_URL } from "../../config/api";
 
@@ -32,17 +33,46 @@ export default function ShabbatView() {
     return (
       <View
         style={{
-          width: "100%",
-          maxWidth: 1100,
+          // The app ScrollView has 16px content padding. Break out of it so
+          // the desktop embed can use the full browser width.
+          width: "calc(100% + 32px)",
+          maxWidth: "none",
           minHeight: 720,
-          alignSelf: "center",
+          alignSelf: "stretch",
+          marginLeft: -16,
           overflow: "hidden",
-          borderWidth: 1,
-          borderColor: "#cbd5e1",
           borderRadius: 20,
           backgroundColor: "#ffffff",
         }}
       >
+        <Pressable
+          accessibilityRole="link"
+          accessibilityLabel="Open the StudyBox teaching library"
+          onPress={() => void Linking.openURL("https://enochscalendar.com/library")}
+          style={({ pressed }) => ({
+            minHeight: 64,
+            paddingHorizontal: 18,
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 12,
+            borderWidth: 1,
+            borderColor: "#365314",
+            borderRadius: 16,
+            backgroundColor: pressed ? "#1f351d" : "#17251b",
+            opacity: pressed ? 0.84 : 1,
+          })}
+        >
+          <MaterialIcons name="menu-book" size={25} color="#86efac" />
+          <View style={{ flex: 1 }}>
+            <Text style={{ color: "#f0fdf4", fontSize: 16, fontWeight: "900" }}>
+              StudyBox Teaching Library
+            </Text>
+            <Text style={{ marginTop: 2, color: "#a7f3d0", fontSize: 12, fontWeight: "700" }}>
+              Browse recordings, transcripts, and study archives
+            </Text>
+          </View>
+          <MaterialIcons name="arrow-forward-ios" size={16} color="#86efac" />
+        </Pressable>
         <iframe
           src={STUDYBOX_URL}
           title="Church of the Word StudyBox"
