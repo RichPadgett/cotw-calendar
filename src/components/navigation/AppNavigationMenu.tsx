@@ -3,7 +3,7 @@
  * Purpose: Responsive primary navigation rail and mobile drawer.
  */
 
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 import {
   Modal,
   Pressable,
@@ -31,7 +31,6 @@ type Props = {
   onChangeGroup: () => void;
   onOpenLatestTeaching: () => void;
   onOpenCalendarSubscription: () => void;
-  latestTeachingPlayer?: ReactNode;
 };
 
 const TAB_DEFINITIONS: {
@@ -100,21 +99,9 @@ export default function AppNavigationMenu(props: Props) {
         showLabel={!isDesktop || isMenuExpanded}
         onPress={() => {
           props.onOpenLatestTeaching();
-          setIsExpanded(true);
+          setIsDrawerOpen(false);
         }}
       />
-
-      {props.latestTeachingPlayer ? (
-        <View
-          accessibilityLabel="Menu teaching player"
-          style={{
-            width: "100%",
-            display: isDesktop && !isExpanded ? "none" : "flex",
-          }}
-        >
-          {props.latestTeachingPlayer}
-        </View>
-      ) : null}
 
       <View
         accessibilityLabel={`${props.groupLabel}, ${props.userRole}`}
