@@ -5,6 +5,7 @@
 
 import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import {
+  Image,
   Pressable,
   ScrollView,
   Text,
@@ -13,6 +14,7 @@ import {
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
+import ScrollIcon from "../../../assets/enoch/icons/scroll.png";
 import type { CalendarNode, EnochDayEvent } from "../../models/calendar";
 import type { PerpetualMarker } from "../../types/perpetualMarkers";
 
@@ -291,6 +293,19 @@ export default function CalendarStripView({
           const showFullDetails = dayWidth >= 300;
           const primaryColor =
             events[0]?.color ?? markers[0]?.color ?? "#94a3b8";
+          const restEvent =
+            events.find((event) => event.type === "high-sabbath") ??
+            events.find((event) => event.type === "weekly-sabbath");
+          const isHighRest = restEvent?.type === "high-sabbath";
+          const hasNotice = Boolean(summary?.notice);
+          const hasContent = Boolean(summary?.hasContent);
+          const accessibilityDetails = [
+            isHighRest ? "high rest" : restEvent ? "weekly rest" : "",
+            hasNotice ? "notice" : "",
+            hasContent ? "content available" : "",
+          ]
+            .filter(Boolean)
+            .join(", ");
 
           return (
             <Pressable
@@ -298,8 +313,8 @@ export default function CalendarStripView({
               accessibilityRole="button"
               accessibilityLabel={
                 isGateDay
-                  ? `${dayLabel}, ${node.gregorianDate}`
-                  : `Month ${node.enoch?.month?.number}, ${dayLabel}, ${node.gregorianDate}`
+                  ? `${dayLabel}, ${node.gregorianDate}${accessibilityDetails ? `, ${accessibilityDetails}` : ""}`
+                  : `Month ${node.enoch?.month?.number}, ${dayLabel}, ${node.gregorianDate}${accessibilityDetails ? `, ${accessibilityDetails}` : ""}`
               }
               onPress={() => onPressDay?.(node)}
               style={({ pressed }) => ({
@@ -597,10 +612,195 @@ export default function CalendarStripView({
                   }}
                 />
               ) : null}
+
+              <DayIndicators
+                restType={isHighRest ? "high" : restEvent ? "weekly" : null}
+                hasNotice={hasNotice}
+                hasContent={hasContent}
+                showLabels={showDetails}
+              />
             </Pressable>
           );
         })}
       </ScrollView>
+
+      <View
+        accessibilityLabel="Strip symbols"
+        style={{
+          paddingHorizontal: 10,
+          flexDirection: "row",
+          flexWrap: "wrap",
+          gap: 12,
+          alignItems: "center",
+        }}
+      >
+        <StripLegendRest color="#ca8a04" label="High Rest" />
+        <StripLegendRest color="#2563eb" label="Weekly Rest" />
+        <StripLegendBadge text="!" color="#f97316" label="Day Notice" />
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
+          <Image source={ScrollIcon} style={{ width: 16, height: 16 }} />
+          <Text style={{ fontSize: 11, color: "#64748b" }}>
+            Content Available
+          </Text>
+        </View>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
+          <View style={{ width: 4, height: 16, backgroundColor: "#0284c7" }} />
+          <Text style={{ fontSize: 11, color: "#64748b" }}>Gate Day</Text>
+        </View>
+      </View>
+    </View>
+  );
+}
+
+function DayIndicators({
+  restType,
+  hasNotice,
+  hasContent,
+  showLabels,
+}: {
+  restType: "weekly" | "high" | null;
+  hasNotice: boolean;
+  hasContent: boolean;
+  showLabels: boolean;
+}) {
+  if (!restType && !hasNotice && !hasContent) return null;
+
+  return (
+    <View
+      pointerEvents="none"
+      style={{
+        position: "absolute",
+        top: 84,
+        right: 4,
+        zIndex: 30,
+        gap: 4,
+        alignItems: "flex-end",
+      }}
+    >
+      {restType ? (
+        <View
+          style={{
+            minWidth: 18,
+            height: 20,
+            paddingHorizontal: 4,
+            borderRadius: 6,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 4,
+            backgroundColor: "rgba(255,255,255,0.94)",
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 14,
+              lineHeight: 18,
+              fontWeight: "900",
+              color: restType === "high" ? "#ca8a04" : "#2563eb",
+            }}
+          >
+            𐤔
+          </Text>
+          {showLabels ? (
+            <Text
+              style={{
+                fontSize: 9,
+                fontWeight: "900",
+                color: restType === "high" ? "#8a5d00" : "#1d4ed8",
+              }}
+            >
+              {restType === "high" ? "HIGH REST" : "REST"}
+            </Text>
+          ) : null}
+        </View>
+      ) : null}
+
+      {hasNotice ? (
+        <View
+          style={{
+            minWidth: 18,
+            height: 18,
+            paddingHorizontal: showLabels ? 5 : 0,
+            borderRadius: 9,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 4,
+            backgroundColor: "#f97316",
+          }}
+        >
+          <Text style={{ fontSize: 11, fontWeight: "900", color: "#ffffff" }}>
+            !
+          </Text>
+          {showLabels ? (
+            <Text style={{ fontSize: 9, fontWeight: "900", color: "#ffffff" }}>
+              NOTICE
+            </Text>
+          ) : null}
+        </View>
+      ) : null}
+
+      {hasContent ? (
+        <View
+          style={{
+            minWidth: 20,
+            height: 20,
+            paddingHorizontal: showLabels ? 4 : 1,
+            borderRadius: 6,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 3,
+            backgroundColor: "rgba(255,255,255,0.94)",
+          }}
+        >
+          <Image source={ScrollIcon} style={{ width: 16, height: 16 }} />
+          {showLabels ? (
+            <Text style={{ fontSize: 9, fontWeight: "900", color: "#334155" }}>
+              CONTENT
+            </Text>
+          ) : null}
+        </View>
+      ) : null}
+    </View>
+  );
+}
+
+function StripLegendRest({ color, label }: { color: string; label: string }) {
+  return (
+    <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
+      <Text style={{ fontSize: 15, fontWeight: "900", color }}>𐤔</Text>
+      <Text style={{ fontSize: 11, color: "#64748b" }}>{label}</Text>
+    </View>
+  );
+}
+
+function StripLegendBadge({
+  text,
+  color,
+  label,
+}: {
+  text: string;
+  color: string;
+  label: string;
+}) {
+  return (
+    <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
+      <View
+        style={{
+          width: 16,
+          height: 16,
+          borderRadius: 8,
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: color,
+        }}
+      >
+        <Text style={{ fontSize: 10, fontWeight: "900", color: "#ffffff" }}>
+          {text}
+        </Text>
+      </View>
+      <Text style={{ fontSize: 11, color: "#64748b" }}>{label}</Text>
     </View>
   );
 }
