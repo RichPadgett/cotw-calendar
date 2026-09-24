@@ -24,6 +24,7 @@ type Props = {
   notices: CalendarDaySummary[];
   perpetualMarkers: PerpetualMarker[];
   todayDateId?: string;
+  monthNumber?: number;
 };
 
 type CalendarDaySummary = {
@@ -91,6 +92,7 @@ export default function YearView({
   onMonthLayout,
   onPressDay,
   todayDateId,
+  monthNumber,
 }: Props) {
   const monthLayoutYsRef = useRef<Record<number, number>>({});
   const monthGridYsRef = useRef<Record<number, number>>({});
@@ -156,206 +158,211 @@ export default function YearView({
 
   return (
     <View>
-      {sabbathWeekNode && (
+      {sabbathWeekNode && (!monthNumber || monthNumber === 1) && (
         <SabbathWeekRow node={sabbathWeekNode} onPressDay={onPressDay} />
       )}
 
-      {Object.entries(monthGroups).map(([monthNumber, monthNodes]) => {
-        const numericMonth = Number(monthNumber);
-        const firstMonthNode = monthNodes[0];
-        const month = firstMonthNode.enoch?.month;
-        const monthColor = month?.themeColor ?? "#cbd5e1";
-        const containsToday = monthNodes.some(
-          (node) => node.gregorianDate === todayDateId
-        );
+      {Object.entries(monthGroups)
+        .filter(([entryMonthNumber]) =>
+          monthNumber ? Number(entryMonthNumber) === monthNumber : true
+        )
+        .map(([entryMonthNumber, monthNodes]) => {
+          const numericMonth = Number(entryMonthNumber);
+          const firstMonthNode = monthNodes[0];
+          const month = firstMonthNode.enoch?.month;
+          const monthColor = month?.themeColor ?? "#cbd5e1";
+          const containsToday = monthNodes.some(
+            (node) => node.gregorianDate === todayDateId
+          );
 
-        const leadingOffset =
-          ((firstMonthNode.enoch?.dayOfYear ?? 1) - 1 + ENOCH_WEEK_OFFSET) % 7;
+          const leadingOffset =
+            ((firstMonthNode.enoch?.dayOfYear ?? 1) - 1 + ENOCH_WEEK_OFFSET) %
+            7;
 
-        const leadingBlanks = Array.from({ length: leadingOffset });
+          const leadingBlanks = Array.from({ length: leadingOffset });
 
-        const intercalaryNode =
-          numericMonth % 3 === 0
-            ? nodes.find(
-                (node) =>
-                  node.enoch?.isIntercalary &&
-                  node.enoch?.quarter === numericMonth / 3
-              )
-            : undefined;
+          const intercalaryNode =
+            numericMonth % 3 === 0
+              ? nodes.find(
+                  (node) =>
+                    node.enoch?.isIntercalary &&
+                    node.enoch?.quarter === numericMonth / 3
+                )
+              : undefined;
 
-        return (
-          <View
-            key={monthNumber}
-            onLayout={(event) => {
-              const monthY = event.nativeEvent.layout.y;
-
-              monthLayoutYsRef.current[numericMonth] = monthY;
-              onMonthLayout?.(numericMonth, monthY);
-            }}
-            style={{
-              marginBottom: 24,
-              borderWidth: 1.5,
-              borderColor: monthColor,
-              borderRadius: 8,
-              backgroundColor: "#ffffff",
-              overflow: "hidden",
-            }}
-          >
+          return (
             <View
+              key={entryMonthNumber}
+              onLayout={(event) => {
+                const monthY = event.nativeEvent.layout.y;
+
+                monthLayoutYsRef.current[numericMonth] = monthY;
+                onMonthLayout?.(numericMonth, monthY);
+              }}
               style={{
-                paddingHorizontal: 12,
-                paddingVertical: 10,
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 10,
-                backgroundColor: "#f8fafc",
-                borderBottomWidth: 1,
-                borderBottomColor: "#e2e8f0",
+                marginBottom: 24,
+                borderWidth: 1.5,
+                borderColor: monthColor,
+                borderRadius: 8,
+                backgroundColor: "#ffffff",
+                overflow: "hidden",
               }}
             >
               <View
                 style={{
-                  width: 5,
-                  alignSelf: "stretch",
-                  borderRadius: 999,
-                  backgroundColor: monthColor,
+                  paddingHorizontal: 12,
+                  paddingVertical: 10,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 10,
+                  backgroundColor: "#f8fafc",
+                  borderBottomWidth: 1,
+                  borderBottomColor: "#e2e8f0",
                 }}
-              />
-
-              <View>
-                <Text
+              >
+                <View
                   style={{
-                    fontSize: 20,
-                    fontWeight: "800",
-                    color: "#111827",
+                    width: 5,
+                    alignSelf: "stretch",
+                    borderRadius: 999,
+                    backgroundColor: monthColor,
                   }}
-                >
-                  Month {month?.number}
-                </Text>
+                />
 
-                <Text
-                  style={{
-                    marginTop: 2,
-                    fontSize: 13,
-                    color: "#6b7280",
-                    textTransform: "capitalize",
-                  }}
-                >
-                  {month?.season}
-                </Text>
-              </View>
-            </View>
-
-            <View style={{ padding: 8 }}>
-              <View style={{ flexDirection: "row", marginBottom: 6 }}>
-                {WEEKDAY_LABELS.map((label) => (
-                  <View
-                    key={label}
+                <View>
+                  <Text
                     style={{
-                      width: "14.2857%",
-                      alignItems: "center",
+                      fontSize: 20,
+                      fontWeight: "800",
+                      color: "#111827",
                     }}
                   >
-                    <Text
-                      style={{
-                        fontSize: 10,
-                        fontWeight: "700",
-                        color: "#6b7280",
-                      }}
-                    >
-                      {label}
-                    </Text>
-                  </View>
-                ))}
+                    Month {month?.number}
+                  </Text>
+
+                  <Text
+                    style={{
+                      marginTop: 2,
+                      fontSize: 13,
+                      color: "#6b7280",
+                      textTransform: "capitalize",
+                    }}
+                  >
+                    {month?.season}
+                  </Text>
+                </View>
               </View>
 
-              <View
-                onLayout={(event) => {
-                  monthGridYsRef.current[numericMonth] =
-                    event.nativeEvent.layout.y;
+              <View style={{ padding: 8 }}>
+                <View style={{ flexDirection: "row", marginBottom: 6 }}>
+                  {WEEKDAY_LABELS.map((label) => (
+                    <View
+                      key={label}
+                      style={{
+                        width: "14.2857%",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 10,
+                          fontWeight: "700",
+                          color: "#6b7280",
+                        }}
+                      >
+                        {label}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
 
-                  if (todayDateId && containsToday) {
-                    reportDayLayout(todayDateId, numericMonth);
-                  }
-                }}
-                style={{ flexDirection: "row", flexWrap: "wrap" }}
-              >
-                {leadingBlanks.map((_, index) => (
-                  <View
-                    key={`blank-${monthNumber}-${index}`}
-                    style={{ width: "14.2857%", padding: 2 }}
-                  />
-                ))}
+                <View
+                  onLayout={(event) => {
+                    monthGridYsRef.current[numericMonth] =
+                      event.nativeEvent.layout.y;
 
-                {monthNodes.map((node) => {
-                  const dayContent = notices.find(
-                    (item) =>
-                      item.year === node.enoch?.year &&
-                      item.month === node.enoch?.month?.number &&
-                      item.day === node.enoch?.day
-                  );
+                    if (todayDateId && containsToday) {
+                      reportDayLayout(todayDateId, numericMonth);
+                    }
+                  }}
+                  style={{ flexDirection: "row", flexWrap: "wrap" }}
+                >
+                  {leadingBlanks.map((_, index) => (
+                    <View
+                      key={`blank-${entryMonthNumber}-${index}`}
+                      style={{ width: "14.2857%", padding: 2 }}
+                    />
+                  ))}
 
-                  const hasNotice = Boolean(dayContent?.notice);
-                  const hasContent = Boolean(dayContent?.hasContent);
+                  {monthNodes.map((node) => {
+                    const dayContent = notices.find(
+                      (item) =>
+                        item.year === node.enoch?.year &&
+                        item.month === node.enoch?.month?.number &&
+                        item.day === node.enoch?.day
+                    );
 
-                  const markersForDay = perpetualMarkers.filter((marker) => {
-                    const matchesMonthDay =
-                      marker.month === node.enoch?.month?.number &&
-                      marker.day === node.enoch?.day;
+                    const hasNotice = Boolean(dayContent?.notice);
+                    const hasContent = Boolean(dayContent?.hasContent);
 
-                    const matchesGateDay =
-                      Boolean(marker.gateDay) &&
-                      node.enoch?.isIntercalary &&
-                      marker.gateDay === node.enoch?.quarter;
+                    const markersForDay = perpetualMarkers.filter((marker) => {
+                      const matchesMonthDay =
+                        marker.month === node.enoch?.month?.number &&
+                        marker.day === node.enoch?.day;
 
-                    const matchesIntercalaryWeek =
-                      marker.intercalaryWeek === true &&
-                      node.enoch?.isSabbathWeek === true;
+                      const matchesGateDay =
+                        Boolean(marker.gateDay) &&
+                        node.enoch?.isIntercalary &&
+                        marker.gateDay === node.enoch?.quarter;
+
+                      const matchesIntercalaryWeek =
+                        marker.intercalaryWeek === true &&
+                        node.enoch?.isSabbathWeek === true;
+
+                      return (
+                        matchesMonthDay ||
+                        matchesGateDay ||
+                        matchesIntercalaryWeek
+                      );
+                    });
 
                     return (
-                      matchesMonthDay ||
-                      matchesGateDay ||
-                      matchesIntercalaryWeek
+                      <View
+                        key={node.id}
+                        onLayout={(event) => {
+                          if (node.gregorianDate === todayDateId) {
+                            reportDayLayout(
+                              node.gregorianDate,
+                              numericMonth,
+                              event.nativeEvent.layout.y
+                            );
+                          }
+                        }}
+                        style={{ width: "14.2857%", padding: 2 }}
+                      >
+                        <DayCell
+                          node={node}
+                          hasNotice={hasNotice}
+                          hasContent={hasContent}
+                          perpetualMarkers={markersForDay}
+                          onPressDay={onPressDay}
+                          todayDateId={todayDateId}
+                        />
+                      </View>
                     );
-                  });
+                  })}
+                </View>
 
-                  return (
-                    <View
-                      key={node.id}
-                      onLayout={(event) => {
-                        if (node.gregorianDate === todayDateId) {
-                          reportDayLayout(
-                            node.gregorianDate,
-                            numericMonth,
-                            event.nativeEvent.layout.y
-                          );
-                        }
-                      }}
-                      style={{ width: "14.2857%", padding: 2 }}
-                    >
-                      <DayCell
-                        node={node}
-                        hasNotice={hasNotice}
-                        hasContent={hasContent}
-                        perpetualMarkers={markersForDay}
-                        onPressDay={onPressDay}
-                        todayDateId={todayDateId}
-                      />
-                    </View>
-                  );
-                })}
+                {intercalaryNode && (
+                  <IntercalaryRow
+                    node={intercalaryNode}
+                    onPressDay={onPressDay}
+                  />
+                )}
               </View>
-
-              {intercalaryNode && (
-                <IntercalaryRow
-                  node={intercalaryNode}
-                  onPressDay={onPressDay}
-                />
-              )}
             </View>
-          </View>
-        );
-      })}
+          );
+        })}
     </View>
   );
 }

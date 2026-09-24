@@ -23,7 +23,11 @@ import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import AppHeader from "../src/components/calendar/AppHeader";
+import CalendarDayView from "../src/components/calendar/CalendarDayView";
 import CalendarSubscriptionCard from "../src/components/calendar/CalendarSubscriptionCard";
+import CalendarViewSwitcher, {
+  type CalendarViewMode,
+} from "../src/components/calendar/CalendarViewSwitcher";
 import DayDetailModal from "../src/components/calendar/DayDetailModal";
 import HistoryTimelineView, {
   formatHistoricalDate,
@@ -66,6 +70,7 @@ const DEVICE_USERNAME_PROMPT_DISMISSED_STORAGE_KEY =
 const COMMAND_BIBLE_VERSION_STORAGE_KEY = "commandBibleVersion";
 const COMMAND_SEARCH_TEXT_STORAGE_KEY = "commandSearchText";
 const ACTIVE_TAB_STORAGE_KEY = "activeAppTab";
+const CALENDAR_VIEW_MODE_STORAGE_KEY = "calendarViewMode";
 
 type AppTab = "calendar" | "shabbat" | "timeline" | "commands" | "hebrew";
 const BIBLE_VERSIONS: BibleVersion[] = [
@@ -133,6 +138,9 @@ export default function HomeScreen() {
   } | null>(null);
   const [isWheelInteracting, setIsWheelInteracting] = useState(false);
   const [activeTab, setActiveTab] = useState<AppTab>("calendar");
+  const [calendarViewMode, setCalendarViewMode] =
+    useState<CalendarViewMode>("month");
+  const [dayViewDateId, setDayViewDateId] = useState(getAppDateId);
   const [selectedCommandHeader, setSelectedCommandHeader] =
     useState<CommandHeaderCommand | null>(null);
   const [commandNavigation, setCommandNavigation] =
@@ -233,6 +241,30 @@ export default function HomeScreen() {
   const currentMonth = nodes.find(
     (node) => node.enoch?.month?.number === currentMonthNumber
   )?.enoch?.month;
+  const dayViewNode =
+    nodes.find((node) => node.gregorianDate === dayViewDateId) ??
+    todayNode ??
+    nodes.find((node) => node.enoch?.month?.number === currentMonthNumber);
+  const dayViewSummary = dayViewNode
+    ? yearNotices.find(
+        (item) =>
+          item.year === dayViewNode.enoch?.year &&
+          item.month === dayViewNode.enoch?.month?.number &&
+          item.day === dayViewNode.enoch?.day
+      )
+    : undefined;
+  const dayViewMarkers = dayViewNode
+    ? perpetualMarkers.filter((marker) => {
+        const matchesMonthDay =
+          marker.month === dayViewNode.enoch?.month?.number &&
+          marker.day === dayViewNode.enoch?.day;
+        const matchesGateDay =
+          Boolean(marker.gateDay) &&
+          dayViewNode.enoch?.isIntercalary &&
+          marker.gateDay === dayViewNode.enoch?.quarter;
+        return matchesMonthDay || matchesGateDay;
+      })
+    : [];
 
   const selectedDayMarkers = selectedNode
     ? perpetualMarkers.filter((marker) => {
@@ -286,6 +318,19 @@ export default function HomeScreen() {
   function changeActiveTab(tab: AppTab) {
     latestTeachingAutoCollapsedRef.current = false;
     setActiveTab(tab);
+  }
+
+  function changeCalendarView(mode: CalendarViewMode) {
+    setCalendarViewMode(mode);
+
+    if (mode === "day" && dayViewNode) {
+      setDayViewDateId(dayViewNode.gregorianDate);
+      setActiveMonthNumber(dayViewNode.enoch?.month?.number ?? null);
+    }
+
+    requestAnimationFrame(() => {
+      scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+    });
   }
 
   function confirmChangeGroup() {
@@ -356,12 +401,14 @@ export default function HomeScreen() {
         savedBibleVersion,
         savedSearchText,
         savedTab,
+        savedCalendarViewMode,
       ] = await Promise.all([
         AsyncStorage.getItem(COMMAND_CONTRIBUTOR_USERNAME_STORAGE_KEY),
         AsyncStorage.getItem(DEVICE_USERNAME_PROMPT_DISMISSED_STORAGE_KEY),
         AsyncStorage.getItem(COMMAND_BIBLE_VERSION_STORAGE_KEY),
         AsyncStorage.getItem(COMMAND_SEARCH_TEXT_STORAGE_KEY),
         AsyncStorage.getItem(ACTIVE_TAB_STORAGE_KEY),
+        AsyncStorage.getItem(CALENDAR_VIEW_MODE_STORAGE_KEY),
       ]);
 
       if (savedUsername) {
@@ -394,6 +441,15 @@ export default function HomeScreen() {
         savedTab === "hebrew"
       ) {
         setActiveTab(savedTab);
+      }
+
+      if (
+        savedCalendarViewMode === "month" ||
+        savedCalendarViewMode === "year" ||
+        savedCalendarViewMode === "day" ||
+        savedCalendarViewMode === "wheel"
+      ) {
+        setCalendarViewMode(savedCalendarViewMode);
       }
 
       hasLoadedPersistedAppStateRef.current = true;
@@ -513,6 +569,11 @@ export default function HomeScreen() {
   }, [activeTab]);
 
   useEffect(() => {
+    if (!hasLoadedPersistedAppStateRef.current) return;
+    AsyncStorage.setItem(CALENDAR_VIEW_MODE_STORAGE_KEY, calendarViewMode);
+  }, [calendarViewMode]);
+
+  useEffect(() => {
     if (!hasEnteredApp) return;
 
     loadPerpetualMarkers();
@@ -535,7 +596,13 @@ export default function HomeScreen() {
     return () => {
       clearTimeout(fallbackId);
     };
-  }, [activeTab, hasEnteredApp, todayDateId, visibleEnochYear]);
+  }, [
+    activeTab,
+    calendarViewMode,
+    hasEnteredApp,
+    todayDateId,
+    visibleEnochYear,
+  ]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -756,6 +823,7 @@ export default function HomeScreen() {
       hasAutoScrolledToCurrentDayRef.current ||
       !hasEnteredApp ||
       activeTab !== "calendar" ||
+      calendarViewMode !== "year" ||
       !hasMeasuredHeaderRef.current ||
       !hasMeasuredYearViewRef.current ||
       !pendingTodayScrollRef.current
@@ -801,7 +869,7 @@ export default function HomeScreen() {
       setLatestTeachingCollapseRequestId((id) => id + 1);
     }
 
-    if (activeTab !== "calendar") return;
+    if (activeTab !== "calendar" || calendarViewMode !== "year") return;
 
     const headerEdgeY = scrollY - getMonthHeaderScrollOffset();
 
@@ -818,6 +886,15 @@ export default function HomeScreen() {
   }
 
   function scrollToMonth(monthNumber: number) {
+    if (calendarViewMode !== "year") {
+      setActiveMonthNumber(monthNumber);
+      setCalendarViewMode("month");
+      requestAnimationFrame(() => {
+        scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+      });
+      return;
+    }
+
     const y = monthOffsetsRef.current[monthNumber];
 
     if (typeof y !== "number") return;
@@ -837,6 +914,7 @@ export default function HomeScreen() {
       hasAutoScrolledToCurrentDayRef.current ||
       !hasEnteredApp ||
       activeTab !== "calendar" ||
+      calendarViewMode !== "year" ||
       !currentMonth ||
       typeof monthOffsetsRef.current[currentMonth] !== "number"
     ) {
@@ -853,6 +931,7 @@ export default function HomeScreen() {
       hasAutoScrolledToCurrentDayRef.current ||
       !hasEnteredApp ||
       activeTab !== "calendar" ||
+      calendarViewMode !== "year" ||
       dateId !== todayDateId
     ) {
       return;
@@ -926,6 +1005,41 @@ export default function HomeScreen() {
     setActiveMonthNumber(null);
     closeDay();
     scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+  }
+
+  function goToCalendarPeriod(direction: -1 | 1) {
+    if (calendarViewMode === "year" || calendarViewMode === "wheel") {
+      direction < 0 ? goPreviousYear() : goNextYear();
+      return;
+    }
+
+    if (calendarViewMode === "month") {
+      const nextMonth = currentMonthNumber + direction;
+
+      if (nextMonth < 1) {
+        setVisibleEnochYear((year) => year - 1);
+        setActiveMonthNumber(12);
+      } else if (nextMonth > 12) {
+        setVisibleEnochYear((year) => year + 1);
+        setActiveMonthNumber(1);
+      } else {
+        setActiveMonthNumber(nextMonth);
+      }
+
+      closeDay();
+      scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+      return;
+    }
+
+    const focusedIndex = dayViewNode
+      ? nodes.findIndex((node) => node.id === dayViewNode.id)
+      : -1;
+    const nextNode = nodes[focusedIndex + direction];
+
+    if (nextNode) {
+      setDayViewDateId(nextNode.gregorianDate);
+      setActiveMonthNumber(nextNode.enoch?.month?.number ?? null);
+    }
   }
 
   function goToPreviousDay() {
@@ -1012,19 +1126,34 @@ export default function HomeScreen() {
               groupLabel={groupLabel}
               userRole={userRole}
               yearTransition={yearTransition}
-              onPreviousMonth={goPreviousYear}
-              onNextMonth={goNextYear}
+              onPreviousMonth={() => goToCalendarPeriod(-1)}
+              onNextMonth={() => goToCalendarPeriod(1)}
               onChangeGroup={confirmChangeGroup}
               onPressToday={() => {
                 if (todayNode) {
+                  setDayViewDateId(todayNode.gregorianDate);
+                  setActiveMonthNumber(todayNode.enoch?.month?.number ?? null);
+                  if (calendarViewMode === "day") return;
                   openDay(todayNode);
                 }
               }}
               onPressUpcomingShabbat={() => {
                 if (upcomingShabbatNode) {
+                  setDayViewDateId(upcomingShabbatNode.gregorianDate);
+                  setActiveMonthNumber(
+                    upcomingShabbatNode.enoch?.month?.number ?? null
+                  );
+                  if (calendarViewMode === "day") return;
                   openDay(upcomingShabbatNode);
                 }
               }}
+            />
+          )}
+
+          {activeTab === "calendar" && (
+            <CalendarViewSwitcher
+              value={calendarViewMode}
+              onChange={changeCalendarView}
             />
           )}
 
@@ -1110,30 +1239,54 @@ export default function HomeScreen() {
               groupCode={groupCode}
               memberToken={memberToken}
             />
-            <YearWheelView
-              nodes={nodes}
-              perpetualMarkers={perpetualMarkers}
-              todayDateId={todayDateId}
-              onPressMonth={scrollToMonth}
-              onPressDay={openDay}
-              onInteractionChange={setIsWheelInteracting}
-            />
 
-            <View
-              onLayout={(event) => {
-                handleYearViewLayout(event.nativeEvent.layout.y);
-              }}
-            >
-              <YearView
+            {calendarViewMode === "wheel" && (
+              <YearWheelView
                 nodes={nodes}
-                notices={yearNotices}
                 perpetualMarkers={perpetualMarkers}
                 todayDateId={todayDateId}
-                onDayLayout={handleDayLayout}
-                onMonthLayout={handleMonthLayout}
+                onPressMonth={scrollToMonth}
                 onPressDay={openDay}
+                onInteractionChange={setIsWheelInteracting}
               />
-            </View>
+            )}
+
+            {(calendarViewMode === "month" || calendarViewMode === "year") && (
+              <View
+                onLayout={(event) => {
+                  handleYearViewLayout(event.nativeEvent.layout.y);
+                }}
+              >
+                <YearView
+                  nodes={nodes}
+                  notices={yearNotices}
+                  perpetualMarkers={perpetualMarkers}
+                  monthNumber={
+                    calendarViewMode === "month"
+                      ? currentMonthNumber
+                      : undefined
+                  }
+                  todayDateId={todayDateId}
+                  onDayLayout={handleDayLayout}
+                  onMonthLayout={handleMonthLayout}
+                  onPressDay={(node) => {
+                    setDayViewDateId(node.gregorianDate);
+                    setActiveMonthNumber(node.enoch?.month?.number ?? null);
+                    openDay(node);
+                  }}
+                />
+              </View>
+            )}
+
+            {calendarViewMode === "day" && dayViewNode && (
+              <CalendarDayView
+                node={dayViewNode}
+                markers={dayViewMarkers}
+                hasNotice={Boolean(dayViewSummary?.notice)}
+                hasContent={Boolean(dayViewSummary?.hasContent)}
+                onOpenDetails={openDay}
+              />
+            )}
           </>
         )}
 
