@@ -72,6 +72,22 @@ function markersForNode(
   });
 }
 
+function getNodeLabel(node: CalendarNode) {
+  if (node.enoch?.isIntercalary) {
+    return node.enoch.label ?? `Quarter ${node.enoch.quarter} Gate Day`;
+  }
+
+  return `Day ${node.enoch?.day}`;
+}
+
+function getCompactNodeLabel(node: CalendarNode) {
+  if (node.enoch?.isIntercalary) {
+    return `G${node.enoch.quarter}`;
+  }
+
+  return `D${node.enoch?.day}`;
+}
+
 export default function CalendarStripView({
   nodes,
   notices = [],
@@ -258,11 +274,17 @@ export default function CalendarStripView({
             (event) => event.id === "day-of-atonement"
           );
           const markers = markersForNode(node, perpetualMarkers);
-          const summary = summariesByDay.get(
-            `${node.enoch?.year}-${node.enoch?.month?.number}-${node.enoch?.day}`
-          );
+          const summary =
+            node.enoch?.month?.number && node.enoch?.day
+              ? summariesByDay.get(
+                  `${node.enoch.year}-${node.enoch.month.number}-${node.enoch.day}`
+                )
+              : undefined;
           const isToday = node.gregorianDate === todayDateId;
           const isMonthStart = node.enoch?.day === 1;
+          const isGateDay = node.enoch?.isIntercalary === true;
+          const dayLabel = getNodeLabel(node);
+          const compactDayLabel = getCompactNodeLabel(node);
           const showBasicText = dayWidth >= 44;
           const showDayParts = dayWidth >= 78;
           const showDetails = dayWidth >= 150;
@@ -274,13 +296,21 @@ export default function CalendarStripView({
             <Pressable
               key={node.id}
               accessibilityRole="button"
-              accessibilityLabel={`Month ${node.enoch?.month?.number}, day ${node.enoch?.day}, ${node.gregorianDate}`}
+              accessibilityLabel={
+                isGateDay
+                  ? `${dayLabel}, ${node.gregorianDate}`
+                  : `Month ${node.enoch?.month?.number}, ${dayLabel}, ${node.gregorianDate}`
+              }
               onPress={() => onPressDay?.(node)}
               style={({ pressed }) => ({
                 width: dayWidth,
                 minHeight: STRIP_HEIGHT,
-                borderLeftWidth: isMonthStart ? 4 : 1,
-                borderLeftColor: isMonthStart ? "#163d2b" : "#cbd5e1",
+                borderLeftWidth: isMonthStart || isGateDay ? 4 : 1,
+                borderLeftColor: isGateDay
+                  ? "#0284c7"
+                  : isMonthStart
+                    ? "#163d2b"
+                    : "#cbd5e1",
                 borderRightWidth: isToday ? 3 : 0,
                 borderRightColor: "#2563eb",
                 backgroundColor: pressed
@@ -323,10 +353,16 @@ export default function CalendarStripView({
                   }}
                 >
                   {showDetails
-                    ? `Month ${node.enoch?.month?.number} · Day ${node.enoch?.day}`
+                    ? isGateDay
+                      ? dayLabel
+                      : `Month ${node.enoch?.month?.number} · ${dayLabel}`
                     : showBasicText
-                      ? `M${node.enoch?.month?.number}`
-                      : node.enoch?.month?.number}
+                      ? isGateDay
+                        ? "GATE"
+                        : `M${node.enoch?.month?.number}`
+                      : isGateDay
+                        ? "G"
+                        : node.enoch?.month?.number}
                 </Text>
                 {!showDetails ? (
                   <Text
@@ -337,7 +373,11 @@ export default function CalendarStripView({
                       color: "#475569",
                     }}
                   >
-                    {showBasicText ? `D${node.enoch?.day}` : node.enoch?.day}
+                    {showBasicText
+                      ? compactDayLabel
+                      : isGateDay
+                        ? node.enoch?.quarter
+                        : node.enoch?.day}
                   </Text>
                 ) : (
                   <Text
@@ -357,7 +397,7 @@ export default function CalendarStripView({
               <View style={{ flex: 1 }}>
                 <DayPart
                   label="Morning"
-                  detail={`Day ${node.enoch?.day} begins · sunrise`}
+                  detail={`${dayLabel} begins · sunrise`}
                   color="#fef3c7"
                   showLabel={showDayParts}
                   expanded={showFullDetails}
@@ -451,7 +491,7 @@ export default function CalendarStripView({
                       markers.length === 0 &&
                       eveningEvents.length === 0 ? (
                         <Text style={{ fontSize: 10, color: "#94a3b8" }}>
-                          Regular day
+                          {isGateDay ? "Gate day" : "Regular day"}
                         </Text>
                       ) : null}
                     </View>
@@ -497,7 +537,7 @@ export default function CalendarStripView({
                 </View>
                 <DayPart
                   label="Evening"
-                  detail={`Evening of Day ${node.enoch?.day} · before night`}
+                  detail={`Evening of ${dayLabel} · before night`}
                   color="#dbeafe"
                   showLabel={showDayParts}
                   expanded={showFullDetails}
