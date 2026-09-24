@@ -5,6 +5,7 @@
 
 import { useState } from "react";
 import {
+  Image,
   Modal,
   Pressable,
   Text,
@@ -173,34 +174,30 @@ export default function AppNavigationMenu(props: Props) {
             }
             onPress={() => setIsExpanded((value) => !value)}
             style={({ pressed }) => ({
-              minHeight: 44,
+              minHeight: isMenuExpanded ? 72 : 44,
               borderRadius: 12,
               flexDirection: "row",
               alignItems: "center",
               justifyContent: isMenuExpanded ? "flex-start" : "center",
               paddingHorizontal: isMenuExpanded ? 12 : 0,
               gap: 10,
-              backgroundColor: "#163d2b",
+              backgroundColor: isMenuExpanded ? "#f4ead2" : "#163d2b",
               opacity: pressed ? 0.82 : 1,
             })}
           >
-            <MaterialIcons name="menu" size={23} color="#ffffff" />
+            <MaterialIcons
+              name="menu"
+              size={23}
+              color={isMenuExpanded ? "#163d2b" : "#ffffff"}
+            />
             {isMenuExpanded ? (
-              <View
+              <Image
                 accessibilityLabel="TCOTW"
-                style={{ flexDirection: "row", alignItems: "baseline", gap: 7 }}
-              >
-                <Text
-                  style={{ fontSize: 21, fontWeight: "900", color: "#f5d76e" }}
-                >
-                  𐤕𐤊𐤅𐤕𐤅
-                </Text>
-                <Text
-                  style={{ fontSize: 12, fontWeight: "900", color: "#ffffff" }}
-                >
-                  TCOTW
-                </Text>
-              </View>
+                accessibilityRole="image"
+                source={require("../../../assets/images/tcotw.png")}
+                resizeMode="contain"
+                style={{ flex: 1, height: 56 }}
+              />
             ) : null}
           </Pressable>
           {menuItems}
@@ -284,33 +281,13 @@ export default function AppNavigationMenu(props: Props) {
                   justifyContent: "space-between",
                 }}
               >
-                <View
+                <Image
                   accessibilityLabel="TCOTW"
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "baseline",
-                    gap: 8,
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: 24,
-                      fontWeight: "900",
-                      color: "#8a641c",
-                    }}
-                  >
-                    𐤕𐤊𐤅𐤕𐤅
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 13,
-                      fontWeight: "900",
-                      color: "#10231a",
-                    }}
-                  >
-                    TCOTW
-                  </Text>
-                </View>
+                  accessibilityRole="image"
+                  source={require("../../../assets/images/tcotw.png")}
+                  resizeMode="contain"
+                  style={{ width: 220, height: 72 }}
+                />
                 <Pressable
                   accessibilityRole="button"
                   accessibilityLabel="Close navigation menu"

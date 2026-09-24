@@ -32,23 +32,27 @@ export default function ShabbatView() {
   if (isAvailable) {
     return (
       <View
-        style={{
-          // The app ScrollView has 16px content padding. Break out of it so
-          // the desktop embed can use the full browser width.
-          width: "calc(100% + 32px)",
-          maxWidth: "none",
-          minHeight: 720,
-          alignSelf: "stretch",
-          marginLeft: -16,
-          overflow: "hidden",
-          borderRadius: 20,
-          backgroundColor: "#ffffff",
-        }}
+        style={
+          {
+            // The app ScrollView has 16px content padding. Break out of it so
+            // the desktop embed can use the full browser width.
+            width: "calc(100% + 32px)",
+            maxWidth: "none",
+            minHeight: 720,
+            alignSelf: "stretch",
+            marginLeft: -16,
+            overflow: "hidden",
+            borderRadius: 20,
+            backgroundColor: "#ffffff",
+          } as any
+        }
       >
         <Pressable
           accessibilityRole="link"
           accessibilityLabel="Open the StudyBox teaching library"
-          onPress={() => void Linking.openURL("https://enochscalendar.com/library")}
+          onPress={() =>
+            void Linking.openURL("https://enochscalendar.com/library")
+          }
           style={({ pressed }) => ({
             minHeight: 64,
             paddingHorizontal: 18,
@@ -67,7 +71,14 @@ export default function ShabbatView() {
             <Text style={{ color: "#f0fdf4", fontSize: 16, fontWeight: "900" }}>
               StudyBox Teaching Library
             </Text>
-            <Text style={{ marginTop: 2, color: "#a7f3d0", fontSize: 12, fontWeight: "700" }}>
+            <Text
+              style={{
+                marginTop: 2,
+                color: "#a7f3d0",
+                fontSize: 12,
+                fontWeight: "700",
+              }}
+            >
               Browse recordings, transcripts, and study archives
             </Text>
           </View>
