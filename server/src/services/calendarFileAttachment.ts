@@ -7,7 +7,13 @@ import { CalendarDayContent } from "../types/calendarContent";
 
 export function attachFileToCalendarContent(
   content: CalendarDayContent,
-  file: { originalName: string; url: string }
+  file: {
+    originalName: string;
+    url: string;
+    mimeType?: string;
+    sizeBytes?: number;
+    uploadedAt?: string;
+  }
 ): CalendarDayContent {
   const sections = content.sections ?? [];
   const mediaSectionIndex = sections.findIndex(
@@ -19,6 +25,10 @@ export function attachFileToCalendarContent(
     url: file.url,
     access: "public" as const,
     includeInCalendarFeed: false,
+    originalName: file.originalName,
+    mimeType: file.mimeType,
+    sizeBytes: file.sizeBytes,
+    uploadedAt: file.uploadedAt,
   };
   const nextSections = [...sections];
 

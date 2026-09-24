@@ -122,6 +122,9 @@ router.post(
         attachFileToCalendarContent(currentContent, {
           originalName: req.file.originalname,
           url: uploadedUrl,
+          mimeType: req.file.mimetype,
+          sizeBytes: req.file.size,
+          uploadedAt: new Date().toISOString(),
         })
       );
       syncReplicatedCalendarContent(groupCode, year, month, day, savedContent);

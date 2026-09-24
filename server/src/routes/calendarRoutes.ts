@@ -18,6 +18,7 @@ import {
 import { buildAppointedTimesCalendar } from "../services/appointedTimesCalendar";
 import { getPublishedCalendarEvents } from "../services/publishedCalendarEvents";
 import { verifyCalendarSubscriptionToken } from "../services/groupStore";
+import { getPublicCalendarFiles } from "../services/calendarFileLibrary";
 
 const router = Router();
 
@@ -86,6 +87,25 @@ router.get("/latest-shabbat-teaching", (req, res) => {
     res.status(500).json({
       error: "Failed to load latest Shabbat teaching.",
     });
+  }
+});
+
+/**
+ * Lists files attached to public calendar days for the StudyBox Library.
+ * The day records are authoritative, so unreferenced server files stay hidden.
+ */
+router.get("/files", (req, res) => {
+  try {
+    const limit = parseOptionalInteger(req.query.limit, 1, 500) ?? 100;
+    const items = getPublicCalendarFiles({
+      query: typeof req.query.q === "string" ? req.query.q : "",
+      type: typeof req.query.type === "string" ? req.query.type : "",
+      limit,
+    });
+    res.json({ items, total: items.length });
+  } catch (error) {
+    console.log("Failed to load calendar files", error);
+    res.status(500).json({ error: "Failed to load calendar files." });
   }
 });
 

@@ -21,6 +21,10 @@ export type CalendarContentItem = {
   calendarStartTime?: string;
   calendarEndTime?: string;
   calendarLocation?: string;
+  uploadedAt?: string;
+  originalName?: string;
+  mimeType?: string;
+  sizeBytes?: number;
 };
 
 export type CalendarContentSection = {

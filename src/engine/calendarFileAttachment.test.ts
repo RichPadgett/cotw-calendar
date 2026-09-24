@@ -25,6 +25,9 @@ describe("calendar file attachment", () => {
       {
         originalName: "study-notes.pdf",
         url: "/api/files/groups/church/files/2026/7/11/study-notes.pdf",
+        mimeType: "application/pdf",
+        sizeBytes: 1234,
+        uploadedAt: "2026-09-23T12:00:00.000Z",
       }
     );
 
@@ -37,6 +40,10 @@ describe("calendar file attachment", () => {
         url: "/api/files/groups/church/files/2026/7/11/study-notes.pdf",
         access: "public",
         includeInCalendarFeed: false,
+        originalName: "study-notes.pdf",
+        mimeType: "application/pdf",
+        sizeBytes: 1234,
+        uploadedAt: "2026-09-23T12:00:00.000Z",
       },
     ]);
   });
