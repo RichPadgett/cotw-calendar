@@ -3,7 +3,7 @@
  * Purpose: Responsive primary navigation rail and mobile drawer.
  */
 
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import {
   Modal,
   Pressable,
@@ -31,6 +31,7 @@ type Props = {
   onChangeGroup: () => void;
   onOpenLatestTeaching: () => void;
   onOpenCalendarSubscription: () => void;
+  latestTeachingPlayer?: ReactNode;
 };
 
 const TAB_DEFINITIONS: {
@@ -51,6 +52,7 @@ export default function AppNavigationMenu(props: Props) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const isDesktop = width >= 900;
+  const isMenuExpanded = isExpanded || Boolean(props.latestTeachingPlayer);
   const tabs = TAB_DEFINITIONS.filter(
     (tab) =>
       (tab.id !== "timeline" || props.isTimelineVisible) &&
@@ -72,7 +74,7 @@ export default function AppNavigationMenu(props: Props) {
             icon={tab.icon}
             label={tab.label}
             isActive={isActive}
-            showLabel={!isDesktop || isExpanded}
+            showLabel={!isDesktop || isMenuExpanded}
             onPress={() => selectTab(tab.id)}
           />
         );
@@ -85,7 +87,7 @@ export default function AppNavigationMenu(props: Props) {
       <NavigationItem
         icon="event-available"
         label="Calendar Subscription"
-        showLabel={!isDesktop || isExpanded}
+        showLabel={!isDesktop || isMenuExpanded}
         onPress={() => {
           props.onOpenCalendarSubscription();
           setIsDrawerOpen(false);
@@ -95,25 +97,35 @@ export default function AppNavigationMenu(props: Props) {
       <NavigationItem
         icon="podcasts"
         label="Latest Teaching"
-        showLabel={!isDesktop || isExpanded}
+        showLabel={!isDesktop || isMenuExpanded}
         onPress={() => {
           props.onOpenLatestTeaching();
-          setIsDrawerOpen(false);
+          setIsExpanded(true);
         }}
       />
+
+      {props.latestTeachingPlayer ? (
+        <View
+          accessibilityLabel="Menu teaching player"
+          style={{ width: "100%" }}
+        >
+          {props.latestTeachingPlayer}
+        </View>
+      ) : null}
 
       <View
         accessibilityLabel={`${props.groupLabel}, ${props.userRole}`}
         style={{
           minHeight: 44,
-          paddingHorizontal: isDesktop && !isExpanded ? 0 : 11,
+          paddingHorizontal: isDesktop && !isMenuExpanded ? 0 : 11,
           borderRadius: 12,
           alignItems: "center",
-          justifyContent: isDesktop && !isExpanded ? "center" : "flex-start",
+          justifyContent:
+            isDesktop && !isMenuExpanded ? "center" : "flex-start",
           backgroundColor: "#eef2ff",
         }}
       >
-        {isDesktop && !isExpanded ? (
+        {isDesktop && !isMenuExpanded ? (
           <MaterialIcons
             name={props.userRole === "admin" ? "admin-panel-settings" : "group"}
             size={23}
@@ -144,7 +156,7 @@ export default function AppNavigationMenu(props: Props) {
       <NavigationItem
         icon="logout"
         label="Change group"
-        showLabel={!isDesktop || isExpanded}
+        showLabel={!isDesktop || isMenuExpanded}
         onPress={props.onChangeGroup}
       />
     </View>
@@ -154,7 +166,7 @@ export default function AppNavigationMenu(props: Props) {
     return (
       <View
         style={{
-          width: isExpanded ? 218 : 64,
+          width: isMenuExpanded ? 320 : 64,
           paddingHorizontal: 8,
           paddingVertical: 14,
           borderRightWidth: 1,
@@ -167,7 +179,7 @@ export default function AppNavigationMenu(props: Props) {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={
-              isExpanded ? "Collapse navigation" : "Expand navigation"
+              isMenuExpanded ? "Collapse navigation" : "Expand navigation"
             }
             onPress={() => setIsExpanded((value) => !value)}
             style={({ pressed }) => ({
@@ -175,15 +187,15 @@ export default function AppNavigationMenu(props: Props) {
               borderRadius: 12,
               flexDirection: "row",
               alignItems: "center",
-              justifyContent: isExpanded ? "flex-start" : "center",
-              paddingHorizontal: isExpanded ? 12 : 0,
+              justifyContent: isMenuExpanded ? "flex-start" : "center",
+              paddingHorizontal: isMenuExpanded ? 12 : 0,
               gap: 10,
               backgroundColor: "#163d2b",
               opacity: pressed ? 0.82 : 1,
             })}
           >
             <MaterialIcons name="menu" size={23} color="#ffffff" />
-            {isExpanded ? (
+            {isMenuExpanded ? (
               <Text style={{ fontWeight: "900", color: "#ffffff" }}>
                 Enoch&apos;s Calendar
               </Text>

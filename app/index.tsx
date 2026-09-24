@@ -1101,6 +1101,21 @@ export default function HomeScreen() {
           onChangeGroup={confirmChangeGroup}
           onOpenLatestTeaching={() => setIsTeachingPlayerOpen(true)}
           onOpenCalendarSubscription={() => setIsCalendarSubscriptionOpen(true)}
+          latestTeachingPlayer={
+            isTeachingPlayerOpen ? (
+              <LatestShabbatTeachingPlayer
+                groupCode={groupCode}
+                username={normalizeContributorUsername(
+                  commandContributorUsername
+                )}
+                overrideTeaching={manualTeaching}
+                onDismissOverride={() => setManualTeaching(null)}
+                initiallyCollapsed={false}
+                allowFullWidth={false}
+                compactEmbed
+              />
+            ) : null
+          }
         />
 
         <ScrollView
@@ -1362,39 +1377,6 @@ export default function HomeScreen() {
           )}
         </ScrollView>
       </View>
-
-      {isTeachingPlayerOpen ? (
-        <View
-          accessibilityLabel="Persistent teaching player"
-          style={{
-            position: "absolute",
-            right: 12,
-            bottom: 12,
-            left: viewportWidth < 620 ? 12 : undefined,
-            width: viewportWidth >= 620 ? 460 : undefined,
-            zIndex: 120,
-            padding: 8,
-            borderRadius: 16,
-            borderWidth: 1,
-            borderColor: "#334155",
-            backgroundColor: "#ffffff",
-            shadowColor: "#000000",
-            shadowOpacity: 0.22,
-            shadowRadius: 18,
-            shadowOffset: { width: 0, height: 8 },
-            elevation: 18,
-          }}
-        >
-          <LatestShabbatTeachingPlayer
-            groupCode={groupCode}
-            username={normalizeContributorUsername(commandContributorUsername)}
-            overrideTeaching={manualTeaching}
-            onDismissOverride={() => setManualTeaching(null)}
-            initiallyCollapsed={false}
-            allowFullWidth={false}
-          />
-        </View>
-      ) : null}
 
       <Modal
         visible={isCalendarSubscriptionOpen}

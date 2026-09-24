@@ -43,6 +43,7 @@ type Props = {
   onDismissOverride?: () => void;
   initiallyCollapsed?: boolean;
   allowFullWidth?: boolean;
+  compactEmbed?: boolean;
 };
 
 function getSpotifyEmbedUrl(url: string): string | null {
@@ -63,6 +64,7 @@ export default function LatestShabbatTeachingPlayer({
   onDismissOverride,
   initiallyCollapsed = true,
   allowFullWidth = true,
+  compactEmbed = false,
 }: Props) {
   const { width } = useWindowDimensions();
   const [latestTeaching, setLatestTeaching] =
@@ -71,7 +73,7 @@ export default function LatestShabbatTeachingPlayer({
   const [isCollapsed, setIsCollapsed] = useState(initiallyCollapsed);
   const [isFullWidth, setIsFullWidth] = useState(false);
   const isWidePlayer = width >= 820;
-  const useTallPlayer = isWidePlayer || isFullWidth;
+  const useTallPlayer = !compactEmbed && (isWidePlayer || isFullWidth);
   const isCompactCollapsed = isCollapsed;
   const collapseAnim = useRef(new Animated.Value(1)).current;
 
