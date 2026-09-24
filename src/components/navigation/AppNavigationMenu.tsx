@@ -181,15 +181,11 @@ export default function AppNavigationMenu(props: Props) {
               justifyContent: isMenuExpanded ? "flex-start" : "center",
               paddingHorizontal: isMenuExpanded ? 12 : 0,
               gap: 10,
-              backgroundColor: isMenuExpanded ? "#f4ead2" : "#163d2b",
+              backgroundColor: pressed ? "#e8efe9" : "transparent",
               opacity: pressed ? 0.82 : 1,
             })}
           >
-            <MaterialIcons
-              name="menu"
-              size={23}
-              color={isMenuExpanded ? "#163d2b" : "#ffffff"}
-            />
+            <MaterialIcons name="menu" size={23} color="#163d2b" />
             {isMenuExpanded ? (
               <Image
                 accessibilityLabel="TCOTW"
