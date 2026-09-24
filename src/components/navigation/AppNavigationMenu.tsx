@@ -5,7 +5,6 @@
 
 import { useState } from "react";
 import {
-  Image,
   Modal,
   Pressable,
   Text,
@@ -187,13 +186,20 @@ export default function AppNavigationMenu(props: Props) {
           >
             <MaterialIcons name="menu" size={23} color="#163d2b" />
             {isMenuExpanded ? (
-              <Image
-                accessibilityLabel="TCOTW"
-                accessibilityRole="image"
-                source={require("../../../assets/images/tcotw.png")}
-                resizeMode="contain"
-                style={{ flex: 1, height: 56 }}
-              />
+              <Text
+                accessibilityLabel="Kahal HaDavar"
+                style={{
+                  flex: 1,
+                  fontSize: 21,
+                  lineHeight: 34,
+                  fontWeight: "900",
+                  color: "#163d2b",
+                  textAlign: "center",
+                  writingDirection: "rtl",
+                }}
+              >
+                קְהַל הַדָּבָר
+              </Text>
             ) : null}
           </Pressable>
           {menuItems}
@@ -277,13 +283,20 @@ export default function AppNavigationMenu(props: Props) {
                   justifyContent: "space-between",
                 }}
               >
-                <Image
-                  accessibilityLabel="TCOTW"
-                  accessibilityRole="image"
-                  source={require("../../../assets/images/tcotw.png")}
-                  resizeMode="contain"
-                  style={{ width: 220, height: 72 }}
-                />
+                <Text
+                  accessibilityLabel="Kahal HaDavar"
+                  style={{
+                    flex: 1,
+                    fontSize: 24,
+                    lineHeight: 40,
+                    fontWeight: "900",
+                    color: "#163d2b",
+                    textAlign: "center",
+                    writingDirection: "rtl",
+                  }}
+                >
+                  קְהַל הַדָּבָר
+                </Text>
                 <Pressable
                   accessibilityRole="button"
                   accessibilityLabel="Close navigation menu"
