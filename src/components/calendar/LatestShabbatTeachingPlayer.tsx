@@ -42,6 +42,7 @@ type Props = {
   overrideTeaching?: LatestShabbatTeachingItem | null;
   onDismissOverride?: () => void;
   initiallyCollapsed?: boolean;
+  allowFullWidth?: boolean;
 };
 
 function getSpotifyEmbedUrl(url: string): string | null {
@@ -61,6 +62,7 @@ export default function LatestShabbatTeachingPlayer({
   overrideTeaching = null,
   onDismissOverride,
   initiallyCollapsed = true,
+  allowFullWidth = true,
 }: Props) {
   const { width } = useWindowDimensions();
   const [latestTeaching, setLatestTeaching] =
@@ -357,7 +359,7 @@ export default function LatestShabbatTeachingPlayer({
             </>
           ) : null}
 
-          {Platform.OS === "web" && latestTeachingEmbed ? (
+          {allowFullWidth && Platform.OS === "web" && latestTeachingEmbed ? (
             <Pressable
               onPress={(event) => {
                 event.stopPropagation();

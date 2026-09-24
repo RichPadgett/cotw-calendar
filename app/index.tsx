@@ -1365,66 +1365,38 @@ export default function HomeScreen() {
         </ScrollView>
       </View>
 
-      <Modal
-        visible={isTeachingPlayerOpen}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setIsTeachingPlayerOpen(false)}
-      >
-        <Pressable
-          onPress={() => setIsTeachingPlayerOpen(false)}
+      {isTeachingPlayerOpen ? (
+        <View
+          accessibilityLabel="Persistent teaching player"
           style={{
-            flex: 1,
-            padding: 18,
-            backgroundColor: "rgba(15,23,42,0.58)",
-            alignItems: "center",
-            justifyContent: "center",
+            position: "absolute",
+            right: 12,
+            bottom: 12,
+            left: viewportWidth < 620 ? 12 : undefined,
+            width: viewportWidth >= 620 ? 460 : undefined,
+            zIndex: 120,
+            padding: 8,
+            borderRadius: 16,
+            borderWidth: 1,
+            borderColor: "#334155",
+            backgroundColor: "#ffffff",
+            shadowColor: "#000000",
+            shadowOpacity: 0.22,
+            shadowRadius: 18,
+            shadowOffset: { width: 0, height: 8 },
+            elevation: 18,
           }}
         >
-          <Pressable
-            onPress={(event) => event.stopPropagation()}
-            style={{
-              width: "100%",
-              maxWidth: 760,
-              padding: 12,
-              borderRadius: 18,
-              backgroundColor: "#ffffff",
-            }}
-          >
-            <View
-              style={{
-                marginBottom: 8,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <Text
-                style={{ fontSize: 16, fontWeight: "900", color: "#10231a" }}
-              >
-                Latest Teaching
-              </Text>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel="Close teaching player"
-                onPress={() => setIsTeachingPlayerOpen(false)}
-              >
-                <MaterialIcons name="close" size={25} color="#475569" />
-              </Pressable>
-            </View>
-            <LatestShabbatTeachingPlayer
-              groupCode={groupCode}
-              username={normalizeContributorUsername(
-                commandContributorUsername
-              )}
-              collapseRequestId={latestTeachingCollapseRequestId}
-              overrideTeaching={manualTeaching}
-              onDismissOverride={() => setManualTeaching(null)}
-              initiallyCollapsed={false}
-            />
-          </Pressable>
-        </Pressable>
-      </Modal>
+          <LatestShabbatTeachingPlayer
+            groupCode={groupCode}
+            username={normalizeContributorUsername(commandContributorUsername)}
+            overrideTeaching={manualTeaching}
+            onDismissOverride={() => setManualTeaching(null)}
+            initiallyCollapsed={false}
+            allowFullWidth={false}
+          />
+        </View>
+      ) : null}
 
       <Modal
         visible={shouldShowDeviceUsernamePrompt}
