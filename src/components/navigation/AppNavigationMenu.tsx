@@ -186,20 +186,38 @@ export default function AppNavigationMenu(props: Props) {
           >
             <MaterialIcons name="menu" size={23} color="#163d2b" />
             {isMenuExpanded ? (
-              <Text
+              <View
                 accessibilityLabel="Kahal HaDavar"
                 style={{
                   flex: 1,
-                  fontSize: 21,
-                  lineHeight: 34,
-                  fontWeight: "900",
-                  color: "#163d2b",
-                  textAlign: "center",
-                  writingDirection: "rtl",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
-                קְהַל הַדָּבָר
-              </Text>
+                <Text
+                  style={{
+                    fontSize: 21,
+                    lineHeight: 28,
+                    fontWeight: "900",
+                    color: "#163d2b",
+                    writingDirection: "rtl",
+                  }}
+                >
+                  קְהַל הַדָּבָר
+                </Text>
+                <Text
+                  style={{
+                    marginTop: 1,
+                    fontSize: 9,
+                    lineHeight: 12,
+                    fontWeight: "900",
+                    letterSpacing: 1.1,
+                    color: "#668c43",
+                  }}
+                >
+                  CHURCH OF THE WORD
+                </Text>
+              </View>
             ) : null}
           </Pressable>
           {menuItems}
@@ -283,20 +301,38 @@ export default function AppNavigationMenu(props: Props) {
                   justifyContent: "space-between",
                 }}
               >
-                <Text
+                <View
                   accessibilityLabel="Kahal HaDavar"
                   style={{
                     flex: 1,
-                    fontSize: 24,
-                    lineHeight: 40,
-                    fontWeight: "900",
-                    color: "#163d2b",
-                    textAlign: "center",
-                    writingDirection: "rtl",
+                    alignItems: "center",
+                    justifyContent: "center",
                   }}
                 >
-                  קְהַל הַדָּבָר
-                </Text>
+                  <Text
+                    style={{
+                      fontSize: 24,
+                      lineHeight: 34,
+                      fontWeight: "900",
+                      color: "#163d2b",
+                      writingDirection: "rtl",
+                    }}
+                  >
+                    קְהַל הַדָּבָר
+                  </Text>
+                  <Text
+                    style={{
+                      marginTop: 1,
+                      fontSize: 10,
+                      lineHeight: 13,
+                      fontWeight: "900",
+                      letterSpacing: 1.2,
+                      color: "#668c43",
+                    }}
+                  >
+                    CHURCH OF THE WORD
+                  </Text>
+                </View>
                 <Pressable
                   accessibilityRole="button"
                   accessibilityLabel="Close navigation menu"
