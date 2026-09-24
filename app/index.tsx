@@ -47,6 +47,10 @@ import WebOnlyActivities from "../src/components/activities/WebOnlyActivities";
 import HebrewStudyView from "../src/components/hebrew/HebrewStudyView";
 import ShabbatView from "../src/components/shabbat/ShabbatView";
 import WelcomeScreen from "../src/components/onboarding/WelcomeScreen";
+import AppNavigationMenu, {
+  type AppTab,
+} from "../src/components/navigation/AppNavigationMenu";
+import StudyBoxLibraryView from "../src/components/library/StudyBoxLibraryView";
 
 import { buildEnochYear } from "../src/engine/buildEnochYear";
 import { getEnochYearStartDate } from "../src/engine/enochYear";
@@ -72,7 +76,6 @@ const COMMAND_SEARCH_TEXT_STORAGE_KEY = "commandSearchText";
 const ACTIVE_TAB_STORAGE_KEY = "activeAppTab";
 const CALENDAR_VIEW_MODE_STORAGE_KEY = "calendarViewMode";
 
-type AppTab = "calendar" | "shabbat" | "timeline" | "commands" | "hebrew";
 const BIBLE_VERSIONS: BibleVersion[] = [
   "KJV",
   "NKJV",
@@ -107,7 +110,8 @@ function getInitialVisibleEnochYear() {
 }
 
 export default function HomeScreen() {
-  const { height: viewportHeight } = useWindowDimensions();
+  const { height: viewportHeight, width: viewportWidth } =
+    useWindowDimensions();
   const scrollViewRef = useRef<ScrollView>(null);
   const monthOffsetsRef = useRef<Record<number, number>>({});
   const currentScrollYRef = useRef(0);
@@ -159,6 +163,7 @@ export default function HomeScreen() {
   const [commandPendingRequestId, setCommandPendingRequestId] = useState(0);
   const [latestTeachingCollapseRequestId, setLatestTeachingCollapseRequestId] =
     useState(0);
+  const [isTeachingPlayerOpen, setIsTeachingPlayerOpen] = useState(false);
   const [manualTeaching, setManualTeaching] = useState<{
     title: string;
     url: string;
@@ -438,7 +443,8 @@ export default function HomeScreen() {
         savedTab === "shabbat" ||
         savedTab === "timeline" ||
         savedTab === "commands" ||
-        savedTab === "hebrew"
+        savedTab === "hebrew" ||
+        savedTab === "library"
       ) {
         setActiveTab(savedTab);
       }
@@ -1077,275 +1083,348 @@ export default function HomeScreen() {
 
   return (
     <>
-      <ScrollView
-        ref={scrollViewRef}
-        stickyHeaderIndices={[0]}
-        scrollEnabled={!isWheelInteracting}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
+      <View
         style={{
           flex: 1,
-          backgroundColor: "#ffffff",
-        }}
-        contentContainerStyle={{
-          paddingHorizontal: 16,
-          paddingTop: 36,
-          paddingBottom: 24,
+          flexDirection: viewportWidth >= 900 ? "row" : "column",
         }}
       >
-        <View
-          onLayout={(event) => {
-            handleHeaderLayout(event.nativeEvent.layout.height);
-          }}
+        <AppNavigationMenu
+          activeTab={activeTab}
+          groupLabel={groupLabel}
+          userRole={userRole}
+          isTimelineVisible={isTimelineVisible}
+          isShabbatVisible={isShabbatVisible}
+          onChangeTab={changeActiveTab}
+          onChangeGroup={confirmChangeGroup}
+          onOpenLatestTeaching={() => setIsTeachingPlayerOpen(true)}
+        />
+
+        <ScrollView
+          ref={scrollViewRef}
+          stickyHeaderIndices={[0]}
+          scrollEnabled={!isWheelInteracting}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
           style={{
+            flex: 1,
             backgroundColor: "#ffffff",
-            paddingBottom: 12,
+          }}
+          contentContainerStyle={{
+            paddingHorizontal: 16,
+            paddingTop: viewportWidth >= 900 ? 16 : 12,
+            paddingBottom: 24,
           }}
         >
-          <TabSelector
-            activeTab={activeTab}
-            isTimelineVisible={isTimelineVisible}
-            isShabbatVisible={isShabbatVisible}
-            onChangeTab={changeActiveTab}
-          />
+          <View
+            onLayout={(event) => {
+              handleHeaderLayout(event.nativeEvent.layout.height);
+            }}
+            style={{
+              backgroundColor: "#ffffff",
+              paddingBottom: 12,
+            }}
+          >
+            {activeTab === "calendar" && (
+              <AppHeader
+                month={currentMonth}
+                todayNode={todayNode}
+                upcomingShabbatNode={upcomingShabbatNode}
+                gregorianLabel={`${config.enochYear} · Starts ${config.startsOnGregorianDate}`}
+                groupLabel={groupLabel}
+                userRole={userRole}
+                showIdentity={false}
+                yearTransition={yearTransition}
+                onPreviousMonth={() => goToCalendarPeriod(-1)}
+                onNextMonth={() => goToCalendarPeriod(1)}
+                onChangeGroup={confirmChangeGroup}
+                onPressToday={() => {
+                  if (todayNode) {
+                    setDayViewDateId(todayNode.gregorianDate);
+                    setActiveMonthNumber(
+                      todayNode.enoch?.month?.number ?? null
+                    );
+                    if (calendarViewMode === "day") return;
+                    openDay(todayNode);
+                  }
+                }}
+                onPressUpcomingShabbat={() => {
+                  if (upcomingShabbatNode) {
+                    setDayViewDateId(upcomingShabbatNode.gregorianDate);
+                    setActiveMonthNumber(
+                      upcomingShabbatNode.enoch?.month?.number ?? null
+                    );
+                    if (calendarViewMode === "day") return;
+                    openDay(upcomingShabbatNode);
+                  }
+                }}
+              />
+            )}
 
-          <LatestShabbatTeachingPlayer
-            groupCode={groupCode}
-            username={normalizeContributorUsername(commandContributorUsername)}
-            collapseRequestId={latestTeachingCollapseRequestId}
-            overrideTeaching={manualTeaching}
-            onDismissOverride={() => setManualTeaching(null)}
-          />
+            {activeTab === "calendar" && (
+              <CalendarViewSwitcher
+                value={calendarViewMode}
+                onChange={changeCalendarView}
+              />
+            )}
+
+            {activeTab === "timeline" && isTimelineVisible && (
+              <TimelineStickyHeader
+                selectedOccurrence={selectedTimelineOccurrence}
+                canManageTimeline={canManageTimeline}
+                isEditMode={isTimelineEditMode}
+                isSavingTimeline={isSavingTimeline}
+                timelineScaleLabel={getTimelineZoomLabel(timelineZoom)}
+                timelineLaneHeightLabel={timelineLaneHeightLabel}
+                groupLabel={groupLabel}
+                userRole={userRole}
+                onPreviousTimelineScale={() => {
+                  setTimelineScaleStepRequest((currentRequest) => ({
+                    id: currentRequest.id + 1,
+                    direction: -1,
+                  }));
+                }}
+                onNextTimelineScale={() => {
+                  setTimelineScaleStepRequest((currentRequest) => ({
+                    id: currentRequest.id + 1,
+                    direction: 1,
+                  }));
+                }}
+                onPreviousTimelineLaneHeight={() => {
+                  setTimelineLaneHeightStepRequest((currentRequest) => ({
+                    id: currentRequest.id + 1,
+                    direction: -1,
+                  }));
+                }}
+                onNextTimelineLaneHeight={() => {
+                  setTimelineLaneHeightStepRequest((currentRequest) => ({
+                    id: currentRequest.id + 1,
+                    direction: 1,
+                  }));
+                }}
+                onToggleEditMode={() =>
+                  setIsTimelineEditMode((isEditing) => !isEditing)
+                }
+                onRequestAdd={() => {
+                  setTimelineAddRequestId((id) => id + 1);
+                }}
+                onRequestEdit={() => {
+                  setTimelineEditRequestId((id) => id + 1);
+                }}
+              />
+            )}
+
+            {activeTab === "commands" && (
+              <CommandStickyHeader
+                command={selectedCommandHeader}
+                navigation={commandNavigation}
+                selectedBibleVersion={selectedBibleVersion}
+                searchText={commandSearchText}
+                contributorUsername={commandContributorUsername}
+                categoryCount={commandResourceStats.categoryCount}
+                commandCount={commandResourceStats.commandCount}
+                isSelectingRandom={commandResourceStats.isSelectingRandom}
+                isSelectingPending={commandResourceStats.isSelectingPending}
+                pendingContributionCount={
+                  commandResourceStats.pendingContributionCount
+                }
+                pendingConcernCount={commandResourceStats.pendingConcernCount}
+                groupLabel={groupLabel}
+                userRole={userRole}
+                onChangeBibleVersion={setSelectedBibleVersion}
+                onChangeSearchText={setCommandSearchText}
+                onShowContributionHelp={showCommandContributionHelp}
+                onRequestRandom={() => {
+                  setCommandRandomRequestId((id) => id + 1);
+                }}
+                onRequestPending={() => {
+                  setCommandPendingRequestId((id) => id + 1);
+                }}
+              />
+            )}
+          </View>
 
           {activeTab === "calendar" && (
-            <AppHeader
-              month={currentMonth}
-              todayNode={todayNode}
-              upcomingShabbatNode={upcomingShabbatNode}
-              gregorianLabel={`${config.enochYear} · Starts ${config.startsOnGregorianDate}`}
-              groupLabel={groupLabel}
-              userRole={userRole}
-              yearTransition={yearTransition}
-              onPreviousMonth={() => goToCalendarPeriod(-1)}
-              onNextMonth={() => goToCalendarPeriod(1)}
-              onChangeGroup={confirmChangeGroup}
-              onPressToday={() => {
-                if (todayNode) {
-                  setDayViewDateId(todayNode.gregorianDate);
-                  setActiveMonthNumber(todayNode.enoch?.month?.number ?? null);
-                  if (calendarViewMode === "day") return;
-                  openDay(todayNode);
-                }
-              }}
-              onPressUpcomingShabbat={() => {
-                if (upcomingShabbatNode) {
-                  setDayViewDateId(upcomingShabbatNode.gregorianDate);
-                  setActiveMonthNumber(
-                    upcomingShabbatNode.enoch?.month?.number ?? null
-                  );
-                  if (calendarViewMode === "day") return;
-                  openDay(upcomingShabbatNode);
-                }
-              }}
-            />
-          )}
+            <>
+              <CalendarSubscriptionCard
+                groupCode={groupCode}
+                memberToken={memberToken}
+              />
 
-          {activeTab === "calendar" && (
-            <CalendarViewSwitcher
-              value={calendarViewMode}
-              onChange={changeCalendarView}
-            />
+              {calendarViewMode === "wheel" && (
+                <YearWheelView
+                  nodes={nodes}
+                  perpetualMarkers={perpetualMarkers}
+                  todayDateId={todayDateId}
+                  onPressMonth={scrollToMonth}
+                  onPressDay={openDay}
+                  onInteractionChange={setIsWheelInteracting}
+                />
+              )}
+
+              {(calendarViewMode === "month" ||
+                calendarViewMode === "year") && (
+                <View
+                  onLayout={(event) => {
+                    handleYearViewLayout(event.nativeEvent.layout.y);
+                  }}
+                >
+                  <YearView
+                    nodes={nodes}
+                    notices={yearNotices}
+                    perpetualMarkers={perpetualMarkers}
+                    monthNumber={
+                      calendarViewMode === "month"
+                        ? currentMonthNumber
+                        : undefined
+                    }
+                    todayDateId={todayDateId}
+                    onDayLayout={handleDayLayout}
+                    onMonthLayout={handleMonthLayout}
+                    onPressDay={(node) => {
+                      setDayViewDateId(node.gregorianDate);
+                      setActiveMonthNumber(node.enoch?.month?.number ?? null);
+                      openDay(node);
+                    }}
+                  />
+                </View>
+              )}
+
+              {calendarViewMode === "day" && dayViewNode && (
+                <CalendarDayView
+                  node={dayViewNode}
+                  markers={dayViewMarkers}
+                  hasNotice={Boolean(dayViewSummary?.notice)}
+                  hasContent={Boolean(dayViewSummary?.hasContent)}
+                  onOpenDetails={openDay}
+                />
+              )}
+            </>
           )}
 
           {activeTab === "timeline" && isTimelineVisible && (
-            <TimelineStickyHeader
-              selectedOccurrence={selectedTimelineOccurrence}
-              canManageTimeline={canManageTimeline}
-              isEditMode={isTimelineEditMode}
-              isSavingTimeline={isSavingTimeline}
-              timelineScaleLabel={getTimelineZoomLabel(timelineZoom)}
-              timelineLaneHeightLabel={timelineLaneHeightLabel}
-              groupLabel={groupLabel}
-              userRole={userRole}
-              onPreviousTimelineScale={() => {
-                setTimelineScaleStepRequest((currentRequest) => ({
-                  id: currentRequest.id + 1,
-                  direction: -1,
-                }));
-              }}
-              onNextTimelineScale={() => {
-                setTimelineScaleStepRequest((currentRequest) => ({
-                  id: currentRequest.id + 1,
-                  direction: 1,
-                }));
-              }}
-              onPreviousTimelineLaneHeight={() => {
-                setTimelineLaneHeightStepRequest((currentRequest) => ({
-                  id: currentRequest.id + 1,
-                  direction: -1,
-                }));
-              }}
-              onNextTimelineLaneHeight={() => {
-                setTimelineLaneHeightStepRequest((currentRequest) => ({
-                  id: currentRequest.id + 1,
-                  direction: 1,
-                }));
-              }}
-              onToggleEditMode={() =>
-                setIsTimelineEditMode((isEditing) => !isEditing)
-              }
-              onRequestAdd={() => {
-                setTimelineAddRequestId((id) => id + 1);
-              }}
-              onRequestEdit={() => {
-                setTimelineEditRequestId((id) => id + 1);
-              }}
-            />
-          )}
-
-          {activeTab === "commands" && (
-            <CommandStickyHeader
-              command={selectedCommandHeader}
-              navigation={commandNavigation}
-              selectedBibleVersion={selectedBibleVersion}
-              searchText={commandSearchText}
-              contributorUsername={commandContributorUsername}
-              categoryCount={commandResourceStats.categoryCount}
-              commandCount={commandResourceStats.commandCount}
-              isSelectingRandom={commandResourceStats.isSelectingRandom}
-              isSelectingPending={commandResourceStats.isSelectingPending}
-              pendingContributionCount={
-                commandResourceStats.pendingContributionCount
-              }
-              pendingConcernCount={commandResourceStats.pendingConcernCount}
-              groupLabel={groupLabel}
-              userRole={userRole}
-              onChangeBibleVersion={setSelectedBibleVersion}
-              onChangeSearchText={setCommandSearchText}
-              onShowContributionHelp={showCommandContributionHelp}
-              onRequestRandom={() => {
-                setCommandRandomRequestId((id) => id + 1);
-              }}
-              onRequestPending={() => {
-                setCommandPendingRequestId((id) => id + 1);
-              }}
-            />
-          )}
-        </View>
-
-        {activeTab === "calendar" && (
-          <>
-            <CalendarSubscriptionCard
-              groupCode={groupCode}
-              memberToken={memberToken}
-            />
-
-            {calendarViewMode === "wheel" && (
-              <YearWheelView
-                nodes={nodes}
-                perpetualMarkers={perpetualMarkers}
-                todayDateId={todayDateId}
-                onPressMonth={scrollToMonth}
-                onPressDay={openDay}
-                onInteractionChange={setIsWheelInteracting}
-              />
-            )}
-
-            {(calendarViewMode === "month" || calendarViewMode === "year") && (
-              <View
-                onLayout={(event) => {
-                  handleYearViewLayout(event.nativeEvent.layout.y);
-                }}
-              >
-                <YearView
-                  nodes={nodes}
-                  notices={yearNotices}
-                  perpetualMarkers={perpetualMarkers}
-                  monthNumber={
-                    calendarViewMode === "month"
-                      ? currentMonthNumber
-                      : undefined
-                  }
-                  todayDateId={todayDateId}
-                  onDayLayout={handleDayLayout}
-                  onMonthLayout={handleMonthLayout}
-                  onPressDay={(node) => {
-                    setDayViewDateId(node.gregorianDate);
-                    setActiveMonthNumber(node.enoch?.month?.number ?? null);
-                    openDay(node);
-                  }}
-                />
-              </View>
-            )}
-
-            {calendarViewMode === "day" && dayViewNode && (
-              <CalendarDayView
-                node={dayViewNode}
-                markers={dayViewMarkers}
-                hasNotice={Boolean(dayViewSummary?.notice)}
-                hasContent={Boolean(dayViewSummary?.hasContent)}
-                onOpenDetails={openDay}
-              />
-            )}
-          </>
-        )}
-
-        {activeTab === "timeline" && isTimelineVisible && (
-          <HistoryTimelineView
-            adminToken={adminToken}
-            groupCode={groupCode}
-            userRole={userRole}
-            selectedOccurrence={selectedTimelineOccurrence}
-            isEditMode={isTimelineEditMode}
-            addRequestId={timelineAddRequestId}
-            editRequestId={timelineEditRequestId}
-            stickyHeaderHeight={stickyHeaderHeight}
-            appScrollY={appScrollY}
-            timelineZoom={timelineZoom}
-            timelineScaleStepRequest={timelineScaleStepRequest}
-            timelineLaneHeightStepRequest={timelineLaneHeightStepRequest}
-            onTimelineZoomChange={setTimelineZoom}
-            onTimelineLaneHeightLabelChange={setTimelineLaneHeightLabel}
-            onSelectedOccurrenceChange={setSelectedTimelineOccurrence}
-            onSavingChange={setIsSavingTimeline}
-          />
-        )}
-
-        {activeTab === "shabbat" && isShabbatVisible && <ShabbatView />}
-
-        {activeTab === "commands" && (
-          <CommandExplorerView
-            bibleVersion={selectedBibleVersion}
-            searchText={commandSearchText}
-            randomRequestId={commandRandomRequestId}
-            pendingRequestId={commandPendingRequestId}
-            adminToken={adminToken}
-            groupCode={groupCode}
-            contributorUsername={commandContributorUsername}
-            userRole={userRole}
-            onSelectedCommandChange={setSelectedCommandHeader}
-            onNavigationStateChange={setCommandNavigation}
-            onResourceStatsChange={handleCommandResourceStatsChange}
-            onMobileSelectedCommandLayout={centerMobileSelectedCommand}
-            onRequestContributorUsername={requestCommandContributorUsername}
-            onPlayTeaching={(teaching) =>
-              setManualTeaching({ ...teaching, provider: "spotify" })
-            }
-          />
-        )}
-
-        {activeTab === "hebrew" && (
-          <>
-            <WebOnlyActivities />
-
-            <HebrewStudyView
+            <HistoryTimelineView
               adminToken={adminToken}
               groupCode={groupCode}
               userRole={userRole}
+              selectedOccurrence={selectedTimelineOccurrence}
+              isEditMode={isTimelineEditMode}
+              addRequestId={timelineAddRequestId}
+              editRequestId={timelineEditRequestId}
+              stickyHeaderHeight={stickyHeaderHeight}
+              appScrollY={appScrollY}
+              timelineZoom={timelineZoom}
+              timelineScaleStepRequest={timelineScaleStepRequest}
+              timelineLaneHeightStepRequest={timelineLaneHeightStepRequest}
+              onTimelineZoomChange={setTimelineZoom}
+              onTimelineLaneHeightLabelChange={setTimelineLaneHeightLabel}
+              onSelectedOccurrenceChange={setSelectedTimelineOccurrence}
+              onSavingChange={setIsSavingTimeline}
             />
-          </>
-        )}
-      </ScrollView>
+          )}
+
+          {activeTab === "shabbat" && isShabbatVisible && <ShabbatView />}
+
+          {activeTab === "commands" && (
+            <CommandExplorerView
+              bibleVersion={selectedBibleVersion}
+              searchText={commandSearchText}
+              randomRequestId={commandRandomRequestId}
+              pendingRequestId={commandPendingRequestId}
+              adminToken={adminToken}
+              groupCode={groupCode}
+              contributorUsername={commandContributorUsername}
+              userRole={userRole}
+              onSelectedCommandChange={setSelectedCommandHeader}
+              onNavigationStateChange={setCommandNavigation}
+              onResourceStatsChange={handleCommandResourceStatsChange}
+              onMobileSelectedCommandLayout={centerMobileSelectedCommand}
+              onRequestContributorUsername={requestCommandContributorUsername}
+              onPlayTeaching={(teaching) => {
+                setManualTeaching({ ...teaching, provider: "spotify" });
+                setIsTeachingPlayerOpen(true);
+              }}
+            />
+          )}
+
+          {activeTab === "hebrew" && (
+            <>
+              <WebOnlyActivities />
+
+              <HebrewStudyView
+                adminToken={adminToken}
+                groupCode={groupCode}
+                userRole={userRole}
+              />
+            </>
+          )}
+
+          {activeTab === "library" && (
+            <StudyBoxLibraryView height={viewportHeight - 72} />
+          )}
+        </ScrollView>
+      </View>
+
+      <Modal
+        visible={isTeachingPlayerOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setIsTeachingPlayerOpen(false)}
+      >
+        <Pressable
+          onPress={() => setIsTeachingPlayerOpen(false)}
+          style={{
+            flex: 1,
+            padding: 18,
+            backgroundColor: "rgba(15,23,42,0.58)",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Pressable
+            onPress={(event) => event.stopPropagation()}
+            style={{
+              width: "100%",
+              maxWidth: 760,
+              padding: 12,
+              borderRadius: 18,
+              backgroundColor: "#ffffff",
+            }}
+          >
+            <View
+              style={{
+                marginBottom: 8,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <Text
+                style={{ fontSize: 16, fontWeight: "900", color: "#10231a" }}
+              >
+                Latest Teaching
+              </Text>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Close teaching player"
+                onPress={() => setIsTeachingPlayerOpen(false)}
+              >
+                <MaterialIcons name="close" size={25} color="#475569" />
+              </Pressable>
+            </View>
+            <LatestShabbatTeachingPlayer
+              groupCode={groupCode}
+              username={normalizeContributorUsername(
+                commandContributorUsername
+              )}
+              collapseRequestId={latestTeachingCollapseRequestId}
+              overrideTeaching={manualTeaching}
+              onDismissOverride={() => setManualTeaching(null)}
+              initiallyCollapsed={false}
+            />
+          </Pressable>
+        </Pressable>
+      </Modal>
 
       <Modal
         visible={shouldShowDeviceUsernamePrompt}
@@ -1501,75 +1580,6 @@ export default function HomeScreen() {
         />
       )}
     </>
-  );
-}
-
-function TabSelector({
-  activeTab,
-  isTimelineVisible,
-  isShabbatVisible,
-  onChangeTab,
-}: {
-  activeTab: AppTab;
-  isTimelineVisible: boolean;
-  isShabbatVisible: boolean;
-  onChangeTab: (tab: AppTab) => void;
-}) {
-  const tabs: { id: AppTab; label: string }[] = [
-    { id: "calendar", label: "Calendar" },
-    ...(isShabbatVisible ? [{ id: "shabbat" as const, label: "Shabbat" }] : []),
-    ...(isTimelineVisible
-      ? [{ id: "timeline" as const, label: "Timeline" }]
-      : []),
-    { id: "commands", label: "Commands" },
-    { id: "hebrew", label: "Language" },
-  ];
-
-  return (
-    <View
-      style={{
-        marginBottom: 8,
-        flexDirection: "row",
-        gap: 6,
-        padding: 4,
-        borderRadius: 999,
-        backgroundColor: "#e5e7eb",
-      }}
-    >
-      {tabs.map((tab) => {
-        const isActive = activeTab === tab.id;
-
-        return (
-          <Pressable
-            key={tab.id}
-            onPress={() => onChangeTab(tab.id)}
-            style={{
-              flex: 1,
-              minHeight: 38,
-              borderRadius: 999,
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: isActive ? "#ffffff" : "transparent",
-              borderWidth: isActive ? 1 : 0,
-              borderColor: "#d1d5db",
-            }}
-          >
-            <Text
-              numberOfLines={1}
-              adjustsFontSizeToFit
-              minimumFontScale={0.78}
-              style={{
-                fontSize: 13,
-                fontWeight: "900",
-                color: isActive ? "#081a33" : "#4b5563",
-              }}
-            >
-              {tab.label}
-            </Text>
-          </Pressable>
-        );
-      })}
-    </View>
   );
 }
 

@@ -28,6 +28,7 @@ export default function CalendarSubscriptionCard({
   memberToken: string;
 }) {
   const [copied, setCopied] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [privateCalendarToken, setPrivateCalendarToken] = useState("");
   const [subscriptionError, setSubscriptionError] = useState("");
   const isPublic = groupCode === "public";
@@ -111,7 +112,21 @@ export default function CalendarSubscriptionCard({
         backgroundColor: "#f0fdf4",
       }}
     >
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={
+          isExpanded
+            ? "Hide calendar subscription options"
+            : "Show calendar subscription options"
+        }
+        onPress={() => setIsExpanded((value) => !value)}
+        style={({ pressed }) => ({
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 10,
+          opacity: pressed ? 0.78 : 1,
+        })}
+      >
         <View
           style={{
             width: 38,
@@ -128,48 +143,59 @@ export default function CalendarSubscriptionCard({
           <Text style={{ fontSize: 16, fontWeight: "900", color: "#14532d" }}>
             Add appointed times to your calendar
           </Text>
-          <Text style={{ fontSize: 12, lineHeight: 17, color: "#3f6212" }}>
-            Subscribe once to receive Passover, Shavuot, Trumpets, Atonement,
-            Sukkot, and {isPublic ? "public" : "Church of the Word"} calendar
-            updates on their Gregorian dates.
-          </Text>
+          {isExpanded ? (
+            <Text style={{ fontSize: 12, lineHeight: 17, color: "#3f6212" }}>
+              Subscribe once to receive Passover, Shavuot, Trumpets, Atonement,
+              Sukkot, and {isPublic ? "public" : "Church of the Word"} calendar
+              updates on their Gregorian dates.
+            </Text>
+          ) : null}
         </View>
-      </View>
+        <MaterialIcons
+          name={isExpanded ? "expand-less" : "expand-more"}
+          size={23}
+          color="#166534"
+        />
+      </Pressable>
 
-      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-        <SubscriptionButton
-          icon="calendar-month"
-          label="Calendar app"
-          onPress={() => {
-            if (feedUrl) return Linking.openURL(webcalUrl);
-          }}
-        />
-        <SubscriptionButton
-          icon={copied ? "check" : "content-copy"}
-          label={
-            copied
-              ? "Link copied"
-              : Platform.OS === "web"
-                ? "Copy link"
-                : "Share link"
-          }
-          onPress={copyOrShareFeed}
-        />
-        <SubscriptionButton
-          icon="download"
-          label="Download .ics"
-          onPress={() => {
-            if (feedUrl) return Linking.openURL(downloadUrl);
-          }}
-        />
-      </View>
+      {isExpanded ? (
+        <>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+            <SubscriptionButton
+              icon="calendar-month"
+              label="Calendar app"
+              onPress={() => {
+                if (feedUrl) return Linking.openURL(webcalUrl);
+              }}
+            />
+            <SubscriptionButton
+              icon={copied ? "check" : "content-copy"}
+              label={
+                copied
+                  ? "Link copied"
+                  : Platform.OS === "web"
+                    ? "Copy link"
+                    : "Share link"
+              }
+              onPress={copyOrShareFeed}
+            />
+            <SubscriptionButton
+              icon="download"
+              label="Download .ics"
+              onPress={() => {
+                if (feedUrl) return Linking.openURL(downloadUrl);
+              }}
+            />
+          </View>
 
-      <Text selectable style={{ fontSize: 11, color: "#4d7c0f" }}>
-        {subscriptionError ||
-          (!feedUrl
-            ? "Preparing your private group subscription link…"
-            : "Google Calendar: copy the link, then use Other calendars → From URL on the Google Calendar website.")}
-      </Text>
+          <Text selectable style={{ fontSize: 11, color: "#4d7c0f" }}>
+            {subscriptionError ||
+              (!feedUrl
+                ? "Preparing your private group subscription link…"
+                : "Google Calendar: copy the link, then use Other calendars → From URL on the Google Calendar website.")}
+          </Text>
+        </>
+      ) : null}
     </View>
   );
 }

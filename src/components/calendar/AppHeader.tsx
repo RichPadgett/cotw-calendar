@@ -30,6 +30,7 @@ type Props = {
   gregorianLabel: string;
   groupLabel: string;
   userRole?: "member" | "admin";
+  showIdentity?: boolean;
   yearTransition?: {
     direction: "previous" | "next";
     id: number;
@@ -52,6 +53,7 @@ export default function AppHeader({
   gregorianLabel,
   groupLabel,
   userRole = "member",
+  showIdentity = true,
   yearTransition,
   onChangeGroup,
   onPressToday,
@@ -65,7 +67,7 @@ export default function AppHeader({
   const yearTransitionProgress = useRef(new Animated.Value(0)).current;
   const [isMobileHeaderExpanded, setIsMobileHeaderExpanded] = useState(false);
   const [isDesktopHeaderCollapsed, setIsDesktopHeaderCollapsed] =
-    useState(false);
+    useState(true);
   const isCompactHeader = width < 680;
   const isCompactCalendarMode = isCompactHeader && !isMobileHeaderExpanded;
   const isDesktopCollapsedMode = !isCompactHeader && isDesktopHeaderCollapsed;
@@ -261,7 +263,7 @@ export default function AppHeader({
               </Pressable>
             ) : null}
 
-            {isHeaderCollapsed || !isCompactHeader ? (
+            {showIdentity && (isHeaderCollapsed || !isCompactHeader) ? (
               <Pressable
                 onPress={onChangeGroup}
                 accessibilityRole="button"
@@ -381,71 +383,73 @@ export default function AppHeader({
             {gregorianLabel}
           </Text>
 
-          <View
-            style={{
-              marginTop: 10,
-              flexDirection: "row",
-              flexWrap: "wrap",
-              alignItems: "center",
-              gap: 8,
-            }}
-          >
-            <Text
+          {showIdentity ? (
+            <View
               style={{
-                paddingHorizontal: 10,
-                paddingVertical: 6,
-                borderRadius: 999,
-                backgroundColor: "#eef2ff",
-                borderWidth: 1,
-                borderColor: "#c7d2fe",
-                fontSize: 12,
-                fontWeight: "900",
-                color: "#312e81",
+                marginTop: 10,
+                flexDirection: "row",
+                flexWrap: "wrap",
+                alignItems: "center",
+                gap: 8,
               }}
             >
-              {groupLabel}
-            </Text>
-
-            <Text
-              style={{
-                paddingHorizontal: 10,
-                paddingVertical: 6,
-                borderRadius: 999,
-                backgroundColor: userRole === "admin" ? "#ecfdf5" : "#f8fafc",
-                borderWidth: 1,
-                borderColor: userRole === "admin" ? "#bbf7d0" : "#e2e8f0",
-                fontSize: 12,
-                fontWeight: "900",
-                color: userRole === "admin" ? "#166534" : "#475569",
-                textTransform: "capitalize",
-              }}
-            >
-              {userRole}
-            </Text>
-
-            {isCompactHeader ? (
-              <Pressable
-                onPress={onChangeGroup}
-                accessibilityRole="button"
-                accessibilityLabel="Change calendar group"
-                style={({ pressed }) => [
-                  {
-                    width: 34,
-                    height: 34,
-                    borderRadius: 17,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor: "#f8fafc",
-                    borderWidth: 1,
-                    borderColor: "#e2e8f0",
-                  },
-                  pressed && { opacity: 0.78 },
-                ]}
+              <Text
+                style={{
+                  paddingHorizontal: 10,
+                  paddingVertical: 6,
+                  borderRadius: 999,
+                  backgroundColor: "#eef2ff",
+                  borderWidth: 1,
+                  borderColor: "#c7d2fe",
+                  fontSize: 12,
+                  fontWeight: "900",
+                  color: "#312e81",
+                }}
               >
-                <MaterialIcons name="logout" size={20} color="#64748b" />
-              </Pressable>
-            ) : null}
-          </View>
+                {groupLabel}
+              </Text>
+
+              <Text
+                style={{
+                  paddingHorizontal: 10,
+                  paddingVertical: 6,
+                  borderRadius: 999,
+                  backgroundColor: userRole === "admin" ? "#ecfdf5" : "#f8fafc",
+                  borderWidth: 1,
+                  borderColor: userRole === "admin" ? "#bbf7d0" : "#e2e8f0",
+                  fontSize: 12,
+                  fontWeight: "900",
+                  color: userRole === "admin" ? "#166534" : "#475569",
+                  textTransform: "capitalize",
+                }}
+              >
+                {userRole}
+              </Text>
+
+              {isCompactHeader ? (
+                <Pressable
+                  onPress={onChangeGroup}
+                  accessibilityRole="button"
+                  accessibilityLabel="Change calendar group"
+                  style={({ pressed }) => [
+                    {
+                      width: 34,
+                      height: 34,
+                      borderRadius: 17,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: "#f8fafc",
+                      borderWidth: 1,
+                      borderColor: "#e2e8f0",
+                    },
+                    pressed && { opacity: 0.78 },
+                  ]}
+                >
+                  <MaterialIcons name="logout" size={20} color="#64748b" />
+                </Pressable>
+              ) : null}
+            </View>
+          ) : null}
         </>
       ) : null}
 

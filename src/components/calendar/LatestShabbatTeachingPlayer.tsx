@@ -41,6 +41,7 @@ type Props = {
   collapseRequestId?: number;
   overrideTeaching?: LatestShabbatTeachingItem | null;
   onDismissOverride?: () => void;
+  initiallyCollapsed?: boolean;
 };
 
 function getSpotifyEmbedUrl(url: string): string | null {
@@ -59,12 +60,13 @@ export default function LatestShabbatTeachingPlayer({
   collapseRequestId = 0,
   overrideTeaching = null,
   onDismissOverride,
+  initiallyCollapsed = true,
 }: Props) {
   const { width } = useWindowDimensions();
   const [latestTeaching, setLatestTeaching] =
     useState<LatestShabbatTeaching | null>(null);
   const [selectedTeachingIndex, setSelectedTeachingIndex] = useState(0);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(initiallyCollapsed);
   const [isFullWidth, setIsFullWidth] = useState(false);
   const isWidePlayer = width >= 820;
   const useTallPlayer = isWidePlayer || isFullWidth;
@@ -396,69 +398,14 @@ export default function LatestShabbatTeachingPlayer({
         </View>
       </Pressable>
 
-      <Pressable
-        onPress={() => Linking.openURL("https://enochscalendar.com/library")}
-        accessibilityRole="link"
-        accessibilityLabel="Open the StudyBox teaching library"
-        style={({ pressed }) => ({
-          marginHorizontal: 10,
-          marginTop: 10,
-          marginBottom: 10,
-          paddingHorizontal: 12,
-          paddingVertical: 11,
-          borderRadius: 12,
-          borderWidth: 1,
-          borderColor: "#365314",
-          backgroundColor: pressed ? "#1f351d" : "#17251b",
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 11,
-          opacity: pressed ? 0.82 : 1,
-        })}
-      >
-        <View
-          style={{
-            width: 38,
-            height: 38,
-            borderRadius: 10,
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "#25452b",
-          }}
-        >
-          <MaterialIcons name="menu-book" size={23} color="#86efac" />
-        </View>
-
-        <View style={{ flex: 1 }}>
-          <Text
-            style={{
-              fontSize: 13,
-              fontWeight: "900",
-              color: "#f0fdf4",
-            }}
-          >
-            StudyBox Teaching Library
-          </Text>
-          <Text
-            style={{
-              marginTop: 2,
-              fontSize: 10,
-              fontWeight: "700",
-              color: "#a7f3d0",
-            }}
-          >
-            Browse recordings, transcripts, and study archives
-          </Text>
-        </View>
-
-        <MaterialIcons name="arrow-forward-ios" size={16} color="#86efac" />
-      </Pressable>
-
       <Animated.View
         style={{
           maxHeight: collapseAnim.interpolate({
             inputRange: [0, 1],
-            outputRange: [0, latestTeachingEmbed ? (useTallPlayer ? 360 : 160) : 90],
+            outputRange: [
+              0,
+              latestTeachingEmbed ? (useTallPlayer ? 360 : 160) : 90,
+            ],
           }),
           opacity: collapseAnim,
           overflow: "hidden",
@@ -494,7 +441,6 @@ export default function LatestShabbatTeachingPlayer({
           </Pressable>
         )}
       </Animated.View>
-
     </View>
   );
 }
