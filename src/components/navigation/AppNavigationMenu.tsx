@@ -52,7 +52,7 @@ export default function AppNavigationMenu(props: Props) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const isDesktop = width >= 900;
-  const isMenuExpanded = isExpanded || Boolean(props.latestTeachingPlayer);
+  const isMenuExpanded = isExpanded;
   const tabs = TAB_DEFINITIONS.filter(
     (tab) =>
       (tab.id !== "timeline" || props.isTimelineVisible) &&
@@ -107,7 +107,10 @@ export default function AppNavigationMenu(props: Props) {
       {props.latestTeachingPlayer ? (
         <View
           accessibilityLabel="Menu teaching player"
-          style={{ width: "100%" }}
+          style={{
+            width: "100%",
+            display: isDesktop && !isExpanded ? "none" : "flex",
+          }}
         >
           {props.latestTeachingPlayer}
         </View>
