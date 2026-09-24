@@ -452,7 +452,8 @@ export default function HomeScreen() {
         savedCalendarViewMode === "month" ||
         savedCalendarViewMode === "year" ||
         savedCalendarViewMode === "day" ||
-        savedCalendarViewMode === "wheel"
+        savedCalendarViewMode === "wheel" ||
+        savedCalendarViewMode === "strip"
       ) {
         setCalendarViewMode(savedCalendarViewMode);
       }

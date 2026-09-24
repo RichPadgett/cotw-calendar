@@ -16,6 +16,7 @@ import {
   View,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import ScrollIcon from "../../../assets/enoch/icons/scroll.png";
 import { CalendarNode } from "../../models/calendar";
 import type { PerpetualMarker } from "../../types/perpetualMarkers";
@@ -38,6 +39,7 @@ const DESKTOP_MIN_SIZE = 520;
 const DESKTOP_MAX_SIZE = 680;
 const WHEEL_ZOOM_STEPS = [0.85, 1, 1.15, 1.3, 1.5];
 const DEFAULT_WHEEL_ZOOM_INDEX = 1;
+const WHEEL_ZOOM_STORAGE_KEY = "calendarWheelZoomIndex";
 const CENTER_BADGE_SIZE = 104;
 const TODAY_TICK_LENGTH = 18;
 const DAY_SHADE_HEIGHT = 1;
@@ -488,12 +490,45 @@ export default function YearWheelView({
   const [wheelZoomIndex, setWheelZoomIndex] = useState(
     DEFAULT_WHEEL_ZOOM_INDEX
   );
+  const [hasLoadedWheelZoom, setHasLoadedWheelZoom] = useState(false);
   const interactionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null
   );
   const wheelTouchStartRef = useRef<{ x: number; y: number } | null>(null);
   const months = Array.from({ length: 12 }, (_, index) => index + 1);
   const activeTodayDateId = todayDateId ?? getAppDateId();
+
+  useEffect(() => {
+    let isMounted = true;
+
+    AsyncStorage.getItem(WHEEL_ZOOM_STORAGE_KEY)
+      .then((savedZoomIndex) => {
+        const parsedZoomIndex = Number(savedZoomIndex);
+
+        if (
+          isMounted &&
+          savedZoomIndex !== null &&
+          Number.isInteger(parsedZoomIndex) &&
+          parsedZoomIndex >= 0 &&
+          parsedZoomIndex < WHEEL_ZOOM_STEPS.length
+        ) {
+          setWheelZoomIndex(parsedZoomIndex);
+        }
+      })
+      .finally(() => {
+        if (isMounted) setHasLoadedWheelZoom(true);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!hasLoadedWheelZoom) return;
+
+    void AsyncStorage.setItem(WHEEL_ZOOM_STORAGE_KEY, String(wheelZoomIndex));
+  }, [hasLoadedWheelZoom, wheelZoomIndex]);
 
   const todayNode = nodes.find((node) => {
     return node.gregorianDate === activeTodayDateId;

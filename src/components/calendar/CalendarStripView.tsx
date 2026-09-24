@@ -13,6 +13,7 @@ import {
   View,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import ScrollIcon from "../../../assets/enoch/icons/scroll.png";
 import type { CalendarNode, EnochDayEvent } from "../../models/calendar";
@@ -44,6 +45,7 @@ const ZOOM_LEVELS = [
 ] as const;
 
 const DEFAULT_ZOOM_INDEX = 2;
+const STRIP_ZOOM_STORAGE_KEY = "calendarStripZoomIndex";
 const STRIP_HEIGHT = 430;
 
 function eventColor(event: EnochDayEvent) {
@@ -101,6 +103,7 @@ export default function CalendarStripView({
   const { width: viewportWidth } = useWindowDimensions();
   const scrollRef = useRef<ScrollView>(null);
   const [zoomIndex, setZoomIndex] = useState(DEFAULT_ZOOM_INDEX);
+  const [hasLoadedStripZoom, setHasLoadedStripZoom] = useState(false);
   const initialIndex = Math.max(
     0,
     nodes.findIndex((node) => node.gregorianDate === todayDateId)
@@ -119,6 +122,38 @@ export default function CalendarStripView({
 
     return result;
   }, [notices]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    AsyncStorage.getItem(STRIP_ZOOM_STORAGE_KEY)
+      .then((savedZoomIndex) => {
+        const parsedZoomIndex = Number(savedZoomIndex);
+
+        if (
+          isMounted &&
+          savedZoomIndex !== null &&
+          Number.isInteger(parsedZoomIndex) &&
+          parsedZoomIndex >= 0 &&
+          parsedZoomIndex < ZOOM_LEVELS.length
+        ) {
+          setZoomIndex(parsedZoomIndex);
+        }
+      })
+      .finally(() => {
+        if (isMounted) setHasLoadedStripZoom(true);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!hasLoadedStripZoom) return;
+
+    void AsyncStorage.setItem(STRIP_ZOOM_STORAGE_KEY, String(zoomIndex));
+  }, [hasLoadedStripZoom, zoomIndex]);
 
   function scrollToIndex(index: number, animated: boolean) {
     const safeIndex = Math.max(0, Math.min(nodes.length - 1, index));
