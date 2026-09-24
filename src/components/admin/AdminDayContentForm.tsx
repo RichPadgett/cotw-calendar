@@ -79,10 +79,6 @@ const emptyMediaRow: ContentRow = {
   calendarLocation: "",
 };
 
-function getEditableRows<T>(rows: T[], emptyRow: T): T[] {
-  return rows.length > 0 ? rows : [emptyRow];
-}
-
 function getContentType(type?: string): ContentRow["type"] {
   const allowedTypes: ContentRow["type"][] = [
     "external-link",
@@ -225,6 +221,7 @@ export default function AdminDayContentForm({
   adminToken,
   currentContent,
 }: Props) {
+  const [eventTitle, setEventTitle] = useState("");
   const [notes, setNotes] = useState("");
   const [includeDayInCalendarFeed, setIncludeDayInCalendarFeed] =
     useState(false);
@@ -232,15 +229,16 @@ export default function AdminDayContentForm({
   const [calendarEndTime, setCalendarEndTime] = useState("");
   const [calendarLocation, setCalendarLocation] = useState("");
 
-  const [scriptureReadings, setScriptureReadings] = useState<ScriptureRow[]>([
-    emptyScriptureRow,
-  ]);
+  const [scriptureReadings, setScriptureReadings] = useState<ScriptureRow[]>(
+    []
+  );
 
-  const [noticeItems, setNoticeItems] = useState<ContentRow[]>([
-    emptyNoticeRow,
-  ]);
+  const [noticeItems, setNoticeItems] = useState<ContentRow[]>([]);
 
-  const [mediaItems, setMediaItems] = useState<ContentRow[]>([emptyMediaRow]);
+  const [mediaItems, setMediaItems] = useState<ContentRow[]>([]);
+  const [expandedSection, setExpandedSection] = useState<
+    "scripture" | "notices" | "media" | null
+  >(null);
 
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
@@ -266,23 +264,22 @@ export default function AdminDayContentForm({
       .flatMap((section) => section.items ?? [])
       .map(getContentRow);
 
+    setEventTitle(currentContent?.title ?? `Month ${month} Day ${day}`);
     setNotes(currentContent?.notes ?? "");
     setIncludeDayInCalendarFeed(currentContent?.includeInCalendarFeed === true);
     setCalendarStartTime(currentContent?.calendarStartTime ?? "");
     setCalendarEndTime(currentContent?.calendarEndTime ?? "");
     setCalendarLocation(currentContent?.calendarLocation ?? "");
     setScriptureReadings(
-      getEditableRows(
-        (currentContent?.scriptureReadings ?? []).map((reading) => ({
-          label: reading.label ?? "",
-          reference: reading.reference ?? "",
-          url: reading.url ?? "",
-        })),
-        emptyScriptureRow
-      )
+      (currentContent?.scriptureReadings ?? []).map((reading) => ({
+        label: reading.label ?? "",
+        reference: reading.reference ?? "",
+        url: reading.url ?? "",
+      }))
     );
-    setNoticeItems(getEditableRows(notices, emptyNoticeRow));
-    setMediaItems(getEditableRows(media, emptyMediaRow));
+    setNoticeItems(notices);
+    setMediaItems(media);
+    setExpandedSection(null);
     setSaveMessage("");
     setUploadMessage("");
   }, [currentContent, day, enochYear, month]);
@@ -351,6 +348,10 @@ export default function AdminDayContentForm({
         details: "",
         url: data.url ?? "",
         access: "public",
+        includeInCalendarFeed: false,
+        calendarStartTime: "",
+        calendarEndTime: "",
+        calendarLocation: "",
       };
 
       if (!uploadedRow.url) {
@@ -370,7 +371,7 @@ export default function AdminDayContentForm({
 
         return next;
       });
-      setUploadMessage("File uploaded. Use Open File to preview it.");
+      setUploadMessage("File uploaded and saved. Use Open File to preview it.");
     } catch (error) {
       console.log("Upload failed", error);
       setUploadMessage(
@@ -481,7 +482,7 @@ export default function AdminDayContentForm({
         enochYear,
         month,
         day,
-        title: currentContent?.title ?? `Month ${month} Day ${day}`,
+        title: eventTitle.trim() || `Month ${month} Day ${day}`,
         notes,
         includeInCalendarFeed: includeDayInCalendarFeed,
         ...(calendarStartTime.trim()
@@ -607,17 +608,24 @@ export default function AdminDayContentForm({
       </Text>
 
       <View style={styles.formStack}>
-        {/* Notes */}
+        {/* Event details */}
         <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>Notes</Text>
+          <Text style={styles.sectionTitle}>Event details</Text>
           <Text style={styles.sectionHelp}>
-            General notes for this calendar day.
+            The main information people need for this calendar day.
           </Text>
+
+          <TextInput
+            value={eventTitle}
+            onChangeText={setEventTitle}
+            placeholder="Event title"
+            style={styles.input}
+          />
 
           <TextInput
             value={notes}
             onChangeText={setNotes}
-            placeholder="Add notes for this day..."
+            placeholder="Description and important details"
             multiline
             style={[styles.input, styles.textArea]}
           />
@@ -665,217 +673,269 @@ export default function AdminDayContentForm({
 
         {/* Scripture */}
         <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>Scripture Readings</Text>
-          <Text style={styles.sectionHelp}>
-            Add passages, readings, or external scripture links.
-          </Text>
+          <SectionToggle
+            title="Scripture readings"
+            count={scriptureReadings.length}
+            expanded={expandedSection === "scripture"}
+            onPress={() =>
+              setExpandedSection((current) =>
+                current === "scripture" ? null : "scripture"
+              )
+            }
+          />
 
-          {scriptureReadings.map((row, index) => (
-            <View key={`scripture-${index}`} style={styles.rowCard}>
-              <TextInput
-                value={row.label}
-                onChangeText={(value) =>
-                  updateScriptureRow(index, "label", value)
-                }
-                placeholder="Label, e.g. Creation Week"
-                style={styles.input}
-              />
+          {expandedSection === "scripture" ? (
+            <>
+              <Text style={styles.sectionHelp}>
+                Add passages or external scripture links.
+              </Text>
+              {scriptureReadings.map((row, index) => (
+                <View key={`scripture-${index}`} style={styles.rowCard}>
+                  <TextInput
+                    value={row.label}
+                    onChangeText={(value) =>
+                      updateScriptureRow(index, "label", value)
+                    }
+                    placeholder="Label, e.g. Creation Week"
+                    style={styles.input}
+                  />
 
-              <TextInput
-                value={row.reference}
-                onChangeText={(value) =>
-                  updateScriptureRow(index, "reference", value)
-                }
-                placeholder="Reference, e.g. Genesis 1"
-                style={styles.input}
-              />
+                  <TextInput
+                    value={row.reference}
+                    onChangeText={(value) =>
+                      updateScriptureRow(index, "reference", value)
+                    }
+                    placeholder="Reference, e.g. Genesis 1"
+                    style={styles.input}
+                  />
 
-              <TextInput
-                value={row.url}
-                onChangeText={(value) =>
-                  updateScriptureRow(index, "url", value)
-                }
-                placeholder="Optional URL"
-                style={styles.input}
-              />
+                  <TextInput
+                    value={row.url}
+                    onChangeText={(value) =>
+                      updateScriptureRow(index, "url", value)
+                    }
+                    placeholder="Optional URL"
+                    style={styles.input}
+                  />
+
+                  <Pressable
+                    onPress={() =>
+                      setScriptureReadings((rows) =>
+                        rows.filter((_, rowIndex) => rowIndex !== index)
+                      )
+                    }
+                  >
+                    <Text style={styles.removeText}>Remove Scripture</Text>
+                  </Pressable>
+                </View>
+              ))}
 
               <Pressable
                 onPress={() =>
-                  setScriptureReadings((rows) =>
-                    rows.filter((_, rowIndex) => rowIndex !== index)
-                  )
+                  setScriptureReadings((rows) => [...rows, emptyScriptureRow])
                 }
               >
-                <Text style={styles.removeText}>Remove Scripture</Text>
+                <Text style={styles.addLinkText}>+ Add Scripture</Text>
               </Pressable>
-            </View>
-          ))}
-
-          <Pressable
-            onPress={() =>
-              setScriptureReadings((rows) => [...rows, emptyScriptureRow])
-            }
-          >
-            <Text style={styles.addLinkText}>+ Add Scripture</Text>
-          </Pressable>
+            </>
+          ) : null}
         </View>
 
         {/* Notices */}
         <View style={[styles.sectionCard, styles.noticeSectionCard]}>
-          <Text style={styles.sectionTitle}>Notices</Text>
-          <Text style={styles.sectionHelp}>
-            Temporary announcements, hosting notes, reminders, or private
-            logistics.
-          </Text>
+          <SectionToggle
+            title="Notices and gatherings"
+            count={noticeItems.length}
+            expanded={expandedSection === "notices"}
+            onPress={() =>
+              setExpandedSection((current) =>
+                current === "notices" ? null : "notices"
+              )
+            }
+          />
 
-          {noticeItems.map((row, index) => (
-            <View key={`notice-${index}`} style={styles.noticeRowCard}>
-              <TextInput
-                value={row.label}
-                onChangeText={(value) => updateNoticeRow(index, "label", value)}
-                placeholder="Notice title"
-                style={styles.input}
-              />
+          {expandedSection === "notices" ? (
+            <>
+              <Text style={styles.sectionHelp}>
+                Hosting information, reminders, locations, or private logistics.
+              </Text>
+              {noticeItems.map((row, index) => (
+                <View key={`notice-${index}`} style={styles.noticeRowCard}>
+                  <TextInput
+                    value={row.label}
+                    onChangeText={(value) =>
+                      updateNoticeRow(index, "label", value)
+                    }
+                    placeholder="Notice title"
+                    style={styles.input}
+                  />
 
-              <TextInput
-                value={row.details}
-                onChangeText={(value) =>
-                  updateNoticeRow(index, "details", value)
-                }
-                placeholder="Notice details"
-                multiline
-                style={[styles.input, styles.textArea]}
-              />
+                  <TextInput
+                    value={row.details}
+                    onChangeText={(value) =>
+                      updateNoticeRow(index, "details", value)
+                    }
+                    placeholder="Notice details"
+                    multiline
+                    style={[styles.input, styles.textArea]}
+                  />
 
-              <TextInput
-                value={row.url}
-                onChangeText={(value) => updateNoticeRow(index, "url", value)}
-                placeholder="Optional link URL"
-                autoCapitalize="none"
-                style={styles.input}
-              />
+                  <TextInput
+                    value={row.url}
+                    onChangeText={(value) =>
+                      updateNoticeRow(index, "url", value)
+                    }
+                    placeholder="Optional link URL"
+                    autoCapitalize="none"
+                    style={styles.input}
+                  />
 
-              <CalendarItemSettings
-                row={row}
-                onChange={(field, value) =>
-                  updateNoticeRow(index, field, value)
-                }
-              />
+                  <CalendarItemSettings
+                    row={row}
+                    onChange={(field, value) =>
+                      updateNoticeRow(index, field, value)
+                    }
+                  />
 
-              {isOpenableUrl(row.url) ? (
-                <Pressable
-                  onPress={() => Linking.openURL(getOpenUrl(row.url))}
-                  style={styles.linkActionButton}
-                >
-                  <Text style={styles.openLinkText}>Open Notice Link</Text>
-                </Pressable>
-              ) : null}
+                  {isOpenableUrl(row.url) ? (
+                    <Pressable
+                      onPress={() => Linking.openURL(getOpenUrl(row.url))}
+                      style={styles.linkActionButton}
+                    >
+                      <Text style={styles.openLinkText}>Open Notice Link</Text>
+                    </Pressable>
+                  ) : null}
+
+                  <Pressable
+                    onPress={() =>
+                      setNoticeItems((rows) =>
+                        rows.filter((_, rowIndex) => rowIndex !== index)
+                      )
+                    }
+                  >
+                    <Text style={styles.removeText}>Remove Notice</Text>
+                  </Pressable>
+                </View>
+              ))}
 
               <Pressable
                 onPress={() =>
-                  setNoticeItems((rows) =>
-                    rows.filter((_, rowIndex) => rowIndex !== index)
-                  )
+                  setNoticeItems((rows) => [...rows, emptyNoticeRow])
                 }
               >
-                <Text style={styles.removeText}>Remove Notice</Text>
+                <Text style={styles.addLinkText}>+ Add Notice</Text>
               </Pressable>
-            </View>
-          ))}
-
-          <Pressable
-            onPress={() => setNoticeItems((rows) => [...rows, emptyNoticeRow])}
-          >
-            <Text style={styles.addLinkText}>+ Add Notice</Text>
-          </Pressable>
+            </>
+          ) : null}
         </View>
 
         {/* Files / Links / Media */}
         <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>Files / Links / Media</Text>
-          <Text style={styles.sectionHelp}>
-            Add PDFs, images, videos, uploaded files, or outside study links.
-          </Text>
+          <SectionToggle
+            title="Files, links, and media"
+            count={mediaItems.length}
+            expanded={expandedSection === "media"}
+            onPress={() =>
+              setExpandedSection((current) =>
+                current === "media" ? null : "media"
+              )
+            }
+          />
 
-          {mediaItems.map((row, index) => (
-            <View key={`media-${index}`} style={styles.rowCard}>
-              <TextInput
-                value={row.label}
-                onChangeText={(value) => updateMediaRow(index, "label", value)}
-                placeholder="Label"
-                style={styles.input}
-              />
+          {expandedSection === "media" ? (
+            <>
+              <Text style={styles.sectionHelp}>
+                Attach PDFs, videos, Spotify episodes, or outside study links.
+              </Text>
+              {mediaItems.map((row, index) => (
+                <View key={`media-${index}`} style={styles.rowCard}>
+                  <TextInput
+                    value={row.label}
+                    onChangeText={(value) =>
+                      updateMediaRow(index, "label", value)
+                    }
+                    placeholder="Label"
+                    style={styles.input}
+                  />
 
-              <TextInput
-                value={row.url}
-                onChangeText={(value) => updateMediaRow(index, "url", value)}
-                placeholder="URL or uploaded file path"
-                style={styles.input}
-              />
+                  <TextInput
+                    value={row.url}
+                    onChangeText={(value) =>
+                      updateMediaRow(index, "url", value)
+                    }
+                    placeholder="URL or uploaded file path"
+                    style={styles.input}
+                  />
 
-              <CalendarItemSettings
-                row={row}
-                onChange={(field, value) => updateMediaRow(index, field, value)}
-              />
+                  <CalendarItemSettings
+                    row={row}
+                    onChange={(field, value) =>
+                      updateMediaRow(index, field, value)
+                    }
+                  />
 
-              {isOpenableUrl(row.url) ? (
-                <Pressable
-                  onPress={() => Linking.openURL(getOpenUrl(row.url))}
-                  style={styles.linkActionButton}
-                >
-                  <Text style={styles.openLinkText}>
-                    {row.type === "pdf" ? "Open File" : "Open Link"}
-                  </Text>
+                  {isOpenableUrl(row.url) ? (
+                    <Pressable
+                      onPress={() => Linking.openURL(getOpenUrl(row.url))}
+                      style={styles.linkActionButton}
+                    >
+                      <Text style={styles.openLinkText}>
+                        {row.type === "pdf" ? "Open File" : "Open Link"}
+                      </Text>
+                    </Pressable>
+                  ) : null}
+
+                  {isSpotifyEpisodeUrl(row.url) ? (
+                    <Pressable
+                      onPress={() => fetchSpotifyDetails(index, row.url)}
+                      disabled={spotifyFetchIndex !== null}
+                      style={[
+                        styles.spotifyFetchButton,
+                        spotifyFetchIndex !== null && styles.disabledButton,
+                      ]}
+                    >
+                      <Text style={styles.spotifyFetchText}>
+                        {spotifyFetchIndex === index
+                          ? "Fetching..."
+                          : "Fetch Notes + Scripture from Spotify"}
+                      </Text>
+                    </Pressable>
+                  ) : null}
+
+                  <Pressable
+                    onPress={() =>
+                      setMediaItems((rows) =>
+                        rows.filter((_, rowIndex) => rowIndex !== index)
+                      )
+                    }
+                  >
+                    <Text style={styles.removeText}>Remove Media</Text>
+                  </Pressable>
+                </View>
+              ))}
+
+              <View style={styles.mediaActionRow}>
+                <Pressable onPress={uploadFile} style={styles.secondaryButton}>
+                  <Text style={styles.uploadText}>Upload File</Text>
                 </Pressable>
+
+                <Pressable
+                  onPress={() =>
+                    setMediaItems((rows) => [...rows, emptyMediaRow])
+                  }
+                >
+                  <Text style={styles.addLinkText}>+ Add Media</Text>
+                </Pressable>
+              </View>
+
+              {uploadMessage ? (
+                <Text style={styles.uploadMessage}>{uploadMessage}</Text>
               ) : null}
 
-              {isSpotifyEpisodeUrl(row.url) ? (
-                <Pressable
-                  onPress={() => fetchSpotifyDetails(index, row.url)}
-                  disabled={spotifyFetchIndex !== null}
-                  style={[
-                    styles.spotifyFetchButton,
-                    spotifyFetchIndex !== null && styles.disabledButton,
-                  ]}
-                >
-                  <Text style={styles.spotifyFetchText}>
-                    {spotifyFetchIndex === index
-                      ? "Fetching..."
-                      : "Fetch Notes + Scripture from Spotify"}
-                  </Text>
-                </Pressable>
+              {spotifyFetchMessage ? (
+                <Text style={styles.uploadMessage}>{spotifyFetchMessage}</Text>
               ) : null}
-
-              <Pressable
-                onPress={() =>
-                  setMediaItems((rows) =>
-                    rows.filter((_, rowIndex) => rowIndex !== index)
-                  )
-                }
-              >
-                <Text style={styles.removeText}>Remove Media</Text>
-              </Pressable>
-            </View>
-          ))}
-
-          <View style={styles.mediaActionRow}>
-            <Pressable onPress={uploadFile} style={styles.secondaryButton}>
-              <Text style={styles.uploadText}>Upload File</Text>
-            </Pressable>
-
-            <Pressable
-              onPress={() => setMediaItems((rows) => [...rows, emptyMediaRow])}
-            >
-              <Text style={styles.addLinkText}>+ Add Media</Text>
-            </Pressable>
-          </View>
-
-          {uploadMessage ? (
-            <Text style={styles.uploadMessage}>{uploadMessage}</Text>
-          ) : null}
-
-          {spotifyFetchMessage ? (
-            <Text style={styles.uploadMessage}>{spotifyFetchMessage}</Text>
+            </>
           ) : null}
         </View>
 
@@ -899,6 +959,35 @@ export default function AdminDayContentForm({
   );
 }
 
+function SectionToggle({
+  title,
+  count,
+  expanded,
+  onPress,
+}: {
+  title: string;
+  count: number;
+  expanded: boolean;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityState={{ expanded }}
+      onPress={onPress}
+      style={styles.sectionToggle}
+    >
+      <View style={{ flex: 1 }}>
+        <Text style={styles.sectionTitle}>{title}</Text>
+        <Text style={styles.sectionSummary}>
+          {count === 0 ? "None added" : `${count} added`}
+        </Text>
+      </View>
+      <Text style={styles.sectionChevron}>{expanded ? "−" : "+"}</Text>
+    </Pressable>
+  );
+}
+
 function CalendarItemSettings({
   row,
   onChange,
@@ -909,65 +998,92 @@ function CalendarItemSettings({
     value: ContentRow[keyof ContentRow]
   ) => void;
 }) {
+  const [expanded, setExpanded] = useState(false);
+
   return (
-    <View style={styles.calendarSettings}>
-      <View style={styles.accessRow}>
-        {(
-          [
-            ["public", "Public"],
-            ["members", "Church members"],
-            ["code-required", "Code required"],
-          ] as const
-        ).map(([value, label]) => (
-          <Pressable
-            key={value}
-            onPress={() => onChange("access", value)}
-            style={[
-              styles.accessOption,
-              row.access === value && styles.accessOptionSelected,
-            ]}
-          >
-            <Text
-              style={[
-                styles.accessOptionText,
-                row.access === value && styles.accessOptionTextSelected,
-              ]}
-            >
-              {label}
+    <View style={styles.itemPublishingContainer}>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityState={{ expanded }}
+        onPress={() => setExpanded((current) => !current)}
+        style={styles.itemPublishingToggle}
+      >
+        <View style={{ flex: 1 }}>
+          <Text style={styles.calendarLabel}>Visibility and calendar</Text>
+          <Text style={styles.sectionSummary}>
+            {row.access === "members"
+              ? "Church members"
+              : row.access === "code-required"
+                ? "Code required"
+                : "Public"}
+            {row.includeInCalendarFeed ? " • Calendar on" : " • Calendar off"}
+          </Text>
+        </View>
+        <Text style={styles.sectionChevron}>{expanded ? "−" : "+"}</Text>
+      </Pressable>
+      {expanded ? (
+        <View style={styles.calendarSettings}>
+          <View style={styles.accessRow}>
+            {(
+              [
+                ["public", "Public"],
+                ["members", "Church members"],
+                ["code-required", "Code required"],
+              ] as const
+            ).map(([value, label]) => (
+              <Pressable
+                key={value}
+                onPress={() => onChange("access", value)}
+                style={[
+                  styles.accessOption,
+                  row.access === value && styles.accessOptionSelected,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.accessOptionText,
+                    row.access === value && styles.accessOptionTextSelected,
+                  ]}
+                >
+                  {label}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+          <View style={styles.switchRow}>
+            <Text style={[styles.calendarLabel, { flex: 1 }]}>
+              Include in calendar feed
             </Text>
-          </Pressable>
-        ))}
-      </View>
-      <View style={styles.switchRow}>
-        <Text style={[styles.calendarLabel, { flex: 1 }]}>
-          Include in calendar feed
-        </Text>
-        <Switch
-          value={row.includeInCalendarFeed}
-          onValueChange={(value) => onChange("includeInCalendarFeed", value)}
-        />
-      </View>
-      {row.includeInCalendarFeed ? (
-        <>
-          <TextInput
-            value={row.calendarStartTime}
-            onChangeText={(value) => onChange("calendarStartTime", value)}
-            placeholder="Start time, e.g. 18:00 (blank = all day)"
-            style={styles.input}
-          />
-          <TextInput
-            value={row.calendarEndTime}
-            onChangeText={(value) => onChange("calendarEndTime", value)}
-            placeholder="End time, e.g. 20:00"
-            style={styles.input}
-          />
-          <TextInput
-            value={row.calendarLocation}
-            onChangeText={(value) => onChange("calendarLocation", value)}
-            placeholder="Location or street address"
-            style={styles.input}
-          />
-        </>
+            <Switch
+              value={row.includeInCalendarFeed}
+              onValueChange={(value) =>
+                onChange("includeInCalendarFeed", value)
+              }
+            />
+          </View>
+          {row.includeInCalendarFeed ? (
+            <>
+              <TextInput
+                value={row.calendarStartTime}
+                onChangeText={(value) => onChange("calendarStartTime", value)}
+                placeholder="Start time, e.g. 18:00 (blank = all day)"
+                style={styles.input}
+              />
+              <TextInput
+                value={row.calendarEndTime}
+                onChangeText={(value) => onChange("calendarEndTime", value)}
+                placeholder="End time, e.g. 20:00"
+                style={styles.input}
+              />
+              <TextInput
+                value={row.calendarLocation}
+                onChangeText={(value) => onChange("calendarLocation", value)}
+                placeholder="Location or street address"
+                style={styles.input}
+              />
+            </>
+          ) : null}
+        </View>
       ) : null}
     </View>
   );
@@ -997,10 +1113,43 @@ const styles = StyleSheet.create({
     borderColor: "#fde68a",
   },
 
+  sectionToggle: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+
+  sectionSummary: {
+    marginTop: 3,
+    color: "#6b7280",
+    fontSize: 12,
+  },
+
+  sectionChevron: {
+    color: "#374151",
+    fontSize: 26,
+    fontWeight: "700",
+  },
+
+  itemPublishingContainer: {
+    borderWidth: 1,
+    borderColor: "#d1fae5",
+    borderRadius: 12,
+    overflow: "hidden",
+  },
+
+  itemPublishingToggle: {
+    padding: 11,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    backgroundColor: "#f0fdf4",
+  },
+
   calendarSettings: {
     gap: 10,
     padding: 12,
-    borderRadius: 12,
+    borderRadius: 0,
     backgroundColor: "#ecfdf5",
     borderWidth: 1,
     borderColor: "#a7f3d0",

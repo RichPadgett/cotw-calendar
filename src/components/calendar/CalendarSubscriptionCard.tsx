@@ -140,7 +140,9 @@ export default function CalendarSubscriptionCard({
         <SubscriptionButton
           icon="calendar-month"
           label="Calendar app"
-          onPress={() => feedUrl && Linking.openURL(webcalUrl)}
+          onPress={() => {
+            if (feedUrl) return Linking.openURL(webcalUrl);
+          }}
         />
         <SubscriptionButton
           icon={copied ? "check" : "content-copy"}
@@ -156,7 +158,9 @@ export default function CalendarSubscriptionCard({
         <SubscriptionButton
           icon="download"
           label="Download .ics"
-          onPress={() => feedUrl && Linking.openURL(downloadUrl)}
+          onPress={() => {
+            if (feedUrl) return Linking.openURL(downloadUrl);
+          }}
         />
       </View>
 

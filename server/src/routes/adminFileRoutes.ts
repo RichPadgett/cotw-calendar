@@ -10,6 +10,12 @@ import fs from "fs";
 import multer from "multer";
 import path from "path";
 import { requireAdminToken } from "../middleware/requireAdminToken";
+import {
+  getCalendarDayContent,
+  saveCalendarDayContent,
+  syncReplicatedCalendarContent,
+} from "../services/calendarContentStore";
+import { attachFileToCalendarContent } from "../services/calendarFileAttachment";
 
 const router = Router();
 
@@ -71,7 +77,9 @@ router.post(
   requireAdminToken,
   upload.single("file"),
   (req, res) => {
-    const { year, month, day } = req.params;
+    const year = getParam(req.params.year);
+    const month = getParam(req.params.month);
+    const day = getParam(req.params.day);
     const groupCode = getGroupCode(req);
 
     if (!req.file) {
@@ -93,6 +101,39 @@ router.post(
 
     const uploadedUrl = `/api/files/groups/${groupCode}/files/${year}/${month}/${day}/${req.file.filename}`;
 
+    try {
+      const currentContent = getCalendarDayContent(
+        groupCode,
+        year,
+        month,
+        day
+      ) ?? {
+        enochYear: Number(year),
+        month: Number(month),
+        day: Number(day),
+        title: `Month ${month} Day ${day}`,
+        sections: [],
+      };
+      const savedContent = saveCalendarDayContent(
+        groupCode,
+        year,
+        month,
+        day,
+        attachFileToCalendarContent(currentContent, {
+          originalName: req.file.originalname,
+          url: uploadedUrl,
+        })
+      );
+      syncReplicatedCalendarContent(groupCode, year, month, day, savedContent);
+    } catch (error) {
+      fs.rmSync(req.file.path, { force: true });
+      console.log("Failed to attach uploaded file to calendar day", error);
+
+      return res.status(500).json({
+        error: "The file could not be attached to the calendar day.",
+      });
+    }
+
     console.log(
       [
         "[UPLOAD]",
@@ -110,6 +151,7 @@ router.post(
     res.json({
       filename: req.file.filename,
       url: uploadedUrl,
+      saved: true,
     });
   }
 );
