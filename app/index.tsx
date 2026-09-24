@@ -252,14 +252,6 @@ export default function HomeScreen() {
     nodes.find((node) => node.gregorianDate === dayViewDateId) ??
     todayNode ??
     nodes.find((node) => node.enoch?.month?.number === currentMonthNumber);
-  const dayViewSummary = dayViewNode
-    ? yearNotices.find(
-        (item) =>
-          item.year === dayViewNode.enoch?.year &&
-          item.month === dayViewNode.enoch?.month?.number &&
-          item.day === dayViewNode.enoch?.day
-      )
-    : undefined;
   const dayViewMarkers = dayViewNode
     ? perpetualMarkers.filter((marker) => {
         const matchesMonthDay =
@@ -330,9 +322,13 @@ export default function HomeScreen() {
   function changeCalendarView(mode: CalendarViewMode) {
     setCalendarViewMode(mode);
 
-    if (mode === "day" && dayViewNode) {
-      setDayViewDateId(dayViewNode.gregorianDate);
-      setActiveMonthNumber(dayViewNode.enoch?.month?.number ?? null);
+    if (mode === "day") {
+      closeDay();
+
+      if (dayViewNode) {
+        setDayViewDateId(dayViewNode.gregorianDate);
+        setActiveMonthNumber(dayViewNode.enoch?.month?.number ?? null);
+      }
     }
 
     requestAnimationFrame(() => {
@@ -1319,9 +1315,6 @@ export default function HomeScreen() {
                   <CalendarDayView
                     node={dayViewNode}
                     markers={dayViewMarkers}
-                    hasNotice={Boolean(dayViewSummary?.notice)}
-                    hasContent={Boolean(dayViewSummary?.hasContent)}
-                    onOpenDetails={openDay}
                   />
                 )}
               </>
@@ -1569,7 +1562,7 @@ export default function HomeScreen() {
         </View>
       </Modal>
 
-      {activeTab === "calendar" && (
+      {activeTab === "calendar" && calendarViewMode !== "day" && (
         <DayDetailModal
           visible={Boolean(selectedNode)}
           selectedNode={selectedNode}

@@ -3,8 +3,7 @@
  * Purpose: Presents one focused calendar day as an agenda-style view.
  */
 
-import { Pressable, Text, View } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
+import { Text, View } from "react-native";
 
 import type { CalendarNode } from "../../models/calendar";
 import type { PerpetualMarker } from "../../types/perpetualMarkers";
@@ -12,18 +11,9 @@ import type { PerpetualMarker } from "../../types/perpetualMarkers";
 type Props = {
   node: CalendarNode;
   markers?: PerpetualMarker[];
-  hasContent?: boolean;
-  hasNotice?: boolean;
-  onOpenDetails: (node: CalendarNode) => void;
 };
 
-export default function CalendarDayView({
-  node,
-  markers = [],
-  hasContent = false,
-  hasNotice = false,
-  onOpenDetails,
-}: Props) {
+export default function CalendarDayView({ node, markers = [] }: Props) {
   const date = new Date(`${node.gregorianDate}T12:00:00`);
   const events = node.enoch?.events ?? [];
 
@@ -105,27 +95,6 @@ export default function CalendarDayView({
           </Text>
         ) : null}
       </View>
-
-      <Pressable
-        onPress={() => onOpenDetails(node)}
-        style={({ pressed }) => ({
-          marginTop: 20,
-          minHeight: 46,
-          paddingHorizontal: 16,
-          borderRadius: 12,
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 7,
-          backgroundColor: "#244f35",
-          opacity: pressed ? 0.8 : 1,
-        })}
-      >
-        <MaterialIcons name="open-in-new" size={18} color="#ffffff" />
-        <Text style={{ fontWeight: "900", color: "#ffffff" }}>
-          {hasContent || hasNotice ? "Open day details" : "Open day"}
-        </Text>
-      </Pressable>
     </View>
   );
 }
