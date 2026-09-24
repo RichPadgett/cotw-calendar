@@ -186,9 +186,21 @@ export default function AppNavigationMenu(props: Props) {
           >
             <MaterialIcons name="menu" size={23} color="#ffffff" />
             {isMenuExpanded ? (
-              <Text style={{ fontWeight: "900", color: "#ffffff" }}>
-                Enoch&apos;s Calendar
-              </Text>
+              <View
+                accessibilityLabel="TCOTW"
+                style={{ flexDirection: "row", alignItems: "baseline", gap: 7 }}
+              >
+                <Text
+                  style={{ fontSize: 21, fontWeight: "900", color: "#f5d76e" }}
+                >
+                  𐤕𐤊𐤅𐤕𐤅
+                </Text>
+                <Text
+                  style={{ fontSize: 12, fontWeight: "900", color: "#ffffff" }}
+                >
+                  TCOTW
+                </Text>
+              </View>
             ) : null}
           </Pressable>
           {menuItems}
@@ -272,11 +284,33 @@ export default function AppNavigationMenu(props: Props) {
                   justifyContent: "space-between",
                 }}
               >
-                <Text
-                  style={{ fontSize: 18, fontWeight: "900", color: "#10231a" }}
+                <View
+                  accessibilityLabel="TCOTW"
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "baseline",
+                    gap: 8,
+                  }}
                 >
-                  Enoch&apos;s Calendar
-                </Text>
+                  <Text
+                    style={{
+                      fontSize: 24,
+                      fontWeight: "900",
+                      color: "#8a641c",
+                    }}
+                  >
+                    𐤕𐤊𐤅𐤕𐤅
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      fontWeight: "900",
+                      color: "#10231a",
+                    }}
+                  >
+                    TCOTW
+                  </Text>
+                </View>
                 <Pressable
                   accessibilityRole="button"
                   accessibilityLabel="Close navigation menu"
