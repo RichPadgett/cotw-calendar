@@ -5,6 +5,7 @@ import path from "node:path";
 import type {
   PublicationChapter,
   PublicationProject,
+  PublicationModelRun,
   PublicationReviewNote,
   PublicationSource,
   PublicationSourceType,
@@ -52,18 +53,21 @@ export function listPublicationProjects() {
       }
     })
     .sort((left, right) => right.updatedAt.localeCompare(left.updatedAt))
-    .map(({ sources, chapters, reviewNotes, ...project }) => ({
+    .map(({ sources, chapters, reviewNotes, modelRuns = [], ...project }) => ({
       ...project,
       sourceCount: sources.length,
       chapterCount: chapters.length,
       openReviewCount: reviewNotes.filter((note) => !note.resolved).length,
+      proposedRunCount: modelRuns.filter((run) => run.status === "proposed").length,
     }));
 }
 
 export function getPublicationProject(projectId: string) {
   const filePath = projectPath(projectId);
   if (!filePath || !fs.existsSync(filePath)) return null;
-  return JSON.parse(fs.readFileSync(filePath, "utf8")) as PublicationProject;
+  const project = JSON.parse(fs.readFileSync(filePath, "utf8")) as PublicationProject;
+  project.modelRuns ??= [];
+  return project;
 }
 
 export function createPublicationProject(input: Record<string, unknown>) {
@@ -77,6 +81,7 @@ export function createPublicationProject(input: Record<string, unknown>) {
     sources: [],
     chapters: [],
     reviewNotes: [],
+    modelRuns: [],
     createdAt: now,
     updatedAt: now,
   });
@@ -111,9 +116,80 @@ export function updatePublicationProject(
     reviewNotes: Array.isArray(input.reviewNotes)
       ? normalizeReviewNotes(input.reviewNotes)
       : current.reviewNotes,
+    modelRuns: current.modelRuns ?? [],
     updatedAt: new Date().toISOString(),
   };
   return writeProject(next);
+}
+
+export function addPublicationModelRun(
+  projectId: string,
+  run: PublicationModelRun
+) {
+  const project = getPublicationProject(projectId);
+  if (!project) return null;
+  project.modelRuns = [run, ...(project.modelRuns ?? [])];
+  project.updatedAt = new Date().toISOString();
+  writeProject(project);
+  return run;
+}
+
+export function reviewPublicationModelRun(
+  projectId: string,
+  runId: string,
+  decision: "accepted" | "rejected"
+) {
+  const project = getPublicationProject(projectId);
+  const run = project?.modelRuns?.find((item) => item.id === runId);
+  if (!project || !run || run.status !== "proposed") return null;
+
+  run.status = decision;
+  run.reviewedAt = new Date().toISOString();
+
+  if (decision === "accepted") {
+    if (run.operation === "outline") {
+      const existingCount = project.chapters.length;
+      project.chapters.push(
+        ...run.proposedChapters.map((chapter, index) => ({
+          id: crypto.randomUUID(),
+          title: chapter.title,
+          summary: chapter.summary,
+          sourceIds: chapter.sourceIds.filter((sourceId) =>
+            project.sources.some((source) => source.id === sourceId)
+          ),
+          manuscript: "",
+          sortOrder: existingCount + index,
+        }))
+      );
+    } else if (run.operation === "clean") {
+      project.sources.push({
+        id: crypto.randomUUID(),
+        type: "note",
+        title: run.title || "Cleaned source material",
+        content: run.proposedText,
+        notes: `AI-prepared from ${run.sourceIds.length} source(s).`,
+        sortOrder: project.sources.length,
+        createdAt: new Date().toISOString(),
+      });
+    } else if (run.operation === "draft" && run.chapterId) {
+      const chapter = project.chapters.find((item) => item.id === run.chapterId);
+      if (chapter) chapter.manuscript = run.proposedText;
+    } else if (run.operation === "verify") {
+      for (const warning of run.warnings) {
+        project.reviewNotes.push({
+          id: crypto.randomUUID(),
+          chapterId: run.chapterId,
+          text: warning,
+          resolved: false,
+          createdAt: new Date().toISOString(),
+        });
+      }
+    }
+  }
+
+  project.updatedAt = new Date().toISOString();
+  writeProject(project);
+  return project;
 }
 
 export function addPublicationSource(
@@ -226,4 +302,3 @@ function normalizeReviewNotes(value: unknown[]): PublicationReviewNote[] {
     }))
     .filter((item) => item.text);
 }
-

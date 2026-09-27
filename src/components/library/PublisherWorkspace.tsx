@@ -13,6 +13,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { API_BASE_URL } from "../../config/api";
 import type { LibraryTeaching } from "../../types/library";
 import type {
+  PublicationModelOperation,
   PublicationChapter,
   PublicationProject,
   PublicationProjectSummary,
@@ -47,6 +48,7 @@ export default function PublisherWorkspace({
   const [selectedTeachingId, setSelectedTeachingId] = useState(teachings[0]?.id ?? "");
   const [selectedChapterId, setSelectedChapterId] = useState<string | null>(null);
   const [reviewText, setReviewText] = useState("");
+  const [aiInstructions, setAiInstructions] = useState("");
 
   const authHeaders = {
     Authorization: `Bearer ${adminToken}`,
@@ -199,6 +201,65 @@ export default function PublisherWorkspace({
     await openProject(project.id);
   }
 
+  async function runAiOperation(operation: PublicationModelOperation) {
+    if (!project) return;
+    setIsBusy(true);
+    setMessage(`Running ${operation} proposal… This may take a few minutes.`);
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/publications/${project.id}/model/run`,
+        {
+          method: "POST",
+          headers: authHeaders,
+          body: JSON.stringify({
+            operation,
+            chapterId:
+              operation === "draft" || operation === "verify"
+                ? selectedChapter?.id
+                : undefined,
+            sourceIds:
+              operation === "draft" || operation === "verify"
+                ? selectedChapter?.sourceIds
+                : project.sources.map((source) => source.id),
+            instructions: aiInstructions,
+          }),
+        }
+      );
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error ?? "The model operation failed.");
+      await openProject(project.id);
+      setMessage("Proposal ready for review. Nothing has been applied yet.");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "The model operation failed.");
+    } finally {
+      setIsBusy(false);
+    }
+  }
+
+  async function reviewModelRun(runId: string, decision: "accepted" | "rejected") {
+    if (!project) return;
+    setIsBusy(true);
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/publications/${project.id}/model-runs/${runId}/review`,
+        {
+          method: "POST",
+          headers: authHeaders,
+          body: JSON.stringify({ decision }),
+        }
+      );
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error ?? "Unable to review proposal.");
+      setProject(data as PublicationProject);
+      setMessage(decision === "accepted" ? "Proposal accepted and applied." : "Proposal rejected.");
+      await loadProjects();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Unable to review proposal.");
+    } finally {
+      setIsBusy(false);
+    }
+  }
+
   if (!project) {
     return (
       <ScrollView contentContainerStyle={{ padding: 18, gap: 16 }}>
@@ -349,21 +410,50 @@ export default function PublisherWorkspace({
         {tab === "ai" ? (
           <>
             <SectionTitle title="AI Editorial Studio" subtitle="Run deliberate editorial stages against selected source material while preserving traceability." />
+            <Panel>
+              <Text style={labelStyle}>Target chapter</Text>
+              <ScrollView horizontal contentContainerStyle={{ gap: 7 }}>
+                {project.chapters.map((chapter) => (
+                  <Pressable key={chapter.id} onPress={() => setSelectedChapterId(chapter.id)} style={[choiceStyle, selectedChapter?.id === chapter.id && selectedChoiceStyle]}>
+                    <Text style={{ fontWeight: "900" }}>{chapter.title}</Text>
+                  </Pressable>
+                ))}
+              </ScrollView>
+              <TextInput value={aiInstructions} onChangeText={setAiInstructions} placeholder="Optional instructions for this pass" multiline style={[inputStyle, { minHeight: 76 }]} />
+              <Text style={mutedStyle}>Clean and Outline use all project sources. Draft and Verify use the selected chapter and its assigned sources.</Text>
+            </Panel>
             {[
-              ["Clean source material", "Remove greetings, technical discussion, and conversational repetition without changing the teaching."],
-              ["Propose sections", "Identify themes and propose an ordered chapter-and-section structure."],
-              ["Draft selected chapter", "Turn the assigned sources into readable prose using the approved outline."],
-              ["Verify against sources", "Flag unsupported claims, changed meaning, missing qualifications, and scripture references needing review."],
-            ].map(([title, description]) => (
+              ["clean", "Clean source material", "Remove greetings, technical discussion, and conversational repetition without changing the teaching."],
+              ["outline", "Propose sections", "Identify themes and propose an ordered chapter-and-section structure."],
+              ["draft", "Draft selected chapter", "Turn the assigned sources into readable prose using the approved outline."],
+              ["verify", "Verify against sources", "Flag unsupported claims, changed meaning, missing qualifications, and scripture references needing review."],
+            ].map(([operation, title, description]) => (
               <Panel key={title}>
                 <Text style={rowTitleStyle}>{title}</Text>
                 <Text style={mutedStyle}>{description}</Text>
-                <ActionButton label="OpenAI setup required" icon="auto-awesome" disabled onPress={() => undefined} />
+                <ActionButton
+                  label={isBusy ? "Working…" : `Run ${title}`}
+                  icon="auto-awesome"
+                  disabled={isBusy || project.sources.length === 0 || ((operation === "draft" || operation === "verify") && (!selectedChapter || selectedChapter.sourceIds.length === 0))}
+                  onPress={() => void runAiOperation(operation as PublicationModelOperation)}
+                />
               </Panel>
             ))}
-            <View style={{ padding: 14, borderRadius: 12, backgroundColor: "#fff7ed", borderWidth: 1, borderColor: "#fed7aa" }}>
-              <Text style={{ color: "#9a3412", fontWeight: "900" }}>The editorial controls are intentionally disabled until the dedicated OpenAI project key, model, prompts, and approval rules are configured on Hetzner.</Text>
-            </View>
+            <SectionTitle title="Model Proposals" subtitle="Review the complete proposal before accepting or rejecting it." />
+            {(project.modelRuns ?? []).length === 0 ? <Text style={mutedStyle}>No model proposals yet.</Text> : null}
+            {(project.modelRuns ?? []).map((run) => (
+              <Panel key={run.id}>
+                <View style={{ flexDirection: "row", justifyContent: "space-between", gap: 10 }}>
+                  <View style={{ flex: 1 }}><Text style={rowTitleStyle}>{run.title}</Text><Text style={mutedStyle}>{run.operation} · {run.model} · {run.status}</Text></View>
+                  <View style={{ paddingHorizontal: 9, paddingVertical: 4, borderRadius: 99, backgroundColor: run.status === "proposed" ? "#fef3c7" : run.status === "accepted" ? "#dcfce7" : "#fee2e2" }}><Text style={{ fontSize: 11, fontWeight: "900", textTransform: "uppercase" }}>{run.status}</Text></View>
+                </View>
+                <Text style={{ color: "#475569", lineHeight: 20 }}>{run.summary}</Text>
+                {run.proposedText ? <View style={{ maxHeight: 320, padding: 12, borderRadius: 10, backgroundColor: "#f8fafc" }}><ScrollView nestedScrollEnabled><Text selectable style={{ color: "#1f2937", lineHeight: 21 }}>{run.proposedText}</Text></ScrollView></View> : null}
+                {run.proposedChapters.length ? <View style={{ gap: 5 }}>{run.proposedChapters.map((chapter, index) => <Text key={`${run.id}-${index}`} style={{ color: "#334155" }}>{index + 1}. <Text style={{ fontWeight: "900" }}>{chapter.title}</Text> — {chapter.summary}</Text>)}</View> : null}
+                {run.warnings.length ? <View style={{ padding: 10, borderRadius: 9, backgroundColor: "#fff7ed" }}>{run.warnings.map((warning, index) => <Text key={`${run.id}-warning-${index}`} style={{ color: "#9a3412" }}>• {warning}</Text>)}</View> : null}
+                {run.status === "proposed" ? <View style={{ flexDirection: "row", gap: 8 }}><View style={{ flex: 1 }}><ActionButton label="Accept and apply" icon="check" disabled={isBusy} onPress={() => void reviewModelRun(run.id, "accepted")} /></View><View style={{ flex: 1 }}><ActionButton label="Reject" icon="close" disabled={isBusy} onPress={() => void reviewModelRun(run.id, "rejected")} /></View></View> : null}
+              </Panel>
+            ))}
           </>
         ) : null}
 

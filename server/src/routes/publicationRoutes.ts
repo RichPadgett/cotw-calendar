@@ -5,14 +5,18 @@ import multer from "multer";
 import { requireAdminTokenForGroup } from "../middleware/requireAdminToken";
 import {
   addPublicationFileSource,
+  addPublicationModelRun,
   addPublicationSource,
   createPublicationProject,
   getPublicationFile,
   getPublicationProject,
   getPublicationUploadFolder,
   listPublicationProjects,
+  reviewPublicationModelRun,
   updatePublicationProject,
 } from "../services/publicationStore";
+import { runPublicationModel } from "../services/publicationAiService";
+import type { PublicationModelOperation } from "../types/publication";
 
 const router = Router();
 const requireChurchAdmin = requireAdminTokenForGroup("church-of-the-word");
@@ -95,14 +99,53 @@ router.get("/:id/sources/:sourceId/file", (req, res) => {
   );
 });
 
-router.post("/:id/model/prepare", (_req, res) => {
-  if (!process.env.OPENAI_PUBLICATION_API_KEY) {
-    return res.status(503).json({
-      error: "Publisher AI is not configured yet.",
-      setup: "Set OPENAI_PUBLICATION_API_KEY and OPENAI_PUBLICATION_MODEL on the server.",
+router.post("/:id/model/run", async (req, res) => {
+  try {
+    const allowedOperations = new Set<PublicationModelOperation>([
+      "clean",
+      "outline",
+      "draft",
+      "verify",
+    ]);
+    const operation = String(req.body?.operation ?? "") as PublicationModelOperation;
+    if (!allowedOperations.has(operation)) {
+      return res.status(400).json({ error: "Unknown Publisher AI operation." });
+    }
+    const run = await runPublicationModel({
+      projectId: String(req.params.id),
+      operation,
+      chapterId:
+        typeof req.body?.chapterId === "string" ? req.body.chapterId : undefined,
+      sourceIds: Array.isArray(req.body?.sourceIds)
+        ? req.body.sourceIds.filter((id: unknown): id is string => typeof id === "string")
+        : undefined,
+      instructions:
+        typeof req.body?.instructions === "string" ? req.body.instructions : undefined,
+    });
+    addPublicationModelRun(String(req.params.id), run);
+    res.status(201).json(run);
+  } catch (error) {
+    console.error("Publisher AI run failed", error);
+    res.status(502).json({
+      error: error instanceof Error ? error.message : "Publisher AI run failed.",
     });
   }
-  res.status(501).json({ error: "Publisher AI workflow is awaiting prompt approval." });
+});
+
+router.post("/:id/model-runs/:runId/review", (req, res) => {
+  const decision = req.body?.decision;
+  if (decision !== "accepted" && decision !== "rejected") {
+    return res.status(400).json({ error: "Decision must be accepted or rejected." });
+  }
+  const project = reviewPublicationModelRun(
+    String(req.params.id),
+    String(req.params.runId),
+    decision
+  );
+  if (!project) {
+    return res.status(404).json({ error: "Pending model proposal not found." });
+  }
+  res.json(project);
 });
 
 export default router;
