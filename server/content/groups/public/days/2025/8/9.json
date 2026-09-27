@@ -10,13 +10,15 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "The Daughters of Zelophehad and the Lineage of the Messiah Spotify",
+          "sourceId": "spotify:3JxKVIrz1Sx60Fi8yNaVqf",
+          "label": "The Daughters of Zelophehad and the Lineage of the Messiah",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/3JxKVIrz1Sx60Fi8yNaVqf",
           "access": "public"
         },
         {
-          "label": "Peter’s Vision and the Gospel’s Reach: Understanding Elohim's Call to the Gentiles Spotify",
+          "sourceId": "spotify:70H8IfY2mcZ4k3L0bFfgDV",
+          "label": "Peter’s Vision and the Gospel’s Reach: Understanding Elohim's Call to the Gentiles",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/70H8IfY2mcZ4k3L0bFfgDV",
           "access": "public"
@@ -24,5 +26,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2025-10-25"
 }

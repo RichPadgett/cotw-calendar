@@ -10,7 +10,8 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Yah's Calendar (Enochian) Spotify",
+          "sourceId": "spotify:4R1Rk4hVhNMIrdT6F57aFN",
+          "label": "Yah's Calendar (Enochian)",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/4R1Rk4hVhNMIrdT6F57aFN",
           "access": "public"
@@ -18,5 +19,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2023-06-20"
 }

@@ -10,19 +10,22 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "The Red Heifer and Yeshua’s Sacrifice Spotify",
+          "sourceId": "spotify:1v5jdl7QV5vg7pS1cAz6mb",
+          "label": "The Red Heifer and Yeshua’s Sacrifice",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/1v5jdl7QV5vg7pS1cAz6mb",
           "access": "public"
         },
         {
-          "label": "From Rock to Living Water: Trust, Rebellion, and the Messiah Spotify",
+          "sourceId": "spotify:3uKKh5IYqZefyaXzmO9hyi",
+          "label": "From Rock to Living Water: Trust, Rebellion, and the Messiah",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/3uKKh5IYqZefyaXzmO9hyi",
           "access": "public"
         },
         {
-          "label": "From Persecution to Power: The Spread of the Gospel and the Gift of the Spirit Spotify",
+          "sourceId": "spotify:4uN8L0XQp54wkzNaDQaypa",
+          "label": "From Persecution to Power: The Spread of the Gospel and the Gift of the Spirit",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/4uN8L0XQp54wkzNaDQaypa",
           "access": "public"
@@ -30,5 +33,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2025-08-23"
 }

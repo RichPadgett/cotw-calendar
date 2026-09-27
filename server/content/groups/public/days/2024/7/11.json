@@ -10,7 +10,8 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Numbers 4 - Service in the Temple Spotify",
+          "sourceId": "spotify:15ZRI8h1Cszm69cCgSr0Pm",
+          "label": "Numbers 4 - Service in the Temple",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/15ZRI8h1Cszm69cCgSr0Pm",
           "access": "public"
@@ -18,5 +19,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2024-09-21"
 }

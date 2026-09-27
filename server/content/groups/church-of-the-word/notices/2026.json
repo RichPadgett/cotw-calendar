@@ -1,89 +1,6 @@
 [
   {
     "year": 2026,
-    "month": 1,
-    "day": 4,
-    "notice": null,
-    "hasContent": true
-  },
-  {
-    "year": 2026,
-    "month": 1,
-    "day": 11,
-    "notice": null,
-    "hasContent": true
-  },
-  {
-    "year": 2026,
-    "month": 1,
-    "day": 15,
-    "notice": null,
-    "hasContent": true
-  },
-  {
-    "year": 2026,
-    "month": 1,
-    "day": 18,
-    "notice": null,
-    "hasContent": true
-  },
-  {
-    "year": 2026,
-    "month": 1,
-    "day": 21,
-    "notice": null,
-    "hasContent": true
-  },
-  {
-    "year": 2026,
-    "month": 2,
-    "day": 2,
-    "notice": null,
-    "hasContent": true
-  },
-  {
-    "year": 2026,
-    "month": 2,
-    "day": 9,
-    "notice": null,
-    "hasContent": true
-  },
-  {
-    "year": 2026,
-    "month": 2,
-    "day": 16,
-    "notice": null,
-    "hasContent": true
-  },
-  {
-    "year": 2026,
-    "month": 2,
-    "day": 23,
-    "notice": null,
-    "hasContent": true
-  },
-  {
-    "year": 2026,
-    "month": 2,
-    "day": 30,
-    "notice": {
-      "year": 2026,
-      "month": 2,
-      "day": 30,
-      "title": "Wendys House",
-      "access": "public"
-    },
-    "hasContent": true
-  },
-  {
-    "year": 2026,
-    "month": 3,
-    "day": 1,
-    "notice": null,
-    "hasContent": true
-  },
-  {
-    "year": 2026,
     "month": 4,
     "day": 18,
     "notice": {
@@ -94,19 +11,6 @@
       "access": "public"
     },
     "hasContent": false
-  },
-  {
-    "year": 2026,
-    "month": 3,
-    "day": 21,
-    "notice": {
-      "year": 2026,
-      "month": 3,
-      "day": 21,
-      "title": "Shabbat at Apa's",
-      "access": "public"
-    },
-    "hasContent": true
   },
   {
     "year": 2026,
@@ -130,32 +34,6 @@
   },
   {
     "year": 2026,
-    "month": 3,
-    "day": 28,
-    "notice": {
-      "year": 2026,
-      "month": 3,
-      "day": 28,
-      "title": "Shabbat at Tommy and Wendy's",
-      "access": "public"
-    },
-    "hasContent": true
-  },
-  {
-    "year": 2026,
-    "month": 4,
-    "day": 4,
-    "notice": {
-      "year": 2026,
-      "month": 4,
-      "day": 4,
-      "title": "Shabbat at Micah & Heather's",
-      "access": "public"
-    },
-    "hasContent": true
-  },
-  {
-    "year": 2026,
     "month": 1,
     "day": 10,
     "notice": null,
@@ -163,38 +41,71 @@
   },
   {
     "year": 2026,
-    "month": 4,
+    "month": 6,
+    "day": 21,
+    "notice": {
+      "year": 2026,
+      "month": 6,
+      "day": 21,
+      "title": "Shabbat at Tommy and Wendy's",
+      "access": "public"
+    },
+    "hasContent": true
+  },
+  {
+    "year": 2026,
+    "month": 7,
     "day": 11,
     "notice": {
       "year": 2026,
-      "month": 4,
+      "month": 7,
       "day": 11,
-      "title": "Shabbat at Mary OG",
+      "title": "Heather & Mica's",
+      "access": "public"
+    },
+    "hasContent": false
+  },
+  {
+    "year": 2026,
+    "month": 7,
+    "day": 4,
+    "notice": {
+      "year": 2026,
+      "month": 7,
+      "day": 4,
+      "title": "Shabbat at Nate and Jordyn's",
       "access": "public"
     },
     "hasContent": true
   },
   {
     "year": 2026,
-    "month": 4,
-    "day": 25,
+    "month": 7,
+    "day": 3,
+    "notice": null,
+    "hasContent": true
+  },
+  {
+    "year": 2026,
+    "month": 7,
+    "day": 1,
     "notice": {
       "year": 2026,
-      "month": 4,
-      "day": 25,
-      "title": "Shabbat Heather and Micah's",
+      "month": 7,
+      "day": 1,
+      "title": "Day Of Trumpets at Trey and Abby's",
       "access": "public"
     },
     "hasContent": true
   },
   {
     "year": 2026,
-    "month": 5,
-    "day": 2,
+    "month": 6,
+    "day": 28,
     "notice": {
       "year": 2026,
-      "month": 5,
-      "day": 2,
+      "month": 6,
+      "day": 28,
       "title": "Shabbat at The Apa's",
       "access": "public"
     },
@@ -202,35 +113,9 @@
   },
   {
     "year": 2026,
-    "month": 5,
-    "day": 9,
-    "notice": {
-      "year": 2026,
-      "month": 5,
-      "day": 9,
-      "title": "Shabbat at Gary & Eva",
-      "access": "public"
-    },
-    "hasContent": true
-  },
-  {
-    "year": 2026,
-    "month": 5,
-    "day": 16,
+    "month": 6,
+    "day": 22,
     "notice": null,
-    "hasContent": true
-  },
-  {
-    "year": 2026,
-    "month": 5,
-    "day": 30,
-    "notice": {
-      "year": 2026,
-      "month": 5,
-      "day": 30,
-      "title": "Shabbat at APA's",
-      "access": "public"
-    },
     "hasContent": true
   },
   {
@@ -261,25 +146,45 @@
   },
   {
     "year": 2026,
-    "month": 6,
-    "day": 21,
+    "month": 5,
+    "day": 30,
     "notice": {
       "year": 2026,
-      "month": 6,
-      "day": 21,
-      "title": "Shabbat at Tommy and Wendy's",
+      "month": 5,
+      "day": 30,
+      "title": "Shabbat at APA's",
       "access": "public"
     },
     "hasContent": true
   },
   {
     "year": 2026,
-    "month": 6,
-    "day": 28,
+    "month": 5,
+    "day": 16,
+    "notice": null,
+    "hasContent": true
+  },
+  {
+    "year": 2026,
+    "month": 5,
+    "day": 9,
     "notice": {
       "year": 2026,
-      "month": 6,
-      "day": 28,
+      "month": 5,
+      "day": 9,
+      "title": "Shabbat at Gary & Eva",
+      "access": "public"
+    },
+    "hasContent": true
+  },
+  {
+    "year": 2026,
+    "month": 5,
+    "day": 2,
+    "notice": {
+      "year": 2026,
+      "month": 5,
+      "day": 2,
       "title": "Shabbat at The Apa's",
       "access": "public"
     },
@@ -287,41 +192,150 @@
   },
   {
     "year": 2026,
-    "month": 7,
-    "day": 1,
+    "month": 4,
+    "day": 25,
     "notice": {
       "year": 2026,
-      "month": 7,
-      "day": 1,
-      "title": "Day Of Trumpets at Trey and Abby's",
+      "month": 4,
+      "day": 25,
+      "title": "Shabbat Heather and Micah's",
       "access": "public"
     },
     "hasContent": true
   },
   {
     "year": 2026,
-    "month": 7,
-    "day": 4,
-    "notice": {
-      "year": 2026,
-      "month": 7,
-      "day": 4,
-      "title": "Shabbat at Nate and Jordyn's",
-      "access": "public"
-    },
-    "hasContent": true
-  },
-  {
-    "year": 2026,
-    "month": 7,
+    "month": 4,
     "day": 11,
     "notice": {
       "year": 2026,
-      "month": 7,
+      "month": 4,
       "day": 11,
-      "title": "Heather & Mica's",
+      "title": "Shabbat at Mary OG",
       "access": "public"
     },
-    "hasContent": false
+    "hasContent": true
+  },
+  {
+    "year": 2026,
+    "month": 4,
+    "day": 4,
+    "notice": {
+      "year": 2026,
+      "month": 4,
+      "day": 4,
+      "title": "Shabbat at Micah & Heather's",
+      "access": "public"
+    },
+    "hasContent": true
+  },
+  {
+    "year": 2026,
+    "month": 3,
+    "day": 28,
+    "notice": {
+      "year": 2026,
+      "month": 3,
+      "day": 28,
+      "title": "Shabbat at Tommy and Wendy's",
+      "access": "public"
+    },
+    "hasContent": true
+  },
+  {
+    "year": 2026,
+    "month": 3,
+    "day": 21,
+    "notice": {
+      "year": 2026,
+      "month": 3,
+      "day": 21,
+      "title": "Shabbat at Apa's",
+      "access": "public"
+    },
+    "hasContent": true
+  },
+  {
+    "year": 2026,
+    "month": 3,
+    "day": 1,
+    "notice": null,
+    "hasContent": true
+  },
+  {
+    "year": 2026,
+    "month": 2,
+    "day": 30,
+    "notice": {
+      "year": 2026,
+      "month": 2,
+      "day": 30,
+      "title": "Wendys House",
+      "access": "public"
+    },
+    "hasContent": true
+  },
+  {
+    "year": 2026,
+    "month": 2,
+    "day": 23,
+    "notice": null,
+    "hasContent": true
+  },
+  {
+    "year": 2026,
+    "month": 2,
+    "day": 16,
+    "notice": null,
+    "hasContent": true
+  },
+  {
+    "year": 2026,
+    "month": 2,
+    "day": 9,
+    "notice": null,
+    "hasContent": true
+  },
+  {
+    "year": 2026,
+    "month": 2,
+    "day": 2,
+    "notice": null,
+    "hasContent": true
+  },
+  {
+    "year": 2026,
+    "month": 1,
+    "day": 21,
+    "notice": null,
+    "hasContent": true
+  },
+  {
+    "year": 2026,
+    "month": 1,
+    "day": 18,
+    "notice": null,
+    "hasContent": true
+  },
+  {
+    "year": 2026,
+    "month": 1,
+    "day": 15,
+    "notice": null,
+    "hasContent": true
+  },
+  {
+    "year": 2026,
+    "month": 1,
+    "day": 11,
+    "notice": null,
+    "hasContent": true
+  },
+  {
+    "year": 2026,
+    "month": 1,
+    "day": 4,
+    "notice": null,
+    "hasContent": true
   }
 ]

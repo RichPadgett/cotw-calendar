@@ -10,19 +10,22 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Gospel Accounts: The Resurrection Spotify",
+          "sourceId": "spotify:3n99U263WF46QWU9rFxY50",
+          "label": "Gospel Accounts: The Resurrection",
           "type": "external-link",
-          "access": "public",
-          "url": "https://open.spotify.com/episode/3n99U263WF46QWU9rFxY50"
+          "url": "https://open.spotify.com/episode/3n99U263WF46QWU9rFxY50",
+          "access": "public"
         },
         {
-          "label": "The Resurrection - One of the Sabbaths Spotify",
+          "sourceId": "spotify:6uXx3lczUIKDoSoTb9f9Ik",
+          "label": "The Resurrection - One of the Sabbaths",
           "type": "external-link",
-          "access": "public",
-          "url": "https://open.spotify.com/episode/6uXx3lczUIKDoSoTb9f9Ik"
+          "url": "https://open.spotify.com/episode/6uXx3lczUIKDoSoTb9f9Ik",
+          "access": "public"
         }
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2025-03-02"
 }

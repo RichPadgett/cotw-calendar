@@ -10,12 +10,14 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Faith Over Fear Spotify",
+          "sourceId": "spotify:2s2lnLgx9HEMWwvAuQLN9C",
+          "label": "Faith Over Fear",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/2s2lnLgx9HEMWwvAuQLN9C",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2025-06-10"
 }

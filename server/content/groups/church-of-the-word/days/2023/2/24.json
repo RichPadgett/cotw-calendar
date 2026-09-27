@@ -10,18 +10,21 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Revelation 8 - Revealed Spotify",
+          "sourceId": "spotify:0ppNOmMAXCcV1A48gbo384",
+          "label": "Revelation 8 - Revealed",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/0ppNOmMAXCcV1A48gbo384",
           "access": "public"
         },
         {
-          "label": "Revelation 9 - Revealed Spotify",
+          "sourceId": "spotify:73wAN3nCRDg9XlTONS7pD5",
+          "label": "Revelation 9 - Revealed",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/73wAN3nCRDg9XlTONS7pD5",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2023-05-07"
 }

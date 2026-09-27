@@ -10,12 +10,14 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Understanding Paul - Strong vs. Weak Faith Spotify",
+          "sourceId": "spotify:4obaeZxVgL2fcXaSXARl6t",
+          "label": "Understanding Paul - Strong vs. Weak Faith",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/4obaeZxVgL2fcXaSXARl6t",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2023-04-29"
 }

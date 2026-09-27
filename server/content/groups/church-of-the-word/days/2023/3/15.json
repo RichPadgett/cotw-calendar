@@ -10,24 +10,28 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Exodus 19 - Moses: Giving of the Covenant Spotify",
+          "sourceId": "spotify:1O1Sv5WXur8vkghkx6FSTl",
+          "label": "Exodus 19 - Moses: Giving of the Covenant",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/1O1Sv5WXur8vkghkx6FSTl",
           "access": "public"
         },
         {
-          "label": "Bondservant To Elohim (Exodus 21 & Revelation 11) Spotify",
+          "sourceId": "spotify:4ySRGLO5F8xWEOkUpjBEN7",
+          "label": "Bondservant To Elohim (Exodus 21 & Revelation 11)",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/4ySRGLO5F8xWEOkUpjBEN7",
           "access": "public"
         },
         {
-          "label": "Obedience: The Love Language of YHWH Spotify",
+          "sourceId": "spotify:7H0Vd8v6XiNEvHAKfids9k",
+          "label": "Obedience: The Love Language of YHWH",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/7H0Vd8v6XiNEvHAKfids9k",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2023-05-28"
 }

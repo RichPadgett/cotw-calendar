@@ -10,13 +10,15 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Wisdom - Part 2 Spotify",
+          "sourceId": "spotify:3EwL0iU7kb6bvdHfuSPkBB",
+          "label": "Wisdom - Part 2",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/3EwL0iU7kb6bvdHfuSPkBB",
           "access": "public"
         },
         {
-          "label": "Wisdom - Part 1 Spotify",
+          "sourceId": "spotify:59njrcIAySgaA6cGfRfjCO",
+          "label": "Wisdom - Part 1",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/59njrcIAySgaA6cGfRfjCO",
           "access": "public"
@@ -24,5 +26,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2022-07-02"
 }

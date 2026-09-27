@@ -10,24 +10,28 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Sabbath Year - Power & Promise Spotify",
+          "sourceId": "spotify:1QFCXgU5vd1ut5jzYEMyiU",
+          "label": "Sabbath Year - Power & Promise",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/1QFCXgU5vd1ut5jzYEMyiU",
           "access": "public"
         },
         {
-          "label": "Asleep Unto Resurrection Spotify",
+          "sourceId": "spotify:2zXf9VfhgRLtFU6lq2EDiA",
+          "label": "Asleep Unto Resurrection",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/2zXf9VfhgRLtFU6lq2EDiA",
           "access": "public"
         },
         {
-          "label": "Vows: Devoted to Yahweh Spotify",
+          "sourceId": "spotify:6h3OGyKn5mEZl90voG1Agp",
+          "label": "Vows: Devoted to Yahweh",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/6h3OGyKn5mEZl90voG1Agp",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2024-08-18"
 }

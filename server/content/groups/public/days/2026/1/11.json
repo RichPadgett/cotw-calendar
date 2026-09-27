@@ -10,13 +10,15 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Spirit of Wisdom & the Mind of Messiah: Building on Yeshua’s Foundation Spotify",
+          "sourceId": "spotify:15gtiIAbf4WJaalGIN0UPh",
+          "label": "Spirit of Wisdom & the Mind of Messiah: Building on Yeshua’s Foundation",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/15gtiIAbf4WJaalGIN0UPh",
           "access": "public"
         },
         {
-          "label": "From First Fruits to Corinth: Paul’s Second Journey, the Message of the Cross, and Unity in Messiah Spotify",
+          "sourceId": "spotify:2Z24NuGVK4hBVTZ8cS6M0b",
+          "label": "From First Fruits to Corinth: Paul’s Second Journey, the Message of the Cross, and Unity in Messiah",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/2Z24NuGVK4hBVTZ8cS6M0b",
           "access": "public"
@@ -24,5 +26,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2026-03-28"
 }

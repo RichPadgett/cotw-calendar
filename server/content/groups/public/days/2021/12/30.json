@@ -10,7 +10,8 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Calendar & Appointed Times Spotify",
+          "sourceId": "spotify:0F2K4VmZWjv4ucyPV6Wagu",
+          "label": "Calendar & Appointed Times",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/0F2K4VmZWjv4ucyPV6Wagu",
           "access": "public"
@@ -18,5 +19,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2022-03-14"
 }

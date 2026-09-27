@@ -10,7 +10,8 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Faith & Duty of Discipleship Spotify",
+          "sourceId": "spotify:1FvSRstuB1DKoI0pERSy2E",
+          "label": "Faith & Duty of Discipleship",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/1FvSRstuB1DKoI0pERSy2E",
           "access": "public"
@@ -18,5 +19,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2024-11-17"
 }

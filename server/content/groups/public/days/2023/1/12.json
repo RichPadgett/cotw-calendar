@@ -10,19 +10,22 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Reasons of Obedience - In Those Days Spotify",
+          "sourceId": "spotify:3X0RSJvOtB3OTAzqcClEOY",
+          "label": "Reasons of Obedience - In Those Days",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/3X0RSJvOtB3OTAzqcClEOY",
           "access": "public"
         },
         {
-          "label": "Reasons for Obedience - Message of the Kingdom Spotify",
+          "sourceId": "spotify:4w60QuQFpzDDFhaEO7kDjF",
+          "label": "Reasons for Obedience - Message of the Kingdom",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/4w60QuQFpzDDFhaEO7kDjF",
           "access": "public"
         },
         {
-          "label": "In The Days of Noah Spotify",
+          "sourceId": "spotify:5ZjQAaBqMQqYkTVY7RilUn",
+          "label": "In The Days of Noah",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/5ZjQAaBqMQqYkTVY7RilUn",
           "access": "public"
@@ -30,5 +33,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2023-03-26"
 }

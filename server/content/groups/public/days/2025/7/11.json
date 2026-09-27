@@ -10,7 +10,8 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Conquering Kings and Celebrating Deliverance Spotify",
+          "sourceId": "spotify:1jby8ROoPAepLyaVYMq2nM",
+          "label": "Conquering Kings and Celebrating Deliverance",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/1jby8ROoPAepLyaVYMq2nM",
           "access": "public"
@@ -18,5 +19,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2025-09-27"
 }

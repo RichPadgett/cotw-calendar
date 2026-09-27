@@ -10,13 +10,15 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Building the Body in Love: Idols, Conscience & Rights Spotify",
+          "sourceId": "spotify:1Bg9cwGxmVzPmRfQG4aNSd",
+          "label": "Building the Body in Love: Idols, Conscience & Rights",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/1Bg9cwGxmVzPmRfQG4aNSd",
           "access": "public"
         },
         {
-          "label": "Discipline, Obedience & Slavery to Messiah: Hearing the Voice of YHWH Spotify",
+          "sourceId": "spotify:6FYWZPM7VPh9a4RyU1kTZZ",
+          "label": "Discipline, Obedience & Slavery to Messiah: Hearing the Voice of Yahuwah",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/6FYWZPM7VPh9a4RyU1kTZZ",
           "access": "public"
@@ -24,5 +26,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2026-05-02"
 }

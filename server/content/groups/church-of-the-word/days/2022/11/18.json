@@ -10,24 +10,28 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Laodicea - The Lukewarm Church Spotify",
+          "sourceId": "spotify:46wy8YhVli2exk5E1xH7zy",
+          "label": "Laodicea - The Lukewarm Church",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/46wy8YhVli2exk5E1xH7zy",
           "access": "public"
         },
         {
-          "label": "Laodicea - The Lukewarm Church Spotify",
+          "sourceId": "spotify:6BzF8TauceQ5vwjcxF2ZnV",
+          "label": "Laodicea - The Lukewarm Church",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/6BzF8TauceQ5vwjcxF2ZnV",
           "access": "public"
         },
         {
-          "label": "Laodicea - The Lukewarm Church Spotify",
+          "sourceId": "spotify:7nGhHK1RhE5s5tF8bMbFwN",
+          "label": "Laodicea - The Lukewarm Church",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/7nGhHK1RhE5s5tF8bMbFwN",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2023-01-30"
 }

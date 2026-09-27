@@ -10,13 +10,15 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "The Lamb Slain – Yeshua’s Crucifixion & Resurrection (Passover 2026) Spotify",
+          "sourceId": "spotify:49hUSeO1HhyxBQLt8hjZ20",
+          "label": "The Lamb Slain – Yeshua’s Crucifixion & Resurrection (Passover 2026)",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/49hUSeO1HhyxBQLt8hjZ20",
           "access": "public"
         },
         {
-          "label": "The Heavens Declare: Yeshua’s Crucifixion, Goliath, and the Mazzaroth at Passover Spotify",
+          "sourceId": "spotify:5ouPQLeEfj2zZXOwpSJCiH",
+          "label": "The Heavens Declare: Yeshua’s Crucifixion, Goliath, and the Mazzaroth at Passover",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/5ouPQLeEfj2zZXOwpSJCiH",
           "access": "public"
@@ -24,5 +26,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2026-04-01"
 }

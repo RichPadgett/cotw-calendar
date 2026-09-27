@@ -10,7 +10,8 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Spiritual Warfare - Part 2 Spotify",
+          "sourceId": "spotify:4qdoGyPtn4ukhWgdii9hK8",
+          "label": "Spiritual Warfare - Part 2",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/4qdoGyPtn4ukhWgdii9hK8",
           "access": "public"
@@ -18,5 +19,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2022-06-22"
 }

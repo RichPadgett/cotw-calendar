@@ -10,13 +10,15 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Love & Forgiveness Spotify",
+          "sourceId": "spotify:4PSL8l31FlYCsXnLczGgkP",
+          "label": "Love & Forgiveness",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/4PSL8l31FlYCsXnLczGgkP",
           "access": "public"
         },
         {
-          "label": "Promise of Zechariah Spotify",
+          "sourceId": "spotify:7KZE3iEhhyCryjHFHvBM4g",
+          "label": "Promise of Zechariah",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/7KZE3iEhhyCryjHFHvBM4g",
           "access": "public"
@@ -24,5 +26,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2024-04-23"
 }

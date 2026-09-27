@@ -10,7 +10,8 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Spirit of Elijah Spotify",
+          "sourceId": "spotify:2egZlwauoOHiNq2daqxGxR",
+          "label": "Spirit of Elijah",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/2egZlwauoOHiNq2daqxGxR",
           "access": "public"
@@ -18,5 +19,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2023-06-05"
 }

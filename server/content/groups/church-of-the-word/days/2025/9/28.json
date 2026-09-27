@@ -10,18 +10,21 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "The Irrevocable Power of Vows Before YHWH: From Numbers and Jephthah’s Daughter to Israel’s Spiritual Adultery, Divine Divorce, and Eternal Redemption in the New Covenant Spotify",
+          "sourceId": "spotify:0J4tEBR4Lyat2cUCB813TQ",
+          "label": "The Irrevocable Power of Vows Before Yahuwah: From Numbers and Jephthah’s Daughter to Israel’s Spiritual Adultery, Divine Divorce, and Eternal Redemption in the New Covenant",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/0J4tEBR4Lyat2cUCB813TQ",
           "access": "public"
         },
         {
-          "label": "From Olivet Prophecy to Paul's Antioch Sermon: Birth Pains, Persecution, John the Baptist as Best Man, and Yeshua's Triumphant Resurrection Spotify",
+          "sourceId": "spotify:0JoBwvIyrXKFPJnD9iuNJL",
+          "label": "From Olivet Prophecy to Paul's Antioch Sermon: Birth Pains, Persecution, John the Baptist as Best Man, and Yeshua's Triumphant Resurrection",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/0JoBwvIyrXKFPJnD9iuNJL",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2025-12-13"
 }

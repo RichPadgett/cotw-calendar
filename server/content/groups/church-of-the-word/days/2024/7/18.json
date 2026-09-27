@@ -10,12 +10,14 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Keys of His Name & The Spirit Spotify",
+          "sourceId": "spotify:6wZCjshgZ6WEIOBZkLqo7I",
+          "label": "Keys of His Name & The Spirit",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/6wZCjshgZ6WEIOBZkLqo7I",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2024-09-28"
 }

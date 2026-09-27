@@ -10,13 +10,15 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Letter to the Philippians Spotify",
+          "sourceId": "spotify:27aRcrugCgUP9jtZ7B7RW9",
+          "label": "Letter to the Philippians ",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/27aRcrugCgUP9jtZ7B7RW9",
           "access": "public"
         },
         {
-          "label": "Smyrna - The Persecuted Church Spotify",
+          "sourceId": "spotify:6C46kexV5z3T8Su5s8UYTO",
+          "label": "Smyrna - The Persecuted Church",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/6C46kexV5z3T8Su5s8UYTO",
           "access": "public"
@@ -24,5 +26,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2022-10-02"
 }

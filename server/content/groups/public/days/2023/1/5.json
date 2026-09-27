@@ -10,13 +10,15 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "The Scriptures Spoke of Me - Obedience & Deliverance Spotify",
+          "sourceId": "spotify:4vezK8boJp3ojRjrEdChYX",
+          "label": "The Scriptures Spoke of Me - Obedience & Deliverance",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/4vezK8boJp3ojRjrEdChYX",
           "access": "public"
         },
         {
-          "label": "The Scriptures Spoke of Me - Passover & His Return Spotify",
+          "sourceId": "spotify:5JYJSzxJbpM1xmbKs6ame6",
+          "label": "The Scriptures Spoke of Me - Passover & His Return",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/5JYJSzxJbpM1xmbKs6ame6",
           "access": "public"
@@ -24,5 +26,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2023-03-19"
 }

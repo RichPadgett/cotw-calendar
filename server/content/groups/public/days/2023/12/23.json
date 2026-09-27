@@ -10,13 +10,15 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Gospel Accounts: Rise Up & Walk Spotify",
+          "sourceId": "spotify:0WKIKBGej5DgEyqEqCQ55A",
+          "label": "Gospel Accounts: Rise Up & Walk",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/0WKIKBGej5DgEyqEqCQ55A",
           "access": "public"
         },
         {
-          "label": "Becoming a New Creation Spotify",
+          "sourceId": "spotify:4fOVEumGWy5oNW5kUqI5CC",
+          "label": "Becoming a New Creation",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/4fOVEumGWy5oNW5kUqI5CC",
           "access": "public"
@@ -24,5 +26,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2024-03-04"
 }

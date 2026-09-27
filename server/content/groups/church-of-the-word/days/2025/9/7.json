@@ -10,18 +10,21 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Yahweh’s Ancient Calendar Restored: Enoch, New Moons, and the True Timing of Yeshua Spotify",
+          "sourceId": "spotify:07y094Ate8tBw0Ga33qpKZ",
+          "label": "Yahweh’s Ancient Calendar Restored: Enoch, New Moons, and the True Timing of Yeshua",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/07y094Ate8tBw0Ga33qpKZ",
           "access": "public"
         },
         {
-          "label": "Bar-Jesus: When a False Prophet Tries to Block the Gospel Spotify",
+          "sourceId": "spotify:2cU8d8szuRREhjGdM26FXM",
+          "label": "Bar-Jesus: When a False Prophet Tries to Block the Gospel",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/2cU8d8szuRREhjGdM26FXM",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2025-11-22"
 }

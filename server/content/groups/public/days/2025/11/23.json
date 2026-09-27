@@ -10,13 +10,15 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Yahweh's Jealous Marriage Covenant: The Torah as Wedding Vows to His Bride Israel Spotify",
+          "sourceId": "spotify:0DUaWvJLzUorKr94wxvYnr",
+          "label": "Yahweh's Jealous Marriage Covenant: The Torah as Wedding Vows to His Bride Israel",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/0DUaWvJLzUorKr94wxvYnr",
           "access": "public"
         },
         {
-          "label": "Midnight Praise That Shakes the Foundations: From Prison Chains to Household Salvation in Philippi Spotify",
+          "sourceId": "spotify:5GROKfdBtvcYu5UwvkmaEd",
+          "label": "Midnight Praise That Shakes the Foundations: From Prison Chains to Household Salvation in Philippi",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/5GROKfdBtvcYu5UwvkmaEd",
           "access": "public"
@@ -24,5 +26,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2026-02-07"
 }

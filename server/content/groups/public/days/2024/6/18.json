@@ -10,13 +10,15 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Numbers 1 - Prepare for War Spotify",
+          "sourceId": "spotify:2NodS6Y8Aa4BjZ4oTzygGW",
+          "label": "Numbers 1 - Prepare for War",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/2NodS6Y8Aa4BjZ4oTzygGW",
           "access": "public"
         },
         {
-          "label": "Gospel Accounts - Submitting to Obedience Spotify",
+          "sourceId": "spotify:4YDDl615SAMal24MWCPHL4",
+          "label": "Gospel Accounts - Submitting to Obedience",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/4YDDl615SAMal24MWCPHL4",
           "access": "public"
@@ -24,5 +26,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2024-08-28"
 }

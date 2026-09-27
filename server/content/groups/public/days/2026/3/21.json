@@ -33,12 +33,21 @@
           "url": "https://open.spotify.com/track/1Ay6r3ykwj3Y2GmYYAnmUx?si=PfQJzI0ERBuVo8iWmfq3sg&rowId=e8565a3d5da128d25345&context=spotify%3Aplaylist%3A37i9dQZF1F5p3rmiWPIYgZ"
         },
         {
-          "label": "The Crutial Role of Teachers: Equipping the Body & Guarding Against False Teaching",
+          "sourceId": "spotify:27U2qv19AryPDL5pS9PIjh",
+          "label": "The Crucial Role of Teachers: Equipping the Body & Guarding Against False Teaching",
           "type": "external-link",
-          "access": "public",
-          "url": "https://open.spotify.com/episode/27U2qv19AryPDL5pS9PIjh"
+          "url": "https://open.spotify.com/episode/27U2qv19AryPDL5pS9PIjh",
+          "access": "public"
+        },
+        {
+          "sourceId": "spotify:0tDkA9fFVpx5eRkf2Ozuos",
+          "label": "Meditate on the Book of the Law: Blessings, Curses & Obedience in Deuteronomy 11 & 28",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/0tDkA9fFVpx5eRkf2Ozuos",
+          "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2026-06-06"
 }

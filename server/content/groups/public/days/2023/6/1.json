@@ -10,13 +10,15 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Written of Me (2/2) - Tabernacle of Yeshua Spotify",
+          "sourceId": "spotify:4S9NSol0uBcilqZ0kyNWAg",
+          "label": "Written of Me (2/2) - Tabernacle of Yeshua",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/4S9NSol0uBcilqZ0kyNWAg",
           "access": "public"
         },
         {
-          "label": "Written of Me (1/2) - Messiah & The Camp Spotify",
+          "sourceId": "spotify:7FSkerIjREqmfEs4ZNZLZl",
+          "label": "Written of Me (1/2) - Messiah & The Camp",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/7FSkerIjREqmfEs4ZNZLZl",
           "access": "public"
@@ -24,5 +26,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2023-08-13"
 }

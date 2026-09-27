@@ -10,13 +10,15 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Revelation 13 - Beast of the Sea Spotify",
+          "sourceId": "spotify:2kYQhiyPQSaoUwVBYSQQd5",
+          "label": "Revelation 13 - Beast of the Sea",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/2kYQhiyPQSaoUwVBYSQQd5",
           "access": "public"
         },
         {
-          "label": "Revelation 12 - The Woman & The Dragon Spotify",
+          "sourceId": "spotify:6eiQNl3IWR5Um3hdP9KYAB",
+          "label": "Revelation 12 - The Woman & The Dragon",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/6eiQNl3IWR5Um3hdP9KYAB",
           "access": "public"
@@ -24,5 +26,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2023-06-25"
 }

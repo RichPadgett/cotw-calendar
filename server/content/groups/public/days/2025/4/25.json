@@ -10,13 +10,15 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Korah’s Rebellion: Choosing Obedience Over Pride Spotify",
+          "sourceId": "spotify:1CMV0p0M59ST6IQqbsbN62",
+          "label": "Korah’s Rebellion: Choosing Obedience Over Pride",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/1CMV0p0M59ST6IQqbsbN62",
           "access": "public"
         },
         {
-          "label": "Divine Power and Human Opposition: The Early Church's Mission and Trials Spotify",
+          "sourceId": "spotify:1TxYmJWPJQvlzskht4k9CA",
+          "label": "Divine Power and Human Opposition: The Early Church's Mission and Trials",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/1TxYmJWPJQvlzskht4k9CA",
           "access": "public"
@@ -24,5 +26,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2025-07-12"
 }

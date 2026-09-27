@@ -10,7 +10,8 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Understanding Paul: Justification Spotify",
+          "sourceId": "spotify:0e10FZktRF3fyuDHGDVbNj",
+          "label": "Understanding Paul: Justification",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/0e10FZktRF3fyuDHGDVbNj",
           "access": "public"
@@ -18,5 +19,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2022-07-03"
 }

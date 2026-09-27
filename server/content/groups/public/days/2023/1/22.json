@@ -10,7 +10,8 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Passover 2023 - What Was The Last Supper? Spotify",
+          "sourceId": "spotify:3sQyAT5r8taOxLsAYwKt5k",
+          "label": "Passover 2023 - What Was The Last Supper?",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/3sQyAT5r8taOxLsAYwKt5k",
           "access": "public"
@@ -18,5 +19,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2023-04-05"
 }

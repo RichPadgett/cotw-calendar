@@ -10,13 +10,15 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Gospel Accounts: Yeshua Was That Prophet Spotify",
+          "sourceId": "spotify:1M1VtJWhR6DiihgRXyo4uG",
+          "label": "Gospel Accounts: Yeshua Was That Prophet",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/1M1VtJWhR6DiihgRXyo4uG",
           "access": "public"
         },
         {
-          "label": "Sacrifices: Commitment to Elohim Spotify",
+          "sourceId": "spotify:3clGFPy316PLeHlWO4HpnE",
+          "label": "Sacrifices: Commitment to Elohim",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/3clGFPy316PLeHlWO4HpnE",
           "access": "public"
@@ -24,5 +26,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2023-12-03"
 }

@@ -10,24 +10,28 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Spiritual Life & Death - Part 1 Spotify",
+          "sourceId": "spotify:0lTXOnv8P4ykrKyk1OGVP8",
+          "label": "Spiritual Life & Death - Part 1",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/0lTXOnv8P4ykrKyk1OGVP8",
           "access": "public"
         },
         {
-          "label": "Spiritual Life & Death - Part 2 Spotify",
+          "sourceId": "spotify:34QjZrLSu3D9BgRhChngGY",
+          "label": "Spiritual Life & Death - Part 2",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/34QjZrLSu3D9BgRhChngGY",
           "access": "public"
         },
         {
-          "label": "Walking in the Spirit vs Flesh Spotify",
+          "sourceId": "spotify:4PRwjFy636mC2D2nfNPQhF",
+          "label": "Walking in the Spirit vs Flesh",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/4PRwjFy636mC2D2nfNPQhF",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2022-05-22"
 }

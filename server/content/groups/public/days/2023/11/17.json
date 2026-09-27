@@ -10,19 +10,22 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Walking in the Spirit: Fruits Spotify",
+          "sourceId": "spotify:1BEGJ2VTj2dyYfclJe3EKG",
+          "label": "Walking in the Spirit: Fruits",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/1BEGJ2VTj2dyYfclJe3EKG",
           "access": "public"
         },
         {
-          "label": "Set-Apart in Sober Mind Spotify",
+          "sourceId": "spotify:66kOtfyRH9BlH22u0j4VF5",
+          "label": "Set-Apart in Sober Mind",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/66kOtfyRH9BlH22u0j4VF5",
           "access": "public"
         },
         {
-          "label": "Walking in the Spirit: Gifts Spotify",
+          "sourceId": "spotify:7FNLy4wC7uKq5gJrsBsr7p",
+          "label": "Walking in the Spirit: Gifts",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/7FNLy4wC7uKq5gJrsBsr7p",
           "access": "public"
@@ -30,5 +33,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2024-01-28"
 }

@@ -10,18 +10,21 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "A New First Fruit - Review & Calendar Spotify",
+          "sourceId": "spotify:3GEBF4E6DdzQuUMkq2t8sN",
+          "label": "A New First Fruit - Review & Calendar",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/3GEBF4E6DdzQuUMkq2t8sN",
           "access": "public"
         },
         {
-          "label": "Affirmation of Resurrection Spotify",
+          "sourceId": "spotify:6lwTwMd8g63J1jfuk8ZU4K",
+          "label": "Affirmation of Resurrection",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/6lwTwMd8g63J1jfuk8ZU4K",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2024-12-08"
 }

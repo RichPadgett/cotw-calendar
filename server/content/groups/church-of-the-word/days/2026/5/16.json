@@ -1,0 +1,36 @@
+{
+  "enochYear": 2026,
+  "month": 5,
+  "day": 16,
+  "title": "Month 5 Day 16",
+  "notes": "",
+  "scriptureReadings": [],
+  "sections": [
+    {
+      "title": "Notices",
+      "displayStyle": "notice",
+      "items": []
+    },
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "sourceId": "spotify:6iw3PLpft2UidsFEvCEKsB",
+          "label": "Tithing, Tongues & Order in the Assembly: Deuteronomy 14 and 1 Corinthians 14",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/6iw3PLpft2UidsFEvCEKsB",
+          "access": "public"
+        },
+        {
+          "sourceId": "spotify:4JwBSdguhJseied3PulOck",
+          "label": "According to the Scriptures: The Gospel, Resurrection & Prophecies in 1 Corinthians 15",
+          "type": "external-link",
+          "url": "https://open.spotify.com/episode/4JwBSdguhJseied3PulOck",
+          "access": "public"
+        }
+      ]
+    }
+  ],
+  "gregorianDate": "2026-08-01"
+}

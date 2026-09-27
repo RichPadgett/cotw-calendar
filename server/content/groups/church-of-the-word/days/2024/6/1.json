@@ -10,12 +10,14 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Yeshua - The Good Shepherd Spotify",
+          "sourceId": "spotify:4bR4Yo6heFKlyvTaNIcEn0",
+          "label": "Yeshua - The Good Shepherd",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/4bR4Yo6heFKlyvTaNIcEn0",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2024-08-11"
 }

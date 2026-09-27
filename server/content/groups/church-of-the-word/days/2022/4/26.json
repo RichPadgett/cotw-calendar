@@ -10,18 +10,21 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "What To Expect - End Times & Millennial Reign Spotify",
+          "sourceId": "spotify:2w1TgsJYKaTwaJYbv7IvAo",
+          "label": "What To Expect - End Times & Millennial Reign",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/2w1TgsJYKaTwaJYbv7IvAo",
           "access": "public"
         },
         {
-          "label": "Story of Jacob - Returning to Yah Spotify",
+          "sourceId": "spotify:6YIrw94Vm4aA1bYNIax2Jt",
+          "label": "Story of Jacob - Returning to Yah",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/6YIrw94Vm4aA1bYNIax2Jt",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2022-07-10"
 }

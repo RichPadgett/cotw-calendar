@@ -10,18 +10,21 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Grafted In or Devoted to Destruction: Marriage, Offspring & Covenant Faithfulness Spotify",
+          "sourceId": "spotify:4qUkIfzw03OYSQ3uhmO6zU",
+          "label": "Grafted In or Devoted to Destruction: Marriage, Offspring & Covenant Faithfulness",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/4qUkIfzw03OYSQ3uhmO6zU",
           "access": "public"
         },
         {
-          "label": "Purge the Leaven: Marriage Principles, Sexual Immorality, & the Impending Crisis in 1 Corinthians 5–7 Spotify",
+          "sourceId": "spotify:7iaFthn3doV3TsNSgr9uqy",
+          "label": "Purge the Leaven: Marriage Principles, Sexual Immorality, & the Impending Crisis in 1 Corinthians 5–7",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/7iaFthn3doV3TsNSgr9uqy",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2026-04-18"
 }

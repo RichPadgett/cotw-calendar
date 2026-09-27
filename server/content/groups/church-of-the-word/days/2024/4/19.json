@@ -10,18 +10,21 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Timeline: First Fruits & Soundings Spotify",
+          "sourceId": "spotify:4goqGYN95kyrLCjoJ5JVTc",
+          "label": "Timeline: First Fruits & Soundings",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/4goqGYN95kyrLCjoJ5JVTc",
           "access": "public"
         },
         {
-          "label": "Through Prayer & Fasting Spotify",
+          "sourceId": "spotify:7wIW02sstluUCt4X1XZi2X",
+          "label": "Through Prayer & Fasting",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/7wIW02sstluUCt4X1XZi2X",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2024-06-30"
 }

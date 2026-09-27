@@ -10,13 +10,15 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "The Role & Call of Apostleship Spotify",
+          "sourceId": "spotify:73pn3NGGTLhuWIYCn8MuZc",
+          "label": "The Role & Call of Apostleship",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/73pn3NGGTLhuWIYCn8MuZc",
           "access": "public"
         },
         {
-          "label": "Revelation 2: Faithfulness to Elohim Spotify",
+          "sourceId": "spotify:7MaCJzuyWXsKtx50w7mReW",
+          "label": "Revelation 2: Faithfulness to Elohim",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/7MaCJzuyWXsKtx50w7mReW",
           "access": "public"
@@ -24,5 +26,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2024-02-18"
 }

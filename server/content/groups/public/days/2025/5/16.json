@@ -10,7 +10,8 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "The Branch of Righteousness: Tracing Yeshua Through the Tribes and Scriptures Spotify",
+          "sourceId": "spotify:4k0nZmXeRwSo8jEGRFPsDY",
+          "label": "The Branch of Righteousness: Tracing Yeshua Through the Tribes and Scriptures",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/4k0nZmXeRwSo8jEGRFPsDY",
           "access": "public"
@@ -18,5 +19,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2025-08-02"
 }

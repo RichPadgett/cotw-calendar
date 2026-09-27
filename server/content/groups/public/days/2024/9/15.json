@@ -10,13 +10,15 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Hoshiana - Lifted High Unto Glory Spotify",
+          "sourceId": "spotify:2ovn609TOjM3k4HvRJGrw6",
+          "label": "Hoshiana - Lifted High Unto Glory",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/2ovn609TOjM3k4HvRJGrw6",
           "access": "public"
         },
         {
-          "label": "Recognizing the Salvation Spotify",
+          "sourceId": "spotify:5ZNh1RMBO59Uv3JO5M6UtD",
+          "label": "Recognizing the Salvation",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/5ZNh1RMBO59Uv3JO5M6UtD",
           "access": "public"
@@ -24,5 +26,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2024-11-24"
 }

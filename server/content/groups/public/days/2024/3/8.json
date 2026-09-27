@@ -10,13 +10,15 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Being Tested by YHWH (2/2) Spotify",
+          "sourceId": "spotify:4B6jxmU32DuNRzW4Gl8Uhj",
+          "label": "Being Tested by YHWH (2/2)",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/4B6jxmU32DuNRzW4Gl8Uhj",
           "access": "public"
         },
         {
-          "label": "Being Tested by YHWH (1/2) Spotify",
+          "sourceId": "spotify:79HjvlYR5Maf1bCWDzU75o",
+          "label": "Being Tested by YHWH (1/2)",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/79HjvlYR5Maf1bCWDzU75o",
           "access": "public"
@@ -24,5 +26,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2024-05-19"
 }

@@ -10,24 +10,28 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Attributes of the Spirit (1/2) Spotify",
+          "sourceId": "spotify:0nqPZ49TzTIdcmHRIgJqtQ",
+          "label": "Attributes of the Spirit (1/2)",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/0nqPZ49TzTIdcmHRIgJqtQ",
           "access": "public"
         },
         {
-          "label": "Armor of Elohim Spotify",
+          "sourceId": "spotify:2PWU75n27jvQG43SKBmXCH",
+          "label": "Armor of Elohim",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/2PWU75n27jvQG43SKBmXCH",
           "access": "public"
         },
         {
-          "label": "Attributes of the Spirit (2/2) Spotify",
+          "sourceId": "spotify:4Gj7i9xF9bk5hHTXFwm0Ml",
+          "label": "Attributes of the Spirit (2/2)",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/4Gj7i9xF9bk5hHTXFwm0Ml",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2024-01-15"
 }

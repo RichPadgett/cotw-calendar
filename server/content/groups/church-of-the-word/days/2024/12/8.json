@@ -10,12 +10,14 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "The Trials of Yeshua Spotify",
+          "sourceId": "spotify:3oYw29joPwSs9mqGMqpeqV",
+          "label": "The Trials of Yeshua",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/3oYw29joPwSs9mqGMqpeqV",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2025-02-16"
 }

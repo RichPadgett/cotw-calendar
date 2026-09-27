@@ -10,18 +10,21 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Love & Forgiveness - Part 2 Spotify",
+          "sourceId": "spotify:3peKN4WBsEoWSU4zV2uJI7",
+          "label": "Love & Forgiveness - Part 2",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/3peKN4WBsEoWSU4zV2uJI7",
           "access": "public"
         },
         {
-          "label": "Contained in Dogmas Spotify",
+          "sourceId": "spotify:78weuwgddt07kxqFHNhtHu",
+          "label": "Contained in Dogmas",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/78weuwgddt07kxqFHNhtHu",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2024-05-05"
 }

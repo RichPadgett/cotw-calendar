@@ -45,10 +45,11 @@
       "displayStyle": "default",
       "items": [
         {
+          "sourceId": "spotify:4X2rRyqj2aj4shLdPYtcJ1",
           "label": "The More Excellent Way: Love, Sacrifice & Obedience",
           "type": "external-link",
-          "access": "public",
-          "url": "https://open.spotify.com/episode/4X2rRyqj2aj4shLdPYtcJ1"
+          "url": "https://open.spotify.com/episode/4X2rRyqj2aj4shLdPYtcJ1",
+          "access": "public"
         },
         {
           "label": "Paleo Yeshua Overlay on Bronze Serpent.pdf",
@@ -94,5 +95,6 @@
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2026-06-13"
 }

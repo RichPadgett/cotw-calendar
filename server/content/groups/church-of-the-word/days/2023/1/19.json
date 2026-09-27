@@ -10,18 +10,21 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Everlasting: Israel & Obedience (1/2) Spotify",
+          "sourceId": "spotify:0jIOzF2QZh2wRFNVuxrW6o",
+          "label": "Everlasting: Israel & Obedience (1/2)",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/0jIOzF2QZh2wRFNVuxrW6o",
           "access": "public"
         },
         {
-          "label": "Everlasting: Israel & Obedience (2/2) Spotify",
+          "sourceId": "spotify:79MxsNOsBo9yCq7pbpWVBa",
+          "label": "Everlasting: Israel & Obedience (2/2)",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/79MxsNOsBo9yCq7pbpWVBa",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2023-04-02"
 }

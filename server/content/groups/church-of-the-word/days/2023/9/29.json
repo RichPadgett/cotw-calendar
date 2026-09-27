@@ -10,18 +10,21 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Yeshua, Our Gift Offering Spotify",
+          "sourceId": "spotify:0hFImwbGpgLd83di3oo0p3",
+          "label": "Yeshua, Our Gift Offering",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/0hFImwbGpgLd83di3oo0p3",
           "access": "public"
         },
         {
-          "label": "The Genealogy of Yeshua: Revealed Spotify",
+          "sourceId": "spotify:36d2MDlusneT5vyPj7ICpT",
+          "label": "The Genealogy of Yeshua: Revealed",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/36d2MDlusneT5vyPj7ICpT",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2023-12-10"
 }

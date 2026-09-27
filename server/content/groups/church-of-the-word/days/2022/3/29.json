@@ -10,24 +10,28 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Story of Ruth - Pentecost 2022 (1/2) Spotify",
+          "sourceId": "spotify:0tc6A2PMfWlGTXBakP1RFp",
+          "label": "Story of Ruth - Pentecost 2022 (1/2)",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/0tc6A2PMfWlGTXBakP1RFp",
           "access": "public"
         },
         {
-          "label": "Spiritual Warfare - Part 1 Spotify",
+          "sourceId": "spotify:6lFmRlyfFTIZ1qZb7VXYI3",
+          "label": "Spiritual Warfare - Part 1",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/6lFmRlyfFTIZ1qZb7VXYI3",
           "access": "public"
         },
         {
-          "label": "Pentecost 2022 - (2/2) Spotify",
+          "sourceId": "spotify:78JlitKJhNZIAqhXN5b8FR",
+          "label": "Pentecost 2022 - (2/2)",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/78JlitKJhNZIAqhXN5b8FR",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2022-06-12"
 }

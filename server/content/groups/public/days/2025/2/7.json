@@ -10,7 +10,8 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Roles in the Assembly Spotify",
+          "sourceId": "spotify:7rkMSTxiWG45yQv4zZusvm",
+          "label": "Roles in the Assembly: Trumpets, Camp Order, Tabernacle Transport & the Example of Deborah",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/7rkMSTxiWG45yQv4zZusvm",
           "access": "public"
@@ -18,5 +19,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2025-04-24"
 }

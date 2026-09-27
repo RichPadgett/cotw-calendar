@@ -10,7 +10,8 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Biblical Eldership Spotify",
+          "sourceId": "spotify:0AQ5HCq757L7ZC9nRqMpez",
+          "label": "Biblical Eldership",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/0AQ5HCq757L7ZC9nRqMpez",
           "access": "public"
@@ -18,5 +19,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2025-04-26"
 }

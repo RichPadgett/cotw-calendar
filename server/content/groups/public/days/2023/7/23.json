@@ -10,7 +10,8 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Dwelt Among Us - Sukkot 2023 (1/2) Spotify",
+          "sourceId": "spotify:353q5mW17lToal0pzI9dGe",
+          "label": "Dwelt Among Us - Sukkot 2023 (1/2)",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/353q5mW17lToal0pzI9dGe",
           "access": "public"
@@ -18,5 +19,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2023-10-05"
 }

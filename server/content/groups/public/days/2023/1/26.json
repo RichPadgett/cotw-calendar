@@ -10,13 +10,15 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Bond Servants of Messiah Spotify",
+          "sourceId": "spotify:0cAIGnTaELCTsp0EQohwo8",
+          "label": "Bond Servants of Messiah",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/0cAIGnTaELCTsp0EQohwo8",
           "access": "public"
         },
         {
-          "label": "Fullness of the Resurrection (2/2) Spotify",
+          "sourceId": "spotify:0zNBi1VaglsJbv0WcTKIOu",
+          "label": "Fullness of the Resurrection (2/2)",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/0zNBi1VaglsJbv0WcTKIOu",
           "access": "public"
@@ -24,5 +26,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2023-04-09"
 }

@@ -1,0 +1,32 @@
+{
+  "enochYear": 2026,
+  "month": 7,
+  "day": 11,
+  "title": "Month 7 Day 11",
+  "notes": "",
+  "includeInCalendarFeed": true,
+  "calendarStartTime": "11:00",
+  "calendarEndTime": "2:00",
+  "calendarLocation": "https://maps.app.goo.gl/LCL2z3DGxEsMwDVS9?g_st=ic",
+  "scriptureReadings": [],
+  "sections": [
+    {
+      "title": "Notices",
+      "displayStyle": "notice",
+      "items": [
+        {
+          "label": "Heather & Mica's",
+          "type": "note",
+          "access": "public",
+          "url": "https://maps.app.goo.gl/LCL2z3DGxEsMwDVS9?g_st=ic",
+          "includeInCalendarFeed": false
+        }
+      ]
+    },
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": []
+    }
+  ]
+}

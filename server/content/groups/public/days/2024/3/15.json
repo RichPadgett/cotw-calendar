@@ -10,13 +10,15 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Bondservants to Yeshua Spotify",
+          "sourceId": "spotify:1KUDuFV3959gxGa4PeiUpt",
+          "label": "Bondservants to Yeshua",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/1KUDuFV3959gxGa4PeiUpt",
           "access": "public"
         },
         {
-          "label": "His Church - From Prophecy to Fulfillment Spotify",
+          "sourceId": "spotify:240YkBe0MwpdVDH52464RH",
+          "label": "His Church - From Prophecy to Fulfillment",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/240YkBe0MwpdVDH52464RH",
           "access": "public"
@@ -24,5 +26,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2024-05-26"
 }

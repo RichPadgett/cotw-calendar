@@ -10,7 +10,8 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Belief Unto Obedience Spotify",
+          "sourceId": "spotify:5zuunndtqC55jhCP1oEf4H",
+          "label": "Belief Unto Obedience ",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/5zuunndtqC55jhCP1oEf4H",
           "access": "public"
@@ -18,5 +19,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2022-03-29"
 }

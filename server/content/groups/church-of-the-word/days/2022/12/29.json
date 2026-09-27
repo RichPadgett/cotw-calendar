@@ -10,24 +10,28 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "The Scriptures Spoke of Me - Crucifixion (2/2) Spotify",
+          "sourceId": "spotify:07PXIfCXNVSpP62JhiaYB9",
+          "label": "The Scriptures Spoke of Me - Crucifixion (2/2)",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/07PXIfCXNVSpP62JhiaYB9",
           "access": "public"
         },
         {
-          "label": "The Scriptures Spoke of Me (1/2) Spotify",
+          "sourceId": "spotify:1PegMrjbg3wLY71s36HUvd",
+          "label": "The Scriptures Spoke of Me (1/2)",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/1PegMrjbg3wLY71s36HUvd",
           "access": "public"
         },
         {
-          "label": "Prophecy: Return of Yeshua & The Delusion Spotify",
+          "sourceId": "spotify:6ThYwWO3IIFQfaUy8dGig0",
+          "label": "Prophecy: Return of Yeshua & The Delusion",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/6ThYwWO3IIFQfaUy8dGig0",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2023-03-12"
 }

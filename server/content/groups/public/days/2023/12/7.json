@@ -10,7 +10,8 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Purification After Childbirth Spotify",
+          "sourceId": "spotify:5wfWLIZZMjw4QJ35b9JjTF",
+          "label": "Purification After Childbirth",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/5wfWLIZZMjw4QJ35b9JjTF",
           "access": "public"
@@ -18,5 +19,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2024-02-17"
 }

@@ -10,13 +10,15 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Thyatira - The Tolerating Church Spotify",
+          "sourceId": "spotify:35J6VPTdHgppbreHRvxfzK",
+          "label": "Thyatira - The Tolerating Church",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/35J6VPTdHgppbreHRvxfzK",
           "access": "public"
         },
         {
-          "label": "Thyatira - The Tolerating Church Spotify",
+          "sourceId": "spotify:76Qvy7stOVH4i3AFOF8H0P",
+          "label": "Thyatira - The Tolerating Church",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/76Qvy7stOVH4i3AFOF8H0P",
           "access": "public"
@@ -24,5 +26,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2022-10-23"
 }

@@ -10,18 +10,21 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Theory: The Current Millennial Reign (2/2) Spotify",
+          "sourceId": "spotify:35ZCWzFnk2LJ9qKabaYOGz",
+          "label": "Theory: The Current Millennial Reign (2/2)",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/35ZCWzFnk2LJ9qKabaYOGz",
           "access": "public"
         },
         {
-          "label": "Theory: The Current Millennial Reign Spotify",
+          "sourceId": "spotify:3tSlBBXbKUMjwV2zqGdvAQ",
+          "label": "Theory: The Current Millennial Reign",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/3tSlBBXbKUMjwV2zqGdvAQ",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2023-09-30"
 }

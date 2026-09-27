@@ -10,7 +10,8 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "End Times Events Spotify",
+          "sourceId": "spotify:5HDhVNv7q3r202bPG3D21I",
+          "label": "End Times Events",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/5HDhVNv7q3r202bPG3D21I",
           "access": "public"
@@ -18,5 +19,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2022-03-05"
 }

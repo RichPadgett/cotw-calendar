@@ -10,18 +10,21 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Inheritance, Prophecy, and the Enochian Foundations of Yah’s Calendar Spotify",
+          "sourceId": "spotify:19g4KQjWUHE1GkdkJjaZvK",
+          "label": "Inheritance, Prophecy, and the Enochian Foundations of Yah’s Calendar",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/19g4KQjWUHE1GkdkJjaZvK",
           "access": "public"
         },
         {
-          "label": "The Gospel’s Universal Call and the Challenges of Faith Spotify",
+          "sourceId": "spotify:5Uf4kcB71EXQlzPCfGkS3r",
+          "label": "The Gospel’s Universal Call and the Challenges of Faith",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/5Uf4kcB71EXQlzPCfGkS3r",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2025-11-08"
 }

@@ -10,30 +10,35 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "The Unleavened Word of Yeshua Spotify",
+          "sourceId": "spotify:03HXu33HYcdrjKZAd8NMjn",
+          "label": "The Unleavened Word of Yeshua",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/03HXu33HYcdrjKZAd8NMjn",
           "access": "public"
         },
         {
-          "label": "Prophecy & Punishment - Passover (2024) Spotify",
+          "sourceId": "spotify:2cssdPuagh58LXP4nd0kaY",
+          "label": "Prophecy & Punishment - Passover (2024)",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/2cssdPuagh58LXP4nd0kaY",
           "access": "public"
         },
         {
-          "label": "Eyewitness Account of the Crucifixion Spotify",
+          "sourceId": "spotify:2kKxda8rbB5CuWfB0xIkG9",
+          "label": "Eyewitness Account of the Crucifixion",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/2kKxda8rbB5CuWfB0xIkG9",
           "access": "public"
         },
         {
-          "label": "Representation of Messiah: The Passover (2024) Spotify",
+          "sourceId": "spotify:35uK0PCU0ywzXToSS7KsLT",
+          "label": "Representation of Messiah: The Passover (2024)",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/35uK0PCU0ywzXToSS7KsLT",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2024-04-04"
 }

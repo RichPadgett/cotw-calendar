@@ -10,18 +10,21 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "End Times: Ezekiel's Vision Spotify",
+          "sourceId": "spotify:3Y0Z21Vk00Ph62RSRBYFMe",
+          "label": "End Times: Ezekiel's Vision",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/3Y0Z21Vk00Ph62RSRBYFMe",
           "access": "public"
         },
         {
-          "label": "End Times: Daniel & Nebuchadnezzar Spotify",
+          "sourceId": "spotify:7kqN8k4flBnALGUbFKFQz0",
+          "label": "End Times: Daniel & Nebuchadnezzar ",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/7kqN8k4flBnALGUbFKFQz0",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2022-07-17"
 }

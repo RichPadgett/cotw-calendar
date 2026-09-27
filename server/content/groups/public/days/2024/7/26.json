@@ -10,7 +10,8 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Equipped Unto A Calling Spotify",
+          "sourceId": "spotify:2j6pnAJb84n6rXPjoDvw1j",
+          "label": "Equipped Unto A Calling",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/2j6pnAJb84n6rXPjoDvw1j",
           "access": "public"
@@ -18,5 +19,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2024-10-06"
 }

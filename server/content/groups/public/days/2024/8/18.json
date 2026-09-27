@@ -10,7 +10,8 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Ephraim - Loyalty & Allegiance Spotify",
+          "sourceId": "spotify:7EZE0YdaIk6u7BC1ljfuFS",
+          "label": "Ephraim - Loyalty & Allegiance ",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/7EZE0YdaIk6u7BC1ljfuFS",
           "access": "public"
@@ -18,5 +19,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2024-10-28"
 }

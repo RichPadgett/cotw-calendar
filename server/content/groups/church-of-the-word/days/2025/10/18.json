@@ -10,18 +10,21 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Cities of Refuge and the Avenger of Blood: Yeshua, Our Eternal High Priest and Refuge Spotify",
+          "sourceId": "spotify:1QJ6TJwRB7nnSnNg9K6NSq",
+          "label": "Cities of Refuge and the Avenger of Blood: Yeshua, Our Eternal High Priest and Refuge",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/1QJ6TJwRB7nnSnNg9K6NSq",
           "access": "public"
         },
         {
-          "label": "One Law in Messiah: The Jerusalem Council, Gentile Fellowship, and Paul's Second Journey Spotify",
+          "sourceId": "spotify:2aQ5uGfAWO8HikWQYFjrMa",
+          "label": "One Law in Messiah: The Jerusalem Council, Gentile Fellowship, and Paul's Second Journey",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/2aQ5uGfAWO8HikWQYFjrMa",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2026-01-03"
 }

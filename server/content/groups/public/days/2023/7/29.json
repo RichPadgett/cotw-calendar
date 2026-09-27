@@ -10,7 +10,8 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "The Judgments Revealed - Sukkot 2023 (2/2) Spotify",
+          "sourceId": "spotify:7aikJRv5FF6w4KsAEnAwfn",
+          "label": "The Judgments Revealed - Sukkot 2023 (2/2)",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/7aikJRv5FF6w4KsAEnAwfn",
           "access": "public"
@@ -18,5 +19,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2023-10-11"
 }

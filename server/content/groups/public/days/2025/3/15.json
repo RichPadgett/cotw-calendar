@@ -10,13 +10,15 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Faith in the Final Days Spotify",
+          "sourceId": "spotify:0HPt85KefARdFvqILOvIp9",
+          "label": "Faith in the Final Days",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/0HPt85KefARdFvqILOvIp9",
           "access": "public"
         },
         {
-          "label": "Humility & Honor: Lessons From Moses & Miriam Spotify",
+          "sourceId": "spotify:7Eu3k2opnEbuWr7sTNa2El",
+          "label": "Humility & Honor: Lessons From Moses & Miriam",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/7Eu3k2opnEbuWr7sTNa2El",
           "access": "public"
@@ -24,5 +26,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2025-06-01"
 }

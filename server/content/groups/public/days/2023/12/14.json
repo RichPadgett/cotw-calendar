@@ -10,7 +10,8 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Lessons from Leprosy Spotify",
+          "sourceId": "spotify:0QLOVy7WdnY6fK1nz0DqhN",
+          "label": "Lessons from Leprosy",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/0QLOVy7WdnY6fK1nz0DqhN",
           "access": "public"
@@ -18,5 +19,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2024-02-24"
 }

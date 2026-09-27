@@ -1,0 +1,27 @@
+{
+  "enochYear": 2026,
+  "month": 1,
+  "day": 10,
+  "title": "Month 1 Day 10",
+  "notes": "",
+  "scriptureReadings": [],
+  "sections": [
+    {
+      "title": "Notices",
+      "displayStyle": "notice",
+      "items": []
+    },
+    {
+      "title": "Files / Links / Media",
+      "displayStyle": "default",
+      "items": [
+        {
+          "label": "the-king's-countdown.pdf",
+          "type": "pdf",
+          "access": "public",
+          "url": "/api/files/groups/church-of-the-word/files/2026/1/10/1782443830089-the-king_s-countdown.pdf"
+        }
+      ]
+    }
+  ]
+}

@@ -10,36 +10,42 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Trespass Offering Spotify",
+          "sourceId": "spotify:1vcEWng9rf3biw9hA95s6c",
+          "label": "Trespass Offering",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/1vcEWng9rf3biw9hA95s6c",
           "access": "public"
         },
         {
-          "label": "Gospel Accounts: Ministry of Yeshua Spotify",
+          "sourceId": "spotify:264plSVSmS9XzOlomiRte1",
+          "label": "Gospel Accounts: Ministry of Yeshua",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/264plSVSmS9XzOlomiRte1",
           "access": "public"
         },
         {
-          "label": "Role of the Offerings Spotify",
+          "sourceId": "spotify:2CvHQzthJvwTMywHmHZnZq",
+          "label": "Role of the Offerings",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/2CvHQzthJvwTMywHmHZnZq",
           "access": "public"
         },
         {
-          "label": "Scriptural Investigation Spotify",
+          "sourceId": "spotify:5j99cpJPzNKMDkpUxPqDO2",
+          "label": "Scriptural Investigation",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/5j99cpJPzNKMDkpUxPqDO2",
           "access": "public"
         },
         {
-          "label": "Yeshua Begins His Miracles Spotify",
+          "sourceId": "spotify:6UTaszUqlthPcKVGkT7JxK",
+          "label": "Yeshua Begins His Miracles",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/6UTaszUqlthPcKVGkT7JxK",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2024-01-04"
 }

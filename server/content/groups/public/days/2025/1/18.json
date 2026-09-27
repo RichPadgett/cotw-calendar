@@ -10,7 +10,8 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Out of Egypt Spotify",
+          "sourceId": "spotify:0fHzA0b8NCIj7HjOkYGk1u",
+          "label": "Out of Egypt",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/0fHzA0b8NCIj7HjOkYGk1u",
           "access": "public"
@@ -18,5 +19,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2025-04-05"
 }

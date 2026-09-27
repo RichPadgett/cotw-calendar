@@ -10,7 +10,8 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "The Restoration of Yahweh’s Priesthood Spotify",
+          "sourceId": "spotify:1kqNKrS0PnsroybWENvQIX",
+          "label": "The Restoration of Yahweh’s Priesthood",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/1kqNKrS0PnsroybWENvQIX",
           "access": "public"
@@ -18,5 +19,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2025-10-04"
 }

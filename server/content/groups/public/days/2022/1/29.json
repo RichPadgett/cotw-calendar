@@ -10,7 +10,8 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Passover (2022) Spotify",
+          "sourceId": "spotify:67SrVPHh0XqxkXzusAl77X",
+          "label": "Passover (2022)",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/67SrVPHh0XqxkXzusAl77X",
           "access": "public"
@@ -18,5 +19,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2022-04-13"
 }

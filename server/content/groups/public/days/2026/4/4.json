@@ -62,22 +62,25 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "The More Excellent Way: Love Never Fails",
+          "sourceId": "spotify:2lUeu1JtdLfnpl5eJ2SAzr",
+          "label": "The More Excellent Way: Love Never Fails – From Abraham’s Sacrifice to Seeing Yahuwah Face to Face",
           "type": "external-link",
-          "access": "public",
-          "url": "https://open.spotify.com/episode/2lUeu1JtdLfnpl5eJ2SAzr?si=FkgvBk9pSJWwk5qS9hG7Bw"
+          "url": "https://open.spotify.com/episode/2lUeu1JtdLfnpl5eJ2SAzr",
+          "access": "public"
         },
         {
-          "label": "The Place Yahua Chooses: Destroying Idols & Centralized Worship in Deuteronomy",
+          "sourceId": "spotify:7qGDEFrpjKzTAn15jjgUh9",
+          "label": "The Place Yahweh Chooses: Destroying Idols & Centralized Worship in Deuteronomy 12",
           "type": "external-link",
-          "access": "public",
-          "url": "https://open.spotify.com/episode/7qGDEFrpjKzTAn15jjgUh9?si=Du43W98vT-22HbZkqhgPww"
+          "url": "https://open.spotify.com/episode/7qGDEFrpjKzTAn15jjgUh9",
+          "access": "public"
         },
         {
-          "label": "Truth in Timeline & Measurements: Tabernacle Locations, Offerings & Ancient Chronology",
+          "sourceId": "spotify:0aST1ognp1WS7hbdqFKkXV",
+          "label": "Truth in the Timeline & Measurements: Tabernacle Locations, Offerings & Ancient Chronology",
           "type": "external-link",
-          "access": "public",
-          "url": "https://open.spotify.com/episode/0aST1ognp1WS7hbdqFKkXV?si=YFtphpJMS_OQz-bnc9LQrA"
+          "url": "https://open.spotify.com/episode/0aST1ognp1WS7hbdqFKkXV",
+          "access": "public"
         },
         {
           "label": "Acts of Pilate timeline to help us ID Tower of Babel.pdf",
@@ -93,5 +96,6 @@
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2026-06-20"
 }

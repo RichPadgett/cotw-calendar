@@ -10,18 +10,21 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Justice & Mercy Spotify",
+          "sourceId": "spotify:07QqQfymHK3bKQoMhwOYTB",
+          "label": "Justice & Mercy",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/07QqQfymHK3bKQoMhwOYTB",
           "access": "public"
         },
         {
-          "label": "Revelation 11 - Remnant Of Her Seed Spotify",
+          "sourceId": "spotify:2CtH1RfXmkhhAoHt6zkvAQ",
+          "label": "Revelation 11 - Remnant Of Her Seed",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/2CtH1RfXmkhhAoHt6zkvAQ",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2023-06-11"
 }

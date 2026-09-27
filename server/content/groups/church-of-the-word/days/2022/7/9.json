@@ -10,18 +10,21 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "The Calendar According to Enoch Spotify",
+          "sourceId": "spotify:0LQmvuFcNalGMwskQY6Cvu",
+          "label": "The Calendar According to Enoch",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/0LQmvuFcNalGMwskQY6Cvu",
           "access": "public"
         },
         {
-          "label": "Seven Churches of Revelation Spotify",
+          "sourceId": "spotify:3EoYWwHWUhGKEQZv7VSs9j",
+          "label": "Seven Churches of Revelation",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/3EoYWwHWUhGKEQZv7VSs9j",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2022-09-22"
 }

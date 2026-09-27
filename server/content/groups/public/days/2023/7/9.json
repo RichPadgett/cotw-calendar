@@ -10,7 +10,8 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Revelation 19 - Marriage Supper of the Lamb Spotify",
+          "sourceId": "spotify:0kuOuVATzQTrHkQzFc6cMH",
+          "label": "Revelation 19 - Marriage Supper of the Lamb",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/0kuOuVATzQTrHkQzFc6cMH",
           "access": "public"
@@ -18,5 +19,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2023-09-21"
 }

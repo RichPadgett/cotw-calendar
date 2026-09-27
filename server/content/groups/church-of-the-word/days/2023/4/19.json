@@ -10,18 +10,21 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Abomination of Desolation (1/2) Spotify",
+          "sourceId": "spotify:4EuiIR5UagoB2GZjQo0BCm",
+          "label": "Abomination of Desolation (1/2)",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/4EuiIR5UagoB2GZjQo0BCm",
           "access": "public"
         },
         {
-          "label": "Abomination of Desolation (2/2) Spotify",
+          "sourceId": "spotify:7uvjy0WZJl2dnmtCS6JZbR",
+          "label": "Abomination of Desolation (2/2)",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/7uvjy0WZJl2dnmtCS6JZbR",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2023-07-02"
 }

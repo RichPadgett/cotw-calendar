@@ -10,7 +10,8 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Shavuot: Yah of Deliverance Spotify",
+          "sourceId": "spotify:34sJs9E7Kmwmb7rdeV8jzn",
+          "label": "Shavuot: Yah of Deliverance",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/34sJs9E7Kmwmb7rdeV8jzn",
           "access": "public"
@@ -18,5 +19,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2025-05-17"
 }

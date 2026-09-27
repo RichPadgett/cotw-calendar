@@ -10,13 +10,15 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Deliverance From Defilement (2/2) Spotify",
+          "sourceId": "spotify:1kulL35J4a8r82F5Pfo1Xd",
+          "label": "Deliverance From Defilement (2/2)",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/1kulL35J4a8r82F5Pfo1Xd",
           "access": "public"
         },
         {
-          "label": "Deliverance from Defilement (1/2) Spotify",
+          "sourceId": "spotify:38feKKNBvJ9NCKuvuEHIe1",
+          "label": "Deliverance from Defilement (1/2)",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/38feKKNBvJ9NCKuvuEHIe1",
           "access": "public"
@@ -24,5 +26,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2024-04-14"
 }

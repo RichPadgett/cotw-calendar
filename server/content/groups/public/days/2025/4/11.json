@@ -10,7 +10,8 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Consequences of Rebellion & The Call to Obedience Spotify",
+          "sourceId": "spotify:2f5REN1HvpGkdxbRfo91qB",
+          "label": "Consequences of Rebellion & The Call to Obedience",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/2f5REN1HvpGkdxbRfo91qB",
           "access": "public"
@@ -18,5 +19,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2025-06-28"
 }

@@ -10,13 +10,15 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Yeshua's Death & Resurrection Spotify",
+          "sourceId": "spotify:17NP1nBkVLHfbij6AcR0nz",
+          "label": "Yeshua's Death & Resurrection",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/17NP1nBkVLHfbij6AcR0nz",
           "access": "public"
         },
         {
-          "label": "The Great Shéma Spotify",
+          "sourceId": "spotify:3RaekpeorVrR9bFBBZABGR",
+          "label": "The Great Shéma ",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/3RaekpeorVrR9bFBBZABGR",
           "access": "public"
@@ -24,5 +26,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2023-04-16"
 }

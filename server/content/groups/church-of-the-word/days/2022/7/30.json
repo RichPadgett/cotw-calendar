@@ -10,12 +10,14 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Pergamum - The Compromised Church Spotify",
+          "sourceId": "spotify:16a8K7hIrFhmqyr0epwEg1",
+          "label": "Pergamum - The Compromised Church ",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/16a8K7hIrFhmqyr0epwEg1",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2022-10-13"
 }

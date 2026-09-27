@@ -10,13 +10,15 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "1 Kings - Elijah & Baal Spotify",
+          "sourceId": "spotify:0IY33xFqD7y1TXqom2k0Kq",
+          "label": "1 Kings - Elijah & Baal ",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/0IY33xFqD7y1TXqom2k0Kq",
           "access": "public"
         },
         {
-          "label": "Attention to Wisdom, Listen to His Words Spotify",
+          "sourceId": "spotify:2P6guHTRkAWEeD2zdssOyD",
+          "label": "Attention to Wisdom, Listen to His Words",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/2P6guHTRkAWEeD2zdssOyD",
           "access": "public"
@@ -24,5 +26,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2022-11-05"
 }

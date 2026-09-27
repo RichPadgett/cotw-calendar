@@ -10,19 +10,22 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Shabbat: From Slavery to Shalom Spotify",
+          "sourceId": "spotify:4GhsriYxJfv9QhY0Twwwnz",
+          "label": "Shabbat: From Slavery to Shalom",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/4GhsriYxJfv9QhY0Twwwnz",
           "access": "public"
         },
         {
-          "label": "The Bread of Life (1/2) Spotify",
+          "sourceId": "spotify:4JIthm923Q5ZCtwAqLyXRN",
+          "label": "The Bread of Life (1/2)",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/4JIthm923Q5ZCtwAqLyXRN",
           "access": "public"
         },
         {
-          "label": "The Bread of Life (2/2) Spotify",
+          "sourceId": "spotify:5WxsDdmuSXuxGxL2rVMIep",
+          "label": "The Bread of Life (2/2)",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/5WxsDdmuSXuxGxL2rVMIep",
           "access": "public"
@@ -30,5 +33,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2023-04-30"
 }

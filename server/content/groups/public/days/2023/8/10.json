@@ -10,7 +10,8 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Revelation 20: The Books Are Opened Spotify",
+          "sourceId": "spotify:3rwziy6lYVG23LiRI4kAR3",
+          "label": "Revelation 20: The Books Are Opened",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/3rwziy6lYVG23LiRI4kAR3",
           "access": "public"
@@ -18,5 +19,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2023-10-22"
 }

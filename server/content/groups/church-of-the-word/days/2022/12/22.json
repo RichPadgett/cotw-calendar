@@ -10,18 +10,21 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Inside the Throne Room (2/2) Spotify",
+          "sourceId": "spotify:0XeqdND1ZQoZRl3YPAW1OJ",
+          "label": "Inside the Throne Room (2/2)",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/0XeqdND1ZQoZRl3YPAW1OJ",
           "access": "public"
         },
         {
-          "label": "The Crown - Living by the Spirit Spotify",
+          "sourceId": "spotify:2Nuezo6D3KOlauDqeKvXPf",
+          "label": "The Crown - Living by the Spirit",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/2Nuezo6D3KOlauDqeKvXPf",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2023-03-05"
 }

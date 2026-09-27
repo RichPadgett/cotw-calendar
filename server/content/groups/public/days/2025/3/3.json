@@ -10,7 +10,8 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "A Call Unto Ministry Spotify",
+          "sourceId": "spotify:633MOqW5YzypCjMTreddJH",
+          "label": "A Call Unto Ministry",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/633MOqW5YzypCjMTreddJH",
           "access": "public"
@@ -18,5 +19,6 @@
       ]
     }
   ],
-  "scriptureReadings": []
+  "scriptureReadings": [],
+  "gregorianDate": "2025-05-20"
 }

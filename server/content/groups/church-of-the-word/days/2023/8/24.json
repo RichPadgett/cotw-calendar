@@ -10,18 +10,21 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "Revelation 22: Come, Master Yeshua Messiah! Spotify",
+          "sourceId": "spotify:111WAwgiOFMOwsUQuxZHG1",
+          "label": "Revelation 22: Come, Master Yeshua Messiah!",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/111WAwgiOFMOwsUQuxZHG1",
           "access": "public"
         },
         {
-          "label": "Revelation 21: New Heaven & New Earth Spotify",
+          "sourceId": "spotify:1R4aofyT4jiT86ol3LIZeh",
+          "label": "Revelation 21: New Heaven & New Earth",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/1R4aofyT4jiT86ol3LIZeh",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2023-11-05"
 }

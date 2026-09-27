@@ -10,18 +10,21 @@
       "displayStyle": "default",
       "items": [
         {
-          "label": "The Sabbath - Truth & Timeline Spotify",
+          "sourceId": "spotify:0p2Jc3jQuBOnt3065QKyuP",
+          "label": "The Sabbath - Truth & Timeline",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/0p2Jc3jQuBOnt3065QKyuP",
           "access": "public"
         },
         {
-          "label": "The Ancient Path & Deceit of Dogma Spotify",
+          "sourceId": "spotify:79jTa9tlDT8lIxktPjtt06",
+          "label": "The Ancient Path & Deceit of Dogma",
           "type": "external-link",
           "url": "https://open.spotify.com/episode/79jTa9tlDT8lIxktPjtt06",
           "access": "public"
         }
       ]
     }
-  ]
+  ],
+  "gregorianDate": "2024-04-07"
 }
