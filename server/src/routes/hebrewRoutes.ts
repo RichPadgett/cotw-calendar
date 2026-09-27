@@ -67,6 +67,7 @@ router.put("/letter-shapes/:script/:order", requireAdminToken, (req, res) => {
       script: String(req.params.script),
       order: Number(req.params.order),
       strokes: req.body?.strokes,
+      brush: req.body?.brush,
     });
     res.json({ shape });
   } catch (error) {

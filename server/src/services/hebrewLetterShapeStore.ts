@@ -8,6 +8,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 export type LetterScript = "modern" | "paleo";
+export type LetterBrush = "ink" | "broad";
 
 export type LetterPoint = {
   x: number;
@@ -21,6 +22,7 @@ export type LetterStroke = {
 export type HebrewLetterShape = {
   script: LetterScript;
   order: number;
+  brush: LetterBrush;
   strokes: LetterStroke[];
   updatedAt: string;
 };
@@ -79,14 +81,17 @@ export function saveHebrewLetterShape(params: {
   script: string;
   order: number;
   strokes: unknown;
+  brush?: unknown;
 }) {
   const script = normalizeScript(params.script);
   const order = normalizeOrder(params.order);
   const strokes = normalizeStrokes(params.strokes);
+  const brush = normalizeBrush(params.brush);
   const current = listHebrewLetterShapes(params.groupCode);
   const shape: HebrewLetterShape = {
     script,
     order,
+    brush,
     strokes,
     updatedAt: new Date().toISOString(),
   };
@@ -108,6 +113,13 @@ export function saveHebrewLetterShape(params: {
   fs.renameSync(temporaryPath, filePath);
 
   return shape;
+}
+
+function normalizeBrush(value: unknown): LetterBrush {
+  if (value === undefined || value === null || value === "broad")
+    return "broad";
+  if (value === "ink") return "ink";
+  throw new Error("Letter brush must be ink or broad.");
 }
 
 function normalizeStrokes(value: unknown): LetterStroke[] {

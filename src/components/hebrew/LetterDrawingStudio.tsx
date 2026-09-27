@@ -19,12 +19,14 @@ import { apiUrl } from "../../config/api";
 import { PALEO_HEBREW_LETTERS } from "../../data/paleoHebrewStrokeData";
 
 type LetterScript = "modern" | "paleo";
+type LetterBrush = "ink" | "broad";
 type Point = { x: number; y: number };
 type Stroke = { points: Point[] };
 
 type SavedShape = {
   script: LetterScript;
   order: number;
+  brush?: LetterBrush;
   strokes: Stroke[];
   updatedAt: string;
 };
@@ -52,6 +54,7 @@ export default function LetterDrawingStudio({
   const [shapes, setShapes] = useState<SavedShape[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<number | null>(null);
   const [strokes, setStrokes] = useState<Stroke[]>([]);
+  const [brush, setBrush] = useState<LetterBrush>("broad");
   const [activeStroke, setActiveStroke] = useState<Point[]>([]);
   const [canvasSize, setCanvasSize] = useState(0);
   const [message, setMessage] = useState<string | null>(null);
@@ -180,6 +183,7 @@ export default function LetterDrawingStudio({
     );
     setSelectedOrder(order);
     setStrokes(saved?.strokes ?? []);
+    setBrush(saved?.brush ?? "broad");
     setActiveStroke([]);
     setMessage(null);
   }
@@ -208,7 +212,7 @@ export default function LetterDrawingStudio({
             "Content-Type": "application/json",
             Authorization: `Bearer ${adminToken}`,
           },
-          body: JSON.stringify({ strokes }),
+          body: JSON.stringify({ strokes, brush }),
         }
       );
       const data = await response.json();
@@ -253,11 +257,19 @@ export default function LetterDrawingStudio({
               {script === "modern" ? "Hebrew" : "Paleo Hebrew"} · draw each line
               as a separate stroke
             </Text>
-            <View style={styles.brushLabel}>
-              <MaterialIcons name="brush" size={14} color="#7c2d12" />
-              <Text style={styles.brushLabelText}>
-                Broad-edge brush · thick N/S, thin E/W
-              </Text>
+            <View style={styles.brushPicker}>
+              <BrushButton
+                label="Thin ink"
+                brush="ink"
+                active={brush === "ink"}
+                onPress={() => setBrush("ink")}
+              />
+              <BrushButton
+                label="Broad edge"
+                brush="broad"
+                active={brush === "broad"}
+                onPress={() => setBrush("broad")}
+              />
             </View>
           </View>
         </View>
@@ -316,6 +328,7 @@ export default function LetterDrawingStudio({
                 stroke={stroke}
                 number={index + 1}
                 active={index === strokes.length}
+                brush={brush}
               />
             ))}
           </Svg>
@@ -424,7 +437,10 @@ export default function LetterDrawingStudio({
               <Text style={styles.tileOrder}>{letter.order}</Text>
               <View style={styles.blankSpace}>
                 {savedShape ? (
-                  <SavedShapePreview strokes={savedShape.strokes} />
+                  <SavedShapePreview
+                    strokes={savedShape.strokes}
+                    brush={savedShape.brush ?? "broad"}
+                  />
                 ) : (
                   <MaterialIcons name="draw" size={24} color="#cbd5e1" />
                 )}
@@ -443,7 +459,13 @@ export default function LetterDrawingStudio({
   );
 }
 
-function SavedShapePreview({ strokes }: { strokes: Stroke[] }) {
+function SavedShapePreview({
+  strokes,
+  brush,
+}: {
+  strokes: Stroke[];
+  brush: LetterBrush;
+}) {
   return (
     <Svg
       width="100%"
@@ -467,8 +489,31 @@ function SavedShapePreview({ strokes }: { strokes: Stroke[] }) {
           />
         ) : (
           <G key={index}>
-            <Path d={edgeOutline} fill="#3b2416" />
-            <Path d={inkOutline} fill="#1f130d" />
+            {brush === "broad" ? (
+              <>
+                <Path d={edgeOutline} fill="#3b2416" />
+                <Path d={inkOutline} fill="#1f130d" />
+              </>
+            ) : (
+              <>
+                <Path
+                  d={path}
+                  fill="none"
+                  stroke="#3b2416"
+                  strokeWidth={8}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <Path
+                  d={path}
+                  fill="none"
+                  stroke="#1f130d"
+                  strokeWidth={5}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </>
+            )}
             <Path
               d={path}
               fill="none"
@@ -489,10 +534,12 @@ function VectorStroke({
   stroke,
   number,
   active,
+  brush,
 }: {
   stroke: Stroke;
   number: number;
   active: boolean;
+  brush: LetterBrush;
 }) {
   const first = stroke.points[0];
   const path = smoothStrokePath(stroke.points);
@@ -506,8 +553,32 @@ function VectorStroke({
         <Circle cx={first.x} cy={first.y} r={5} fill="#0f172a" />
       ) : (
         <G>
-          <Path d={edgeOutline} fill={edgeColor} opacity={0.9} />
-          <Path d={inkOutline} fill={inkColor} />
+          {brush === "broad" ? (
+            <>
+              <Path d={edgeOutline} fill={edgeColor} opacity={0.9} />
+              <Path d={inkOutline} fill={inkColor} />
+            </>
+          ) : (
+            <>
+              <Path
+                d={path}
+                fill="none"
+                stroke={edgeColor}
+                strokeWidth={8}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                opacity={0.9}
+              />
+              <Path
+                d={path}
+                fill="none"
+                stroke={inkColor}
+                strokeWidth={5}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </>
+          )}
           <Path
             d={path}
             fill="none"
@@ -538,6 +609,41 @@ function VectorStroke({
         {number}
       </SvgText>
     </>
+  );
+}
+
+function BrushButton({
+  label,
+  brush,
+  active,
+  onPress,
+}: {
+  label: string;
+  brush: LetterBrush;
+  active: boolean;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={`${label} brush`}
+      accessibilityState={{ selected: active }}
+      onPress={onPress}
+      style={[styles.brushButton, active && styles.brushButtonActive]}
+    >
+      <View style={styles.brushIconBox}>
+        <View
+          style={[
+            styles.brushIconLine,
+            brush === "broad" && styles.brushIconLineBroad,
+            active && { backgroundColor: "#ffffff" },
+          ]}
+        />
+      </View>
+      <Text style={[styles.brushButtonText, active && { color: "#ffffff" }]}>
+        {label}
+      </Text>
+    </Pressable>
   );
 }
 
@@ -637,21 +743,46 @@ const styles = {
     marginBottom: 3,
   },
   helperText: { fontSize: 13, color: "#64748b", lineHeight: 19 },
-  brushLabel: {
-    alignSelf: "flex-start" as const,
+  brushPicker: {
     marginTop: 5,
+    flexDirection: "row" as const,
+    flexWrap: "wrap" as const,
+    gap: 6,
+  },
+  brushButton: {
     flexDirection: "row" as const,
     alignItems: "center" as const,
     gap: 5,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 999,
+    paddingHorizontal: 9,
+    paddingVertical: 5,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#fed7aa",
     backgroundColor: "#fff7ed",
   },
-  brushLabelText: {
+  brushButtonActive: {
+    borderColor: "#9a3412",
+    backgroundColor: "#9a3412",
+  },
+  brushButtonText: {
     fontSize: 11,
     fontWeight: "800" as const,
     color: "#7c2d12",
+  },
+  brushIconBox: {
+    width: 22,
+    height: 14,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+  },
+  brushIconLine: {
+    width: 20,
+    height: 3,
+    borderRadius: 999,
+    backgroundColor: "#7c2d12",
+  },
+  brushIconLineBroad: {
+    height: 9,
   },
   scriptRow: {
     flexDirection: "row" as const,
