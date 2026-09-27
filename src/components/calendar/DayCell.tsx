@@ -182,6 +182,7 @@ export function DayCell({
           )}
           {hasTeaching && (
             <View
+              accessibilityLabel="Library teaching available"
               style={{
                 position: "absolute",
                 bottom: showScrollIcon ? scrollIconSize + 2 : 4,
