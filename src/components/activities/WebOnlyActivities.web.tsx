@@ -28,7 +28,18 @@ const activities = [
 /**
  * Creates the web-only Activities panel shown on the calendar home screen.
  */
-export default function WebOnlyActivities() {
+export default function WebOnlyActivities({
+  activity,
+}: {
+  activity?: "game" | "quiz";
+}) {
+  const visibleActivities = activities.filter((item) => {
+    if (!activity) return true;
+    return activity === "quiz"
+      ? item.title.includes("Quizzes")
+      : item.title.includes("Game") && !item.title.includes("Quizzes");
+  });
+
   return (
     <View
       style={{
@@ -54,7 +65,7 @@ export default function WebOnlyActivities() {
       </Text>
 
       <View style={{ gap: 10 }}>
-        {activities.map((activity) => (
+        {visibleActivities.map((activity) => (
           <Pressable
             key={activity.title}
             accessibilityRole="link"

@@ -44,8 +44,7 @@ import CommandExplorerView, {
   type CommandHeaderCommand,
   type CommandNavigationState,
 } from "../src/components/commands/CommandExplorerView";
-import WebOnlyActivities from "../src/components/activities/WebOnlyActivities";
-import HebrewStudyView from "../src/components/hebrew/HebrewStudyView";
+import KidsCornerView from "../src/components/kids/KidsCornerView";
 import ShabbatView from "../src/components/shabbat/ShabbatView";
 import WelcomeScreen from "../src/components/onboarding/WelcomeScreen";
 import AppNavigationMenu, {
@@ -1383,15 +1382,11 @@ export default function HomeScreen() {
             )}
 
             {activeTab === "hebrew" && (
-              <>
-                <WebOnlyActivities />
-
-                <HebrewStudyView
-                  adminToken={adminToken}
-                  groupCode={groupCode}
-                  userRole={userRole}
-                />
-              </>
+              <KidsCornerView
+                adminToken={adminToken}
+                groupCode={groupCode}
+                userRole={userRole}
+              />
             )}
 
             {activeTab === "library" && (

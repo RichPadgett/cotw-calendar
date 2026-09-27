@@ -84,10 +84,12 @@ export default function HebrewStudyView({
   adminToken,
   groupCode,
   userRole,
+  mode = "all",
 }: {
   adminToken: string;
   groupCode: string;
   userRole: string;
+  mode?: "all" | "alphabet" | "glossary";
 }) {
   const isAdmin = userRole === "admin" && Boolean(adminToken);
 
@@ -107,6 +109,11 @@ export default function HebrewStudyView({
   const [message, setMessage] = useState<string | null>(null);
   const [draft, setDraft] = useState<GlossaryDraft | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (mode === "glossary") setSubTab("glossary");
+    if (mode === "alphabet" && subTab === "glossary") setSubTab("modern");
+  }, [mode, subTab]);
 
   useEffect(() => {
     let isCancelled = false;
@@ -294,32 +301,36 @@ export default function HebrewStudyView({
 
   return (
     <View style={{ gap: 14 }}>
-      <View style={styles.subTabRow}>
-        {[
-          { id: "modern" as const, label: "Hebrew" },
-          { id: "paleo" as const, label: "Paleo Hebrew" },
-          { id: "drawing" as const, label: "Letter Drawing" },
-          { id: "glossary" as const, label: "Glossary" },
-        ].map((tab) => (
-          <Pressable
-            key={tab.id}
-            onPress={() => setSubTab(tab.id)}
-            style={[
-              styles.subTabButton,
-              subTab === tab.id && styles.subTabButtonActive,
-            ]}
-          >
-            <Text
-              style={[
-                styles.subTabText,
-                subTab === tab.id && styles.subTabTextActive,
-              ]}
-            >
-              {tab.label}
-            </Text>
-          </Pressable>
-        ))}
-      </View>
+      {mode !== "glossary" ? (
+        <View style={styles.subTabRow}>
+          {[
+            { id: "modern" as const, label: "Hebrew" },
+            { id: "paleo" as const, label: "Paleo Hebrew" },
+            { id: "drawing" as const, label: "Letter Drawing" },
+            { id: "glossary" as const, label: "Glossary" },
+          ]
+            .filter((tab) => mode === "all" || tab.id !== "glossary")
+            .map((tab) => (
+              <Pressable
+                key={tab.id}
+                onPress={() => setSubTab(tab.id)}
+                style={[
+                  styles.subTabButton,
+                  subTab === tab.id && styles.subTabButtonActive,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.subTabText,
+                    subTab === tab.id && styles.subTabTextActive,
+                  ]}
+                >
+                  {tab.label}
+                </Text>
+              </Pressable>
+            ))}
+        </View>
+      ) : null}
 
       {subTab === "modern" || subTab === "paleo" ? (
         <View style={{ gap: 12 }}>

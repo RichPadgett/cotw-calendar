@@ -3,6 +3,8 @@
  * Purpose: Native fallback for web-only activity links.
  */
 
-export default function WebOnlyActivities() {
+export default function WebOnlyActivities(_props: {
+  activity?: "game" | "quiz";
+}) {
   return null;
 }
