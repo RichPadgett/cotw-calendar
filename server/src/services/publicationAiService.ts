@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
+import dotenv from "dotenv";
 import { Pool } from "pg";
 
 import { getPublicationFile, getPublicationProject } from "./publicationStore";
@@ -8,6 +9,12 @@ import type {
   PublicationModelRun,
   PublicationSource,
 } from "../types/publication";
+
+dotenv.config({
+  path:
+    process.env.STUDYBOX_LIBRARY_ENV_FILE ??
+    "/etc/studybox/cloud-library.env",
+});
 
 const pool = new Pool({
   connectionString:
