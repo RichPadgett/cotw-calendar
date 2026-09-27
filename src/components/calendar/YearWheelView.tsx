@@ -1441,38 +1441,6 @@ export default function YearWheelView({
           ) : null}
         </View>
       </View>
-
-      <View
-        style={{
-          marginTop: 18,
-          flexDirection: "row",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          gap: 18,
-        }}
-      >
-        <LegendItem color={MARKER_COLORS.highSabbath} label="High Sabbaths" />
-        <LegendItem color={MARKER_COLORS.sabbath} label="Weekly Sabbaths" />
-        <LegendItem color={MARKER_COLORS.feast} label="Feasts" />
-        <LegendItem color={MARKER_COLORS.fast} label="Fasts" />
-        <LegendItem color={MARKER_COLORS.preparation} label="Preparation" />
-        <LegendItem color={MARKER_COLORS.perpetual} label="Perpetual Markers" />
-        <LegendDot color="#84cc16" label="Spring Gate" />
-        <LegendDot color="#facc15" label="Summer Gate" />
-        <LegendDot color="#fb923c" label="Fall Gate" />
-        <LegendDot color="#38bdf8" label="Winter Gate" />
-        {SOLAR_GATE_DATES.map((solarGate) => (
-          <LegendSolarGate
-            key={solarGate.id}
-            color={solarGate.color}
-            label={solarGate.label}
-          />
-        ))}
-        <LegendRest color="#ca8a04" label="High Sabbath" />
-        <LegendRest color="#2563eb" label="Sabbath" />
-        <LegendNotice label="Day Notice" />
-        <LegendScroll label="Content Available" />
-      </View>
     </View>
   );
 }

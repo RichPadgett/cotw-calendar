@@ -658,31 +658,6 @@ export default function CalendarStripView({
           );
         })}
       </ScrollView>
-
-      <View
-        accessibilityLabel="Strip symbols"
-        style={{
-          paddingHorizontal: 10,
-          flexDirection: "row",
-          flexWrap: "wrap",
-          gap: 12,
-          alignItems: "center",
-        }}
-      >
-        <StripLegendRest color="#ca8a04" label="High Rest" />
-        <StripLegendRest color="#2563eb" label="Weekly Rest" />
-        <StripLegendBadge text="!" color="#f97316" label="Day Notice" />
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
-          <Image source={ScrollIcon} style={{ width: 16, height: 16 }} />
-          <Text style={{ fontSize: 11, color: "#64748b" }}>
-            Content Available
-          </Text>
-        </View>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
-          <View style={{ width: 4, height: 16, backgroundColor: "#0284c7" }} />
-          <Text style={{ fontSize: 11, color: "#64748b" }}>Gate Day</Text>
-        </View>
-      </View>
     </View>
   );
 }

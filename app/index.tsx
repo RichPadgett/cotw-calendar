@@ -24,6 +24,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import AppHeader from "../src/components/calendar/AppHeader";
 import CalendarDayView from "../src/components/calendar/CalendarDayView";
+import CalendarLegend from "../src/components/calendar/CalendarLegend";
 import CalendarSubscriptionCard from "../src/components/calendar/CalendarSubscriptionCard";
 import CalendarViewSwitcher, {
   type CalendarViewMode,
@@ -1257,10 +1258,13 @@ export default function HomeScreen() {
               )}
 
               {activeTab === "calendar" && (
-                <CalendarViewSwitcher
-                  value={calendarViewMode}
-                  onChange={changeCalendarView}
-                />
+                <>
+                  <CalendarViewSwitcher
+                    value={calendarViewMode}
+                    onChange={changeCalendarView}
+                  />
+                  <CalendarLegend />
+                </>
               )}
 
               {activeTab === "timeline" && isTimelineVisible && (
