@@ -22,7 +22,7 @@ export function generatePublicationPdf(
       bufferPages: true,
       info: {
         Title: project.title,
-        Author: project.author || "Church of the Word",
+        Author: project.author || undefined,
         Subject: project.description || "Publication manuscript",
       },
     });
@@ -118,12 +118,6 @@ function addTitlePage(
       .fontSize(11)
       .text(project.description, { align: "center", lineGap: 4 });
   }
-  document
-    .moveDown(4)
-    .fillColor(COLORS.green)
-    .font("Helvetica-Bold")
-    .fontSize(11)
-    .text("CHURCH OF THE WORD", { align: "center", characterSpacing: 1.4 });
 }
 
 function addChapter(document: PDFKit.PDFDocument, chapter: PublicationChapter) {
