@@ -34,6 +34,7 @@ export type CalendarFeedEvent = {
   url?: string;
   startTime?: string;
   endTime?: string;
+  endDate?: string;
   location?: string;
 };
 
@@ -99,7 +100,7 @@ export function buildAppointedTimesCalendar(
   }
 
   for (const event of options.additionalEvents ?? []) {
-    const endDate = addDays(event.startDate, 1);
+    const endDate = event.endDate ?? addDays(event.startDate, 1);
     const hasTime = /^\d{2}:\d{2}$/.test(event.startTime ?? "");
     const timedEnd = hasTime
       ? getTimedEnd(event.startTime!, event.endTime)

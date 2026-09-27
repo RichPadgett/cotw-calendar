@@ -12,12 +12,16 @@ import path from "path";
 import { PerpetualMarker } from "../types/perpetualMarkers";
 
 // Constants
-const MARKERS_PATH = path.join(
-  process.cwd(),
-  "content",
-  "system",
-  "perpetualMarkers.json"
-);
+const MARKERS_PATH = [
+  path.join(process.cwd(), "content", "system", "perpetualMarkers.json"),
+  path.join(
+    process.cwd(),
+    "server",
+    "content",
+    "system",
+    "perpetualMarkers.json"
+  ),
+].find((candidate) => fs.existsSync(candidate));
 
 const EMPTY_MARKERS_JSON = "[]";
 
@@ -27,7 +31,7 @@ const EMPTY_MARKERS_JSON = "[]";
  * This service function returns an empty list when no marker file has been created.
  */
 export function getPerpetualMarkers(): PerpetualMarker[] {
-  if (!fs.existsSync(MARKERS_PATH)) {
+  if (!MARKERS_PATH) {
     return [];
   }
 
@@ -39,7 +43,7 @@ export function getPerpetualMarkers(): PerpetualMarker[] {
  * This service function lets clients cheaply detect whether marker data has changed.
  */
 export function getPerpetualMarkersChecksum(): string {
-  const text = fs.existsSync(MARKERS_PATH)
+  const text = MARKERS_PATH
     ? fs.readFileSync(MARKERS_PATH, "utf-8")
     : EMPTY_MARKERS_JSON;
 

@@ -16,7 +16,10 @@ import {
   getPerpetualMarkersChecksum,
 } from "../services/perpetualMarkers";
 import { buildAppointedTimesCalendar } from "../services/appointedTimesCalendar";
-import { getPublishedCalendarEvents } from "../services/publishedCalendarEvents";
+import {
+  getPublishedCalendarEvents,
+  getPublishedPerpetualMarkerEvents,
+} from "../services/publishedCalendarEvents";
 import { verifyCalendarSubscriptionToken } from "../services/groupStore";
 import { getPublicCalendarFiles } from "../services/calendarFileLibrary";
 
@@ -136,11 +139,10 @@ router.get("/subscriptions/appointed-times.ics", (req, res) => {
   const calendar = buildAppointedTimesCalendar({
     startYear,
     yearCount,
-    additionalEvents: getPublishedCalendarEvents(
-      startYear,
-      yearCount,
-      groupCode
-    ),
+    additionalEvents: [
+      ...getPublishedCalendarEvents(startYear, yearCount, groupCode),
+      ...getPublishedPerpetualMarkerEvents(startYear, yearCount),
+    ],
   });
   const disposition = req.query.download === "1" ? "attachment" : "inline";
 

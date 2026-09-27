@@ -11,6 +11,7 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
+  Switch,
   Text,
   TextInput,
   View,
@@ -78,6 +79,8 @@ export default function DayDetailModal({
   const [markerNotes, setMarkerNotes] = useState("");
   const [markerSourceLabel, setMarkerSourceLabel] = useState("");
   const [markerSourceUrl, setMarkerSourceUrl] = useState("");
+  const [markerIncludeInCalendarFeed, setMarkerIncludeInCalendarFeed] =
+    useState(false);
   const [markerSaveMessage, setMarkerSaveMessage] = useState("");
   const [isSavingMarker, setIsSavingMarker] = useState(false);
   const [editingMarkerId, setEditingMarkerId] = useState<string | null>(null);
@@ -245,6 +248,7 @@ export default function DayDetailModal({
     setMarkerNotes("");
     setMarkerSourceLabel("");
     setMarkerSourceUrl("");
+    setMarkerIncludeInCalendarFeed(false);
   }
 
   function createMarkerId(title: string) {
@@ -276,6 +280,7 @@ export default function DayDetailModal({
     setMarkerNotes(marker.notes ?? "");
     setMarkerSourceLabel(marker.sourceLabel ?? "");
     setMarkerSourceUrl(marker.sourceUrl ?? "");
+    setMarkerIncludeInCalendarFeed(marker.includeInCalendarFeed === true);
     setMarkerSaveMessage("");
   }
 
@@ -287,6 +292,7 @@ export default function DayDetailModal({
       title,
       shortName,
       color: getMarkerColor(markerColor),
+      includeInCalendarFeed: markerIncludeInCalendarFeed,
     };
 
     delete nextMarker.notes;
@@ -574,9 +580,27 @@ export default function DayDetailModal({
                     style={styles.input}
                   />
 
+                  <View style={styles.markerCalendarRow}>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.markerCalendarLabel}>
+                        Include in calendar subscription
+                      </Text>
+                      <Text style={styles.markerCalendarHelp}>
+                        Publishes this marker every Enoch year with its notes
+                        and source.
+                      </Text>
+                    </View>
+                    <Switch
+                      value={markerIncludeInCalendarFeed}
+                      onValueChange={setMarkerIncludeInCalendarFeed}
+                    />
+                  </View>
+
                   <Pressable
                     onPress={
-                      editingMarkerId ? updatePerpetualMarker : addPerpetualMarker
+                      editingMarkerId
+                        ? updatePerpetualMarker
+                        : addPerpetualMarker
                     }
                     disabled={isSavingMarker}
                     style={[
@@ -1133,6 +1157,30 @@ const styles = StyleSheet.create({
   textArea: {
     minHeight: 72,
     textAlignVertical: "top",
+  },
+
+  markerCalendarRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    padding: 12,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#bfdbfe",
+    backgroundColor: "#eff6ff",
+  },
+
+  markerCalendarLabel: {
+    fontSize: 13,
+    fontWeight: "900",
+    color: "#1e3a8a",
+  },
+
+  markerCalendarHelp: {
+    marginTop: 3,
+    fontSize: 11,
+    lineHeight: 16,
+    color: "#475569",
   },
 
   primaryButton: {

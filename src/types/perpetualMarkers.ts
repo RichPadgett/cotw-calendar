@@ -22,4 +22,5 @@ export type PerpetualMarker = {
   notes?: string;
   sourceLabel?: string;
   sourceUrl?: string;
+  includeInCalendarFeed?: boolean;
 };

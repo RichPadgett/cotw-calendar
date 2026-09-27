@@ -3,7 +3,10 @@
  * Purpose: Verifies calendar publication flags and group visibility rules.
  */
 
-import { getPublishedEventsForContent } from "../../server/src/services/publishedCalendarEvents";
+import {
+  getPublishedEventsForContent,
+  getPublishedPerpetualMarkerEvents,
+} from "../../server/src/services/publishedCalendarEvents";
 
 const content = {
   enochYear: 2026,
@@ -53,5 +56,19 @@ describe("published calendar content", () => {
     expect(event.description).toContain("Bring a chair.");
     expect(event.description).toContain("Scripture: Isaiah 58");
     expect(event.description).toContain("Dinner follows.");
+  });
+
+  it("publishes opted-in perpetual Beginning of Months markers every year", () => {
+    const events = getPublishedPerpetualMarkerEvents(2026, 1).filter((event) =>
+      event.summary.toLowerCase().includes("begin")
+    );
+
+    expect(events).toHaveLength(12);
+    expect(events[0]).toMatchObject({
+      startDate: "2026-03-18",
+      summary: "Beginnings of Months",
+    });
+    expect(events[11].startDate).toBe("2027-02-14");
+    expect(events[0].description).toContain("Numbers 28:11");
   });
 });

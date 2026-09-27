@@ -12,6 +12,7 @@ import {
   CalendarFeedEvent,
   getEnochYearStartDate,
 } from "./appointedTimesCalendar";
+import { getPerpetualMarkers } from "./perpetualMarkers";
 
 const GROUPS_ROOT = path.join(process.cwd(), "content", "groups");
 
@@ -46,6 +47,80 @@ export function getPublishedCalendarEvents(
       `${right.startDate}-${right.summary}`
     )
   );
+}
+
+export function getPublishedPerpetualMarkerEvents(
+  startYear: number,
+  yearCount: number
+): CalendarFeedEvent[] {
+  const markers = getPerpetualMarkers().filter(
+    (marker) => marker.includeInCalendarFeed === true
+  );
+  const events: CalendarFeedEvent[] = [];
+
+  for (
+    let enochYear = startYear;
+    enochYear < startYear + yearCount;
+    enochYear++
+  ) {
+    const yearStart = getEnochYearStartDate(enochYear);
+    const nextYearStart = getEnochYearStartDate(enochYear + 1);
+
+    for (const marker of markers) {
+      const dayOfYear = getMarkerDayOfYear(marker);
+      if (!dayOfYear) continue;
+
+      const startDate = addDays(yearStart, dayOfYear - 1);
+      if (startDate >= nextYearStart) continue;
+
+      const description = [
+        marker.description?.trim(),
+        marker.notes?.trim(),
+        marker.sourceLabel?.trim()
+          ? `Source: ${marker.sourceLabel.trim()}`
+          : undefined,
+        marker.sourceUrl?.trim(),
+        marker.intercalaryWeek
+          ? `Enoch Year ${enochYear}, Intercalary Week`
+          : marker.gateDay
+            ? `Enoch Year ${enochYear}, Gate Day ${marker.gateDay}`
+            : `Enoch Year ${enochYear}, Month ${marker.month}, Day ${marker.day}`,
+      ]
+        .filter(Boolean)
+        .join("\n\n");
+
+      events.push({
+        uid: `perpetual-${marker.id}-${enochYear}@enochscalendar.com`,
+        startDate,
+        endDate: marker.intercalaryWeek ? nextYearStart : undefined,
+        summary: marker.title,
+        description,
+        url: isWebUrl(marker.sourceUrl) ? marker.sourceUrl : undefined,
+      });
+    }
+  }
+
+  return events.sort((left, right) =>
+    `${left.startDate}-${left.summary}`.localeCompare(
+      `${right.startDate}-${right.summary}`
+    )
+  );
+}
+
+function getMarkerDayOfYear(marker: {
+  month?: number;
+  day?: number;
+  gateDay?: number;
+  intercalaryWeek?: boolean;
+}) {
+  if (marker.intercalaryWeek) return 365;
+  if (marker.gateDay && marker.gateDay >= 1 && marker.gateDay <= 4) {
+    return marker.gateDay * 91;
+  }
+  if (marker.month && marker.day) {
+    return getDayOfYear(marker.month, marker.day);
+  }
+  return null;
 }
 
 export function getPublishedEventsForContent(
