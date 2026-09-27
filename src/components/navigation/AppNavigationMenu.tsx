@@ -27,6 +27,7 @@ type Props = {
   userRole: "member" | "admin";
   isTimelineVisible: boolean;
   isShabbatVisible: boolean;
+  isLibraryVisible: boolean;
   onChangeTab: (tab: AppTab) => void;
   onChangeGroup: () => void;
   onOpenLatestTeaching: () => void;
@@ -55,7 +56,8 @@ export default function AppNavigationMenu(props: Props) {
   const tabs = TAB_DEFINITIONS.filter(
     (tab) =>
       (tab.id !== "timeline" || props.isTimelineVisible) &&
-      (tab.id !== "shabbat" || props.isShabbatVisible)
+      (tab.id !== "shabbat" || props.isShabbatVisible) &&
+      (tab.id !== "library" || props.isLibraryVisible)
   );
 
   function selectTab(tab: AppTab) {

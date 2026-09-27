@@ -12,6 +12,7 @@ import express from "express";
 import path from "node:path";
 
 import { logApiRequest } from "./middleware/logApiRequest";
+import { requireMemberTokenForGroup } from "./middleware/requireMemberToken";
 import adminCalendarRoutes from "./routes/adminCalendarRoutes";
 import adminFileRoutes from "./routes/adminFileRoutes";
 import adminSpotifyRoutes from "./routes/adminSpotifyRoutes";
@@ -25,7 +26,10 @@ import shabbatRoutes from "./routes/shabbatRoutes";
 import timelineRoutes from "./routes/timelineRoutes";
 import studyboxLibraryRoutes from "./routes/studyboxLibraryRoutes";
 
-dotenv.config({ path: process.env.STUDYBOX_LIBRARY_ENV_FILE ?? "/etc/studybox/cloud-library.env" });
+dotenv.config({
+  path:
+    process.env.STUDYBOX_LIBRARY_ENV_FILE ?? "/etc/studybox/cloud-library.env",
+});
 
 const app = express();
 
@@ -37,7 +41,13 @@ app.get("/", (_req, res) => {
   res.send("Calendar API is running");
 });
 
-app.use("/library", express.static(path.join(process.cwd(), "public/studybox-library"), { index: "library.html" }));
+app.use(
+  "/library",
+  requireMemberTokenForGroup("church-of-the-word"),
+  express.static(path.join(process.cwd(), "public/studybox-library"), {
+    index: "library.html",
+  })
+);
 
 app.use("/api/calendar", calendarRoutes);
 app.use("/api/command-resources", commandResourceRoutes);

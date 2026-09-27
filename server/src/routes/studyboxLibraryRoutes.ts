@@ -6,10 +6,12 @@ import { readFile } from "node:fs/promises";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { publishLibraryTeachingToCalendar } from "../services/calendarContentStore";
+import { requireMemberTokenForGroup } from "../middleware/requireMemberToken";
 
 dotenv.config({ path: process.env.STUDYBOX_LIBRARY_ENV_FILE ?? "/etc/studybox/cloud-library.env" });
 
 const router = Router();
+const requireChurchMember = requireMemberTokenForGroup("church-of-the-word");
 const pool = new Pool({
   connectionString: process.env.STUDYBOX_LIBRARY_DATABASE_URL ?? process.env.DATABASE_URL,
 });
@@ -91,7 +93,7 @@ router.post("/sync", requireSyncToken, async (req, res, next) => {
   }
 });
 
-router.get("/", async (req, res, next) => {
+router.get("/", requireChurchMember, async (req, res, next) => {
   try {
     const query = String(req.query.q ?? "").trim();
     const limit = Math.min(100, Math.max(1, Number(req.query.limit ?? 30)));
@@ -112,7 +114,7 @@ router.get("/", async (req, res, next) => {
   } catch (error) { next(error); }
 });
 
-router.get("/search", async (req, res, next) => {
+router.get("/search", requireChurchMember, async (req, res, next) => {
   try {
     const query = String(req.query.q ?? "").trim();
     const limit = Math.min(100, Math.max(1, Number(req.query.limit ?? 30)));
@@ -126,7 +128,7 @@ router.get("/search", async (req, res, next) => {
   } catch (error) { next(error); }
 });
 
-router.get("/:id/assets/:kind/download", async (req, res, next) => {
+router.get("/:id/assets/:kind/download", requireChurchMember, async (req, res, next) => {
   try {
     const kind = req.params.kind === "zoom" || req.params.kind === "audio" ? req.params.kind : undefined;
     if (!kind) { res.status(400).json({ error: "Asset kind must be audio or zoom" }); return; }
@@ -145,7 +147,7 @@ router.get("/:id/assets/:kind/download", async (req, res, next) => {
   } catch (error) { next(error); }
 });
 
-router.get("/:id", async (req, res, next) => {
+router.get("/:id", requireChurchMember, async (req, res, next) => {
   try {
     const recording = await pool.query("SELECT * FROM library_recordings WHERE id = $1", [req.params.id]);
     if (!recording.rowCount) { res.status(404).json({ error: "Recording not found" }); return; }

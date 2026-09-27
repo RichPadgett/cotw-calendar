@@ -136,6 +136,12 @@ export function useGroupSession() {
   }
 
   async function changeGroup() {
+    try {
+      await fetch(`${API_BASE_URL}/api/groups/logout`, { method: "POST" });
+    } catch (error) {
+      console.log("Failed to clear group session cookie", error);
+    }
+
     // Clear the saved token when changing groups so admin access cannot leak between sessions.
     await AsyncStorage.removeItem(GROUP_CODE_STORAGE_KEY);
     await AsyncStorage.removeItem(ROLE_STORAGE_KEY);

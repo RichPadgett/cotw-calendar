@@ -271,6 +271,8 @@ export default function HomeScreen() {
     Boolean(adminToken);
   const isTimelineVisible = hasEnteredApp;
   const isShabbatVisible = groupCode === "church-of-the-word";
+  const isLibraryVisible =
+    groupCode === "church-of-the-word" && Boolean(memberToken);
   const todayNode = nodes.find((node) => {
     return node.gregorianDate === todayDateId;
   });
@@ -429,7 +431,10 @@ export default function HomeScreen() {
   }, [config.enochYear, groupCode, hasEnteredApp]);
 
   useEffect(() => {
-    if (!hasEnteredApp) return;
+    if (!hasEnteredApp || !isLibraryVisible) {
+      setLibraryTeachings([]);
+      return;
+    }
 
     appFetch(`${API_BASE_URL}/api/library?limit=100`)
       .then((response) => (response.ok ? response.json() : Promise.reject()))
@@ -437,7 +442,7 @@ export default function HomeScreen() {
         setLibraryTeachings(Array.isArray(data.items) ? data.items : [])
       )
       .catch(() => setLibraryTeachings([]));
-  }, [hasEnteredApp]);
+  }, [hasEnteredApp, isLibraryVisible, memberToken]);
 
   function openLibraryTeaching(teachingId: string) {
     setSelectedLibraryTeachingId(teachingId);
@@ -572,6 +577,9 @@ export default function HomeScreen() {
     if (groupCode) {
       headers.set("X-COTW-Group-Code", groupCode);
     }
+    if (memberToken) {
+      headers.set("X-COTW-Session", memberToken);
+    }
 
     return fetch(input, {
       ...init,
@@ -643,7 +651,10 @@ export default function HomeScreen() {
     if (activeTab === "shabbat" && !isShabbatVisible) {
       setActiveTab("calendar");
     }
-  }, [activeTab, isShabbatVisible, isTimelineVisible]);
+    if (activeTab === "library" && !isLibraryVisible) {
+      setActiveTab("calendar");
+    }
+  }, [activeTab, isLibraryVisible, isShabbatVisible, isTimelineVisible]);
 
   useEffect(() => {
     const fallbackId = setTimeout(() => {
@@ -1150,6 +1161,7 @@ export default function HomeScreen() {
           userRole={userRole}
           isTimelineVisible={isTimelineVisible}
           isShabbatVisible={isShabbatVisible}
+          isLibraryVisible={isLibraryVisible}
           onChangeTab={changeActiveTab}
           onChangeGroup={confirmChangeGroup}
           onOpenLatestTeaching={() => setIsTeachingPlayerOpen(true)}
