@@ -911,6 +911,24 @@ export default function PublisherWorkspace({
               title="AI Editorial Studio"
               subtitle="Run deliberate editorial stages against selected source material while preserving traceability."
             />
+            <View
+              style={{
+                padding: 12,
+                borderRadius: 10,
+                backgroundColor: "#ecfdf5",
+                borderWidth: 1,
+                borderColor: "#86efac",
+              }}
+            >
+              <Text style={{ color: "#166534", fontWeight: "900" }}>
+                Source-bound editorial mode
+              </Text>
+              <Text style={{ color: "#166534", marginTop: 4, lineHeight: 19 }}>
+                AI may only clean, organize, format, or compare the material you
+                supplied. It may not add outside knowledge, fact-check the
+                teaching, or recommend external verification.
+              </Text>
+            </View>
             <Panel>
               <Text style={labelStyle}>Target chapter</Text>
               <ScrollView horizontal contentContainerStyle={{ gap: 7 }}>
@@ -958,7 +976,7 @@ export default function PublisherWorkspace({
               [
                 "verify",
                 "Verify against sources",
-                "Flag unsupported claims, changed meaning, missing qualifications, and scripture references needing review.",
+                "Compare the draft only to its sources for added material, changed meaning, omitted qualifications, and attribution differences.",
               ],
             ].map(([operation, title, description]) => (
               <Panel key={title}>
