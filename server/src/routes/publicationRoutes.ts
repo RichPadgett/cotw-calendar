@@ -8,6 +8,7 @@ import {
   addPublicationModelRun,
   addPublicationSource,
   createPublicationProject,
+  deletePublicationProject,
   getPublicationFile,
   getPublicationProject,
   getPublicationUploadFolder,
@@ -84,6 +85,24 @@ router.put("/:id", (req, res) => {
   if (!project)
     return res.status(404).json({ error: "Publication project not found." });
   res.json(project);
+});
+
+router.delete("/:id", (req, res) => {
+  const result = deletePublicationProject(
+    String(req.params.id),
+    typeof req.body?.confirmTitle === "string" ? req.body.confirmTitle : ""
+  );
+  if (result.status === "not-found") {
+    return res.status(404).json({ error: "Publication project not found." });
+  }
+  if (result.status === "title-mismatch") {
+    return res
+      .status(400)
+      .json({
+        error: "Type the complete project title exactly to confirm deletion.",
+      });
+  }
+  res.json({ deleted: true, title: result.title });
 });
 
 router.get("/:id/export/pdf", async (req, res, next) => {

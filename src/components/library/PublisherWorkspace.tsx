@@ -61,6 +61,8 @@ export default function PublisherWorkspace({
   const [openSourceId, setOpenSourceId] = useState<string | null>(null);
   const [sourcePreview, setSourcePreview] = useState("");
   const [isLoadingSource, setIsLoadingSource] = useState(false);
+  const [showDeleteProject, setShowDeleteProject] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState("");
 
   const authHeaders = {
     Authorization: `Bearer ${adminToken}`,
@@ -98,6 +100,8 @@ export default function PublisherWorkspace({
       if (!response.ok) throw new Error("Unable to open the project.");
       const nextProject = (await response.json()) as PublicationProject;
       setProject(nextProject);
+      setShowDeleteProject(false);
+      setDeleteConfirmation("");
       const firstChapter =
         nextProject.chapters.find((chapter) => chapter.partId) ??
         nextProject.chapters[0];
@@ -156,6 +160,39 @@ export default function PublisherWorkspace({
     } catch (error) {
       setMessage(
         error instanceof Error ? error.message : "Unable to save project."
+      );
+    } finally {
+      setIsBusy(false);
+    }
+  }
+
+  async function deleteProject() {
+    if (!project || deleteConfirmation !== project.title) return;
+    setIsBusy(true);
+    setMessage("");
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/publications/${project.id}`,
+        {
+          method: "DELETE",
+          headers: authHeaders,
+          body: JSON.stringify({ confirmTitle: deleteConfirmation }),
+        }
+      );
+      const data = await response.json();
+      if (!response.ok)
+        throw new Error(data.error ?? "Unable to delete project.");
+      const deletedTitle = project.title;
+      setProject(null);
+      setShowDeleteProject(false);
+      setDeleteConfirmation("");
+      setSelectedChapterId(null);
+      setSelectedSectionId(null);
+      await loadProjects();
+      setMessage(`Deleted “${deletedTitle}”.`);
+    } catch (error) {
+      setMessage(
+        error instanceof Error ? error.message : "Unable to delete project."
       );
     } finally {
       setIsBusy(false);
@@ -582,6 +619,13 @@ export default function PublisherWorkspace({
             disabled={isBusy}
             compact
           />
+          <Pressable
+            accessibilityLabel="Delete project"
+            onPress={() => setShowDeleteProject((visible) => !visible)}
+            style={{ padding: 8 }}
+          >
+            <MaterialIcons name="delete-outline" size={23} color="#b91c1c" />
+          </Pressable>
         </View>
         <ScrollView
           horizontal
@@ -615,6 +659,58 @@ export default function PublisherWorkspace({
       </View>
 
       <ScrollView contentContainerStyle={{ padding: 16, gap: 14 }}>
+        {showDeleteProject ? (
+          <Panel>
+            <Text style={{ fontSize: 17, fontWeight: "900", color: "#991b1b" }}>
+              Delete this project permanently
+            </Text>
+            <Text style={mutedStyle}>
+              This removes the project, its manuscript, proposals, review notes,
+              and uploaded files. Type the complete title to confirm:
+            </Text>
+            <Text selectable style={{ fontWeight: "900", color: "#1f2937" }}>
+              {project.title}
+            </Text>
+            <TextInput
+              value={deleteConfirmation}
+              onChangeText={setDeleteConfirmation}
+              placeholder="Type the full project title"
+              style={inputStyle}
+            />
+            <View style={{ flexDirection: "row", gap: 8 }}>
+              <Pressable
+                onPress={() => {
+                  setShowDeleteProject(false);
+                  setDeleteConfirmation("");
+                }}
+                style={[choiceStyle, { flex: 1, alignItems: "center" }]}
+              >
+                <Text style={{ fontWeight: "900", color: "#334155" }}>
+                  Cancel
+                </Text>
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                disabled={isBusy || deleteConfirmation !== project.title}
+                onPress={() => void deleteProject()}
+                style={{
+                  flex: 1,
+                  minHeight: 42,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: 9,
+                  backgroundColor: "#b91c1c",
+                  opacity:
+                    isBusy || deleteConfirmation !== project.title ? 0.4 : 1,
+                }}
+              >
+                <Text style={{ color: "#ffffff", fontWeight: "900" }}>
+                  DELETE PROJECT
+                </Text>
+              </Pressable>
+            </View>
+          </Panel>
+        ) : null}
         {tab === "sources" ? (
           <>
             <SectionTitle

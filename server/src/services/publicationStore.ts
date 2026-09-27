@@ -53,20 +53,32 @@ export function listPublicationProjects() {
       }
     })
     .sort((left, right) => right.updatedAt.localeCompare(left.updatedAt))
-    .map(({ sources, parts = [], chapters, reviewNotes, modelRuns = [], ...project }) => ({
-      ...project,
-      sourceCount: sources.length,
-      chapterCount: chapters.length,
-      partCount: parts.length,
-      openReviewCount: reviewNotes.filter((note) => !note.resolved).length,
-      proposedRunCount: modelRuns.filter((run) => run.status === "proposed").length,
-    }));
+    .map(
+      ({
+        sources,
+        parts = [],
+        chapters,
+        reviewNotes,
+        modelRuns = [],
+        ...project
+      }) => ({
+        ...project,
+        sourceCount: sources.length,
+        chapterCount: chapters.length,
+        partCount: parts.length,
+        openReviewCount: reviewNotes.filter((note) => !note.resolved).length,
+        proposedRunCount: modelRuns.filter((run) => run.status === "proposed")
+          .length,
+      })
+    );
 }
 
 export function getPublicationProject(projectId: string) {
   const filePath = projectPath(projectId);
   if (!filePath || !fs.existsSync(filePath)) return null;
-  const project = JSON.parse(fs.readFileSync(filePath, "utf8")) as PublicationProject;
+  const project = JSON.parse(
+    fs.readFileSync(filePath, "utf8")
+  ) as PublicationProject;
   project.modelRuns ??= [];
   project.parts ??= [];
   project.chapters = project.chapters.map((chapter) => ({
@@ -131,6 +143,24 @@ export function updatePublicationProject(
     updatedAt: new Date().toISOString(),
   };
   return writeProject(next);
+}
+
+export function deletePublicationProject(
+  projectId: string,
+  confirmTitle: string
+) {
+  const project = getPublicationProject(projectId);
+  const filePath = projectPath(projectId);
+  if (!project || !filePath) return { status: "not-found" as const };
+  if (confirmTitle !== project.title)
+    return { status: "title-mismatch" as const };
+
+  fs.unlinkSync(filePath);
+  const uploadFolder = path.join(PUBLICATION_ROOT, "files", projectId);
+  if (fs.existsSync(uploadFolder)) {
+    fs.rmSync(uploadFolder, { recursive: true, force: true });
+  }
+  return { status: "deleted" as const, title: project.title };
 }
 
 export function addPublicationModelRun(
@@ -212,8 +242,12 @@ export function reviewPublicationModelRun(
         createdAt: new Date().toISOString(),
       });
     } else if (run.operation === "draft" && run.chapterId) {
-      const chapter = project.chapters.find((item) => item.id === run.chapterId);
-      const section = chapter?.sections.find((item) => item.id === run.sectionId);
+      const chapter = project.chapters.find(
+        (item) => item.id === run.chapterId
+      );
+      const section = chapter?.sections.find(
+        (item) => item.id === run.sectionId
+      );
       if (section) section.manuscript = run.proposedText;
       else if (chapter) chapter.manuscript = run.proposedText;
     } else if (run.operation === "verify") {
@@ -256,27 +290,37 @@ export function updatePublicationModelProposal(
 
 function normalizeProposedParts(value: unknown[]) {
   return value
-    .filter((part): part is Record<string, unknown> => Boolean(part && typeof part === "object"))
+    .filter((part): part is Record<string, unknown> =>
+      Boolean(part && typeof part === "object")
+    )
     .map((part) => ({
       title: normalizeText(part.title, "Untitled part"),
       summary: normalizeText(part.summary),
       chapters: Array.isArray(part.chapters)
         ? part.chapters
-            .filter((chapter): chapter is Record<string, unknown> => Boolean(chapter && typeof chapter === "object"))
+            .filter((chapter): chapter is Record<string, unknown> =>
+              Boolean(chapter && typeof chapter === "object")
+            )
             .map((chapter) => ({
               title: normalizeText(chapter.title, "Untitled chapter"),
               summary: normalizeText(chapter.summary),
               sourceIds: Array.isArray(chapter.sourceIds)
-                ? chapter.sourceIds.filter((id): id is string => typeof id === "string")
+                ? chapter.sourceIds.filter(
+                    (id): id is string => typeof id === "string"
+                  )
                 : [],
               sections: Array.isArray(chapter.sections)
                 ? chapter.sections
-                    .filter((section): section is Record<string, unknown> => Boolean(section && typeof section === "object"))
+                    .filter((section): section is Record<string, unknown> =>
+                      Boolean(section && typeof section === "object")
+                    )
                     .map((section) => ({
                       title: normalizeText(section.title, "Untitled section"),
                       summary: normalizeText(section.summary),
                       sourceIds: Array.isArray(section.sourceIds)
-                        ? section.sourceIds.filter((id): id is string => typeof id === "string")
+                        ? section.sourceIds.filter(
+                            (id): id is string => typeof id === "string"
+                          )
                         : [],
                     }))
                 : [],
@@ -348,15 +392,24 @@ export function addPublicationFileSource(
 export function getPublicationFile(projectId: string, sourceId: string) {
   const project = getPublicationProject(projectId);
   const source = project?.sources.find((item) => item.id === sourceId);
-  if (!source?.storedFileName || path.basename(source.storedFileName) !== source.storedFileName) {
+  if (
+    !source?.storedFileName ||
+    path.basename(source.storedFileName) !== source.storedFileName
+  ) {
     return null;
   }
-  const filePath = path.join(PUBLICATION_ROOT, "files", projectId, source.storedFileName);
+  const filePath = path.join(
+    PUBLICATION_ROOT,
+    "files",
+    projectId,
+    source.storedFileName
+  );
   return fs.existsSync(filePath) ? { filePath, source } : null;
 }
 
 export function getPublicationUploadFolder(projectId: string) {
-  if (!projectPath(projectId)) throw new Error("Invalid publication project id.");
+  if (!projectPath(projectId))
+    throw new Error("Invalid publication project id.");
   const folder = path.join(PUBLICATION_ROOT, "files", projectId);
   fs.mkdirSync(folder, { recursive: true });
   return folder;
@@ -364,13 +417,17 @@ export function getPublicationUploadFolder(projectId: string) {
 
 function normalizeSources(value: unknown[]): PublicationSource[] {
   return value
-    .filter((item): item is PublicationSource => Boolean(item && typeof item === "object"))
+    .filter((item): item is PublicationSource =>
+      Boolean(item && typeof item === "object")
+    )
     .map((item, index) => ({ ...item, sortOrder: index }));
 }
 
 function normalizeChapters(value: unknown[]): PublicationChapter[] {
   return value
-    .filter((item): item is PublicationChapter => Boolean(item && typeof item === "object"))
+    .filter((item): item is PublicationChapter =>
+      Boolean(item && typeof item === "object")
+    )
     .map((item, index) => ({
       id: normalizeText(item.id) || crypto.randomUUID(),
       title: normalizeText(item.title, `Chapter ${index + 1}`),
@@ -386,9 +443,12 @@ function normalizeChapters(value: unknown[]): PublicationChapter[] {
             title: normalizeText(section?.title, "Untitled section"),
             summary: normalizeText(section?.summary),
             sourceIds: Array.isArray(section?.sourceIds)
-              ? section.sourceIds.filter((id): id is string => typeof id === "string")
+              ? section.sourceIds.filter(
+                  (id): id is string => typeof id === "string"
+                )
               : [],
-            manuscript: typeof section?.manuscript === "string" ? section.manuscript : "",
+            manuscript:
+              typeof section?.manuscript === "string" ? section.manuscript : "",
           }))
         : [],
       sortOrder: index,
@@ -403,7 +463,9 @@ function validSourceIds(project: PublicationProject, sourceIds: string[]) {
 
 function normalizeReviewNotes(value: unknown[]): PublicationReviewNote[] {
   return value
-    .filter((item): item is PublicationReviewNote => Boolean(item && typeof item === "object"))
+    .filter((item): item is PublicationReviewNote =>
+      Boolean(item && typeof item === "object")
+    )
     .map((item) => ({
       id: normalizeText(item.id) || crypto.randomUUID(),
       chapterId: normalizeText(item.chapterId) || undefined,
