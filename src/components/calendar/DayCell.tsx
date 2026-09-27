@@ -12,7 +12,6 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
 
 import ScrollIcon from "../../../assets/enoch/icons/scroll.png";
 import { CalendarNode } from "../../models/calendar";
@@ -83,10 +82,8 @@ export function DayCell({
   const visibleEvents = displayEvents.slice(0, 2);
   const useLargeEventBadges = viewportWidth >= 1100;
 
-  const showScrollIcon = hasContent;
+  const showScrollIcon = hasContent || hasTeaching;
   const scrollIconSize = viewportWidth >= 900 ? 24 : 18;
-  const libraryIndicatorSize = viewportWidth >= 900 ? 22 : 18;
-  const libraryIconSize = viewportWidth >= 900 ? 14 : 12;
 
   const sabbathEvent = enoch?.events?.find(
     (event) => event.type === "weekly-sabbath" || event.type === "high-sabbath"
@@ -165,6 +162,11 @@ export function DayCell({
           )}
           {showScrollIcon && (
             <Image
+              accessibilityLabel={
+                hasTeaching
+                  ? "Content or Library teaching available"
+                  : "Content available"
+              }
               source={ScrollIcon}
               style={{
                 position: "absolute",
@@ -181,29 +183,6 @@ export function DayCell({
               }}
               resizeMode="contain"
             />
-          )}
-          {hasTeaching && (
-            <View
-              accessibilityLabel="Library teaching available"
-              style={{
-                position: "absolute",
-                bottom: showScrollIcon ? scrollIconSize + 2 : 4,
-                right: viewportWidth >= 900 ? 2 : 1,
-                width: libraryIndicatorSize,
-                height: libraryIndicatorSize,
-                borderRadius: libraryIndicatorSize / 2,
-                alignItems: "center",
-                justifyContent: "center",
-                backgroundColor: "#e0f2fe",
-                zIndex: 31,
-              }}
-            >
-              <MaterialIcons
-                name="video-library"
-                size={libraryIconSize}
-                color="#0369a1"
-              />
-            </View>
           )}
 
           <View

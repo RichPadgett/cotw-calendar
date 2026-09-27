@@ -1,4 +1,3 @@
-import { MaterialIcons } from "@expo/vector-icons";
 import { Image, ScrollView, Text, View } from "react-native";
 
 import ScrollIcon from "../../../assets/enoch/icons/scroll.png";
@@ -118,11 +117,8 @@ export default function CalendarLegend() {
             </Text>
           </View>
         </LegendItem>
-        <LegendItem label="Content available">
+        <LegendItem label="Content or teaching available">
           <Image source={ScrollIcon} style={{ width: 17, height: 17 }} />
-        </LegendItem>
-        <LegendItem label="Library teaching">
-          <MaterialIcons name="video-library" size={17} color="#0369a1" />
         </LegendItem>
       </ScrollView>
     </View>
