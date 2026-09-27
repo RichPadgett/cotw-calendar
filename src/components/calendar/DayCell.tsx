@@ -85,6 +85,8 @@ export function DayCell({
 
   const showScrollIcon = hasContent;
   const scrollIconSize = viewportWidth >= 900 ? 24 : 18;
+  const libraryIndicatorSize = viewportWidth >= 900 ? 22 : 18;
+  const libraryIconSize = viewportWidth >= 900 ? 14 : 12;
 
   const sabbathEvent = enoch?.events?.find(
     (event) => event.type === "weekly-sabbath" || event.type === "high-sabbath"
@@ -186,17 +188,21 @@ export function DayCell({
               style={{
                 position: "absolute",
                 bottom: showScrollIcon ? scrollIconSize + 2 : 4,
-                right: 2,
-                width: 24,
-                height: 24,
-                borderRadius: 12,
+                right: viewportWidth >= 900 ? 2 : 1,
+                width: libraryIndicatorSize,
+                height: libraryIndicatorSize,
+                borderRadius: libraryIndicatorSize / 2,
                 alignItems: "center",
                 justifyContent: "center",
                 backgroundColor: "#e0f2fe",
                 zIndex: 31,
               }}
             >
-              <MaterialIcons name="video-library" size={15} color="#0369a1" />
+              <MaterialIcons
+                name="video-library"
+                size={libraryIconSize}
+                color="#0369a1"
+              />
             </View>
           )}
 
