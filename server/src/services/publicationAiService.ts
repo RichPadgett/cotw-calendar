@@ -27,6 +27,9 @@ const SOURCE_BOUND_EDITOR_INSTRUCTIONS = [
   "Do not use or mention outside knowledge, pretrained factual knowledge, web content, external references, common scholarly positions, or unstated assumptions.",
   "Do not fact-check, independently verify, dispute, reinterpret, or correct the teachings' claims, theology, chronology, arithmetic, names, dates, geography, astronomy, or Scripture interpretation.",
   "For this editorial task, treat every assertion in the supplied material as authoritative fact and preserve it faithfully.",
+  "Preserve the source's epistemic certainty and grammatical mood exactly. A statement presented as fact must remain a statement of fact.",
+  "Never weaken a factual statement with hypothetical or distancing language such as may, might, could, possibly, perhaps, suggests, appears, seems, likely, reportedly, allegedly, or according to some interpretations unless that same qualification is present in the supplied source.",
+  "Likewise, preserve uncertainty when the supplied source itself uses uncertain or hypothetical language; do not strengthen it into certainty.",
   "Never label supplied material inconsistent, questionable, unsupported, incorrect, disputed, or in need of verification.",
   "Never recommend independent verification or outside research.",
   "You may identify only wording duplicated within the supplied material or a difference introduced between the supplied sources and the current manuscript. Describe such issues only by referencing exact supplied source IDs.",
@@ -343,13 +346,13 @@ function buildTaskPrompt(
 ) {
   const taskByOperation = {
     clean:
-      "Clean the supplied source material into faithful, readable prose. Remove greetings, technical interruptions, filler, and conversational repetition. Preserve testimony, reasoning, theology, qualifications, and Scripture references. Return cleaned prose in proposedText.",
+      "Clean the supplied source material into faithful, readable prose. Remove greetings, technical interruptions, filler, and conversational repetition. Preserve testimony, reasoning, theology, qualifications, Scripture references, and the exact degree of certainty of every claim. Return cleaned prose in proposedText.",
     outline:
       "Discover and propose the coherent structure already present in the supplied manuscripts and lessons. Treat every assertion as authoritative fact. Treat the supplied order, progression of thought, theological distinctions, and intentional buildup as authoritative. Do not critique claims or impose an unrelated framework. Return a hierarchy of parts, chapters, and sections in proposedParts. Associate chapters and sections with exact supplied source IDs. Use editorialObservations only for formatting, repeated wording that may be consolidated, transitions, and organizational choices. Put material that does not fit naturally in unplacedSourceIds rather than forcing it into the outline. Also provide a readable organizational rationale in proposedText. proposedChapters may be empty when proposedParts is populated.",
     draft:
-      "Draft or revise the selected chapter as polished book prose using only its supplied sources. Preserve the teachers' exact intended meaning, claims, reasoning, and theological position. Do not add facts, stories, quotations, calculations, corrections, commentary, or Scripture interpretations. Return the full proposed chapter in proposedText.",
+      "Draft or revise the selected chapter as polished book prose using only its supplied sources. Preserve the teachers' exact intended meaning, claims, reasoning, theological position, and degree of certainty. Never turn a factual statement into a possibility, suggestion, theory, interpretation, or allegation. Do not add facts, stories, quotations, calculations, corrections, commentary, or Scripture interpretations. Return the full proposed chapter in proposedText.",
     verify:
-      "Compare the current manuscript only to the supplied sources. Identify text in the manuscript that was not derived from those sources, changed meaning, omitted qualifications, or inaccurate source attribution. Do not evaluate whether the sources themselves are factually, mathematically, historically, scientifically, geographically, theologically, or scripturally correct. Do not recommend outside verification. Return a source-fidelity report in proposedText and each actionable source-fidelity concern in warnings.",
+      "Compare the current manuscript only to the supplied sources. Identify text in the manuscript that was not derived from those sources, changed meaning, omitted qualifications, inaccurate source attribution, or changed the degree of certainty. Specifically flag any factual source statement softened into hypothetical, tentative, distancing, or interpretive language, and any uncertain source statement strengthened into certainty. Do not evaluate whether the sources themselves are factually, mathematically, historically, scientifically, geographically, theologically, or scripturally correct. Do not recommend outside verification. Return a source-fidelity report in proposedText and each actionable source-fidelity concern in warnings.",
   } satisfies Record<PublicationModelOperation, string>;
 
   return [
