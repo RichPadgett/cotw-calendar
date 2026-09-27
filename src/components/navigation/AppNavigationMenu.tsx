@@ -42,7 +42,7 @@ const TAB_DEFINITIONS: {
   { id: "shabbat", label: "Shabbat", icon: "groups" },
   { id: "timeline", label: "Timeline", icon: "timeline" },
   { id: "commands", label: "Commands", icon: "menu-book" },
-  { id: "hebrew", label: "Language", icon: "translate" },
+  { id: "hebrew", label: "Kids' Corner", icon: "child-care" },
   { id: "library", label: "Library", icon: "video-library" },
 ];
 

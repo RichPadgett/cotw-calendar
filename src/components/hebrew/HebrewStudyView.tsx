@@ -22,6 +22,7 @@ import {
   PALEO_HEBREW_STROKE_VIEW_BOX,
   type PaleoHebrewLetter,
 } from "../../data/paleoHebrewStrokeData";
+import LetterDrawingStudio from "./LetterDrawingStudio";
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 
@@ -56,6 +57,12 @@ type GlossaryDraft = {
   note: string;
 };
 
+type ConfiguredShape = {
+  script: "modern" | "paleo";
+  order: number;
+  strokes: { points: { x: number; y: number }[] }[];
+};
+
 const EMPTY_DRAFT: GlossaryDraft = {
   key: "",
   language: "hebrew",
@@ -84,9 +91,13 @@ export default function HebrewStudyView({
 }) {
   const isAdmin = userRole === "admin" && Boolean(adminToken);
 
-  const [subTab, setSubTab] = useState<"alphabet" | "glossary">("alphabet");
-  const [script, setScript] = useState<"modern" | "paleo">("modern");
+  const [subTab, setSubTab] = useState<
+    "modern" | "paleo" | "drawing" | "glossary"
+  >("modern");
   const [letters, setLetters] = useState<HebrewLetter[]>([]);
+  const [configuredShapes, setConfiguredShapes] = useState<ConfiguredShape[]>(
+    []
+  );
   const [terms, setTerms] = useState<GlossaryTerm[]>([]);
   const [searchText, setSearchText] = useState("");
   const [languageFilter, setLanguageFilter] = useState<
@@ -117,6 +128,30 @@ export default function HebrewStudyView({
       isCancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    (async () => {
+      try {
+        const response = await fetch(
+          apiUrl(
+            `/hebrew/letter-shapes?groupCode=${encodeURIComponent(groupCode)}`
+          )
+        );
+        const data = await response.json();
+        if (!isCancelled && response.ok) {
+          setConfiguredShapes(data.shapes ?? []);
+        }
+      } catch {
+        // Keep the built-in paths if configured shapes cannot be loaded.
+      }
+    })();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [groupCode, subTab]);
 
   useEffect(() => {
     let isCancelled = false;
@@ -260,100 +295,73 @@ export default function HebrewStudyView({
   return (
     <View style={{ gap: 14 }}>
       <View style={styles.subTabRow}>
-        <Pressable
-          onPress={() => setSubTab("alphabet")}
-          style={[
-            styles.subTabButton,
-            subTab === "alphabet" && styles.subTabButtonActive,
-          ]}
-        >
-          <Text
+        {[
+          { id: "modern" as const, label: "Hebrew" },
+          { id: "paleo" as const, label: "Paleo Hebrew" },
+          { id: "drawing" as const, label: "Letter Drawing" },
+          { id: "glossary" as const, label: "Glossary" },
+        ].map((tab) => (
+          <Pressable
+            key={tab.id}
+            onPress={() => setSubTab(tab.id)}
             style={[
-              styles.subTabText,
-              subTab === "alphabet" && styles.subTabTextActive,
+              styles.subTabButton,
+              subTab === tab.id && styles.subTabButtonActive,
             ]}
           >
-            Alphabet
-          </Text>
-        </Pressable>
-
-        <Pressable
-          onPress={() => setSubTab("glossary")}
-          style={[
-            styles.subTabButton,
-            subTab === "glossary" && styles.subTabButtonActive,
-          ]}
-        >
-          <Text
-            style={[
-              styles.subTabText,
-              subTab === "glossary" && styles.subTabTextActive,
-            ]}
-          >
-            Glossary
-          </Text>
-        </Pressable>
+            <Text
+              style={[
+                styles.subTabText,
+                subTab === tab.id && styles.subTabTextActive,
+              ]}
+            >
+              {tab.label}
+            </Text>
+          </Pressable>
+        ))}
       </View>
 
-      {subTab === "alphabet" ? (
+      {subTab === "modern" || subTab === "paleo" ? (
         <View style={{ gap: 12 }}>
-          <View style={styles.languageFilterRow}>
-            <Pressable
-              onPress={() => setScript("modern")}
-              style={[
-                styles.languageFilterChip,
-                script === "modern" && styles.languageFilterChipActive,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.languageFilterText,
-                  script === "modern" && styles.languageFilterTextActive,
-                ]}
-              >
-                Modern Hebrew
-              </Text>
-            </Pressable>
-
-            <Pressable
-              onPress={() => setScript("paleo")}
-              style={[
-                styles.languageFilterChip,
-                script === "paleo" && styles.languageFilterChipActive,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.languageFilterText,
-                  script === "paleo" && styles.languageFilterTextActive,
-                ]}
-              >
-                Paleo-Hebrew
-              </Text>
-            </Pressable>
-          </View>
-
-          {script === "paleo" ? (
+          {subTab === "paleo" ? (
             <Text style={styles.mutedText}>
-              Educational reconstruction of Paleo-Hebrew letterforms and
-              stroke order - not an attested universal ancient standard.
+              Educational reconstruction of Paleo-Hebrew letterforms and stroke
+              order - not an attested universal ancient standard.
             </Text>
           ) : null}
 
           <View style={styles.letterGrid}>
-            {script === "modern"
+            {subTab === "modern"
               ? sortedLetters.map((letter) => (
-                  <LetterTile key={letter.order} letter={letter} />
+                  <LetterTile
+                    key={letter.order}
+                    letter={letter}
+                    configuredShape={configuredShapes.find(
+                      (shape) =>
+                        shape.script === "modern" &&
+                        shape.order === letter.order
+                    )}
+                  />
                 ))
               : PALEO_HEBREW_LETTERS.map((letter) => (
                   <PaleoLetterTile
                     key={letter.order}
                     letter={letter}
                     meaning={meaningByOrder.get(letter.order)}
+                    configuredShape={configuredShapes.find(
+                      (shape) =>
+                        shape.script === "paleo" && shape.order === letter.order
+                    )}
                   />
                 ))}
           </View>
         </View>
+      ) : subTab === "drawing" ? (
+        <LetterDrawingStudio
+          adminToken={adminToken}
+          groupCode={groupCode}
+          isAdmin={isAdmin}
+        />
       ) : (
         <View style={{ gap: 12 }}>
           <View style={styles.searchRow}>
@@ -395,9 +403,7 @@ export default function HebrewStudyView({
 
           {isAdmin ? (
             <Pressable
-              onPress={() =>
-                setDraft(draft ? null : { ...EMPTY_DRAFT })
-              }
+              onPress={() => setDraft(draft ? null : { ...EMPTY_DRAFT })}
               style={styles.addButton}
             >
               <MaterialIcons
@@ -416,7 +422,9 @@ export default function HebrewStudyView({
               <TextInput
                 value={draft.key}
                 onChangeText={(value) =>
-                  setDraft((current) => (current ? { ...current, key: value } : current))
+                  setDraft((current) =>
+                    current ? { ...current, key: value } : current
+                  )
                 }
                 placeholder="key (lowercase, e.g. holy_spirit)"
                 placeholderTextColor="#94a3b8"
@@ -464,7 +472,9 @@ export default function HebrewStudyView({
               <TextInput
                 value={draft.word}
                 onChangeText={(value) =>
-                  setDraft((current) => (current ? { ...current, word: value } : current))
+                  setDraft((current) =>
+                    current ? { ...current, word: value } : current
+                  )
                 }
                 placeholder="Hebrew word (e.g. שָׁלוֹם)"
                 placeholderTextColor="#94a3b8"
@@ -507,7 +517,9 @@ export default function HebrewStudyView({
               <TextInput
                 value={draft.note}
                 onChangeText={(value) =>
-                  setDraft((current) => (current ? { ...current, note: value } : current))
+                  setDraft((current) =>
+                    current ? { ...current, note: value } : current
+                  )
                 }
                 placeholder="Optional note / fun fact"
                 placeholderTextColor="#94a3b8"
@@ -541,9 +553,7 @@ export default function HebrewStudyView({
                   <Text style={styles.termTransliteration}>
                     {term.transliteration}
                   </Text>
-                  <Text style={styles.termLanguageTag}>
-                    {term.language}
-                  </Text>
+                  <Text style={styles.termLanguageTag}>{term.language}</Text>
                 </View>
 
                 <Text style={styles.termPronunciation}>
@@ -593,6 +603,7 @@ export default function HebrewStudyView({
 
 const GLYPH_BOX_SIZE = 120;
 const STROKE_DURATION_MS = 550;
+const CONFIGURED_STROKE_VIEW_BOX = "0 0 320 320";
 
 type StrokeStyle = {
   primaryWidth: number;
@@ -605,6 +616,16 @@ type StrokeStyle = {
 };
 
 type Stroke = { d: string; length: number; startX: number; startY: number };
+
+const CONFIGURED_STROKE_STYLE: StrokeStyle = {
+  primaryWidth: 9,
+  edgeWidth: 13,
+  innerWidth: 4,
+  ink: "#24170f",
+  innerInk: "#4a3221",
+  accent: "#8a6a3c",
+  paper: "#f7f1e5",
+};
 
 function StrokeLetterSvg({
   strokes,
@@ -704,8 +725,16 @@ function StrokeLetterSvg({
   );
 }
 
-function LetterTile({ letter }: { letter: HebrewLetter }) {
-  const strokes = HEBREW_LETTER_STROKES[letter.order];
+function LetterTile({
+  letter,
+  configuredShape,
+}: {
+  letter: HebrewLetter;
+  configuredShape?: ConfiguredShape;
+}) {
+  const strokes = configuredShape
+    ? configuredShapeToStrokes(configuredShape)
+    : HEBREW_LETTER_STROKES[letter.order];
   const revealAnim = useRef(new Animated.Value(0)).current;
 
   function playReveal() {
@@ -722,17 +751,20 @@ function LetterTile({ letter }: { letter: HebrewLetter }) {
   return (
     <Pressable
       onPress={playReveal}
-      style={({ pressed }) => [
-        styles.letterCard,
-        pressed && { opacity: 0.85 },
-      ]}
+      style={({ pressed }) => [styles.letterCard, pressed && { opacity: 0.85 }]}
     >
       <View style={styles.letterGlyphBox}>
         {strokes?.length ? (
           <StrokeLetterSvg
             strokes={strokes}
-            style={HEBREW_STROKE_STYLE}
-            viewBox={HEBREW_STROKE_VIEW_BOX}
+            style={
+              configuredShape ? CONFIGURED_STROKE_STYLE : HEBREW_STROKE_STYLE
+            }
+            viewBox={
+              configuredShape
+                ? CONFIGURED_STROKE_VIEW_BOX
+                : HEBREW_STROKE_VIEW_BOX
+            }
             revealAnim={revealAnim}
           />
         ) : (
@@ -741,9 +773,7 @@ function LetterTile({ letter }: { letter: HebrewLetter }) {
       </View>
 
       <Text style={styles.letterName}>{letter.name}</Text>
-      <Text style={styles.letterTransliteration}>
-        {letter.transliteration}
-      </Text>
+      <Text style={styles.letterTransliteration}>{letter.transliteration}</Text>
       <Text style={styles.letterSound}>{letter.sound}</Text>
       <Text style={styles.letterMeaning}>{letter.meaning}</Text>
     </Pressable>
@@ -753,11 +783,15 @@ function LetterTile({ letter }: { letter: HebrewLetter }) {
 function PaleoLetterTile({
   letter,
   meaning,
+  configuredShape,
 }: {
   letter: PaleoHebrewLetter;
   meaning?: string;
+  configuredShape?: ConfiguredShape;
 }) {
-  const strokes = PALEO_HEBREW_LETTER_STROKES[letter.order];
+  const strokes = configuredShape
+    ? configuredShapeToStrokes(configuredShape)
+    : PALEO_HEBREW_LETTER_STROKES[letter.order];
   const revealAnim = useRef(new Animated.Value(0)).current;
 
   function playReveal() {
@@ -774,17 +808,22 @@ function PaleoLetterTile({
   return (
     <Pressable
       onPress={playReveal}
-      style={({ pressed }) => [
-        styles.letterCard,
-        pressed && { opacity: 0.85 },
-      ]}
+      style={({ pressed }) => [styles.letterCard, pressed && { opacity: 0.85 }]}
     >
       <View style={styles.letterGlyphBox}>
         {strokes?.length ? (
           <StrokeLetterSvg
             strokes={strokes}
-            style={PALEO_HEBREW_STROKE_STYLE}
-            viewBox={PALEO_HEBREW_STROKE_VIEW_BOX}
+            style={
+              configuredShape
+                ? CONFIGURED_STROKE_STYLE
+                : PALEO_HEBREW_STROKE_STYLE
+            }
+            viewBox={
+              configuredShape
+                ? CONFIGURED_STROKE_VIEW_BOX
+                : PALEO_HEBREW_STROKE_VIEW_BOX
+            }
             revealAnim={revealAnim}
           />
         ) : (
@@ -793,20 +832,44 @@ function PaleoLetterTile({
       </View>
 
       <Text style={styles.letterName}>{letter.name}</Text>
-      <Text style={styles.letterTransliteration}>
-        {letter.transliteration}
-      </Text>
+      <Text style={styles.letterTransliteration}>{letter.transliteration}</Text>
       <Text style={styles.letterSound}>Modern: {letter.modern}</Text>
-      {meaning ? (
-        <Text style={styles.letterMeaning}>{meaning}</Text>
-      ) : null}
+      {meaning ? <Text style={styles.letterMeaning}>{meaning}</Text> : null}
     </Pressable>
   );
+}
+
+function configuredShapeToStrokes(shape: ConfiguredShape): Stroke[] {
+  return shape.strokes
+    .filter((stroke) => stroke.points.length > 0)
+    .map((stroke) => {
+      const [first, ...rest] = stroke.points;
+      let length = 0;
+      let previous = first;
+
+      rest.forEach((point) => {
+        length += Math.hypot(point.x - previous.x, point.y - previous.y);
+        previous = point;
+      });
+
+      return {
+        d: stroke.points
+          .map(
+            (point, index) =>
+              `${index === 0 ? "M" : "L"} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`
+          )
+          .join(" "),
+        length: Math.max(length, 1),
+        startX: first.x,
+        startY: first.y,
+      };
+    });
 }
 
 const styles = {
   subTabRow: {
     flexDirection: "row" as const,
+    flexWrap: "wrap" as const,
     gap: 8,
   },
   subTabButton: {

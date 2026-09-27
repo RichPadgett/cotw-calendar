@@ -16,6 +16,10 @@ import {
   listGlossaryTerms,
   listHebrewAlphabet,
 } from "../services/hebrewStudyService";
+import {
+  listHebrewLetterShapes,
+  saveHebrewLetterShape,
+} from "../services/hebrewLetterShapeStore";
 
 const router = Router();
 
@@ -39,6 +43,37 @@ router.get("/glossary", async (req, res) => {
   } catch (error) {
     console.log("Failed to load Hebrew glossary", error);
     res.status(500).json({ error: "Failed to load Hebrew glossary." });
+  }
+});
+
+router.get("/letter-shapes", (req, res) => {
+  try {
+    const groupCode = String(req.query.groupCode ?? "public");
+    res.json({ shapes: listHebrewLetterShapes(groupCode) });
+  } catch (error) {
+    res.status(400).json({
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to load letter shapes.",
+    });
+  }
+});
+
+router.put("/letter-shapes/:script/:order", requireAdminToken, (req, res) => {
+  try {
+    const shape = saveHebrewLetterShape({
+      groupCode: String(req.query.groupCode ?? "public"),
+      script: String(req.params.script),
+      order: Number(req.params.order),
+      strokes: req.body?.strokes,
+    });
+    res.json({ shape });
+  } catch (error) {
+    res.status(400).json({
+      error:
+        error instanceof Error ? error.message : "Failed to save letter shape.",
+    });
   }
 });
 
