@@ -128,6 +128,7 @@ type RunInput = {
   projectId: string;
   operation: PublicationModelOperation;
   chapterId?: string;
+  sectionId?: string;
   sourceIds?: string[];
   instructions?: string;
 };
@@ -141,14 +142,19 @@ export async function runPublicationModel(input: RunInput) {
   const chapter = input.chapterId
     ? project.chapters.find((item) => item.id === input.chapterId)
     : undefined;
+  const section = input.sectionId
+    ? chapter?.sections.find((item) => item.id === input.sectionId)
+    : undefined;
   if (["draft", "verify"].includes(input.operation) && !chapter) {
     throw new Error("Select a chapter for this operation.");
   }
 
   const requestedIds = input.sourceIds?.length
     ? input.sourceIds
-    : chapter?.sourceIds.length
-      ? chapter.sourceIds
+    : section?.sourceIds.length
+      ? section.sourceIds
+      : chapter?.sourceIds.length
+        ? chapter.sourceIds
       : project.sources.map((source) => source.id);
   const sources = project.sources.filter((source) =>
     requestedIds.includes(source.id)
@@ -161,9 +167,9 @@ export async function runPublicationModel(input: RunInput) {
       text: buildTaskPrompt(input.operation, {
         projectTitle: project.title,
         projectDescription: project.description,
-        chapterTitle: chapter?.title,
-        chapterSummary: chapter?.summary,
-        currentManuscript: chapter?.manuscript,
+        chapterTitle: section ? `${chapter?.title} — ${section.title}` : chapter?.title,
+        chapterSummary: section?.summary ?? chapter?.summary,
+        currentManuscript: section?.manuscript ?? chapter?.manuscript,
         instructions: input.instructions,
         sources,
         existingManuscripts: project.chapters
@@ -274,6 +280,7 @@ export async function runPublicationModel(input: RunInput) {
     | "id"
     | "operation"
     | "chapterId"
+    | "sectionId"
     | "sourceIds"
     | "instructions"
     | "model"
@@ -286,6 +293,7 @@ export async function runPublicationModel(input: RunInput) {
     id: crypto.randomUUID(),
     operation: input.operation,
     chapterId: chapter?.id,
+    sectionId: section?.id,
     sourceIds: sources.map((source) => source.id),
     instructions: input.instructions?.trim() || undefined,
     model,

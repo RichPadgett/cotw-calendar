@@ -160,6 +160,10 @@ router.post("/:id/model/run", async (req, res) => {
         typeof req.body?.chapterId === "string"
           ? req.body.chapterId
           : undefined,
+      sectionId:
+        typeof req.body?.sectionId === "string"
+          ? req.body.sectionId
+          : undefined,
       sourceIds: Array.isArray(req.body?.sourceIds)
         ? req.body.sourceIds.filter(
             (id: unknown): id is string => typeof id === "string"

@@ -17,7 +17,7 @@ export type PublicationChapter = {
   title: string;
   summary: string;
   sourceIds: string[];
-  sections: Array<{ id: string; title: string; summary: string; sourceIds: string[] }>;
+  sections: Array<{ id: string; title: string; summary: string; sourceIds: string[]; manuscript: string }>;
   manuscript: string;
   sortOrder: number;
 };
@@ -32,6 +32,7 @@ export type PublicationPart = {
 export type PublicationReviewNote = {
   id: string;
   chapterId?: string;
+  sectionId?: string;
   text: string;
   resolved: boolean;
   createdAt: string;
@@ -43,6 +44,7 @@ export type PublicationModelRun = {
   id: string;
   operation: PublicationModelOperation;
   chapterId?: string;
+  sectionId?: string;
   sourceIds: string[];
   instructions?: string;
   model: string;

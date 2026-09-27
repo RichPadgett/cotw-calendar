@@ -71,7 +71,10 @@ export function getPublicationProject(projectId: string) {
   project.parts ??= [];
   project.chapters = project.chapters.map((chapter) => ({
     ...chapter,
-    sections: chapter.sections ?? [],
+    sections: (chapter.sections ?? []).map((section) => ({
+      ...section,
+      manuscript: section.manuscript ?? "",
+    })),
   }));
   return project;
 }
@@ -178,6 +181,7 @@ export function reviewPublicationModelRun(
                 title: section.title,
                 summary: section.summary,
                 sourceIds: validSourceIds(project, section.sourceIds),
+                manuscript: "",
               })),
               manuscript: "",
               sortOrder: project.chapters.length,
@@ -209,12 +213,15 @@ export function reviewPublicationModelRun(
       });
     } else if (run.operation === "draft" && run.chapterId) {
       const chapter = project.chapters.find((item) => item.id === run.chapterId);
-      if (chapter) chapter.manuscript = run.proposedText;
+      const section = chapter?.sections.find((item) => item.id === run.sectionId);
+      if (section) section.manuscript = run.proposedText;
+      else if (chapter) chapter.manuscript = run.proposedText;
     } else if (run.operation === "verify") {
       for (const warning of run.warnings) {
         project.reviewNotes.push({
           id: crypto.randomUUID(),
           chapterId: run.chapterId,
+          sectionId: run.sectionId,
           text: warning,
           resolved: false,
           createdAt: new Date().toISOString(),
@@ -381,6 +388,7 @@ function normalizeChapters(value: unknown[]): PublicationChapter[] {
             sourceIds: Array.isArray(section?.sourceIds)
               ? section.sourceIds.filter((id): id is string => typeof id === "string")
               : [],
+            manuscript: typeof section?.manuscript === "string" ? section.manuscript : "",
           }))
         : [],
       sortOrder: index,
@@ -399,6 +407,7 @@ function normalizeReviewNotes(value: unknown[]): PublicationReviewNote[] {
     .map((item) => ({
       id: normalizeText(item.id) || crypto.randomUUID(),
       chapterId: normalizeText(item.chapterId) || undefined,
+      sectionId: normalizeText(item.sectionId) || undefined,
       text: normalizeText(item.text),
       resolved: item.resolved === true,
       createdAt: normalizeText(item.createdAt) || new Date().toISOString(),

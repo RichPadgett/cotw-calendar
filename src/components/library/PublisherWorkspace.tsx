@@ -53,6 +53,7 @@ export default function PublisherWorkspace({
   const [selectedChapterId, setSelectedChapterId] = useState<string | null>(
     null
   );
+  const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
   const [reviewText, setReviewText] = useState("");
   const [aiInstructions, setAiInstructions] = useState("");
   const [openSourceId, setOpenSourceId] = useState<string | null>(null);
@@ -95,7 +96,11 @@ export default function PublisherWorkspace({
       if (!response.ok) throw new Error("Unable to open the project.");
       const nextProject = (await response.json()) as PublicationProject;
       setProject(nextProject);
-      setSelectedChapterId(nextProject.chapters[0]?.id ?? null);
+      const firstChapter =
+        nextProject.chapters.find((chapter) => chapter.partId) ??
+        nextProject.chapters[0];
+      setSelectedChapterId(firstChapter?.id ?? null);
+      setSelectedSectionId(firstChapter?.sections[0]?.id ?? null);
     } catch (error) {
       setMessage(
         error instanceof Error ? error.message : "Unable to open project."
@@ -255,6 +260,20 @@ export default function PublisherWorkspace({
     });
   }
 
+  function updateSection(
+    chapterId: string,
+    sectionId: string,
+    patch: Partial<PublicationChapter["sections"][number]>
+  ) {
+    const chapter = project?.chapters.find((item) => item.id === chapterId);
+    if (!project || !chapter) return;
+    updateChapter(chapterId, {
+      sections: chapter.sections.map((section) =>
+        section.id === sectionId ? { ...section, ...patch } : section
+      ),
+    });
+  }
+
   async function uploadFile(file: File) {
     if (!project) return;
     const form = new FormData();
@@ -273,6 +292,8 @@ export default function PublisherWorkspace({
 
   async function runAiOperation(operation: PublicationModelOperation) {
     if (!project) return;
+    const activeChapterId = selectedChapter?.id;
+    const activeSectionId = selectedSection?.id;
     setIsBusy(true);
     setMessage(`Running ${operation} proposal… This may take a few minutes.`);
     try {
@@ -287,9 +308,15 @@ export default function PublisherWorkspace({
               operation === "draft" || operation === "verify"
                 ? selectedChapter?.id
                 : undefined,
+            sectionId:
+              operation === "draft" || operation === "verify"
+                ? selectedSection?.id
+                : undefined,
             sourceIds:
               operation === "draft" || operation === "verify"
-                ? selectedChapter?.sourceIds
+                ? selectedSection?.sourceIds.length
+                  ? selectedSection.sourceIds
+                  : selectedChapter?.sourceIds
                 : project.sources.map((source) => source.id),
             instructions: aiInstructions,
           }),
@@ -299,6 +326,8 @@ export default function PublisherWorkspace({
       if (!response.ok)
         throw new Error(data.error ?? "The model operation failed.");
       await openProject(project.id);
+      if (activeChapterId) setSelectedChapterId(activeChapterId);
+      setSelectedSectionId(activeSectionId ?? null);
       setMessage("Proposal ready for review. Nothing has been applied yet.");
     } catch (error) {
       setMessage(
@@ -328,6 +357,17 @@ export default function PublisherWorkspace({
       if (!response.ok)
         throw new Error(data.error ?? "Unable to review proposal.");
       setProject(data as PublicationProject);
+      if (decision === "accepted") {
+        const acceptedRun = project.modelRuns.find((item) => item.id === runId);
+        if (acceptedRun?.operation === "outline") {
+          const firstStructuredChapter = (data as PublicationProject).chapters.find(
+            (chapter) => chapter.partId
+          );
+          setSelectedChapterId(firstStructuredChapter?.id ?? null);
+          setSelectedSectionId(firstStructuredChapter?.sections[0]?.id ?? null);
+          setTab("manuscript");
+        }
+      }
       setMessage(
         decision === "accepted"
           ? "Proposal accepted and applied."
@@ -449,7 +489,18 @@ export default function PublisherWorkspace({
 
   const selectedChapter =
     project.chapters.find((chapter) => chapter.id === selectedChapterId) ??
+    project.chapters.find((chapter) => chapter.partId) ??
     project.chapters[0];
+  const selectedSection = selectedChapter?.sections.find(
+    (section) => section.id === selectedSectionId
+  );
+  const pendingDrafts = (project.modelRuns ?? []).filter(
+    (run) =>
+      run.operation === "draft" &&
+      run.status === "proposed" &&
+      run.chapterId === selectedChapter?.id &&
+      (run.sectionId ?? null) === (selectedSection?.id ?? null)
+  );
 
   return (
     <View style={{ flex: 1 }}>
@@ -489,29 +540,24 @@ export default function PublisherWorkspace({
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{ gap: 7 }}
         >
-          {(
-            [
-              "sources",
-              "outline",
-              "manuscript",
-              "ai",
-              "review",
-              "export",
-            ] as WorkspaceTab[]
-          ).map((item) => (
+          {([
+            { step: 1, tab: "sources", label: "Choose data" },
+            { step: 2, tab: "ai", label: "Generate outline" },
+            { step: 3, tab: "manuscript", label: "Build content" },
+            { step: 4, tab: "review", label: "Review" },
+          ] as Array<{ step: number; tab: WorkspaceTab; label: string }>).map((item) => (
             <Pressable
-              key={item}
-              onPress={() => setTab(item)}
-              style={[tabStyle, tab === item && activeTabStyle]}
+              key={item.step}
+              onPress={() => setTab(item.tab)}
+              style={[tabStyle, tab === item.tab && activeTabStyle]}
             >
               <Text
                 style={{
                   fontWeight: "900",
-                  color: tab === item ? "#ffffff" : "#365247",
-                  textTransform: "capitalize",
+                  color: tab === item.tab ? "#ffffff" : "#365247",
                 }}
               >
-                {item}
+                {item.step}. {item.label}
               </Text>
             </Pressable>
           ))}
@@ -772,6 +818,25 @@ export default function PublisherWorkspace({
                   })()
                 : null}
             </Panel>
+            <Panel>
+              <Text style={rowTitleStyle}>Ready for Step 2?</Text>
+              <Text style={mutedStyle}>
+                Optional cleanup removes greetings and conversational filler. The
+                outline generator always reads every collected source.
+              </Text>
+              <ActionButton
+                label={isBusy ? "Working…" : "Optional: Clean source material"}
+                icon="auto-fix-high"
+                disabled={isBusy || project.sources.length === 0}
+                onPress={() => void runAiOperation("clean")}
+              />
+              <ActionButton
+                label="Continue to Generate Outline"
+                icon="arrow-forward"
+                disabled={project.sources.length === 0}
+                onPress={() => setTab("ai")}
+              />
+            </Panel>
           </>
         ) : null}
 
@@ -856,14 +921,19 @@ export default function PublisherWorkspace({
         {tab === "manuscript" ? (
           <>
             <SectionTitle
-              title="Manuscript"
-              subtitle="Edit one chapter at a time while retaining its source assignments."
+              title="Step 3 · Build Chapter and Section Content"
+              subtitle="Choose an approved chapter and section, generate its source-bound draft, then edit the result."
             />
             <ScrollView horizontal contentContainerStyle={{ gap: 7 }}>
-              {project.chapters.map((chapter) => (
+              {[...project.chapters]
+                .sort((a, b) => Number(Boolean(b.partId)) - Number(Boolean(a.partId)))
+                .map((chapter) => (
                 <Pressable
                   key={chapter.id}
-                  onPress={() => setSelectedChapterId(chapter.id)}
+                  onPress={() => {
+                    setSelectedChapterId(chapter.id);
+                    setSelectedSectionId(chapter.sections[0]?.id ?? null);
+                  }}
                   style={[
                     choiceStyle,
                     selectedChapter?.id === chapter.id && selectedChoiceStyle,
@@ -876,28 +946,68 @@ export default function PublisherWorkspace({
             {selectedChapter ? (
               <Panel>
                 <Text style={labelStyle}>{selectedChapter.title}</Text>
-                <TextInput
-                  value={selectedChapter.manuscript}
-                  onChangeText={(manuscript) =>
-                    updateChapter(selectedChapter.id, { manuscript })
+                {selectedChapter.sections.length ? (
+                  <View style={{ gap: 8 }}>
+                    <Text style={mutedStyle}>Choose a section to draft or edit:</Text>
+                    <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 7 }}>
+                      {selectedChapter.sections.map((section) => (
+                        <Pressable
+                          key={section.id}
+                          onPress={() => setSelectedSectionId(section.id)}
+                          style={[
+                            choiceStyle,
+                            selectedSection?.id === section.id && selectedChoiceStyle,
+                          ]}
+                        >
+                          <Text style={{ fontWeight: "800" }}>{section.title}</Text>
+                        </Pressable>
+                      ))}
+                    </View>
+                  </View>
+                ) : null}
+                <Text style={rowTitleStyle}>
+                  {selectedSection?.title ?? selectedChapter.title}
+                </Text>
+                <Text style={mutedStyle}>
+                  {selectedSection?.summary ?? selectedChapter.summary}
+                </Text>
+                <ActionButton
+                  label={isBusy ? "Generating…" : `Generate ${selectedSection ? "section" : "chapter"} content`}
+                  icon="auto-awesome"
+                  disabled={
+                    isBusy ||
+                    (selectedSection
+                      ? selectedSection.sourceIds.length === 0
+                      : selectedChapter.sourceIds.length === 0)
                   }
-                  placeholder="Draft or paste chapter text here…"
+                  onPress={() => void runAiOperation("draft")}
+                />
+                {pendingDrafts.map((run) => (
+                  <View key={run.id} style={{ padding: 12, gap: 9, borderRadius: 10, backgroundColor: "#f8fafc", borderWidth: 1, borderColor: "#cbd5e1" }}>
+                    <Text style={rowTitleStyle}>Proposed content · Review before applying</Text>
+                    <ScrollView style={{ maxHeight: 360 }} nestedScrollEnabled>
+                      <Text selectable style={{ color: "#1f2937", lineHeight: 22 }}>{run.proposedText}</Text>
+                    </ScrollView>
+                    <View style={{ flexDirection: "row", gap: 8 }}>
+                      <View style={{ flex: 1 }}><ActionButton label="Apply to section" icon="check" disabled={isBusy} onPress={() => void reviewModelRun(run.id, "accepted")} /></View>
+                      <View style={{ flex: 1 }}><ActionButton label="Reject" icon="close" disabled={isBusy} onPress={() => void reviewModelRun(run.id, "rejected")} /></View>
+                    </View>
+                  </View>
+                ))}
+                <TextInput
+                  value={selectedSection?.manuscript ?? selectedChapter.manuscript}
+                  onChangeText={(manuscript) =>
+                    selectedSection
+                      ? updateSection(selectedChapter.id, selectedSection.id, { manuscript })
+                      : updateChapter(selectedChapter.id, { manuscript })
+                  }
+                  placeholder={`Draft or paste ${selectedSection ? "section" : "chapter"} text here…`}
                   multiline
                   textAlignVertical="top"
                   style={[inputStyle, { minHeight: 430, lineHeight: 23 }]}
                 />
-                <View
-                  style={{
-                    padding: 12,
-                    borderRadius: 10,
-                    backgroundColor: "#fff7ed",
-                  }}
-                >
-                  <Text style={{ color: "#9a3412", fontWeight: "800" }}>
-                    AI cleanup and chapter drafting will be enabled after the
-                    OpenAI project key and editorial prompt are approved.
-                  </Text>
-                </View>
+                <ActionButton label="Save manuscript progress" icon="save" onPress={() => void saveProject()} disabled={isBusy} />
+                <ActionButton label="Continue to Editorial Review" icon="arrow-forward" onPress={() => setTab("review")} />
               </Panel>
             ) : (
               <Text style={mutedStyle}>Add a chapter in Outline first.</Text>
@@ -932,53 +1042,24 @@ export default function PublisherWorkspace({
               </Text>
             </View>
             <Panel>
-              <Text style={labelStyle}>Target chapter</Text>
-              <ScrollView horizontal contentContainerStyle={{ gap: 7 }}>
-                {project.chapters.map((chapter) => (
-                  <Pressable
-                    key={chapter.id}
-                    onPress={() => setSelectedChapterId(chapter.id)}
-                    style={[
-                      choiceStyle,
-                      selectedChapter?.id === chapter.id && selectedChoiceStyle,
-                    ]}
-                  >
-                    <Text style={{ fontWeight: "900" }}>{chapter.title}</Text>
-                  </Pressable>
-                ))}
-              </ScrollView>
+              <Text style={labelStyle}>Outline instructions</Text>
               <TextInput
                 value={aiInstructions}
                 onChangeText={setAiInstructions}
-                placeholder="Optional instructions for this pass"
+                placeholder="Optional organizational instructions"
                 multiline
                 style={[inputStyle, { minHeight: 76 }]}
               />
               <Text style={mutedStyle}>
-                Clean and Outline use all project sources. Draft and Verify use
-                the selected chapter and its assigned sources.
+                The outline generator uses every collected source and proposes
+                parts, chapters, sections, and source assignments.
               </Text>
             </Panel>
             {[
               [
-                "clean",
-                "Clean source material",
-                "Remove greetings, technical discussion, and conversational repetition without changing the teaching.",
-              ],
-              [
                 "outline",
-                "Propose sections",
-                "Identify themes and propose an ordered chapter-and-section structure.",
-              ],
-              [
-                "draft",
-                "Draft selected chapter",
-                "Turn the assigned sources into readable prose using the approved outline.",
-              ],
-              [
-                "verify",
-                "Check source fidelity",
-                "Compare the draft only to its sources for added material, changed meaning, altered certainty, omitted qualifications, and attribution differences.",
+                "Generate proposed outline",
+                "Organize the supplied material into an ordered part, chapter, and section structure.",
               ],
             ].map(([operation, title, description]) => (
               <Panel key={title}>
@@ -1004,10 +1085,10 @@ export default function PublisherWorkspace({
               title="Model Proposals"
               subtitle="Review the complete proposal before accepting or rejecting it."
             />
-            {(project.modelRuns ?? []).length === 0 ? (
+            {(project.modelRuns ?? []).filter((run) => run.operation === "outline").length === 0 ? (
               <Text style={mutedStyle}>No model proposals yet.</Text>
             ) : null}
-            {(project.modelRuns ?? []).map((run) => (
+            {(project.modelRuns ?? []).filter((run) => run.operation === "outline").map((run) => (
               <Panel key={run.id}>
                 <View
                   style={{
@@ -1143,9 +1224,27 @@ export default function PublisherWorkspace({
         {tab === "review" ? (
           <>
             <SectionTitle
-              title="Editorial Review"
-              subtitle="Track theological, factual, scripture, and source-verification questions."
+              title="Step 4 · Editorial Review"
+              subtitle="Check source fidelity, record editor comments, and resolve every revision note."
             />
+            <Panel>
+              <Text style={rowTitleStyle}>Source-fidelity check</Text>
+              <Text style={mutedStyle}>
+                Compare the selected {selectedSection ? "section" : "chapter"} only to its assigned sources. This does not fact-check the teaching.
+              </Text>
+              <ActionButton
+                label={isBusy ? "Checking…" : "Check selected content against sources"}
+                icon="fact-check"
+                disabled={
+                  isBusy ||
+                  !selectedChapter ||
+                  (selectedSection
+                    ? !selectedSection.manuscript.trim() || selectedSection.sourceIds.length === 0
+                    : !selectedChapter.manuscript.trim() || selectedChapter.sourceIds.length === 0)
+                }
+                onPress={() => void runAiOperation("verify")}
+              />
+            </Panel>
             <Panel>
               <TextInput
                 value={reviewText}
@@ -1164,6 +1263,7 @@ export default function PublisherWorkspace({
                       globalThis.crypto?.randomUUID?.() ??
                       `review-${Date.now()}`,
                     chapterId: selectedChapterId ?? undefined,
+                    sectionId: selectedSectionId ?? undefined,
                     text: reviewText.trim(),
                     resolved: false,
                     createdAt: new Date().toISOString(),
@@ -1208,6 +1308,7 @@ export default function PublisherWorkspace({
                 </Text>
               </Pressable>
             ))}
+            <ActionButton label="Export preparation" icon="arrow-forward" onPress={() => setTab("export")} />
           </>
         ) : null}
 
