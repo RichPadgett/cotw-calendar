@@ -853,17 +853,32 @@ function configuredShapeToStrokes(shape: ConfiguredShape): Stroke[] {
       });
 
       return {
-        d: stroke.points
-          .map(
-            (point, index) =>
-              `${index === 0 ? "M" : "L"} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`
-          )
-          .join(" "),
+        d: configuredStrokePath(stroke.points),
         length: Math.max(length, 1),
         startX: first.x,
         startY: first.y,
       };
     });
+}
+
+function configuredStrokePath(points: { x: number; y: number }[]) {
+  if (!points.length) return "";
+  if (points.length === 1) {
+    return `M ${points[0].x.toFixed(1)} ${points[0].y.toFixed(1)}`;
+  }
+
+  let path = `M ${points[0].x.toFixed(1)} ${points[0].y.toFixed(1)}`;
+  for (let index = 1; index < points.length - 1; index += 1) {
+    const point = points[index];
+    const next = points[index + 1];
+    path += ` Q ${point.x.toFixed(1)} ${point.y.toFixed(1)} ${(
+      (point.x + next.x) /
+      2
+    ).toFixed(1)} ${((point.y + next.y) / 2).toFixed(1)}`;
+  }
+
+  const last = points[points.length - 1];
+  return `${path} L ${last.x.toFixed(1)} ${last.y.toFixed(1)}`;
 }
 
 const styles = {

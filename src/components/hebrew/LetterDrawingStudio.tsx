@@ -13,7 +13,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import Svg, { Circle, Line, Path, Text as SvgText } from "react-native-svg";
+import Svg, { Circle, G, Line, Path, Text as SvgText } from "react-native-svg";
 
 import { apiUrl } from "../../config/api";
 import { PALEO_HEBREW_LETTERS } from "../../data/paleoHebrewStrokeData";
@@ -253,6 +253,12 @@ export default function LetterDrawingStudio({
               {script === "modern" ? "Hebrew" : "Paleo Hebrew"} · draw each line
               as a separate stroke
             </Text>
+            <View style={styles.brushLabel}>
+              <MaterialIcons name="brush" size={14} color="#7c2d12" />
+              <Text style={styles.brushLabelText}>
+                Ink brush · smooth vector
+              </Text>
+            </View>
           </View>
         </View>
 
@@ -447,12 +453,7 @@ function SavedShapePreview({ strokes }: { strokes: Stroke[] }) {
     >
       {strokes.map((stroke, index) => {
         if (!stroke.points.length) return null;
-        const path = stroke.points
-          .map(
-            (point, pointIndex) =>
-              `${pointIndex === 0 ? "M" : "L"} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`
-          )
-          .join(" ");
+        const path = smoothStrokePath(stroke.points);
 
         return stroke.points.length === 1 ? (
           <Circle
@@ -463,15 +464,33 @@ function SavedShapePreview({ strokes }: { strokes: Stroke[] }) {
             fill="#0f172a"
           />
         ) : (
-          <Path
-            key={index}
-            d={path}
-            fill="none"
-            stroke="#0f172a"
-            strokeWidth={9}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
+          <G key={index}>
+            <Path
+              d={path}
+              fill="none"
+              stroke="#3b2416"
+              strokeWidth={13}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <Path
+              d={path}
+              fill="none"
+              stroke="#1f130d"
+              strokeWidth={9}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <Path
+              d={path}
+              fill="none"
+              stroke="#8b5e3c"
+              strokeWidth={2.4}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              opacity={0.38}
+            />
+          </G>
         );
       })}
     </Svg>
@@ -488,25 +507,42 @@ function VectorStroke({
   active: boolean;
 }) {
   const first = stroke.points[0];
-  const path = stroke.points
-    .map(
-      (point, index) =>
-        `${index === 0 ? "M" : "L"} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`
-    )
-    .join(" ");
+  const path = smoothStrokePath(stroke.points);
+  const edgeColor = active ? "#115e59" : "#3b2416";
+  const inkColor = active ? "#0f766e" : "#1f130d";
   return (
     <>
       {stroke.points.length === 1 ? (
         <Circle cx={first.x} cy={first.y} r={5} fill="#0f172a" />
       ) : (
-        <Path
-          d={path}
-          fill="none"
-          stroke={active ? "#0f766e" : "#0f172a"}
-          strokeWidth={8}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+        <G>
+          <Path
+            d={path}
+            fill="none"
+            stroke={edgeColor}
+            strokeWidth={13}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            opacity={0.88}
+          />
+          <Path
+            d={path}
+            fill="none"
+            stroke={inkColor}
+            strokeWidth={9}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <Path
+            d={path}
+            fill="none"
+            stroke={active ? "#5eead4" : "#8b5e3c"}
+            strokeWidth={2.4}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            opacity={0.38}
+          />
+        </G>
       )}
       <Circle
         cx={first.x}
@@ -528,6 +564,23 @@ function VectorStroke({
       </SvgText>
     </>
   );
+}
+
+function smoothStrokePath(points: Point[]) {
+  if (!points.length) return "";
+  if (points.length === 1) {
+    return `M ${points[0].x.toFixed(1)} ${points[0].y.toFixed(1)}`;
+  }
+
+  let path = `M ${points[0].x.toFixed(1)} ${points[0].y.toFixed(1)}`;
+  for (let index = 1; index < points.length - 1; index += 1) {
+    const point = points[index];
+    const next = points[index + 1];
+    path += ` Q ${point.x.toFixed(1)} ${point.y.toFixed(1)} ${((point.x + next.x) / 2).toFixed(1)} ${((point.y + next.y) / 2).toFixed(1)}`;
+  }
+
+  const last = points[points.length - 1];
+  return `${path} L ${last.x.toFixed(1)} ${last.y.toFixed(1)}`;
 }
 
 function ScriptButton({
@@ -567,6 +620,22 @@ const styles = {
     marginBottom: 3,
   },
   helperText: { fontSize: 13, color: "#64748b", lineHeight: 19 },
+  brushLabel: {
+    alignSelf: "flex-start" as const,
+    marginTop: 5,
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    gap: 5,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 999,
+    backgroundColor: "#fff7ed",
+  },
+  brushLabelText: {
+    fontSize: 11,
+    fontWeight: "800" as const,
+    color: "#7c2d12",
+  },
   scriptRow: {
     flexDirection: "row" as const,
     flexWrap: "wrap" as const,
