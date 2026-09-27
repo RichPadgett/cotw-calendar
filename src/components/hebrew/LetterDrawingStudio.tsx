@@ -400,7 +400,7 @@ export default function LetterDrawingStudio({
       </View>
       <View style={styles.tileGrid}>
         {letters.map((letter) => {
-          const isSaved = shapes.some(
+          const savedShape = shapes.find(
             (shape) => shape.script === script && shape.order === letter.order
           );
           return (
@@ -417,10 +417,14 @@ export default function LetterDrawingStudio({
             >
               <Text style={styles.tileOrder}>{letter.order}</Text>
               <View style={styles.blankSpace}>
-                <MaterialIcons name="draw" size={24} color="#cbd5e1" />
+                {savedShape ? (
+                  <SavedShapePreview strokes={savedShape.strokes} />
+                ) : (
+                  <MaterialIcons name="draw" size={24} color="#cbd5e1" />
+                )}
               </View>
               <Text style={styles.tileName}>{letter.name}</Text>
-              {isSaved ? (
+              {savedShape ? (
                 <Text style={styles.savedBadge}>SAVED</Text>
               ) : (
                 <Text style={styles.emptyBadge}>BLANK</Text>
@@ -430,6 +434,47 @@ export default function LetterDrawingStudio({
         })}
       </View>
     </View>
+  );
+}
+
+function SavedShapePreview({ strokes }: { strokes: Stroke[] }) {
+  return (
+    <Svg
+      width="100%"
+      height="100%"
+      viewBox="0 0 320 320"
+      preserveAspectRatio="xMidYMid meet"
+    >
+      {strokes.map((stroke, index) => {
+        if (!stroke.points.length) return null;
+        const path = stroke.points
+          .map(
+            (point, pointIndex) =>
+              `${pointIndex === 0 ? "M" : "L"} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`
+          )
+          .join(" ");
+
+        return stroke.points.length === 1 ? (
+          <Circle
+            key={index}
+            cx={stroke.points[0].x}
+            cy={stroke.points[0].y}
+            r={5}
+            fill="#0f172a"
+          />
+        ) : (
+          <Path
+            key={index}
+            d={path}
+            fill="none"
+            stroke="#0f172a"
+            strokeWidth={9}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        );
+      })}
+    </Svg>
   );
 }
 
@@ -564,6 +609,7 @@ const styles = {
   },
   blankSpace: {
     flex: 1,
+    width: "100%" as const,
     minHeight: 72,
     alignItems: "center" as const,
     justifyContent: "center" as const,
