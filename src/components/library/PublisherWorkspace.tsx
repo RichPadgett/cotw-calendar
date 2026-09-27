@@ -14,6 +14,7 @@ import { API_BASE_URL } from "../../config/api";
 import type { LibraryTeaching } from "../../types/library";
 import type {
   PublicationModelOperation,
+  PublicationModelRun,
   PublicationChapter,
   PublicationProject,
   PublicationProjectSummary,
@@ -151,6 +152,7 @@ export default function PublisherWorkspace({
       title: `Chapter ${project.chapters.length + 1}`,
       summary: "",
       sourceIds: [],
+      sections: [],
       manuscript: "",
       sortOrder: project.chapters.length,
     };
@@ -255,6 +257,45 @@ export default function PublisherWorkspace({
       await loadProjects();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Unable to review proposal.");
+    } finally {
+      setIsBusy(false);
+    }
+  }
+
+  function updateModelRun(
+    runId: string,
+    updater: (run: PublicationProject["modelRuns"][number]) => PublicationProject["modelRuns"][number]
+  ) {
+    if (!project) return;
+    setProject({
+      ...project,
+      modelRuns: (project.modelRuns ?? []).map((run) =>
+        run.id === runId ? updater(run) : run
+      ),
+    });
+  }
+
+  async function saveModelProposal(run: PublicationProject["modelRuns"][number]) {
+    if (!project) return;
+    setIsBusy(true);
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/publications/${project.id}/model-runs/${run.id}`,
+        {
+          method: "PUT",
+          headers: authHeaders,
+          body: JSON.stringify({
+            proposedParts: run.proposedParts ?? [],
+            editorCritique: run.editorCritique ?? "",
+          }),
+        }
+      );
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error ?? "Unable to save proposal edits.");
+      setProject(data as PublicationProject);
+      setMessage("Proposed structure and editor critique saved.");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Unable to save proposal edits.");
     } finally {
       setIsBusy(false);
     }
@@ -449,9 +490,13 @@ export default function PublisherWorkspace({
                 </View>
                 <Text style={{ color: "#475569", lineHeight: 20 }}>{run.summary}</Text>
                 {run.proposedText ? <View style={{ maxHeight: 320, padding: 12, borderRadius: 10, backgroundColor: "#f8fafc" }}><ScrollView nestedScrollEnabled><Text selectable style={{ color: "#1f2937", lineHeight: 21 }}>{run.proposedText}</Text></ScrollView></View> : null}
-                {run.proposedChapters.length ? <View style={{ gap: 5 }}>{run.proposedChapters.map((chapter, index) => <Text key={`${run.id}-${index}`} style={{ color: "#334155" }}>{index + 1}. <Text style={{ fontWeight: "900" }}>{chapter.title}</Text> — {chapter.summary}</Text>)}</View> : null}
+                <StructureProposalEditor
+                  run={run}
+                  project={project}
+                  onChange={(nextRun) => updateModelRun(run.id, () => nextRun)}
+                />
                 {run.warnings.length ? <View style={{ padding: 10, borderRadius: 9, backgroundColor: "#fff7ed" }}>{run.warnings.map((warning, index) => <Text key={`${run.id}-warning-${index}`} style={{ color: "#9a3412" }}>• {warning}</Text>)}</View> : null}
-                {run.status === "proposed" ? <View style={{ flexDirection: "row", gap: 8 }}><View style={{ flex: 1 }}><ActionButton label="Accept and apply" icon="check" disabled={isBusy} onPress={() => void reviewModelRun(run.id, "accepted")} /></View><View style={{ flex: 1 }}><ActionButton label="Reject" icon="close" disabled={isBusy} onPress={() => void reviewModelRun(run.id, "rejected")} /></View></View> : null}
+                {run.status === "proposed" ? <><TextInput value={run.editorCritique ?? ""} onChangeText={(editorCritique) => updateModelRun(run.id, (current) => ({ ...current, editorCritique }))} placeholder="Editor critique, structural concerns, or recommendations for the next pass" multiline style={[inputStyle, { minHeight: 80 }]} /><ActionButton label="Save structure edits and critique" icon="save" disabled={isBusy} onPress={() => void saveModelProposal(run)} /><View style={{ flexDirection: "row", gap: 8 }}><View style={{ flex: 1 }}><ActionButton label="Accept and apply" icon="check" disabled={isBusy} onPress={() => void reviewModelRun(run.id, "accepted")} /></View><View style={{ flex: 1 }}><ActionButton label="Reject" icon="close" disabled={isBusy} onPress={() => void reviewModelRun(run.id, "rejected")} /></View></View></> : null}
               </Panel>
             ))}
           </>
@@ -486,6 +531,103 @@ export default function PublisherWorkspace({
         ) : null}
         {message ? <Text style={messageStyle}>{message}</Text> : null}
       </ScrollView>
+    </View>
+  );
+}
+
+function StructureProposalEditor({
+  run,
+  project,
+  onChange,
+}: {
+  run: PublicationModelRun;
+  project: PublicationProject;
+  onChange: (run: PublicationModelRun) => void;
+}) {
+  const editable = run.status === "proposed";
+  const parts = run.proposedParts ?? [];
+
+  function updatePart(partIndex: number, patch: Record<string, unknown>) {
+    onChange({
+      ...run,
+      proposedParts: parts.map((part, index) =>
+        index === partIndex ? { ...part, ...patch } : part
+      ),
+    });
+  }
+
+  function updateChapter(
+    partIndex: number,
+    chapterIndex: number,
+    patch: Record<string, unknown>
+  ) {
+    const part = parts[partIndex];
+    updatePart(partIndex, {
+      chapters: part.chapters.map((chapter, index) =>
+        index === chapterIndex ? { ...chapter, ...patch } : chapter
+      ),
+    });
+  }
+
+  function updateSection(
+    partIndex: number,
+    chapterIndex: number,
+    sectionIndex: number,
+    patch: Record<string, unknown>
+  ) {
+    const chapter = parts[partIndex].chapters[chapterIndex];
+    updateChapter(partIndex, chapterIndex, {
+      sections: chapter.sections.map((section, index) =>
+        index === sectionIndex ? { ...section, ...patch } : section
+      ),
+    });
+  }
+
+  if (parts.length === 0) {
+    return run.proposedChapters.length ? (
+      <View style={{ gap: 5 }}>
+        {run.proposedChapters.map((chapter, index) => (
+          <Text key={`${run.id}-${index}`} style={{ color: "#334155" }}>
+            {index + 1}. <Text style={{ fontWeight: "900" }}>{chapter.title}</Text> — {chapter.summary}
+          </Text>
+        ))}
+      </View>
+    ) : null;
+  }
+
+  return (
+    <View style={{ gap: 12 }}>
+      {parts.map((part, partIndex) => (
+        <View key={`${run.id}-part-${partIndex}`} style={{ padding: 12, gap: 9, borderRadius: 10, borderWidth: 1, borderColor: "#dbe4dc", backgroundColor: "#fbfdfb" }}>
+          <Text style={{ fontSize: 11, fontWeight: "900", color: "#668c43" }}>PART {partIndex + 1}</Text>
+          <TextInput editable={editable} value={part.title} onChangeText={(title) => updatePart(partIndex, { title })} style={[inputStyle, { fontSize: 17, fontWeight: "900" }]} />
+          <TextInput editable={editable} value={part.summary} onChangeText={(summary) => updatePart(partIndex, { summary })} multiline style={inputStyle} />
+          {part.chapters.map((chapter, chapterIndex) => (
+            <View key={`${run.id}-${partIndex}-${chapterIndex}`} style={{ marginLeft: 8, paddingLeft: 12, gap: 7, borderLeftWidth: 3, borderLeftColor: "#86a873" }}>
+              <Text style={{ fontSize: 11, fontWeight: "900", color: "#64748b" }}>CHAPTER {chapterIndex + 1}</Text>
+              <TextInput editable={editable} value={chapter.title} onChangeText={(title) => updateChapter(partIndex, chapterIndex, { title })} style={[inputStyle, { fontWeight: "900" }]} />
+              <TextInput editable={editable} value={chapter.summary} onChangeText={(summary) => updateChapter(partIndex, chapterIndex, { summary })} multiline style={inputStyle} />
+              <Text style={mutedStyle}>Sources: {chapter.sourceIds.map((sourceId) => project.sources.find((source) => source.id === sourceId)?.title ?? sourceId).join(" · ") || "None assigned"}</Text>
+              {chapter.sections.map((section, sectionIndex) => (
+                <View key={`${run.id}-${partIndex}-${chapterIndex}-${sectionIndex}`} style={{ marginLeft: 10, padding: 9, gap: 5, borderRadius: 8, backgroundColor: "#f1f5f9" }}>
+                  <Text style={{ fontSize: 10, fontWeight: "900", color: "#64748b" }}>SECTION {sectionIndex + 1}</Text>
+                  <TextInput editable={editable} value={section.title} onChangeText={(title) => updateSection(partIndex, chapterIndex, sectionIndex, { title })} style={inputStyle} />
+                  <TextInput editable={editable} value={section.summary} onChangeText={(summary) => updateSection(partIndex, chapterIndex, sectionIndex, { summary })} multiline style={inputStyle} />
+                </View>
+              ))}
+            </View>
+          ))}
+        </View>
+      ))}
+      {(run.editorialObservations ?? []).length ? (
+        <View style={{ padding: 10, gap: 4, borderRadius: 9, backgroundColor: "#eff6ff" }}>
+          <Text style={{ fontWeight: "900", color: "#1e40af" }}>Editorial observations</Text>
+          {run.editorialObservations.map((observation, index) => <Text key={`${run.id}-observation-${index}`} style={{ color: "#1e40af" }}>• {observation}</Text>)}
+        </View>
+      ) : null}
+      {(run.unplacedSourceIds ?? []).length ? (
+        <Text style={{ color: "#9a3412" }}>Unplaced material: {run.unplacedSourceIds.map((sourceId) => project.sources.find((source) => source.id === sourceId)?.title ?? sourceId).join(" · ")}</Text>
+      ) : null}
     </View>
   );
 }

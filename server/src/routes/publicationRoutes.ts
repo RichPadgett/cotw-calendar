@@ -13,6 +13,7 @@ import {
   getPublicationUploadFolder,
   listPublicationProjects,
   reviewPublicationModelRun,
+  updatePublicationModelProposal,
   updatePublicationProject,
 } from "../services/publicationStore";
 import { runPublicationModel } from "../services/publicationAiService";
@@ -141,6 +142,21 @@ router.post("/:id/model-runs/:runId/review", (req, res) => {
     String(req.params.id),
     String(req.params.runId),
     decision
+  );
+  if (!project) {
+    return res.status(404).json({ error: "Pending model proposal not found." });
+  }
+  res.json(project);
+});
+
+router.put("/:id/model-runs/:runId", (req, res) => {
+  const project = updatePublicationModelProposal(
+    String(req.params.id),
+    String(req.params.runId),
+    {
+      proposedParts: req.body?.proposedParts,
+      editorCritique: req.body?.editorCritique,
+    }
   );
   if (!project) {
     return res.status(404).json({ error: "Pending model proposal not found." });

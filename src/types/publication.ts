@@ -13,10 +13,19 @@ export type PublicationSource = {
 
 export type PublicationChapter = {
   id: string;
+  partId?: string;
   title: string;
   summary: string;
   sourceIds: string[];
+  sections: Array<{ id: string; title: string; summary: string; sourceIds: string[] }>;
   manuscript: string;
+  sortOrder: number;
+};
+
+export type PublicationPart = {
+  id: string;
+  title: string;
+  summary: string;
   sortOrder: number;
 };
 
@@ -42,6 +51,19 @@ export type PublicationModelRun = {
   summary: string;
   proposedText: string;
   proposedChapters: Array<{ title: string; summary: string; sourceIds: string[] }>;
+  proposedParts: Array<{
+    title: string;
+    summary: string;
+    chapters: Array<{
+      title: string;
+      summary: string;
+      sourceIds: string[];
+      sections: Array<{ title: string; summary: string; sourceIds: string[] }>;
+    }>;
+  }>;
+  editorialObservations: string[];
+  unplacedSourceIds: string[];
+  editorCritique?: string;
   warnings: string[];
   citations: Array<{ sourceId: string; note: string }>;
   responseId?: string;
@@ -56,6 +78,7 @@ export type PublicationProject = {
   author: string;
   status: "draft" | "editing" | "review" | "published";
   sources: PublicationSource[];
+  parts: PublicationPart[];
   chapters: PublicationChapter[];
   reviewNotes: PublicationReviewNote[];
   modelRuns: PublicationModelRun[];

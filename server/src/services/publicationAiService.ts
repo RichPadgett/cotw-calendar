@@ -34,6 +34,46 @@ const OUTPUT_SCHEMA = {
         required: ["title", "summary", "sourceIds"],
       },
     },
+    proposedParts: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          title: { type: "string" },
+          summary: { type: "string" },
+          chapters: {
+            type: "array",
+            items: {
+              type: "object",
+              additionalProperties: false,
+              properties: {
+                title: { type: "string" },
+                summary: { type: "string" },
+                sourceIds: { type: "array", items: { type: "string" } },
+                sections: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    additionalProperties: false,
+                    properties: {
+                      title: { type: "string" },
+                      summary: { type: "string" },
+                      sourceIds: { type: "array", items: { type: "string" } },
+                    },
+                    required: ["title", "summary", "sourceIds"],
+                  },
+                },
+              },
+              required: ["title", "summary", "sourceIds", "sections"],
+            },
+          },
+        },
+        required: ["title", "summary", "chapters"],
+      },
+    },
+    editorialObservations: { type: "array", items: { type: "string" } },
+    unplacedSourceIds: { type: "array", items: { type: "string" } },
     warnings: { type: "array", items: { type: "string" } },
     citations: {
       type: "array",
@@ -53,6 +93,9 @@ const OUTPUT_SCHEMA = {
     "summary",
     "proposedText",
     "proposedChapters",
+    "proposedParts",
+    "editorialObservations",
+    "unplacedSourceIds",
     "warnings",
     "citations",
   ],
@@ -98,9 +141,21 @@ export async function runPublicationModel(input: RunInput) {
         currentManuscript: chapter?.manuscript,
         instructions: input.instructions,
         sources,
+        existingManuscripts: project.chapters
+          .filter((item) => item.manuscript.trim())
+          .map((item) => ({ title: item.title, text: item.manuscript })),
       }),
     },
   ];
+
+  if (input.operation === "outline") {
+    for (const manuscript of project.chapters.filter((item) => item.manuscript.trim())) {
+      content.push({
+        type: "input_text",
+        text: `\nEXISTING MANUSCRIPT: ${manuscript.title}\n${manuscript.manuscript}`,
+      });
+    }
+  }
 
   let embeddedFileBytes = 0;
   for (const source of sources) {
@@ -207,6 +262,9 @@ export async function runPublicationModel(input: RunInput) {
     summary: proposal.summary,
     proposedText: proposal.proposedText,
     proposedChapters: proposal.proposedChapters,
+    proposedParts: proposal.proposedParts,
+    editorialObservations: proposal.editorialObservations,
+    unplacedSourceIds: proposal.unplacedSourceIds,
     warnings: proposal.warnings,
     citations: proposal.citations,
     responseId: typeof responseBody.id === "string" ? responseBody.id : undefined,
@@ -249,13 +307,14 @@ function buildTaskPrompt(
     currentManuscript?: string;
     instructions?: string;
     sources: PublicationSource[];
+    existingManuscripts: Array<{ title: string; text: string }>;
   }
 ) {
   const taskByOperation = {
     clean:
       "Clean the supplied source material into faithful, readable prose. Remove greetings, technical interruptions, filler, and conversational repetition. Preserve testimony, reasoning, theology, qualifications, and Scripture references. Return cleaned prose in proposedText.",
     outline:
-      "Propose a coherent book outline grounded only in the supplied sources. Return chapters in proposedChapters and a concise rationale in proposedText. Use the exact supplied source IDs in each chapter.",
+      "Discover and propose the coherent structure already present in the supplied manuscripts and lessons. Treat their supplied order, progression of thought, theological distinctions, and intentional buildup as authoritative. Do not impose an unrelated framework. Return a hierarchy of parts, chapters, and sections in proposedParts. Associate chapters and sections with exact supplied source IDs. Use editorialObservations for repetitions that may be consolidated, transitions, and structural questions. Put material that does not fit naturally in unplacedSourceIds rather than forcing it into the outline. Also provide a readable rationale in proposedText. proposedChapters may be empty when proposedParts is populated.",
     draft:
       "Draft or revise the selected chapter as polished book prose using only its supplied sources. Preserve the teachers' intended meaning and theological position. Do not invent facts, stories, quotations, or Scripture interpretations. Return the full proposed chapter in proposedText.",
     verify:
@@ -277,6 +336,9 @@ function buildTaskPrompt(
       : "",
     context.instructions ? `EDITOR INSTRUCTIONS: ${context.instructions}` : "",
     `AVAILABLE SOURCE IDS:\n${context.sources.map((source) => `${source.id}: ${source.title} (${source.type})`).join("\n")}`,
+    context.existingManuscripts.length
+      ? `EXISTING MANUSCRIPTS IN CURRENT ORDER:\n${context.existingManuscripts.map((item, index) => `${index + 1}. ${item.title}`).join("\n")}`
+      : "",
   ]
     .filter(Boolean)
     .join("\n\n");

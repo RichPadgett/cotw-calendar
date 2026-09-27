@@ -53,10 +53,11 @@ export function listPublicationProjects() {
       }
     })
     .sort((left, right) => right.updatedAt.localeCompare(left.updatedAt))
-    .map(({ sources, chapters, reviewNotes, modelRuns = [], ...project }) => ({
+    .map(({ sources, parts = [], chapters, reviewNotes, modelRuns = [], ...project }) => ({
       ...project,
       sourceCount: sources.length,
       chapterCount: chapters.length,
+      partCount: parts.length,
       openReviewCount: reviewNotes.filter((note) => !note.resolved).length,
       proposedRunCount: modelRuns.filter((run) => run.status === "proposed").length,
     }));
@@ -67,6 +68,11 @@ export function getPublicationProject(projectId: string) {
   if (!filePath || !fs.existsSync(filePath)) return null;
   const project = JSON.parse(fs.readFileSync(filePath, "utf8")) as PublicationProject;
   project.modelRuns ??= [];
+  project.parts ??= [];
+  project.chapters = project.chapters.map((chapter) => ({
+    ...chapter,
+    sections: chapter.sections ?? [],
+  }));
   return project;
 }
 
@@ -79,6 +85,7 @@ export function createPublicationProject(input: Record<string, unknown>) {
     author: normalizeText(input.author),
     status: "draft",
     sources: [],
+    parts: [],
     chapters: [],
     reviewNotes: [],
     modelRuns: [],
@@ -110,6 +117,7 @@ export function updatePublicationProject(
     sources: Array.isArray(input.sources)
       ? normalizeSources(input.sources)
       : current.sources,
+    parts: current.parts ?? [],
     chapters: Array.isArray(input.chapters)
       ? normalizeChapters(input.chapters)
       : current.chapters,
@@ -148,19 +156,47 @@ export function reviewPublicationModelRun(
 
   if (decision === "accepted") {
     if (run.operation === "outline") {
-      const existingCount = project.chapters.length;
-      project.chapters.push(
-        ...run.proposedChapters.map((chapter, index) => ({
-          id: crypto.randomUUID(),
-          title: chapter.title,
-          summary: chapter.summary,
-          sourceIds: chapter.sourceIds.filter((sourceId) =>
-            project.sources.some((source) => source.id === sourceId)
-          ),
-          manuscript: "",
-          sortOrder: existingCount + index,
-        }))
-      );
+      const proposedParts = run.proposedParts ?? [];
+      if (proposedParts.length > 0) {
+        for (const proposedPart of proposedParts) {
+          const partId = crypto.randomUUID();
+          project.parts.push({
+            id: partId,
+            title: proposedPart.title,
+            summary: proposedPart.summary,
+            sortOrder: project.parts.length,
+          });
+          for (const proposedChapter of proposedPart.chapters) {
+            project.chapters.push({
+              id: crypto.randomUUID(),
+              partId,
+              title: proposedChapter.title,
+              summary: proposedChapter.summary,
+              sourceIds: validSourceIds(project, proposedChapter.sourceIds),
+              sections: proposedChapter.sections.map((section) => ({
+                id: crypto.randomUUID(),
+                title: section.title,
+                summary: section.summary,
+                sourceIds: validSourceIds(project, section.sourceIds),
+              })),
+              manuscript: "",
+              sortOrder: project.chapters.length,
+            });
+          }
+        }
+      } else {
+        project.chapters.push(
+          ...run.proposedChapters.map((chapter) => ({
+            id: crypto.randomUUID(),
+            title: chapter.title,
+            summary: chapter.summary,
+            sourceIds: validSourceIds(project, chapter.sourceIds),
+            sections: [],
+            manuscript: "",
+            sortOrder: project.chapters.length,
+          }))
+        );
+      }
     } else if (run.operation === "clean") {
       project.sources.push({
         id: crypto.randomUUID(),
@@ -190,6 +226,56 @@ export function reviewPublicationModelRun(
   project.updatedAt = new Date().toISOString();
   writeProject(project);
   return project;
+}
+
+export function updatePublicationModelProposal(
+  projectId: string,
+  runId: string,
+  input: { proposedParts?: unknown; editorCritique?: unknown }
+) {
+  const project = getPublicationProject(projectId);
+  const run = project?.modelRuns?.find((item) => item.id === runId);
+  if (!project || !run || run.status !== "proposed") return null;
+  if (Array.isArray(input.proposedParts)) {
+    run.proposedParts = normalizeProposedParts(input.proposedParts);
+  }
+  if (typeof input.editorCritique === "string") {
+    run.editorCritique = input.editorCritique.trim();
+  }
+  project.updatedAt = new Date().toISOString();
+  writeProject(project);
+  return project;
+}
+
+function normalizeProposedParts(value: unknown[]) {
+  return value
+    .filter((part): part is Record<string, unknown> => Boolean(part && typeof part === "object"))
+    .map((part) => ({
+      title: normalizeText(part.title, "Untitled part"),
+      summary: normalizeText(part.summary),
+      chapters: Array.isArray(part.chapters)
+        ? part.chapters
+            .filter((chapter): chapter is Record<string, unknown> => Boolean(chapter && typeof chapter === "object"))
+            .map((chapter) => ({
+              title: normalizeText(chapter.title, "Untitled chapter"),
+              summary: normalizeText(chapter.summary),
+              sourceIds: Array.isArray(chapter.sourceIds)
+                ? chapter.sourceIds.filter((id): id is string => typeof id === "string")
+                : [],
+              sections: Array.isArray(chapter.sections)
+                ? chapter.sections
+                    .filter((section): section is Record<string, unknown> => Boolean(section && typeof section === "object"))
+                    .map((section) => ({
+                      title: normalizeText(section.title, "Untitled section"),
+                      summary: normalizeText(section.summary),
+                      sourceIds: Array.isArray(section.sourceIds)
+                        ? section.sourceIds.filter((id): id is string => typeof id === "string")
+                        : [],
+                    }))
+                : [],
+            }))
+        : [],
+    }));
 }
 
 export function addPublicationSource(
@@ -286,8 +372,25 @@ function normalizeChapters(value: unknown[]): PublicationChapter[] {
         ? item.sourceIds.filter((id): id is string => typeof id === "string")
         : [],
       manuscript: typeof item.manuscript === "string" ? item.manuscript : "",
+      partId: normalizeText(item.partId) || undefined,
+      sections: Array.isArray(item.sections)
+        ? item.sections.map((section) => ({
+            id: normalizeText(section?.id) || crypto.randomUUID(),
+            title: normalizeText(section?.title, "Untitled section"),
+            summary: normalizeText(section?.summary),
+            sourceIds: Array.isArray(section?.sourceIds)
+              ? section.sourceIds.filter((id): id is string => typeof id === "string")
+              : [],
+          }))
+        : [],
       sortOrder: index,
     }));
+}
+
+function validSourceIds(project: PublicationProject, sourceIds: string[]) {
+  return sourceIds.filter((sourceId) =>
+    project.sources.some((source) => source.id === sourceId)
+  );
 }
 
 function normalizeReviewNotes(value: unknown[]): PublicationReviewNote[] {
