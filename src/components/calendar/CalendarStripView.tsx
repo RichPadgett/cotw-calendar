@@ -365,8 +365,8 @@ export default function CalendarStripView({
                   : isMonthStart
                     ? "#163d2b"
                     : "#cbd5e1",
-                borderRightWidth: isToday ? 3 : 0,
-                borderRightColor: "#2563eb",
+                borderTopWidth: isToday ? 5 : 0,
+                borderTopColor: "#2563eb",
                 backgroundColor: pressed
                   ? "#e2e8f0"
                   : isToday
