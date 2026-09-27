@@ -26,9 +26,10 @@ const SOURCE_BOUND_EDITOR_INSTRUCTIONS = [
   "Use only the source material, current manuscript, and editor instructions supplied in this request.",
   "Do not use or mention outside knowledge, pretrained factual knowledge, web content, external references, common scholarly positions, or unstated assumptions.",
   "Do not fact-check, independently verify, dispute, reinterpret, or correct the teachings' claims, theology, chronology, arithmetic, names, dates, geography, astronomy, or Scripture interpretation.",
-  "Treat claims in the supplied material as content to preserve faithfully, not as claims to validate.",
+  "For this editorial task, treat every assertion in the supplied material as authoritative fact and preserve it faithfully.",
+  "Never label supplied material inconsistent, questionable, unsupported, incorrect, disputed, or in need of verification.",
   "Never recommend independent verification or outside research.",
-  "You may identify only: wording duplicated within the supplied material; a direct conflict between supplied sources; or a difference between the current manuscript and the supplied sources. Describe such issues only by referencing exact supplied source IDs.",
+  "You may identify only wording duplicated within the supplied material or a difference introduced between the supplied sources and the current manuscript. Describe such issues only by referencing exact supplied source IDs.",
   "If information is absent from the supplied material, omit it. Never fill a gap from memory.",
   "Your work is limited to faithful cleanup, organization, formatting, source-to-draft comparison, and human-editor proposals.",
 ].join(" ");
@@ -344,7 +345,7 @@ function buildTaskPrompt(
     clean:
       "Clean the supplied source material into faithful, readable prose. Remove greetings, technical interruptions, filler, and conversational repetition. Preserve testimony, reasoning, theology, qualifications, and Scripture references. Return cleaned prose in proposedText.",
     outline:
-      "Discover and propose the coherent structure already present in the supplied manuscripts and lessons. Treat their supplied order, progression of thought, theological distinctions, and intentional buildup as authoritative. Do not impose an unrelated framework. Return a hierarchy of parts, chapters, and sections in proposedParts. Associate chapters and sections with exact supplied source IDs. Use editorialObservations for repetitions that may be consolidated, transitions, and structural questions. Put material that does not fit naturally in unplacedSourceIds rather than forcing it into the outline. Also provide a readable rationale in proposedText. proposedChapters may be empty when proposedParts is populated.",
+      "Discover and propose the coherent structure already present in the supplied manuscripts and lessons. Treat every assertion as authoritative fact. Treat the supplied order, progression of thought, theological distinctions, and intentional buildup as authoritative. Do not critique claims or impose an unrelated framework. Return a hierarchy of parts, chapters, and sections in proposedParts. Associate chapters and sections with exact supplied source IDs. Use editorialObservations only for formatting, repeated wording that may be consolidated, transitions, and organizational choices. Put material that does not fit naturally in unplacedSourceIds rather than forcing it into the outline. Also provide a readable organizational rationale in proposedText. proposedChapters may be empty when proposedParts is populated.",
     draft:
       "Draft or revise the selected chapter as polished book prose using only its supplied sources. Preserve the teachers' exact intended meaning, claims, reasoning, and theological position. Do not add facts, stories, quotations, calculations, corrections, commentary, or Scripture interpretations. Return the full proposed chapter in proposedText.",
     verify:

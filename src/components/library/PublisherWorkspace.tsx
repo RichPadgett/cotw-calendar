@@ -925,8 +925,9 @@ export default function PublisherWorkspace({
               </Text>
               <Text style={{ color: "#166534", marginTop: 4, lineHeight: 19 }}>
                 AI may only clean, organize, format, or compare the material you
-                supplied. It may not add outside knowledge, fact-check the
-                teaching, or recommend external verification.
+                supplied. All supplied assertions are treated as authoritative
+                fact. AI may not add outside knowledge, fact-check the teaching,
+                or recommend external verification.
               </Text>
             </View>
             <Panel>
@@ -975,7 +976,7 @@ export default function PublisherWorkspace({
               ],
               [
                 "verify",
-                "Verify against sources",
+                "Check source fidelity",
                 "Compare the draft only to its sources for added material, changed meaning, omitted qualifications, and attribution differences.",
               ],
             ].map(([operation, title, description]) => (
