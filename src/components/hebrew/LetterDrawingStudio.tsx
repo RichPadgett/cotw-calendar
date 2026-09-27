@@ -256,7 +256,7 @@ export default function LetterDrawingStudio({
             <View style={styles.brushLabel}>
               <MaterialIcons name="brush" size={14} color="#7c2d12" />
               <Text style={styles.brushLabelText}>
-                Ink brush · smooth vector
+                Broad-edge brush · thick N/S, thin E/W
               </Text>
             </View>
           </View>
@@ -454,6 +454,8 @@ function SavedShapePreview({ strokes }: { strokes: Stroke[] }) {
       {strokes.map((stroke, index) => {
         if (!stroke.points.length) return null;
         const path = smoothStrokePath(stroke.points);
+        const edgeOutline = directionalBrushOutline(stroke.points, 7, 18);
+        const inkOutline = directionalBrushOutline(stroke.points, 4, 14);
 
         return stroke.points.length === 1 ? (
           <Circle
@@ -465,22 +467,8 @@ function SavedShapePreview({ strokes }: { strokes: Stroke[] }) {
           />
         ) : (
           <G key={index}>
-            <Path
-              d={path}
-              fill="none"
-              stroke="#3b2416"
-              strokeWidth={13}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <Path
-              d={path}
-              fill="none"
-              stroke="#1f130d"
-              strokeWidth={9}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
+            <Path d={edgeOutline} fill="#3b2416" />
+            <Path d={inkOutline} fill="#1f130d" />
             <Path
               d={path}
               fill="none"
@@ -508,6 +496,8 @@ function VectorStroke({
 }) {
   const first = stroke.points[0];
   const path = smoothStrokePath(stroke.points);
+  const edgeOutline = directionalBrushOutline(stroke.points, 7, 18);
+  const inkOutline = directionalBrushOutline(stroke.points, 4, 14);
   const edgeColor = active ? "#115e59" : "#3b2416";
   const inkColor = active ? "#0f766e" : "#1f130d";
   return (
@@ -516,23 +506,8 @@ function VectorStroke({
         <Circle cx={first.x} cy={first.y} r={5} fill="#0f172a" />
       ) : (
         <G>
-          <Path
-            d={path}
-            fill="none"
-            stroke={edgeColor}
-            strokeWidth={13}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            opacity={0.88}
-          />
-          <Path
-            d={path}
-            fill="none"
-            stroke={inkColor}
-            strokeWidth={9}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
+          <Path d={edgeOutline} fill={edgeColor} opacity={0.9} />
+          <Path d={inkOutline} fill={inkColor} />
           <Path
             d={path}
             fill="none"
@@ -581,6 +556,48 @@ function smoothStrokePath(points: Point[]) {
 
   const last = points[points.length - 1];
   return `${path} L ${last.x.toFixed(1)} ${last.y.toFixed(1)}`;
+}
+
+function directionalBrushOutline(
+  points: Point[],
+  horizontalWidth: number,
+  verticalWidth: number
+) {
+  if (points.length < 2) return "";
+
+  const left: Point[] = [];
+  const right: Point[] = [];
+
+  points.forEach((point, index) => {
+    const previous = points[Math.max(0, index - 1)];
+    const next = points[Math.min(points.length - 1, index + 1)];
+    const dx = next.x - previous.x;
+    const dy = next.y - previous.y;
+    const magnitude = Math.hypot(dx, dy) || 1;
+    const verticalAmount = Math.abs(dy) / magnitude;
+    const width =
+      horizontalWidth + (verticalWidth - horizontalWidth) * verticalAmount;
+    const normalX = -dy / magnitude;
+    const normalY = dx / magnitude;
+    const halfWidth = width / 2;
+
+    left.push({
+      x: point.x + normalX * halfWidth,
+      y: point.y + normalY * halfWidth,
+    });
+    right.push({
+      x: point.x - normalX * halfWidth,
+      y: point.y - normalY * halfWidth,
+    });
+  });
+
+  const outline = [...left, ...right.reverse()];
+  return `${outline
+    .map(
+      (point, index) =>
+        `${index === 0 ? "M" : "L"} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`
+    )
+    .join(" ")} Z`;
 }
 
 function ScriptButton({
