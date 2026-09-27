@@ -6,11 +6,21 @@
 import { createElement } from "react";
 import { Linking, Platform, Pressable, Text, View } from "react-native";
 
-export default function StudyBoxLibraryView({ height }: { height: number }) {
+export default function StudyBoxLibraryView({
+  height,
+  teachingId,
+}: {
+  height: number;
+  teachingId?: string | null;
+}) {
   if (Platform.OS === "web") {
+    const query = teachingId
+      ? `?teaching=${encodeURIComponent(teachingId)}`
+      : "";
+
     return createElement("iframe" as any, {
       title: "StudyBox Teaching Library",
-      src: "/library",
+      src: `/library${query}`,
       style: {
         display: "block",
         width: "100%",

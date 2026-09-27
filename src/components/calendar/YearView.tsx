@@ -25,6 +25,7 @@ type Props = {
   perpetualMarkers: PerpetualMarker[];
   todayDateId?: string;
   monthNumber?: number;
+  teachingDateIds?: Set<string>;
 };
 
 type CalendarDaySummary = {
@@ -93,6 +94,7 @@ export default function YearView({
   onPressDay,
   todayDateId,
   monthNumber,
+  teachingDateIds = new Set<string>(),
 }: Props) {
   const monthLayoutYsRef = useRef<Record<number, number>>({});
   const monthGridYsRef = useRef<Record<number, number>>({});
@@ -344,6 +346,7 @@ export default function YearView({
                           node={node}
                           hasNotice={hasNotice}
                           hasContent={hasContent}
+                          hasTeaching={teachingDateIds.has(node.gregorianDate)}
                           perpetualMarkers={markersForDay}
                           onPressDay={onPressDay}
                           todayDateId={todayDateId}

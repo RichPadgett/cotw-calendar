@@ -59,6 +59,7 @@ import { CalendarNode } from "../src/models/calendar";
 
 import type { DayContent } from "../src/types/calendarContent";
 import type { PerpetualMarker } from "../src/types/perpetualMarkers";
+import type { LibraryTeaching } from "../src/types/library";
 import type { TimelineOccurrence } from "../src/data/historyTimeline";
 import { HISTORY_TIMELINE_RANGE } from "../src/data/historyTimeline";
 import { API_BASE_URL } from "../src/config/api";
@@ -107,6 +108,23 @@ function getInitialVisibleEnochYear() {
   }
 
   return 2026;
+}
+
+function getTeachingDateId(recordedAt?: string | null): string | null {
+  if (!recordedAt) return null;
+  const date = new Date(recordedAt);
+  if (Number.isNaN(date.getTime())) return null;
+
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Chicago",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+  const value = Object.fromEntries(
+    parts.map((part) => [part.type, part.value])
+  );
+  return `${value.year}-${value.month}-${value.day}`;
 }
 
 export default function HomeScreen() {
@@ -201,6 +219,12 @@ export default function HomeScreen() {
   const [yearNotices, setYearNotices] = useState<any[]>([]);
   const [selectedNode, setSelectedNode] = useState<CalendarNode | null>(null);
   const [dayContent, setDayContent] = useState<DayContent | null>(null);
+  const [libraryTeachings, setLibraryTeachings] = useState<LibraryTeaching[]>(
+    []
+  );
+  const [selectedLibraryTeachingId, setSelectedLibraryTeachingId] = useState<
+    string | null
+  >(null);
 
   const [perpetualMarkers, setPerpetualMarkers] = useState<PerpetualMarker[]>(
     []
@@ -232,6 +256,14 @@ export default function HomeScreen() {
   };
 
   const nodes = buildEnochYear(config);
+  const teachingsByDate = libraryTeachings.reduce<
+    Record<string, LibraryTeaching[]>
+  >((index, teaching) => {
+    const dateId = getTeachingDateId(teaching.recorded_at);
+    if (dateId) (index[dateId] ??= []).push(teaching);
+    return index;
+  }, {});
+  const teachingDateIds = new Set(Object.keys(teachingsByDate));
   const groupLabel = formatGroupLabel(groupCode);
   const canManageTimeline =
     userRole === "admin" &&
@@ -395,6 +427,26 @@ export default function HomeScreen() {
       loadYearNotices();
     }
   }, [config.enochYear, groupCode, hasEnteredApp]);
+
+  useEffect(() => {
+    if (!hasEnteredApp) return;
+
+    appFetch(`${API_BASE_URL}/api/library?limit=100`)
+      .then((response) => (response.ok ? response.json() : Promise.reject()))
+      .then((data) =>
+        setLibraryTeachings(Array.isArray(data.items) ? data.items : [])
+      )
+      .catch(() => setLibraryTeachings([]));
+  }, [hasEnteredApp]);
+
+  function openLibraryTeaching(teachingId: string) {
+    setSelectedLibraryTeachingId(teachingId);
+    closeDay();
+    changeActiveTab("library");
+    requestAnimationFrame(() =>
+      scrollViewRef.current?.scrollTo({ y: 0, animated: false })
+    );
+  }
 
   useEffect(() => {
     async function loadSavedCommandStudyState() {
@@ -1316,6 +1368,7 @@ export default function HomeScreen() {
                           : undefined
                       }
                       todayDateId={todayDateId}
+                      teachingDateIds={teachingDateIds}
                       onDayLayout={handleDayLayout}
                       onMonthLayout={handleMonthLayout}
                       onPressDay={(node) => {
@@ -1331,6 +1384,8 @@ export default function HomeScreen() {
                   <CalendarDayView
                     node={dayViewNode}
                     markers={dayViewMarkers}
+                    teachings={teachingsByDate[dayViewNode.gregorianDate] ?? []}
+                    onOpenTeaching={openLibraryTeaching}
                   />
                 )}
               </>
@@ -1390,7 +1445,10 @@ export default function HomeScreen() {
             )}
 
             {activeTab === "library" && (
-              <StudyBoxLibraryView height={viewportHeight - 72} />
+              <StudyBoxLibraryView
+                height={viewportHeight - 72}
+                teachingId={selectedLibraryTeachingId}
+              />
             )}
           </ScrollView>
         </View>
@@ -1581,6 +1639,11 @@ export default function HomeScreen() {
           dayContent={dayContent}
           perpetualMarkers={perpetualMarkers}
           selectedDayMarkers={selectedDayMarkers}
+          teachings={
+            selectedNode
+              ? (teachingsByDate[selectedNode.gregorianDate] ?? [])
+              : []
+          }
           isAdminMode={isAdminMode}
           groupCode={groupCode}
           userRole={userRole}
@@ -1592,6 +1655,7 @@ export default function HomeScreen() {
           onDeleteNotice={deleteNotice}
           onDeleteScriptureReading={deleteScriptureReading}
           onSavePerpetualMarkers={savePerpetualMarkers}
+          onOpenTeaching={openLibraryTeaching}
           adminToken={adminToken}
         />
       )}

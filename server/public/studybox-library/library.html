@@ -133,7 +133,10 @@
     loadActiveView();
   }));
   document.querySelector('#search').addEventListener('submit', (event) => { event.preventDefault(); loadActiveView(); });
-  loadList().catch(() => { results.innerHTML = '<p class="empty">Library is temporarily unavailable.</p>'; });
+  const initialTeachingId = new URLSearchParams(window.location.search).get('teaching');
+  loadList()
+    .then(() => initialTeachingId ? loadReader(initialTeachingId) : undefined)
+    .catch(() => { results.innerHTML = '<p class="empty">Library is temporarily unavailable.</p>'; });
 </script>
 </body>
 </html>

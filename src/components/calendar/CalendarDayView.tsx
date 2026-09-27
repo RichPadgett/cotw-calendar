@@ -3,17 +3,25 @@
  * Purpose: Presents one focused calendar day as an agenda-style view.
  */
 
-import { Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 
 import type { CalendarNode } from "../../models/calendar";
 import type { PerpetualMarker } from "../../types/perpetualMarkers";
+import type { LibraryTeaching } from "../../types/library";
 
 type Props = {
   node: CalendarNode;
   markers?: PerpetualMarker[];
+  teachings?: LibraryTeaching[];
+  onOpenTeaching?: (teachingId: string) => void;
 };
 
-export default function CalendarDayView({ node, markers = [] }: Props) {
+export default function CalendarDayView({
+  node,
+  markers = [],
+  teachings = [],
+  onOpenTeaching,
+}: Props) {
   const date = new Date(`${node.gregorianDate}T12:00:00`);
   const events = node.enoch?.events ?? [];
 
@@ -89,7 +97,37 @@ export default function CalendarDayView({ node, markers = [] }: Props) {
           </View>
         ))}
 
-        {events.length === 0 && markers.length === 0 ? (
+        {teachings.map((teaching) => (
+          <Pressable
+            key={teaching.id}
+            onPress={() => onOpenTeaching?.(teaching.id)}
+            style={{
+              padding: 14,
+              borderRadius: 12,
+              borderLeftWidth: 5,
+              borderLeftColor: "#0369a1",
+              backgroundColor: "#f0f9ff",
+            }}
+          >
+            <Text style={{ fontSize: 12, fontWeight: "900", color: "#0369a1" }}>
+              LIBRARY TEACHING
+            </Text>
+            <Text
+              style={{
+                marginTop: 4,
+                fontSize: 16,
+                fontWeight: "900",
+                color: "#1f2937",
+              }}
+            >
+              {teaching.title}
+            </Text>
+          </Pressable>
+        ))}
+
+        {events.length === 0 &&
+        markers.length === 0 &&
+        teachings.length === 0 ? (
           <Text style={{ paddingVertical: 18, color: "#64748b" }}>
             No appointed times or perpetual markers are listed for this day.
           </Text>

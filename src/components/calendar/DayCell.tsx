@@ -12,6 +12,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 
 import ScrollIcon from "../../../assets/enoch/icons/scroll.png";
 import { CalendarNode } from "../../models/calendar";
@@ -26,6 +27,7 @@ type Props = {
   onPressDay?: (node: CalendarNode) => void;
   hasContent?: boolean;
   hasNotice?: boolean;
+  hasTeaching?: boolean;
   perpetualMarkers?: PerpetualMarker[];
   todayDateId?: string;
 };
@@ -51,6 +53,7 @@ export function DayCell({
   onPressDay,
   hasContent = false,
   hasNotice = false,
+  hasTeaching = false,
   perpetualMarkers = [],
   todayDateId,
 }: Props) {
@@ -177,6 +180,24 @@ export function DayCell({
               resizeMode="contain"
             />
           )}
+          {hasTeaching && (
+            <View
+              style={{
+                position: "absolute",
+                bottom: showScrollIcon ? scrollIconSize + 2 : 4,
+                right: 2,
+                width: 24,
+                height: 24,
+                borderRadius: 12,
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "#e0f2fe",
+                zIndex: 31,
+              }}
+            >
+              <MaterialIcons name="video-library" size={15} color="#0369a1" />
+            </View>
+          )}
 
           <View
             style={{
@@ -262,7 +283,7 @@ export function DayCell({
                 >
                   {useLargeEventBadges
                     ? event.englishName
-                    : event.shortName ?? event.englishName}
+                    : (event.shortName ?? event.englishName)}
                 </Text>
               </View>
             ))}

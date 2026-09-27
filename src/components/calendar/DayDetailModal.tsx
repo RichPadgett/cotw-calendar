@@ -23,6 +23,7 @@ import { API_BASE_URL } from "../../config/api";
 import { CalendarNode } from "../../models/calendar";
 import type { DayContent, DayContentItem } from "../../types/calendarContent";
 import type { PerpetualMarker } from "../../types/perpetualMarkers";
+import type { LibraryTeaching } from "../../types/library";
 
 const DEFAULT_MARKER_COLOR = "#2563eb";
 
@@ -32,6 +33,7 @@ type Props = {
   dayContent: DayContent | null;
   perpetualMarkers: PerpetualMarker[];
   selectedDayMarkers: PerpetualMarker[];
+  teachings: LibraryTeaching[];
   isAdminMode: boolean;
   groupCode: string;
   userRole: "member" | "admin";
@@ -45,6 +47,7 @@ type Props = {
   onDeleteNotice: (index: number) => Promise<void>;
   onDeleteScriptureReading: (index: number) => Promise<void>;
   onSavePerpetualMarkers: (markers: PerpetualMarker[]) => Promise<void>;
+  onOpenTeaching: (teachingId: string) => void;
 };
 
 /**
@@ -57,6 +60,7 @@ export default function DayDetailModal({
   dayContent,
   perpetualMarkers,
   selectedDayMarkers,
+  teachings,
   isAdminMode,
   groupCode,
   userRole,
@@ -69,6 +73,7 @@ export default function DayDetailModal({
   onDeleteNotice,
   onDeleteScriptureReading,
   onSavePerpetualMarkers,
+  onOpenTeaching,
 }: Props) {
   const [selectedMarker, setSelectedMarker] = useState<PerpetualMarker | null>(
     null
@@ -856,6 +861,26 @@ export default function DayDetailModal({
                     ) : null}
                   </View>
                 ))}
+
+              {teachings.length > 0 ? (
+                <Text style={styles.sectionHeading}>Library Teachings</Text>
+              ) : null}
+              {teachings.map((teaching) => (
+                <View key={teaching.id} style={styles.card}>
+                  <Text style={styles.itemTitle}>{teaching.title}</Text>
+                  {teaching.description ? (
+                    <Text style={styles.bodyTextMuted}>
+                      {teaching.description}
+                    </Text>
+                  ) : null}
+                  <Pressable
+                    onPress={() => onOpenTeaching(teaching.id)}
+                    style={styles.linkButton}
+                  >
+                    <Text style={styles.linkButtonText}>Open in Library</Text>
+                  </Pressable>
+                </View>
+              ))}
 
               {regularSections.map((section, sectionIndex) => (
                 <View key={`section-${sectionIndex}`}>
