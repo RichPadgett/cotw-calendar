@@ -5,6 +5,7 @@
  */
 
 export type CalendarContentItem = {
+  sourceId?: string;
   label: string;
   type:
     | "external-link"

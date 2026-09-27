@@ -5,6 +5,7 @@ import { timingSafeEqual } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { publishLibraryTeachingToCalendar } from "../services/calendarContentStore";
 
 dotenv.config({ path: process.env.STUDYBOX_LIBRARY_ENV_FILE ?? "/etc/studybox/cloud-library.env" });
 
@@ -69,7 +70,19 @@ router.post("/sync", requireSyncToken, async (req, res, next) => {
       );
     }
     await connection.query("COMMIT");
-    res.json({ ok: true, recordingId, chunks: chunks.length, markers: markers.length });
+    const title = stringValue(document.title) ?? stringValue(recording?.title) ?? "Untitled teaching";
+    const description = stringValue(document.description);
+    const recordedAt = stringValue(recording?.startedAt) ?? stringValue(document.recordedAt);
+    const calendarContent = recordedAt
+      ? publishLibraryTeachingToCalendar({ recordingId, title, description, recordedAt })
+      : null;
+    res.json({
+      ok: true,
+      recordingId,
+      chunks: chunks.length,
+      markers: markers.length,
+      calendarPublished: Boolean(calendarContent),
+    });
   } catch (error) {
     await connection.query("ROLLBACK").catch(() => undefined);
     next(error);

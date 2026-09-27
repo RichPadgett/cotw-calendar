@@ -117,6 +117,16 @@ export default function DayDetailModal({
   const regularSections = (dayContent?.sections ?? []).filter(
     (section) => section.displayStyle !== "notice"
   );
+  const savedTeachingIds = new Set(
+    regularSections.flatMap((section) =>
+      (section.items ?? []).flatMap((item) =>
+        item.sourceId ? [item.sourceId] : []
+      )
+    )
+  );
+  const automaticTeachings = teachings.filter(
+    (teaching) => !savedTeachingIds.has(teaching.id)
+  );
 
   /**
    * Opens a linked scripture, source note, media item, or external content URL.
@@ -862,10 +872,10 @@ export default function DayDetailModal({
                   </View>
                 ))}
 
-              {teachings.length > 0 ? (
+              {automaticTeachings.length > 0 ? (
                 <Text style={styles.sectionHeading}>Library Teachings</Text>
               ) : null}
-              {teachings.map((teaching) => (
+              {automaticTeachings.map((teaching) => (
                 <View key={teaching.id} style={styles.card}>
                   <Text style={styles.itemTitle}>{teaching.title}</Text>
                   {teaching.description ? (
@@ -907,7 +917,18 @@ export default function DayDetailModal({
                             )}
                           </Text>
 
-                          {item.url ? renderOpenLinkButton(item.url) : null}
+                          {item.sourceId ? (
+                            <Pressable
+                              onPress={() => onOpenTeaching(item.sourceId!)}
+                              style={styles.linkButton}
+                            >
+                              <Text style={styles.linkButtonText}>
+                                Open in Library
+                              </Text>
+                            </Pressable>
+                          ) : item.url ? (
+                            renderOpenLinkButton(item.url)
+                          ) : null}
                         </View>
                       );
                     })}

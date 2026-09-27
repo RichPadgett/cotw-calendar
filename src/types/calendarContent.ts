@@ -12,6 +12,7 @@ export type ScriptureReading = {
 };
 
 export type DayContentItem = {
+  sourceId?: string;
   label?: string;
   type?: string;
   details?: string;

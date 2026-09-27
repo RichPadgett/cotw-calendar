@@ -138,6 +138,121 @@ function getGregorianDateForEnochDate(
   return addDays(startDate, dayOfYear - 1);
 }
 
+export function getEnochDateForGregorianDate(gregorianDate: string): {
+  enochYear: number;
+  month: number;
+  day: number;
+} | null {
+  const gregorianYear = Number(gregorianDate.slice(0, 4));
+
+  for (
+    let enochYear = gregorianYear - 1;
+    enochYear <= gregorianYear + 1;
+    enochYear++
+  ) {
+    const startDate = getEnochYearStartDate(enochYear);
+    const nextStartDate = getEnochYearStartDate(enochYear + 1);
+    if (gregorianDate < startDate || gregorianDate >= nextStartDate) continue;
+
+    const start = new Date(`${startDate}T00:00:00Z`);
+    const target = new Date(`${gregorianDate}T00:00:00Z`);
+    const dayOfYear =
+      Math.floor((target.getTime() - start.getTime()) / 86_400_000) + 1;
+    if (dayOfYear < 1 || dayOfYear > 364) return null;
+
+    const quarterDay = ((dayOfYear - 1) % 91) + 1;
+    if (quarterDay === 91) return null;
+
+    const quarter = Math.floor((dayOfYear - 1) / 91);
+    const monthInQuarter = Math.floor((quarterDay - 1) / 30);
+    return {
+      enochYear,
+      month: quarter * 3 + monthInQuarter + 1,
+      day: ((quarterDay - 1) % 30) + 1,
+    };
+  }
+
+  return null;
+}
+
+export function publishLibraryTeachingToCalendar(input: {
+  recordingId: string;
+  title: string;
+  description?: string;
+  recordedAt: string;
+}): CalendarDayContent | null {
+  const gregorianDate = formatDateInCentralTime(input.recordedAt);
+  if (!gregorianDate) return null;
+
+  const enochDate = getEnochDateForGregorianDate(gregorianDate);
+  if (!enochDate) return null;
+
+  const year = String(enochDate.enochYear);
+  const month = String(enochDate.month);
+  const day = String(enochDate.day);
+  const existing = getCalendarDayContent(
+    CHURCH_GROUP_CODE,
+    year,
+    month,
+    day
+  ) ?? {
+    ...enochDate,
+    gregorianDate,
+    title: `Enoch Month ${enochDate.month}, Day ${enochDate.day}`,
+    scriptureReadings: [],
+    sections: [],
+  };
+  const sectionTitle = "Library Teachings";
+  const existingSection = existing.sections.find(
+    (section) =>
+      section.title === sectionTitle && section.displayStyle !== "notice"
+  );
+  const teachingItem: CalendarContentItem = {
+    sourceId: input.recordingId,
+    label: input.title,
+    type: "internal-link",
+    url: `/library?teaching=${encodeURIComponent(input.recordingId)}`,
+    details: input.description,
+    access: "members",
+    uploadedAt: input.recordedAt,
+  };
+  const nextItems = [...(existingSection?.items ?? [])];
+  const itemIndex = nextItems.findIndex(
+    (item) =>
+      item.sourceId === input.recordingId || item.url === teachingItem.url
+  );
+  if (itemIndex >= 0) nextItems[itemIndex] = teachingItem;
+  else nextItems.push(teachingItem);
+
+  const nextSections = existing.sections.filter(
+    (section) => section !== existingSection
+  );
+  nextSections.push({ title: sectionTitle, items: nextItems });
+
+  return saveCalendarDayContent(CHURCH_GROUP_CODE, year, month, day, {
+    ...existing,
+    ...enochDate,
+    gregorianDate,
+    sections: nextSections,
+  });
+}
+
+function formatDateInCentralTime(value: string): string | null {
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Chicago",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+  const values = Object.fromEntries(
+    parts.map((part) => [part.type, part.value])
+  );
+  return `${values.year}-${values.month}-${values.day}`;
+}
+
 function formatDateOnly(date: Date): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");

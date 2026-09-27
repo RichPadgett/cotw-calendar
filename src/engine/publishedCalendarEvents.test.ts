@@ -7,6 +7,7 @@ import {
   getPublishedEventsForContent,
   getPublishedPerpetualMarkerEvents,
 } from "../../server/src/services/publishedCalendarEvents";
+import { getEnochDateForGregorianDate } from "../../server/src/services/calendarContentStore";
 
 const content = {
   enochYear: 2026,
@@ -70,5 +71,13 @@ describe("published calendar content", () => {
     });
     expect(events[11].startDate).toBe("2027-02-14");
     expect(events[0].description).toContain("Numbers 28:11");
+  });
+
+  it("maps a StudyBox recording date to its Enoch calendar JSON day", () => {
+    expect(getEnochDateForGregorianDate("2026-09-26")).toEqual({
+      enochYear: 2026,
+      month: 7,
+      day: 11,
+    });
   });
 });
