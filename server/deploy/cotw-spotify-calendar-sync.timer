@@ -1,0 +1,10 @@
+[Unit]
+Description=Check Spotify for new Church of the Word episodes
+
+[Timer]
+OnCalendar=*-*-* 00/6:20:00
+Persistent=true
+RandomizedDelaySec=10m
+
+[Install]
+WantedBy=timers.target

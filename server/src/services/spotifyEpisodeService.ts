@@ -6,6 +6,8 @@
 
 const TOKEN_URL = "https://accounts.spotify.com/api/token";
 const EPISODE_URL_PREFIX = "https://api.spotify.com/v1/episodes";
+const SHOW_EPISODES_URL_PREFIX = "https://api.spotify.com/v1/shows";
+export const CHURCH_OF_THE_WORD_SPOTIFY_SHOW_ID = "0R8U9lsiYV4RTKODWZbRo6";
 
 export type SuggestedScriptureReading = {
   label: string;
@@ -18,6 +20,14 @@ export type SpotifyEpisodeDetails = {
   url: string;
   description: string;
   suggestedReadings: SuggestedScriptureReading[];
+};
+
+export type SpotifyShowEpisode = {
+  id: string;
+  name: string;
+  releaseDate: string;
+  releaseDatePrecision: "day" | "month" | "year";
+  url: string;
 };
 
 type CachedToken = {
@@ -96,14 +106,11 @@ export async function getSpotifyEpisodeDetails(
 
   const accessToken = await getAccessToken();
 
-  const response = await fetch(
-    `${EPISODE_URL_PREFIX}/${episodeId}?market=US`,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  );
+  const response = await fetch(`${EPISODE_URL_PREFIX}/${episodeId}?market=US`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
 
   if (!response.ok) {
     throw new Error(`Spotify episode request failed: ${response.status}`);
@@ -119,10 +126,63 @@ export async function getSpotifyEpisodeDetails(
 
   return {
     title: data.name ?? "",
-    url: data.external_urls?.spotify ?? `https://open.spotify.com/episode/${episodeId}`,
+    url:
+      data.external_urls?.spotify ??
+      `https://open.spotify.com/episode/${episodeId}`,
     description,
     suggestedReadings: extractScriptureReadings(description),
   };
+}
+
+export async function getSpotifyShowEpisodes(
+  showId = process.env.SPOTIFY_SHOW_ID ?? CHURCH_OF_THE_WORD_SPOTIFY_SHOW_ID
+): Promise<SpotifyShowEpisode[]> {
+  const accessToken = await getAccessToken();
+  const episodes: SpotifyShowEpisode[] = [];
+  let offset = 0;
+  const limit = 50;
+
+  while (true) {
+    const response = await fetch(
+      `${SHOW_EPISODES_URL_PREFIX}/${encodeURIComponent(showId)}/episodes?market=US&limit=${limit}&offset=${offset}`,
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        `Spotify show episodes request failed: ${response.status}`
+      );
+    }
+
+    const data = (await response.json()) as {
+      items?: Array<{
+        id?: string;
+        name?: string;
+        release_date?: string;
+        release_date_precision?: "day" | "month" | "year";
+        external_urls?: { spotify?: string };
+      }>;
+      next?: string | null;
+    };
+
+    for (const item of data.items ?? []) {
+      if (!item.id || !item.name || !item.release_date) continue;
+      episodes.push({
+        id: item.id,
+        name: item.name,
+        releaseDate: item.release_date,
+        releaseDatePrecision: item.release_date_precision ?? "day",
+        url:
+          item.external_urls?.spotify ??
+          `https://open.spotify.com/episode/${item.id}`,
+      });
+    }
+
+    if (!data.next || (data.items?.length ?? 0) < limit) break;
+    offset += limit;
+  }
+
+  return episodes;
 }
 
 const BOOK_NAMES = [

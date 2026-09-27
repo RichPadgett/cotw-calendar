@@ -237,6 +237,92 @@ export function publishLibraryTeachingToCalendar(input: {
   });
 }
 
+export function publishSpotifyEpisodeToCalendar(
+  input: {
+    episodeId: string;
+    title: string;
+    url: string;
+    releaseDate: string;
+  },
+  options: { dryRun?: boolean } = {}
+): { changed: boolean; enochDate: string; groups: string[] } | null {
+  const enochDate = getEnochDateForGregorianDate(input.releaseDate);
+  if (!enochDate) return null;
+
+  const year = String(enochDate.enochYear);
+  const month = String(enochDate.month);
+  const day = String(enochDate.day);
+  const changedGroups: string[] = [];
+
+  for (const groupCode of [CHURCH_GROUP_CODE, PUBLIC_GROUP_CODE]) {
+    const existing = getCalendarDayContent(groupCode, year, month, day) ?? {
+      ...enochDate,
+      gregorianDate: input.releaseDate,
+      title: `Enoch Month ${enochDate.month}, Day ${enochDate.day}`,
+      scriptureReadings: [],
+      sections: [],
+    };
+    const sourceId = `spotify:${input.episodeId}`;
+    const episodeUrl = `https://open.spotify.com/episode/${input.episodeId}`;
+    const item: CalendarContentItem = {
+      sourceId,
+      label: input.title,
+      type: "external-link",
+      url: input.url || episodeUrl,
+      access: "public",
+    };
+    let found = false;
+    const sections = existing.sections.map((section) => ({
+      ...section,
+      items: section.items.map((existingItem) => {
+        const matches =
+          existingItem.sourceId === sourceId ||
+          existingItem.url?.startsWith(episodeUrl);
+        if (!matches) return existingItem;
+        found = true;
+        return item;
+      }),
+    }));
+
+    if (!found) {
+      const linksSectionIndex = sections.findIndex(
+        (section) =>
+          section.displayStyle !== "notice" &&
+          (section.title === "Teaching Links" ||
+            section.title === "Files / Links / Media")
+      );
+
+      if (linksSectionIndex >= 0) {
+        sections[linksSectionIndex] = {
+          ...sections[linksSectionIndex],
+          items: [...sections[linksSectionIndex].items, item],
+        };
+      } else {
+        sections.push({ title: "Teaching Links", items: [item] });
+      }
+    }
+
+    const nextContent: CalendarDayContent = {
+      ...existing,
+      ...enochDate,
+      gregorianDate: input.releaseDate,
+      sections,
+    };
+
+    if (JSON.stringify(existing) === JSON.stringify(nextContent)) continue;
+    changedGroups.push(groupCode);
+    if (!options.dryRun) {
+      saveCalendarDayContent(groupCode, year, month, day, nextContent);
+    }
+  }
+
+  return {
+    changed: changedGroups.length > 0,
+    enochDate: `${enochDate.enochYear}/${enochDate.month}/${enochDate.day}`,
+    groups: changedGroups,
+  };
+}
+
 function formatDateInCentralTime(value: string): string | null {
   if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
   const date = new Date(value);

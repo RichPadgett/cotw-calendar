@@ -10,7 +10,8 @@
     "dev1": "ts-node-dev --respawn src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "teachings:find-new": "ts-node --transpile-only scripts/findNewTeachingEpisodes.ts"
+    "teachings:find-new": "ts-node --transpile-only scripts/findNewTeachingEpisodes.ts",
+    "spotify:calendar-sync": "node dist/scripts/syncSpotifyCalendar.js"
   },
   "keywords": [],
   "author": "",

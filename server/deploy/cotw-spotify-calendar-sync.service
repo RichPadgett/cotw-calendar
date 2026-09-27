@@ -1,0 +1,12 @@
+[Unit]
+Description=Sync Church of the Word Spotify episodes into calendar days
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=deploy
+WorkingDirectory=/var/www/cotw-calendar/server
+EnvironmentFile=/var/www/cotw-calendar/server/.env
+ExecStart=/usr/bin/node /var/www/cotw-calendar/server/dist/scripts/syncSpotifyCalendar.js
+
