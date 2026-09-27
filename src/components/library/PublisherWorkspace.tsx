@@ -53,7 +53,9 @@ export default function PublisherWorkspace({
   const [selectedChapterId, setSelectedChapterId] = useState<string | null>(
     null
   );
-  const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
+  const [selectedSectionId, setSelectedSectionId] = useState<string | null>(
+    null
+  );
   const [reviewText, setReviewText] = useState("");
   const [aiInstructions, setAiInstructions] = useState("");
   const [openSourceId, setOpenSourceId] = useState<string | null>(null);
@@ -208,6 +210,40 @@ export default function PublisherWorkspace({
     setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
   }
 
+  async function downloadPdf() {
+    if (!project || Platform.OS !== "web") return;
+    await saveProject(project);
+    setIsBusy(true);
+    setMessage("Preparing PDF…");
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/publications/${project.id}/export/pdf`,
+        { headers: { Authorization: `Bearer ${adminToken}` } }
+      );
+      if (!response.ok) throw new Error("Unable to generate the PDF.");
+      const objectUrl = URL.createObjectURL(await response.blob());
+      const anchor = document.createElement("a");
+      anchor.href = objectUrl;
+      anchor.download = `${
+        project.title
+          .replace(/[^a-z0-9]+/gi, "-")
+          .replace(/^-|-$/g, "")
+          .toLowerCase() || "publication"
+      }.pdf`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
+      setMessage("PDF downloaded.");
+    } catch (error) {
+      setMessage(
+        error instanceof Error ? error.message : "Unable to generate the PDF."
+      );
+    } finally {
+      setIsBusy(false);
+    }
+  }
+
   function addChapter() {
     if (!project) return;
     const chapter: PublicationChapter = {
@@ -360,9 +396,9 @@ export default function PublisherWorkspace({
       if (decision === "accepted") {
         const acceptedRun = project.modelRuns.find((item) => item.id === runId);
         if (acceptedRun?.operation === "outline") {
-          const firstStructuredChapter = (data as PublicationProject).chapters.find(
-            (chapter) => chapter.partId
-          );
+          const firstStructuredChapter = (
+            data as PublicationProject
+          ).chapters.find((chapter) => chapter.partId);
           setSelectedChapterId(firstStructuredChapter?.id ?? null);
           setSelectedSectionId(firstStructuredChapter?.sections[0]?.id ?? null);
           setTab("manuscript");
@@ -501,6 +537,18 @@ export default function PublisherWorkspace({
       run.chapterId === selectedChapter?.id &&
       (run.sectionId ?? null) === (selectedSection?.id ?? null)
   );
+  const pendingVerifications = (project.modelRuns ?? []).filter(
+    (run) => run.operation === "verify" && run.status === "proposed"
+  );
+  const completedSectionCount = project.chapters.reduce(
+    (total, chapter) =>
+      total +
+      chapter.sections.filter((section) => section.manuscript?.trim()).length,
+    0
+  );
+  const hasExportableContent =
+    completedSectionCount > 0 ||
+    project.chapters.some((chapter) => chapter.manuscript.trim());
 
   return (
     <View style={{ flex: 1 }}>
@@ -540,12 +588,14 @@ export default function PublisherWorkspace({
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{ gap: 7 }}
         >
-          {([
-            { step: 1, tab: "sources", label: "Choose data" },
-            { step: 2, tab: "ai", label: "Generate outline" },
-            { step: 3, tab: "manuscript", label: "Build content" },
-            { step: 4, tab: "review", label: "Review" },
-          ] as Array<{ step: number; tab: WorkspaceTab; label: string }>).map((item) => (
+          {(
+            [
+              { step: 1, tab: "sources", label: "Choose data" },
+              { step: 2, tab: "ai", label: "Generate outline" },
+              { step: 3, tab: "manuscript", label: "Build content" },
+              { step: 4, tab: "review", label: "Review" },
+            ] as Array<{ step: number; tab: WorkspaceTab; label: string }>
+          ).map((item) => (
             <Pressable
               key={item.step}
               onPress={() => setTab(item.tab)}
@@ -821,8 +871,8 @@ export default function PublisherWorkspace({
             <Panel>
               <Text style={rowTitleStyle}>Ready for Step 2?</Text>
               <Text style={mutedStyle}>
-                Optional cleanup removes greetings and conversational filler. The
-                outline generator always reads every collected source.
+                Optional cleanup removes greetings and conversational filler.
+                The outline generator always reads every collected source.
               </Text>
               <ActionButton
                 label={isBusy ? "Working…" : "Optional: Clean source material"}
@@ -926,40 +976,50 @@ export default function PublisherWorkspace({
             />
             <ScrollView horizontal contentContainerStyle={{ gap: 7 }}>
               {[...project.chapters]
-                .sort((a, b) => Number(Boolean(b.partId)) - Number(Boolean(a.partId)))
+                .sort(
+                  (a, b) =>
+                    Number(Boolean(b.partId)) - Number(Boolean(a.partId))
+                )
                 .map((chapter) => (
-                <Pressable
-                  key={chapter.id}
-                  onPress={() => {
-                    setSelectedChapterId(chapter.id);
-                    setSelectedSectionId(chapter.sections[0]?.id ?? null);
-                  }}
-                  style={[
-                    choiceStyle,
-                    selectedChapter?.id === chapter.id && selectedChoiceStyle,
-                  ]}
-                >
-                  <Text style={{ fontWeight: "900" }}>{chapter.title}</Text>
-                </Pressable>
-              ))}
+                  <Pressable
+                    key={chapter.id}
+                    onPress={() => {
+                      setSelectedChapterId(chapter.id);
+                      setSelectedSectionId(chapter.sections[0]?.id ?? null);
+                    }}
+                    style={[
+                      choiceStyle,
+                      selectedChapter?.id === chapter.id && selectedChoiceStyle,
+                    ]}
+                  >
+                    <Text style={{ fontWeight: "900" }}>{chapter.title}</Text>
+                  </Pressable>
+                ))}
             </ScrollView>
             {selectedChapter ? (
               <Panel>
                 <Text style={labelStyle}>{selectedChapter.title}</Text>
                 {selectedChapter.sections.length ? (
                   <View style={{ gap: 8 }}>
-                    <Text style={mutedStyle}>Choose a section to draft or edit:</Text>
-                    <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 7 }}>
+                    <Text style={mutedStyle}>
+                      Choose a section to draft or edit:
+                    </Text>
+                    <View
+                      style={{ flexDirection: "row", flexWrap: "wrap", gap: 7 }}
+                    >
                       {selectedChapter.sections.map((section) => (
                         <Pressable
                           key={section.id}
                           onPress={() => setSelectedSectionId(section.id)}
                           style={[
                             choiceStyle,
-                            selectedSection?.id === section.id && selectedChoiceStyle,
+                            selectedSection?.id === section.id &&
+                              selectedChoiceStyle,
                           ]}
                         >
-                          <Text style={{ fontWeight: "800" }}>{section.title}</Text>
+                          <Text style={{ fontWeight: "800" }}>
+                            {section.title}
+                          </Text>
                         </Pressable>
                       ))}
                     </View>
@@ -972,7 +1032,11 @@ export default function PublisherWorkspace({
                   {selectedSection?.summary ?? selectedChapter.summary}
                 </Text>
                 <ActionButton
-                  label={isBusy ? "Generating…" : `Generate ${selectedSection ? "section" : "chapter"} content`}
+                  label={
+                    isBusy
+                      ? "Generating…"
+                      : `Generate ${selectedSection ? "section" : "chapter"} content`
+                  }
                   icon="auto-awesome"
                   disabled={
                     isBusy ||
@@ -983,22 +1047,61 @@ export default function PublisherWorkspace({
                   onPress={() => void runAiOperation("draft")}
                 />
                 {pendingDrafts.map((run) => (
-                  <View key={run.id} style={{ padding: 12, gap: 9, borderRadius: 10, backgroundColor: "#f8fafc", borderWidth: 1, borderColor: "#cbd5e1" }}>
-                    <Text style={rowTitleStyle}>Proposed content · Review before applying</Text>
+                  <View
+                    key={run.id}
+                    style={{
+                      padding: 12,
+                      gap: 9,
+                      borderRadius: 10,
+                      backgroundColor: "#f8fafc",
+                      borderWidth: 1,
+                      borderColor: "#cbd5e1",
+                    }}
+                  >
+                    <Text style={rowTitleStyle}>
+                      Proposed content · Review before applying
+                    </Text>
                     <ScrollView style={{ maxHeight: 360 }} nestedScrollEnabled>
-                      <Text selectable style={{ color: "#1f2937", lineHeight: 22 }}>{run.proposedText}</Text>
+                      <Text
+                        selectable
+                        style={{ color: "#1f2937", lineHeight: 22 }}
+                      >
+                        {run.proposedText}
+                      </Text>
                     </ScrollView>
                     <View style={{ flexDirection: "row", gap: 8 }}>
-                      <View style={{ flex: 1 }}><ActionButton label="Apply to section" icon="check" disabled={isBusy} onPress={() => void reviewModelRun(run.id, "accepted")} /></View>
-                      <View style={{ flex: 1 }}><ActionButton label="Reject" icon="close" disabled={isBusy} onPress={() => void reviewModelRun(run.id, "rejected")} /></View>
+                      <View style={{ flex: 1 }}>
+                        <ActionButton
+                          label="Apply to section"
+                          icon="check"
+                          disabled={isBusy}
+                          onPress={() =>
+                            void reviewModelRun(run.id, "accepted")
+                          }
+                        />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <ActionButton
+                          label="Reject"
+                          icon="close"
+                          disabled={isBusy}
+                          onPress={() =>
+                            void reviewModelRun(run.id, "rejected")
+                          }
+                        />
+                      </View>
                     </View>
                   </View>
                 ))}
                 <TextInput
-                  value={selectedSection?.manuscript ?? selectedChapter.manuscript}
+                  value={
+                    selectedSection?.manuscript ?? selectedChapter.manuscript
+                  }
                   onChangeText={(manuscript) =>
                     selectedSection
-                      ? updateSection(selectedChapter.id, selectedSection.id, { manuscript })
+                      ? updateSection(selectedChapter.id, selectedSection.id, {
+                          manuscript,
+                        })
                       : updateChapter(selectedChapter.id, { manuscript })
                   }
                   placeholder={`Draft or paste ${selectedSection ? "section" : "chapter"} text here…`}
@@ -1006,8 +1109,17 @@ export default function PublisherWorkspace({
                   textAlignVertical="top"
                   style={[inputStyle, { minHeight: 430, lineHeight: 23 }]}
                 />
-                <ActionButton label="Save manuscript progress" icon="save" onPress={() => void saveProject()} disabled={isBusy} />
-                <ActionButton label="Continue to Editorial Review" icon="arrow-forward" onPress={() => setTab("review")} />
+                <ActionButton
+                  label="Save manuscript progress"
+                  icon="save"
+                  onPress={() => void saveProject()}
+                  disabled={isBusy}
+                />
+                <ActionButton
+                  label="Continue to Editorial Review"
+                  icon="arrow-forward"
+                  onPress={() => setTab("review")}
+                />
               </Panel>
             ) : (
               <Text style={mutedStyle}>Add a chapter in Outline first.</Text>
@@ -1085,139 +1197,145 @@ export default function PublisherWorkspace({
               title="Model Proposals"
               subtitle="Review the complete proposal before accepting or rejecting it."
             />
-            {(project.modelRuns ?? []).filter((run) => run.operation === "outline").length === 0 ? (
+            {(project.modelRuns ?? []).filter(
+              (run) => run.operation === "outline"
+            ).length === 0 ? (
               <Text style={mutedStyle}>No model proposals yet.</Text>
             ) : null}
-            {(project.modelRuns ?? []).filter((run) => run.operation === "outline").map((run) => (
-              <Panel key={run.id}>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    gap: 10,
-                  }}
-                >
-                  <View style={{ flex: 1 }}>
-                    <Text style={rowTitleStyle}>{run.title}</Text>
-                    <Text style={mutedStyle}>
-                      {run.operation} · {run.model} · {run.status}
-                    </Text>
-                  </View>
+            {(project.modelRuns ?? [])
+              .filter((run) => run.operation === "outline")
+              .map((run) => (
+                <Panel key={run.id}>
                   <View
                     style={{
-                      paddingHorizontal: 9,
-                      paddingVertical: 4,
-                      borderRadius: 99,
-                      backgroundColor:
-                        run.status === "proposed"
-                          ? "#fef3c7"
-                          : run.status === "accepted"
-                            ? "#dcfce7"
-                            : "#fee2e2",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      gap: 10,
                     }}
                   >
-                    <Text
+                    <View style={{ flex: 1 }}>
+                      <Text style={rowTitleStyle}>{run.title}</Text>
+                      <Text style={mutedStyle}>
+                        {run.operation} · {run.model} · {run.status}
+                      </Text>
+                    </View>
+                    <View
                       style={{
-                        fontSize: 11,
-                        fontWeight: "900",
-                        textTransform: "uppercase",
+                        paddingHorizontal: 9,
+                        paddingVertical: 4,
+                        borderRadius: 99,
+                        backgroundColor:
+                          run.status === "proposed"
+                            ? "#fef3c7"
+                            : run.status === "accepted"
+                              ? "#dcfce7"
+                              : "#fee2e2",
                       }}
                     >
-                      {run.status}
-                    </Text>
-                  </View>
-                </View>
-                <Text style={{ color: "#475569", lineHeight: 20 }}>
-                  {run.summary}
-                </Text>
-                {run.proposedText ? (
-                  <View
-                    style={{
-                      maxHeight: 320,
-                      padding: 12,
-                      borderRadius: 10,
-                      backgroundColor: "#f8fafc",
-                    }}
-                  >
-                    <ScrollView nestedScrollEnabled>
                       <Text
-                        selectable
-                        style={{ color: "#1f2937", lineHeight: 21 }}
+                        style={{
+                          fontSize: 11,
+                          fontWeight: "900",
+                          textTransform: "uppercase",
+                        }}
                       >
-                        {run.proposedText}
+                        {run.status}
                       </Text>
-                    </ScrollView>
-                  </View>
-                ) : null}
-                <StructureProposalEditor
-                  run={run}
-                  project={project}
-                  onChange={(nextRun) => updateModelRun(run.id, () => nextRun)}
-                />
-                {run.warnings.length ? (
-                  <View
-                    style={{
-                      padding: 10,
-                      borderRadius: 9,
-                      backgroundColor: "#fff7ed",
-                    }}
-                  >
-                    {run.warnings.map((warning, index) => (
-                      <Text
-                        key={`${run.id}-warning-${index}`}
-                        style={{ color: "#9a3412" }}
-                      >
-                        • {warning}
-                      </Text>
-                    ))}
-                  </View>
-                ) : null}
-                {run.status === "proposed" ? (
-                  <>
-                    <TextInput
-                      value={run.editorCritique ?? ""}
-                      onChangeText={(editorCritique) =>
-                        updateModelRun(run.id, (current) => ({
-                          ...current,
-                          editorCritique,
-                        }))
-                      }
-                      placeholder="Editor critique, structural concerns, or recommendations for the next pass"
-                      multiline
-                      style={[inputStyle, { minHeight: 80 }]}
-                    />
-                    <ActionButton
-                      label="Save structure edits and critique"
-                      icon="save"
-                      disabled={isBusy}
-                      onPress={() => void saveModelProposal(run)}
-                    />
-                    <View style={{ flexDirection: "row", gap: 8 }}>
-                      <View style={{ flex: 1 }}>
-                        <ActionButton
-                          label="Accept and apply"
-                          icon="check"
-                          disabled={isBusy}
-                          onPress={() =>
-                            void reviewModelRun(run.id, "accepted")
-                          }
-                        />
-                      </View>
-                      <View style={{ flex: 1 }}>
-                        <ActionButton
-                          label="Reject"
-                          icon="close"
-                          disabled={isBusy}
-                          onPress={() =>
-                            void reviewModelRun(run.id, "rejected")
-                          }
-                        />
-                      </View>
                     </View>
-                  </>
-                ) : null}
-              </Panel>
-            ))}
+                  </View>
+                  <Text style={{ color: "#475569", lineHeight: 20 }}>
+                    {run.summary}
+                  </Text>
+                  {run.proposedText ? (
+                    <View
+                      style={{
+                        maxHeight: 320,
+                        padding: 12,
+                        borderRadius: 10,
+                        backgroundColor: "#f8fafc",
+                      }}
+                    >
+                      <ScrollView nestedScrollEnabled>
+                        <Text
+                          selectable
+                          style={{ color: "#1f2937", lineHeight: 21 }}
+                        >
+                          {run.proposedText}
+                        </Text>
+                      </ScrollView>
+                    </View>
+                  ) : null}
+                  <StructureProposalEditor
+                    run={run}
+                    project={project}
+                    onChange={(nextRun) =>
+                      updateModelRun(run.id, () => nextRun)
+                    }
+                  />
+                  {run.warnings.length ? (
+                    <View
+                      style={{
+                        padding: 10,
+                        borderRadius: 9,
+                        backgroundColor: "#fff7ed",
+                      }}
+                    >
+                      {run.warnings.map((warning, index) => (
+                        <Text
+                          key={`${run.id}-warning-${index}`}
+                          style={{ color: "#9a3412" }}
+                        >
+                          • {warning}
+                        </Text>
+                      ))}
+                    </View>
+                  ) : null}
+                  {run.status === "proposed" ? (
+                    <>
+                      <TextInput
+                        value={run.editorCritique ?? ""}
+                        onChangeText={(editorCritique) =>
+                          updateModelRun(run.id, (current) => ({
+                            ...current,
+                            editorCritique,
+                          }))
+                        }
+                        placeholder="Editor critique, structural concerns, or recommendations for the next pass"
+                        multiline
+                        style={[inputStyle, { minHeight: 80 }]}
+                      />
+                      <ActionButton
+                        label="Save structure edits and critique"
+                        icon="save"
+                        disabled={isBusy}
+                        onPress={() => void saveModelProposal(run)}
+                      />
+                      <View style={{ flexDirection: "row", gap: 8 }}>
+                        <View style={{ flex: 1 }}>
+                          <ActionButton
+                            label="Accept and apply"
+                            icon="check"
+                            disabled={isBusy}
+                            onPress={() =>
+                              void reviewModelRun(run.id, "accepted")
+                            }
+                          />
+                        </View>
+                        <View style={{ flex: 1 }}>
+                          <ActionButton
+                            label="Reject"
+                            icon="close"
+                            disabled={isBusy}
+                            onPress={() =>
+                              void reviewModelRun(run.id, "rejected")
+                            }
+                          />
+                        </View>
+                      </View>
+                    </>
+                  ) : null}
+                </Panel>
+              ))}
           </>
         ) : null}
 
@@ -1230,21 +1348,80 @@ export default function PublisherWorkspace({
             <Panel>
               <Text style={rowTitleStyle}>Source-fidelity check</Text>
               <Text style={mutedStyle}>
-                Compare the selected {selectedSection ? "section" : "chapter"} only to its assigned sources. This does not fact-check the teaching.
+                Compare the selected {selectedSection ? "section" : "chapter"}{" "}
+                only to its assigned sources. This does not fact-check the
+                teaching.
               </Text>
               <ActionButton
-                label={isBusy ? "Checking…" : "Check selected content against sources"}
+                label={
+                  isBusy
+                    ? "Checking…"
+                    : "Check selected content against sources"
+                }
                 icon="fact-check"
                 disabled={
                   isBusy ||
                   !selectedChapter ||
                   (selectedSection
-                    ? !selectedSection.manuscript.trim() || selectedSection.sourceIds.length === 0
-                    : !selectedChapter.manuscript.trim() || selectedChapter.sourceIds.length === 0)
+                    ? !selectedSection.manuscript.trim() ||
+                      selectedSection.sourceIds.length === 0
+                    : !selectedChapter.manuscript.trim() ||
+                      selectedChapter.sourceIds.length === 0)
                 }
                 onPress={() => void runAiOperation("verify")}
               />
             </Panel>
+            {pendingVerifications.map((run) => (
+              <Panel key={run.id}>
+                <Text style={rowTitleStyle}>
+                  Source-fidelity proposal ready for review
+                </Text>
+                <Text selectable style={{ color: "#334155", lineHeight: 21 }}>
+                  {run.proposedText || "No narrative report was returned."}
+                </Text>
+                {run.warnings.length ? (
+                  <View
+                    style={{
+                      padding: 10,
+                      gap: 5,
+                      borderRadius: 9,
+                      backgroundColor: "#fff7ed",
+                    }}
+                  >
+                    {run.warnings.map((warning, index) => (
+                      <Text
+                        key={`${run.id}-review-${index}`}
+                        style={{ color: "#9a3412" }}
+                      >
+                        • {warning}
+                      </Text>
+                    ))}
+                  </View>
+                ) : (
+                  <Text style={{ color: "#166534", fontWeight: "800" }}>
+                    No source-fidelity concerns were returned.
+                  </Text>
+                )}
+                <View style={{ flexDirection: "row", gap: 8 }}>
+                  <View style={{ flex: 1 }}>
+                    <ActionButton
+                      label="Accept review"
+                      icon="check"
+                      disabled={isBusy}
+                      onPress={() => void reviewModelRun(run.id, "accepted")}
+                    />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <ActionButton
+                      label="Reject"
+                      icon="close"
+                      disabled={isBusy}
+                      onPress={() => void reviewModelRun(run.id, "rejected")}
+                    />
+                  </View>
+                </View>
+              </Panel>
+            ))}
             <Panel>
               <TextInput
                 value={reviewText}
@@ -1308,7 +1485,11 @@ export default function PublisherWorkspace({
                 </Text>
               </Pressable>
             ))}
-            <ActionButton label="Export preparation" icon="arrow-forward" onPress={() => setTab("export")} />
+            <ActionButton
+              label="Export preparation"
+              icon="arrow-forward"
+              onPress={() => setTab("export")}
+            />
           </>
         ) : null}
 
@@ -1336,28 +1517,29 @@ export default function PublisherWorkspace({
                 style={[inputStyle, { minHeight: 100 }]}
               />
               <Text style={mutedStyle}>
+                {completedSectionCount} sections and{" "}
                 {
                   project.chapters.filter((item) => item.manuscript.trim())
                     .length
                 }{" "}
-                of {project.chapters.length} chapters contain manuscript text.
+                chapter drafts contain manuscript text.
               </Text>
               <Text style={mutedStyle}>
                 {project.reviewNotes.filter((item) => !item.resolved).length}{" "}
                 unresolved review notes.
               </Text>
-              <View
-                style={{
-                  padding: 12,
-                  borderRadius: 10,
-                  backgroundColor: "#eff6ff",
-                }}
-              >
-                <Text style={{ color: "#1e40af", fontWeight: "800" }}>
-                  Document export will be the next phase. The complete
-                  structured project is already retained for that workflow.
+              <ActionButton
+                label={isBusy ? "Preparing PDF…" : "Download PDF"}
+                icon="picture-as-pdf"
+                disabled={isBusy || !hasExportableContent}
+                onPress={() => void downloadPdf()}
+              />
+              {!hasExportableContent ? (
+                <Text style={mutedStyle}>
+                  Add manuscript content to at least one chapter or section
+                  before exporting.
                 </Text>
-              </View>
+              ) : null}
             </Panel>
           </>
         ) : null}

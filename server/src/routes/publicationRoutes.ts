@@ -20,6 +20,7 @@ import {
   getTeachingTranscript,
   runPublicationModel,
 } from "../services/publicationAiService";
+import { generatePublicationPdf } from "../services/publicationPdfService";
 import type { PublicationModelOperation } from "../types/publication";
 
 const router = Router();
@@ -83,6 +84,26 @@ router.put("/:id", (req, res) => {
   if (!project)
     return res.status(404).json({ error: "Publication project not found." });
   res.json(project);
+});
+
+router.get("/:id/export/pdf", async (req, res, next) => {
+  try {
+    const project = getPublicationProject(String(req.params.id));
+    if (!project)
+      return res.status(404).json({ error: "Publication project not found." });
+    const pdf = await generatePublicationPdf(project);
+    const fileName = `${
+      project.title
+        .replace(/[^a-z0-9]+/gi, "-")
+        .replace(/^-|-$/g, "")
+        .toLowerCase() || "publication"
+    }.pdf`;
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `attachment; filename="${fileName}"`);
+    res.send(pdf);
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.post("/:id/sources", (req, res) => {
