@@ -31,6 +31,7 @@ type Props = {
   nodes: CalendarNode[];
   notices?: CalendarDaySummary[];
   perpetualMarkers?: PerpetualMarker[];
+  teachingDateIds?: Set<string>;
   todayDateId?: string;
   onPressDay?: (node: CalendarNode) => void;
   onInteractionChange?: (isInteracting: boolean) => void;
@@ -96,6 +97,7 @@ export default function CalendarStripView({
   nodes,
   notices = [],
   perpetualMarkers = [],
+  teachingDateIds = new Set<string>(),
   todayDateId,
   onPressDay,
   onInteractionChange,
@@ -333,11 +335,13 @@ export default function CalendarStripView({
             events.find((event) => event.type === "weekly-sabbath");
           const isHighRest = restEvent?.type === "high-sabbath";
           const hasNotice = Boolean(summary?.notice);
-          const hasContent = Boolean(summary?.hasContent);
+          const hasContent =
+            Boolean(summary?.hasContent) ||
+            teachingDateIds.has(node.gregorianDate);
           const accessibilityDetails = [
             isHighRest ? "high rest" : restEvent ? "weekly rest" : "",
             hasNotice ? "notice" : "",
-            hasContent ? "content available" : "",
+            hasContent ? "teaching available" : "",
           ]
             .filter(Boolean)
             .join(", ");
@@ -764,10 +768,14 @@ function DayIndicators({
             backgroundColor: "rgba(255,255,255,0.94)",
           }}
         >
-          <Image source={ScrollIcon} style={{ width: 16, height: 16 }} />
+          <Image
+            accessibilityLabel="Teaching available"
+            source={ScrollIcon}
+            style={{ width: 16, height: 16 }}
+          />
           {showLabels ? (
             <Text style={{ fontSize: 9, fontWeight: "900", color: "#334155" }}>
-              CONTENT
+              TEACHING
             </Text>
           ) : null}
         </View>

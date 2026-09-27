@@ -1361,6 +1361,7 @@ export default function HomeScreen() {
                     nodes={nodes}
                     notices={yearNotices}
                     perpetualMarkers={perpetualMarkers}
+                    teachingDateIds={teachingDateIds}
                     todayDateId={todayDateId}
                     onPressDay={openDay}
                     onInteractionChange={setIsWheelInteracting}
