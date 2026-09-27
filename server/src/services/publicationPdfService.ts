@@ -149,17 +149,43 @@ function addChapter(document: PDFKit.PDFDocument, chapter: PublicationChapter) {
 }
 
 function addBody(document: PDFKit.PDFDocument, value: string) {
-  const paragraphs = value
+  const blocks = value
     .split(/\n\s*\n/)
     .map((item) => item.trim())
     .filter(Boolean);
-  for (const paragraph of paragraphs) {
-    document
-      .moveDown(0.75)
-      .fillColor(COLORS.ink)
-      .font("Times-Roman")
-      .fontSize(11.5)
-      .text(paragraph, { align: "justify", lineGap: 3 });
+  for (const block of blocks) {
+    const lines = block.split("\n");
+    let paragraphLines: string[] = [];
+    const flushParagraph = () => {
+      const paragraph = paragraphLines.join(" ").trim();
+      paragraphLines = [];
+      if (!paragraph) return;
+      document
+        .moveDown(0.75)
+        .fillColor(COLORS.ink)
+        .font("Times-Roman")
+        .fontSize(11.5)
+        .text(paragraph, { align: "justify", lineGap: 3 });
+    };
+
+    for (const line of lines) {
+      const heading = line.trim().match(/^(#{1,4})\s+(.+)$/);
+      if (!heading) {
+        paragraphLines.push(line.trim());
+        continue;
+      }
+      flushParagraph();
+      const level = heading[1].length;
+      const fontSize =
+        level === 1 ? 17 : level === 2 ? 14.5 : level === 3 ? 12.5 : 11.5;
+      document
+        .moveDown(level <= 2 ? 1.05 : 0.8)
+        .fillColor(COLORS.green)
+        .font("Helvetica-Bold")
+        .fontSize(fontSize)
+        .text(heading[2].trim(), { lineGap: 2 });
+    }
+    flushParagraph();
   }
 }
 
