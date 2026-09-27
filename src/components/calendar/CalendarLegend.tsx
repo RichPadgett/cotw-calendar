@@ -117,7 +117,7 @@ export default function CalendarLegend() {
             </Text>
           </View>
         </LegendItem>
-        <LegendItem label="Content or teaching available">
+        <LegendItem label="Teaching available">
           <Image source={ScrollIcon} style={{ width: 17, height: 17 }} />
         </LegendItem>
       </ScrollView>

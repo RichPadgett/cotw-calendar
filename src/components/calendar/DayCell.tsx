@@ -162,11 +162,7 @@ export function DayCell({
           )}
           {showScrollIcon && (
             <Image
-              accessibilityLabel={
-                hasTeaching
-                  ? "Content or Library teaching available"
-                  : "Content available"
-              }
+              accessibilityLabel="Teaching available"
               source={ScrollIcon}
               style={{
                 position: "absolute",
