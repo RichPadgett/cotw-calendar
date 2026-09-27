@@ -1635,7 +1635,7 @@ function TimelineStickyHeader({
   const { width } = useWindowDimensions();
   const [isMobileHeaderExpanded, setIsMobileHeaderExpanded] = useState(false);
   const [isDesktopHeaderCollapsed, setIsDesktopHeaderCollapsed] =
-    useState(false);
+    useState(true);
   const isCompactHeader = width < 680;
   const isMobileCollapsedMode = isCompactHeader && !isMobileHeaderExpanded;
   const isDesktopCollapsedMode = !isCompactHeader && isDesktopHeaderCollapsed;
@@ -1678,11 +1678,11 @@ function TimelineStickyHeader({
   return (
     <View
       style={{
-        padding: isDesktopCollapsedMode ? 10 : 16,
-        borderRadius: isDesktopCollapsedMode ? 14 : 20,
-        backgroundColor: "#f9fafb",
-        borderWidth: 1,
-        borderColor: "#e5e7eb",
+        paddingVertical: 4,
+        paddingBottom: 8,
+        backgroundColor: "#ffffff",
+        borderBottomWidth: 1,
+        borderBottomColor: "#e2e8f0",
       }}
     >
       <View
@@ -2302,7 +2302,7 @@ function CommandStickyHeader({
   const [isVersionMenuOpen, setIsVersionMenuOpen] = useState(false);
   const [isMobileHeaderExpanded, setIsMobileHeaderExpanded] = useState(false);
   const [isDesktopHeaderCollapsed, setIsDesktopHeaderCollapsed] =
-    useState(false);
+    useState(true);
   const isCompactHeader = width < 680;
   const commandCategory = command?.categories?.[0] ?? null;
   const categoryLabel = commandCategory
@@ -2316,11 +2316,10 @@ function CommandStickyHeader({
     : hasPendingContributions
       ? "#0e7490"
       : "transparent";
-  const canUseMobileHeaderOverride = isCompactHeader && Boolean(command);
+  const canUseMobileHeaderOverride = isCompactHeader;
   const isCompactStudyMode =
     canUseMobileHeaderOverride && !isMobileHeaderExpanded;
-  const isDesktopCollapsedMode =
-    !isCompactHeader && isDesktopHeaderCollapsed && Boolean(command);
+  const isDesktopCollapsedMode = !isCompactHeader && isDesktopHeaderCollapsed;
   const isHeaderCollapsed = isCompactStudyMode || isDesktopCollapsedMode;
   const headerCollapseAnim = useRef(new Animated.Value(1)).current;
 
@@ -2335,11 +2334,11 @@ function CommandStickyHeader({
   return (
     <View
       style={{
-        padding: 16,
-        borderRadius: 20,
-        backgroundColor: "#f9fafb",
-        borderWidth: 1,
-        borderColor: "#e5e7eb",
+        paddingVertical: 4,
+        paddingBottom: 8,
+        backgroundColor: "#ffffff",
+        borderBottomWidth: 1,
+        borderBottomColor: "#e2e8f0",
       }}
     >
       <View

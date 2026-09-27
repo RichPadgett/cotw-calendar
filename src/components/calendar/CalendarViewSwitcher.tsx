@@ -30,9 +30,10 @@ export default function CalendarViewSwitcher({ value, onChange }: Props) {
     <View
       accessibilityRole="tablist"
       style={{
-        marginBottom: 12,
-        padding: 4,
-        borderRadius: 14,
+        marginTop: 8,
+        marginBottom: 8,
+        padding: 3,
+        borderRadius: 11,
         flexDirection: "row",
         gap: 4,
         backgroundColor: "#eef2f7",
@@ -50,9 +51,9 @@ export default function CalendarViewSwitcher({ value, onChange }: Props) {
             onPress={() => onChange(mode.id)}
             style={({ pressed }) => ({
               flex: 1,
-              minHeight: 42,
+              minHeight: 34,
               paddingHorizontal: 6,
-              borderRadius: 11,
+              borderRadius: 8,
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "center",
