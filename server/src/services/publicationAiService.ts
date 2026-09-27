@@ -127,7 +127,9 @@ export async function runPublicationModel(input: RunInput) {
     : chapter?.sourceIds.length
       ? chapter.sourceIds
       : project.sources.map((source) => source.id);
-  const sources = project.sources.filter((source) => requestedIds.includes(source.id));
+  const sources = project.sources.filter((source) =>
+    requestedIds.includes(source.id)
+  );
   if (sources.length === 0) throw new Error("Select at least one source.");
 
   const content: Array<Record<string, unknown>> = [
@@ -149,7 +151,9 @@ export async function runPublicationModel(input: RunInput) {
   ];
 
   if (input.operation === "outline") {
-    for (const manuscript of project.chapters.filter((item) => item.manuscript.trim())) {
+    for (const manuscript of project.chapters.filter((item) =>
+      item.manuscript.trim()
+    )) {
       content.push({
         type: "input_text",
         text: `\nEXISTING MANUSCRIPT: ${manuscript.title}\n${manuscript.manuscript}`,
@@ -169,7 +173,10 @@ export async function runPublicationModel(input: RunInput) {
       const file = getPublicationFile(project.id, source.id);
       if (!file) continue;
       const stats = fs.statSync(file.filePath);
-      if (stats.size > 15 * 1024 * 1024 || embeddedFileBytes + stats.size > 25 * 1024 * 1024) {
+      if (
+        stats.size > 15 * 1024 * 1024 ||
+        embeddedFileBytes + stats.size > 25 * 1024 * 1024
+      ) {
         content.push({
           type: "input_text",
           text: `SOURCE ${source.id}: ${source.title} was not embedded because it exceeds the per-run file limit.`,
@@ -232,7 +239,8 @@ export async function runPublicationModel(input: RunInput) {
   const responseBody = (await response.json()) as Record<string, any>;
   if (!response.ok) {
     throw new Error(
-      responseBody?.error?.message ?? `OpenAI request failed (${response.status}).`
+      responseBody?.error?.message ??
+        `OpenAI request failed (${response.status}).`
     );
   }
   const outputText = extractOutputText(responseBody);
@@ -267,17 +275,19 @@ export async function runPublicationModel(input: RunInput) {
     unplacedSourceIds: proposal.unplacedSourceIds,
     warnings: proposal.warnings,
     citations: proposal.citations,
-    responseId: typeof responseBody.id === "string" ? responseBody.id : undefined,
+    responseId:
+      typeof responseBody.id === "string" ? responseBody.id : undefined,
     createdAt: new Date().toISOString(),
   };
   return run;
 }
 
-async function getTeachingTranscript(recordingId: string) {
+export async function getTeachingTranscript(recordingId: string) {
   const [recording, chunks] = await Promise.all([
-    pool.query("SELECT title, description FROM library_recordings WHERE id = $1", [
-      recordingId,
-    ]),
+    pool.query(
+      "SELECT title, description FROM library_recordings WHERE id = $1",
+      [recordingId]
+    ),
     pool.query(
       "SELECT start_seconds, text FROM transcript_chunks WHERE recording_id = $1 ORDER BY chunk_index",
       [recordingId]
@@ -328,7 +338,9 @@ function buildTaskPrompt(
     "The output is a proposal for human review and must not claim it was approved.",
     taskByOperation[operation],
     `PROJECT: ${context.projectTitle}`,
-    context.projectDescription ? `PROJECT DESCRIPTION: ${context.projectDescription}` : "",
+    context.projectDescription
+      ? `PROJECT DESCRIPTION: ${context.projectDescription}`
+      : "",
     context.chapterTitle ? `CHAPTER: ${context.chapterTitle}` : "",
     context.chapterSummary ? `CHAPTER PURPOSE: ${context.chapterSummary}` : "",
     context.currentManuscript

@@ -19,6 +19,7 @@ import type {
   PublicationProject,
   PublicationProjectSummary,
   PublicationReviewNote,
+  PublicationSource,
 } from "../../types/publication";
 
 type WorkspaceTab =
@@ -46,10 +47,17 @@ export default function PublisherWorkspace({
   const [noteTitle, setNoteTitle] = useState("");
   const [noteContent, setNoteContent] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
-  const [selectedTeachingId, setSelectedTeachingId] = useState(teachings[0]?.id ?? "");
-  const [selectedChapterId, setSelectedChapterId] = useState<string | null>(null);
+  const [selectedTeachingId, setSelectedTeachingId] = useState(
+    teachings[0]?.id ?? ""
+  );
+  const [selectedChapterId, setSelectedChapterId] = useState<string | null>(
+    null
+  );
   const [reviewText, setReviewText] = useState("");
   const [aiInstructions, setAiInstructions] = useState("");
+  const [openSourceId, setOpenSourceId] = useState<string | null>(null);
+  const [sourcePreview, setSourcePreview] = useState("");
+  const [isLoadingSource, setIsLoadingSource] = useState(false);
 
   const authHeaders = {
     Authorization: `Bearer ${adminToken}`,
@@ -70,22 +78,28 @@ export default function PublisherWorkspace({
   }, [adminToken]);
 
   useEffect(() => {
-    if (!selectedTeachingId && teachings[0]?.id) setSelectedTeachingId(teachings[0].id);
+    if (!selectedTeachingId && teachings[0]?.id)
+      setSelectedTeachingId(teachings[0].id);
   }, [selectedTeachingId, teachings]);
 
   async function openProject(projectId: string) {
     setIsBusy(true);
     setMessage("");
     try {
-      const response = await fetch(`${API_BASE_URL}/api/publications/${projectId}`, {
-        headers: authHeaders,
-      });
+      const response = await fetch(
+        `${API_BASE_URL}/api/publications/${projectId}`,
+        {
+          headers: authHeaders,
+        }
+      );
       if (!response.ok) throw new Error("Unable to open the project.");
       const nextProject = (await response.json()) as PublicationProject;
       setProject(nextProject);
       setSelectedChapterId(nextProject.chapters[0]?.id ?? null);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Unable to open project.");
+      setMessage(
+        error instanceof Error ? error.message : "Unable to open project."
+      );
     } finally {
       setIsBusy(false);
     }
@@ -107,7 +121,9 @@ export default function PublisherWorkspace({
       setNewAuthor("");
       await loadProjects();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Unable to create project.");
+      setMessage(
+        error instanceof Error ? error.message : "Unable to create project."
+      );
     } finally {
       setIsBusy(false);
     }
@@ -118,17 +134,22 @@ export default function PublisherWorkspace({
     setIsBusy(true);
     setMessage("");
     try {
-      const response = await fetch(`${API_BASE_URL}/api/publications/${nextProject.id}`, {
-        method: "PUT",
-        headers: authHeaders,
-        body: JSON.stringify(nextProject),
-      });
+      const response = await fetch(
+        `${API_BASE_URL}/api/publications/${nextProject.id}`,
+        {
+          method: "PUT",
+          headers: authHeaders,
+          body: JSON.stringify(nextProject),
+        }
+      );
       if (!response.ok) throw new Error("Unable to save the project.");
       setProject((await response.json()) as PublicationProject);
       setMessage("Project saved.");
       await loadProjects();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Unable to save project.");
+      setMessage(
+        error instanceof Error ? error.message : "Unable to save project."
+      );
     } finally {
       setIsBusy(false);
     }
@@ -136,13 +157,50 @@ export default function PublisherWorkspace({
 
   async function addSource(input: Record<string, unknown>) {
     if (!project) return;
-    const response = await fetch(`${API_BASE_URL}/api/publications/${project.id}/sources`, {
-      method: "POST",
-      headers: authHeaders,
-      body: JSON.stringify(input),
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/api/publications/${project.id}/sources`,
+      {
+        method: "POST",
+        headers: authHeaders,
+        body: JSON.stringify(input),
+      }
+    );
     if (!response.ok) throw new Error("Unable to add source material.");
     await openProject(project.id);
+  }
+
+  async function openSource(source: PublicationSource) {
+    if (!project) return;
+    setOpenSourceId(source.id);
+    setIsLoadingSource(true);
+    setSourcePreview("");
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/publications/${project.id}/sources/${source.id}/preview`,
+        { headers: authHeaders }
+      );
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error ?? "Unable to open source.");
+      setSourcePreview(String(data.content ?? ""));
+    } catch (error) {
+      setMessage(
+        error instanceof Error ? error.message : "Unable to open source."
+      );
+    } finally {
+      setIsLoadingSource(false);
+    }
+  }
+
+  async function openUploadedFile(source: PublicationSource) {
+    if (!project || Platform.OS !== "web") return;
+    const response = await fetch(
+      `${API_BASE_URL}/api/publications/${project.id}/sources/${source.id}/file`,
+      { headers: { Authorization: `Bearer ${adminToken}` } }
+    );
+    if (!response.ok) throw new Error("Unable to open the uploaded file.");
+    const objectUrl = URL.createObjectURL(await response.blob());
+    globalThis.open(objectUrl, "_blank", "noopener,noreferrer");
+    setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
   }
 
   function addChapter() {
@@ -166,7 +224,10 @@ export default function PublisherWorkspace({
     if (target < 0 || target >= project.chapters.length) return;
     const chapters = [...project.chapters];
     [chapters[index], chapters[target]] = [chapters[target], chapters[index]];
-    setProject({ ...project, chapters: chapters.map((item, sortOrder) => ({ ...item, sortOrder })) });
+    setProject({
+      ...project,
+      chapters: chapters.map((item, sortOrder) => ({ ...item, sortOrder })),
+    });
   }
 
   function moveSource(index: number, direction: -1 | 1) {
@@ -181,7 +242,10 @@ export default function PublisherWorkspace({
     });
   }
 
-  function updateChapter(chapterId: string, patch: Partial<PublicationChapter>) {
+  function updateChapter(
+    chapterId: string,
+    patch: Partial<PublicationChapter>
+  ) {
     if (!project) return;
     setProject({
       ...project,
@@ -197,7 +261,11 @@ export default function PublisherWorkspace({
     form.append("file", file);
     const response = await fetch(
       `${API_BASE_URL}/api/publications/${project.id}/sources/upload`,
-      { method: "POST", headers: { Authorization: `Bearer ${adminToken}` }, body: form }
+      {
+        method: "POST",
+        headers: { Authorization: `Bearer ${adminToken}` },
+        body: form,
+      }
     );
     if (!response.ok) throw new Error("Unable to upload publication file.");
     await openProject(project.id);
@@ -228,17 +296,23 @@ export default function PublisherWorkspace({
         }
       );
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error ?? "The model operation failed.");
+      if (!response.ok)
+        throw new Error(data.error ?? "The model operation failed.");
       await openProject(project.id);
       setMessage("Proposal ready for review. Nothing has been applied yet.");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "The model operation failed.");
+      setMessage(
+        error instanceof Error ? error.message : "The model operation failed."
+      );
     } finally {
       setIsBusy(false);
     }
   }
 
-  async function reviewModelRun(runId: string, decision: "accepted" | "rejected") {
+  async function reviewModelRun(
+    runId: string,
+    decision: "accepted" | "rejected"
+  ) {
     if (!project) return;
     setIsBusy(true);
     try {
@@ -251,12 +325,19 @@ export default function PublisherWorkspace({
         }
       );
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error ?? "Unable to review proposal.");
+      if (!response.ok)
+        throw new Error(data.error ?? "Unable to review proposal.");
       setProject(data as PublicationProject);
-      setMessage(decision === "accepted" ? "Proposal accepted and applied." : "Proposal rejected.");
+      setMessage(
+        decision === "accepted"
+          ? "Proposal accepted and applied."
+          : "Proposal rejected."
+      );
       await loadProjects();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Unable to review proposal.");
+      setMessage(
+        error instanceof Error ? error.message : "Unable to review proposal."
+      );
     } finally {
       setIsBusy(false);
     }
@@ -264,7 +345,9 @@ export default function PublisherWorkspace({
 
   function updateModelRun(
     runId: string,
-    updater: (run: PublicationProject["modelRuns"][number]) => PublicationProject["modelRuns"][number]
+    updater: (
+      run: PublicationProject["modelRuns"][number]
+    ) => PublicationProject["modelRuns"][number]
   ) {
     if (!project) return;
     setProject({
@@ -275,7 +358,9 @@ export default function PublisherWorkspace({
     });
   }
 
-  async function saveModelProposal(run: PublicationProject["modelRuns"][number]) {
+  async function saveModelProposal(
+    run: PublicationProject["modelRuns"][number]
+  ) {
     if (!project) return;
     setIsBusy(true);
     try {
@@ -291,11 +376,16 @@ export default function PublisherWorkspace({
         }
       );
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error ?? "Unable to save proposal edits.");
+      if (!response.ok)
+        throw new Error(data.error ?? "Unable to save proposal edits.");
       setProject(data as PublicationProject);
       setMessage("Proposed structure and editor critique saved.");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Unable to save proposal edits.");
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Unable to save proposal edits."
+      );
     } finally {
       setIsBusy(false);
     }
@@ -304,21 +394,48 @@ export default function PublisherWorkspace({
   if (!project) {
     return (
       <ScrollView contentContainerStyle={{ padding: 18, gap: 16 }}>
-        <SectionTitle title="Publisher" subtitle="Build books from teachings, documents, images, and editorial notes." />
+        <SectionTitle
+          title="Publisher"
+          subtitle="Build books from teachings, documents, images, and editorial notes."
+        />
         <Panel>
           <Text style={labelStyle}>New book project</Text>
-          <TextInput value={newTitle} onChangeText={setNewTitle} placeholder="Working title" style={inputStyle} />
-          <TextInput value={newAuthor} onChangeText={setNewAuthor} placeholder="Author or editor" style={inputStyle} />
-          <ActionButton label="Create project" icon="add" onPress={() => void createProject()} disabled={!newTitle.trim() || isBusy} />
+          <TextInput
+            value={newTitle}
+            onChangeText={setNewTitle}
+            placeholder="Working title"
+            style={inputStyle}
+          />
+          <TextInput
+            value={newAuthor}
+            onChangeText={setNewAuthor}
+            placeholder="Author or editor"
+            style={inputStyle}
+          />
+          <ActionButton
+            label="Create project"
+            icon="add"
+            onPress={() => void createProject()}
+            disabled={!newTitle.trim() || isBusy}
+          />
         </Panel>
         <Panel>
           <Text style={labelStyle}>Book projects</Text>
-          {projects.length === 0 ? <Text style={mutedStyle}>No publication projects yet.</Text> : null}
+          {projects.length === 0 ? (
+            <Text style={mutedStyle}>No publication projects yet.</Text>
+          ) : null}
           {projects.map((item) => (
-            <Pressable key={item.id} onPress={() => void openProject(item.id)} style={rowStyle}>
+            <Pressable
+              key={item.id}
+              onPress={() => void openProject(item.id)}
+              style={rowStyle}
+            >
               <View style={{ flex: 1 }}>
                 <Text style={rowTitleStyle}>{item.title}</Text>
-                <Text style={mutedStyle}>{item.sourceCount} sources · {item.chapterCount} chapters · {item.status}</Text>
+                <Text style={mutedStyle}>
+                  {item.sourceCount} sources · {item.chapterCount} chapters ·{" "}
+                  {item.status}
+                </Text>
               </View>
               <MaterialIcons name="chevron-right" size={22} color="#64748b" />
             </Pressable>
@@ -331,23 +448,71 @@ export default function PublisherWorkspace({
   }
 
   const selectedChapter =
-    project.chapters.find((chapter) => chapter.id === selectedChapterId) ?? project.chapters[0];
+    project.chapters.find((chapter) => chapter.id === selectedChapterId) ??
+    project.chapters[0];
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={{ padding: 14, borderBottomWidth: 1, borderBottomColor: "#dbe4dc", gap: 10 }}>
+      <View
+        style={{
+          padding: 14,
+          borderBottomWidth: 1,
+          borderBottomColor: "#dbe4dc",
+          gap: 10,
+        }}
+      >
         <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-          <Pressable onPress={() => setProject(null)}><MaterialIcons name="arrow-back" size={24} color="#244f35" /></Pressable>
+          <Pressable onPress={() => setProject(null)}>
+            <MaterialIcons name="arrow-back" size={24} color="#244f35" />
+          </Pressable>
           <View style={{ flex: 1 }}>
-            <TextInput value={project.title} onChangeText={(title) => setProject({ ...project, title })} style={{ fontSize: 21, fontWeight: "900", color: "#10231a" }} />
-            <Text style={mutedStyle}>{project.sources.length} sources · {project.chapters.length} chapters</Text>
+            <TextInput
+              value={project.title}
+              onChangeText={(title) => setProject({ ...project, title })}
+              style={{ fontSize: 21, fontWeight: "900", color: "#10231a" }}
+            />
+            <Text style={mutedStyle}>
+              {project.sources.length} sources · {project.chapters.length}{" "}
+              chapters
+            </Text>
           </View>
-          <ActionButton label={isBusy ? "Saving…" : "Save"} icon="save" onPress={() => void saveProject()} disabled={isBusy} compact />
+          <ActionButton
+            label={isBusy ? "Saving…" : "Save"}
+            icon="save"
+            onPress={() => void saveProject()}
+            disabled={isBusy}
+            compact
+          />
         </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 7 }}>
-          {(["sources", "outline", "manuscript", "ai", "review", "export"] as WorkspaceTab[]).map((item) => (
-            <Pressable key={item} onPress={() => setTab(item)} style={[tabStyle, tab === item && activeTabStyle]}>
-              <Text style={{ fontWeight: "900", color: tab === item ? "#ffffff" : "#365247", textTransform: "capitalize" }}>{item}</Text>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ gap: 7 }}
+        >
+          {(
+            [
+              "sources",
+              "outline",
+              "manuscript",
+              "ai",
+              "review",
+              "export",
+            ] as WorkspaceTab[]
+          ).map((item) => (
+            <Pressable
+              key={item}
+              onPress={() => setTab(item)}
+              style={[tabStyle, tab === item && activeTabStyle]}
+            >
+              <Text
+                style={{
+                  fontWeight: "900",
+                  color: tab === item ? "#ffffff" : "#365247",
+                  textTransform: "capitalize",
+                }}
+              >
+                {item}
+              </Text>
             </Pressable>
           ))}
         </ScrollView>
@@ -356,75 +521,331 @@ export default function PublisherWorkspace({
       <ScrollView contentContainerStyle={{ padding: 16, gap: 14 }}>
         {tab === "sources" ? (
           <>
-            <SectionTitle title="Source Library" subtitle="Original material remains separate from the manuscript and traceable to every chapter." />
+            <SectionTitle
+              title="Source Library"
+              subtitle="Open any collected source to read or copy it. Clean and Propose sections automatically read the collected sources for you."
+            />
             <Panel>
               <Text style={labelStyle}>Add a teaching</Text>
               <ScrollView horizontal contentContainerStyle={{ gap: 8 }}>
                 {teachings.slice(0, 100).map((teaching) => (
-                  <Pressable key={teaching.id} onPress={() => setSelectedTeachingId(teaching.id)} style={[choiceStyle, selectedTeachingId === teaching.id && selectedChoiceStyle]}>
-                    <Text numberOfLines={2} style={{ width: 160, fontWeight: "800", color: "#1f2937" }}>{teaching.title}</Text>
+                  <Pressable
+                    key={teaching.id}
+                    onPress={() => setSelectedTeachingId(teaching.id)}
+                    style={[
+                      choiceStyle,
+                      selectedTeachingId === teaching.id && selectedChoiceStyle,
+                    ]}
+                  >
+                    <Text
+                      numberOfLines={2}
+                      style={{
+                        width: 160,
+                        fontWeight: "800",
+                        color: "#1f2937",
+                      }}
+                    >
+                      {teaching.title}
+                    </Text>
                   </Pressable>
                 ))}
               </ScrollView>
-              <ActionButton label="Add selected teaching" icon="library-add" disabled={!selectedTeachingId} onPress={() => {
-                const teaching = teachings.find((item) => item.id === selectedTeachingId);
-                if (teaching) void addSource({ type: "teaching", title: teaching.title, recordingId: teaching.id });
-              }} />
+              <ActionButton
+                label="Add selected teaching"
+                icon="library-add"
+                disabled={!selectedTeachingId}
+                onPress={() => {
+                  const teaching = teachings.find(
+                    (item) => item.id === selectedTeachingId
+                  );
+                  if (teaching)
+                    void addSource({
+                      type: "teaching",
+                      title: teaching.title,
+                      recordingId: teaching.id,
+                    });
+                }}
+              />
             </Panel>
             <Panel>
               <Text style={labelStyle}>Add notes or an outside link</Text>
-              <TextInput value={noteTitle} onChangeText={setNoteTitle} placeholder="Source title" style={inputStyle} />
-              <TextInput value={noteContent} onChangeText={setNoteContent} placeholder="Editorial notes or source text" multiline style={[inputStyle, { minHeight: 90 }]} />
-              <TextInput value={linkUrl} onChangeText={setLinkUrl} placeholder="Optional URL" autoCapitalize="none" style={inputStyle} />
-              <ActionButton label="Add source" icon="note-add" disabled={!noteTitle.trim()} onPress={() => void addSource({ type: linkUrl ? "url" : "note", title: noteTitle, content: noteContent, url: linkUrl }).then(() => { setNoteTitle(""); setNoteContent(""); setLinkUrl(""); })} />
+              <TextInput
+                value={noteTitle}
+                onChangeText={setNoteTitle}
+                placeholder="Source title"
+                style={inputStyle}
+              />
+              <TextInput
+                value={noteContent}
+                onChangeText={setNoteContent}
+                placeholder="Editorial notes or source text"
+                multiline
+                style={[inputStyle, { minHeight: 90 }]}
+              />
+              <TextInput
+                value={linkUrl}
+                onChangeText={setLinkUrl}
+                placeholder="Optional URL"
+                autoCapitalize="none"
+                style={inputStyle}
+              />
+              <ActionButton
+                label="Add source"
+                icon="note-add"
+                disabled={!noteTitle.trim()}
+                onPress={() =>
+                  void addSource({
+                    type: linkUrl ? "url" : "note",
+                    title: noteTitle,
+                    content: noteContent,
+                    url: linkUrl,
+                  }).then(() => {
+                    setNoteTitle("");
+                    setNoteContent("");
+                    setLinkUrl("");
+                  })
+                }
+              />
             </Panel>
             {Platform.OS === "web" ? (
               <Panel>
-                <Text style={labelStyle}>Upload images, PDFs, or documents</Text>
+                <Text style={labelStyle}>
+                  Upload images, PDFs, or documents
+                </Text>
                 {createElement("input", {
                   type: "file",
                   accept: "image/*,.pdf,.doc,.docx,.txt,.md",
                   onChange: (event: any) => {
                     const file = event.target.files?.[0] as File | undefined;
-                    if (file) void uploadFile(file).catch((error) => setMessage(error.message));
+                    if (file)
+                      void uploadFile(file).catch((error) =>
+                        setMessage(error.message)
+                      );
                     event.target.value = "";
                   },
                 })}
-                <Text style={mutedStyle}>Maximum file size: 30 MB. Files remain private to the admin Publisher.</Text>
+                <Text style={mutedStyle}>
+                  Maximum file size: 30 MB. Files remain private to the admin
+                  Publisher.
+                </Text>
               </Panel>
             ) : null}
             <Panel>
-              <Text style={labelStyle}>Collected sources</Text>
+              <View>
+                <Text style={labelStyle}>Collected sources</Text>
+                <Text style={mutedStyle}>
+                  Use the book icon to open the source reader.
+                </Text>
+              </View>
               {project.sources.map((source, index) => (
-                <View key={source.id} style={rowStyle}>
-                  <MaterialIcons name={source.type === "image" ? "image" : source.type === "teaching" ? "record-voice-over" : "description"} size={22} color="#386641" />
-                  <View style={{ flex: 1 }}><Text style={rowTitleStyle}>{source.title}</Text><Text style={mutedStyle}>{index + 1}. {source.type}</Text></View>
-                  <Pressable accessibilityLabel={`Move ${source.title} earlier`} onPress={() => moveSource(index, -1)}><MaterialIcons name="arrow-upward" size={20} color="#475569" /></Pressable>
-                  <Pressable accessibilityLabel={`Move ${source.title} later`} onPress={() => moveSource(index, 1)}><MaterialIcons name="arrow-downward" size={20} color="#475569" /></Pressable>
+                <View
+                  key={source.id}
+                  style={[
+                    rowStyle,
+                    openSourceId === source.id && {
+                      backgroundColor: "#f0f7f1",
+                    },
+                  ]}
+                >
+                  <MaterialIcons
+                    name={
+                      source.type === "image"
+                        ? "image"
+                        : source.type === "teaching"
+                          ? "record-voice-over"
+                          : "description"
+                    }
+                    size={22}
+                    color="#386641"
+                  />
+                  <View style={{ flex: 1 }}>
+                    <Text style={rowTitleStyle}>{source.title}</Text>
+                    <Text style={mutedStyle}>
+                      {index + 1}. {source.type}
+                    </Text>
+                  </View>
+                  <Pressable
+                    accessibilityLabel={`Read ${source.title}`}
+                    onPress={() => void openSource(source)}
+                    style={{ padding: 6 }}
+                  >
+                    <MaterialIcons name="menu-book" size={21} color="#28523b" />
+                  </Pressable>
+                  <Pressable
+                    accessibilityLabel={`Move ${source.title} earlier`}
+                    onPress={() => moveSource(index, -1)}
+                  >
+                    <MaterialIcons
+                      name="arrow-upward"
+                      size={20}
+                      color="#475569"
+                    />
+                  </Pressable>
+                  <Pressable
+                    accessibilityLabel={`Move ${source.title} later`}
+                    onPress={() => moveSource(index, 1)}
+                  >
+                    <MaterialIcons
+                      name="arrow-downward"
+                      size={20}
+                      color="#475569"
+                    />
+                  </Pressable>
                 </View>
               ))}
+              {openSourceId
+                ? (() => {
+                    const source = project.sources.find(
+                      (item) => item.id === openSourceId
+                    );
+                    if (!source) return null;
+                    return (
+                      <View
+                        style={{
+                          padding: 14,
+                          gap: 10,
+                          borderRadius: 12,
+                          backgroundColor: "#f8fafc",
+                          borderWidth: 1,
+                          borderColor: "#dbe4dc",
+                        }}
+                      >
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            gap: 8,
+                          }}
+                        >
+                          <View style={{ flex: 1 }}>
+                            <Text style={rowTitleStyle}>{source.title}</Text>
+                            <Text style={mutedStyle}>Source text</Text>
+                          </View>
+                          <Pressable
+                            accessibilityLabel="Close source reader"
+                            onPress={() => {
+                              setOpenSourceId(null);
+                              setSourcePreview("");
+                            }}
+                          >
+                            <MaterialIcons
+                              name="close"
+                              size={22}
+                              color="#475569"
+                            />
+                          </Pressable>
+                        </View>
+                        {isLoadingSource ? (
+                          <ActivityIndicator />
+                        ) : sourcePreview ? (
+                          <ScrollView
+                            style={{ maxHeight: 460 }}
+                            nestedScrollEnabled
+                          >
+                            <Text
+                              selectable
+                              style={{ color: "#1f2937", lineHeight: 22 }}
+                            >
+                              {sourcePreview}
+                            </Text>
+                          </ScrollView>
+                        ) : (
+                          <Text style={mutedStyle}>
+                            {source.originalFileName
+                              ? "This source is an uploaded file."
+                              : "No text is stored for this source."}
+                          </Text>
+                        )}
+                        {source.originalFileName ? (
+                          <ActionButton
+                            label="Open uploaded file"
+                            icon="open-in-new"
+                            onPress={() =>
+                              void openUploadedFile(source).catch((error) =>
+                                setMessage(error.message)
+                              )
+                            }
+                          />
+                        ) : null}
+                      </View>
+                    );
+                  })()
+                : null}
             </Panel>
           </>
         ) : null}
 
         {tab === "outline" ? (
           <>
-            <SectionTitle title="Outline" subtitle="Arrange chapters and attach the sources each chapter may use." />
+            <SectionTitle
+              title="Outline"
+              subtitle="Arrange chapters and attach the sources each chapter may use."
+            />
             <ActionButton label="Add chapter" icon="add" onPress={addChapter} />
             {project.chapters.map((chapter, index) => (
               <Panel key={chapter.id}>
-                <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-                  <Text style={{ fontWeight: "900", color: "#64748b" }}>{index + 1}</Text>
-                  <TextInput value={chapter.title} onChangeText={(title) => updateChapter(chapter.id, { title })} style={[inputStyle, { flex: 1 }]} />
-                  <Pressable onPress={() => moveChapter(index, -1)}><MaterialIcons name="arrow-upward" size={20} color="#475569" /></Pressable>
-                  <Pressable onPress={() => moveChapter(index, 1)}><MaterialIcons name="arrow-downward" size={20} color="#475569" /></Pressable>
+                <View
+                  style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
+                >
+                  <Text style={{ fontWeight: "900", color: "#64748b" }}>
+                    {index + 1}
+                  </Text>
+                  <TextInput
+                    value={chapter.title}
+                    onChangeText={(title) =>
+                      updateChapter(chapter.id, { title })
+                    }
+                    style={[inputStyle, { flex: 1 }]}
+                  />
+                  <Pressable onPress={() => moveChapter(index, -1)}>
+                    <MaterialIcons
+                      name="arrow-upward"
+                      size={20}
+                      color="#475569"
+                    />
+                  </Pressable>
+                  <Pressable onPress={() => moveChapter(index, 1)}>
+                    <MaterialIcons
+                      name="arrow-downward"
+                      size={20}
+                      color="#475569"
+                    />
+                  </Pressable>
                 </View>
-                <TextInput value={chapter.summary} onChangeText={(summary) => updateChapter(chapter.id, { summary })} placeholder="Purpose and summary for this chapter" multiline style={[inputStyle, { minHeight: 70 }]} />
+                <TextInput
+                  value={chapter.summary}
+                  onChangeText={(summary) =>
+                    updateChapter(chapter.id, { summary })
+                  }
+                  placeholder="Purpose and summary for this chapter"
+                  multiline
+                  style={[inputStyle, { minHeight: 70 }]}
+                />
                 <Text style={labelStyle}>Sources for this chapter</Text>
-                <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 7 }}>
+                <View
+                  style={{ flexDirection: "row", flexWrap: "wrap", gap: 7 }}
+                >
                   {project.sources.map((source) => {
                     const selected = chapter.sourceIds.includes(source.id);
-                    return <Pressable key={source.id} onPress={() => updateChapter(chapter.id, { sourceIds: selected ? chapter.sourceIds.filter((id) => id !== source.id) : [...chapter.sourceIds, source.id] })} style={[choiceStyle, selected && selectedChoiceStyle]}><Text style={{ fontWeight: "800" }}>{source.title}</Text></Pressable>;
+                    return (
+                      <Pressable
+                        key={source.id}
+                        onPress={() =>
+                          updateChapter(chapter.id, {
+                            sourceIds: selected
+                              ? chapter.sourceIds.filter(
+                                  (id) => id !== source.id
+                                )
+                              : [...chapter.sourceIds, source.id],
+                          })
+                        }
+                        style={[choiceStyle, selected && selectedChoiceStyle]}
+                      >
+                        <Text style={{ fontWeight: "800" }}>
+                          {source.title}
+                        </Text>
+                      </Pressable>
+                    );
                   })}
                 </View>
               </Panel>
@@ -434,40 +855,111 @@ export default function PublisherWorkspace({
 
         {tab === "manuscript" ? (
           <>
-            <SectionTitle title="Manuscript" subtitle="Edit one chapter at a time while retaining its source assignments." />
+            <SectionTitle
+              title="Manuscript"
+              subtitle="Edit one chapter at a time while retaining its source assignments."
+            />
             <ScrollView horizontal contentContainerStyle={{ gap: 7 }}>
-              {project.chapters.map((chapter) => <Pressable key={chapter.id} onPress={() => setSelectedChapterId(chapter.id)} style={[choiceStyle, selectedChapter?.id === chapter.id && selectedChoiceStyle]}><Text style={{ fontWeight: "900" }}>{chapter.title}</Text></Pressable>)}
+              {project.chapters.map((chapter) => (
+                <Pressable
+                  key={chapter.id}
+                  onPress={() => setSelectedChapterId(chapter.id)}
+                  style={[
+                    choiceStyle,
+                    selectedChapter?.id === chapter.id && selectedChoiceStyle,
+                  ]}
+                >
+                  <Text style={{ fontWeight: "900" }}>{chapter.title}</Text>
+                </Pressable>
+              ))}
             </ScrollView>
             {selectedChapter ? (
               <Panel>
                 <Text style={labelStyle}>{selectedChapter.title}</Text>
-                <TextInput value={selectedChapter.manuscript} onChangeText={(manuscript) => updateChapter(selectedChapter.id, { manuscript })} placeholder="Draft or paste chapter text here…" multiline textAlignVertical="top" style={[inputStyle, { minHeight: 430, lineHeight: 23 }]} />
-                <View style={{ padding: 12, borderRadius: 10, backgroundColor: "#fff7ed" }}><Text style={{ color: "#9a3412", fontWeight: "800" }}>AI cleanup and chapter drafting will be enabled after the OpenAI project key and editorial prompt are approved.</Text></View>
+                <TextInput
+                  value={selectedChapter.manuscript}
+                  onChangeText={(manuscript) =>
+                    updateChapter(selectedChapter.id, { manuscript })
+                  }
+                  placeholder="Draft or paste chapter text here…"
+                  multiline
+                  textAlignVertical="top"
+                  style={[inputStyle, { minHeight: 430, lineHeight: 23 }]}
+                />
+                <View
+                  style={{
+                    padding: 12,
+                    borderRadius: 10,
+                    backgroundColor: "#fff7ed",
+                  }}
+                >
+                  <Text style={{ color: "#9a3412", fontWeight: "800" }}>
+                    AI cleanup and chapter drafting will be enabled after the
+                    OpenAI project key and editorial prompt are approved.
+                  </Text>
+                </View>
               </Panel>
-            ) : <Text style={mutedStyle}>Add a chapter in Outline first.</Text>}
+            ) : (
+              <Text style={mutedStyle}>Add a chapter in Outline first.</Text>
+            )}
           </>
         ) : null}
 
         {tab === "ai" ? (
           <>
-            <SectionTitle title="AI Editorial Studio" subtitle="Run deliberate editorial stages against selected source material while preserving traceability." />
+            <SectionTitle
+              title="AI Editorial Studio"
+              subtitle="Run deliberate editorial stages against selected source material while preserving traceability."
+            />
             <Panel>
               <Text style={labelStyle}>Target chapter</Text>
               <ScrollView horizontal contentContainerStyle={{ gap: 7 }}>
                 {project.chapters.map((chapter) => (
-                  <Pressable key={chapter.id} onPress={() => setSelectedChapterId(chapter.id)} style={[choiceStyle, selectedChapter?.id === chapter.id && selectedChoiceStyle]}>
+                  <Pressable
+                    key={chapter.id}
+                    onPress={() => setSelectedChapterId(chapter.id)}
+                    style={[
+                      choiceStyle,
+                      selectedChapter?.id === chapter.id && selectedChoiceStyle,
+                    ]}
+                  >
                     <Text style={{ fontWeight: "900" }}>{chapter.title}</Text>
                   </Pressable>
                 ))}
               </ScrollView>
-              <TextInput value={aiInstructions} onChangeText={setAiInstructions} placeholder="Optional instructions for this pass" multiline style={[inputStyle, { minHeight: 76 }]} />
-              <Text style={mutedStyle}>Clean and Outline use all project sources. Draft and Verify use the selected chapter and its assigned sources.</Text>
+              <TextInput
+                value={aiInstructions}
+                onChangeText={setAiInstructions}
+                placeholder="Optional instructions for this pass"
+                multiline
+                style={[inputStyle, { minHeight: 76 }]}
+              />
+              <Text style={mutedStyle}>
+                Clean and Outline use all project sources. Draft and Verify use
+                the selected chapter and its assigned sources.
+              </Text>
             </Panel>
             {[
-              ["clean", "Clean source material", "Remove greetings, technical discussion, and conversational repetition without changing the teaching."],
-              ["outline", "Propose sections", "Identify themes and propose an ordered chapter-and-section structure."],
-              ["draft", "Draft selected chapter", "Turn the assigned sources into readable prose using the approved outline."],
-              ["verify", "Verify against sources", "Flag unsupported claims, changed meaning, missing qualifications, and scripture references needing review."],
+              [
+                "clean",
+                "Clean source material",
+                "Remove greetings, technical discussion, and conversational repetition without changing the teaching.",
+              ],
+              [
+                "outline",
+                "Propose sections",
+                "Identify themes and propose an ordered chapter-and-section structure.",
+              ],
+              [
+                "draft",
+                "Draft selected chapter",
+                "Turn the assigned sources into readable prose using the approved outline.",
+              ],
+              [
+                "verify",
+                "Verify against sources",
+                "Flag unsupported claims, changed meaning, missing qualifications, and scripture references needing review.",
+              ],
             ].map(([operation, title, description]) => (
               <Panel key={title}>
                 <Text style={rowTitleStyle}>{title}</Text>
@@ -475,28 +967,154 @@ export default function PublisherWorkspace({
                 <ActionButton
                   label={isBusy ? "Working…" : `Run ${title}`}
                   icon="auto-awesome"
-                  disabled={isBusy || project.sources.length === 0 || ((operation === "draft" || operation === "verify") && (!selectedChapter || selectedChapter.sourceIds.length === 0))}
-                  onPress={() => void runAiOperation(operation as PublicationModelOperation)}
+                  disabled={
+                    isBusy ||
+                    project.sources.length === 0 ||
+                    ((operation === "draft" || operation === "verify") &&
+                      (!selectedChapter ||
+                        selectedChapter.sourceIds.length === 0))
+                  }
+                  onPress={() =>
+                    void runAiOperation(operation as PublicationModelOperation)
+                  }
                 />
               </Panel>
             ))}
-            <SectionTitle title="Model Proposals" subtitle="Review the complete proposal before accepting or rejecting it." />
-            {(project.modelRuns ?? []).length === 0 ? <Text style={mutedStyle}>No model proposals yet.</Text> : null}
+            <SectionTitle
+              title="Model Proposals"
+              subtitle="Review the complete proposal before accepting or rejecting it."
+            />
+            {(project.modelRuns ?? []).length === 0 ? (
+              <Text style={mutedStyle}>No model proposals yet.</Text>
+            ) : null}
             {(project.modelRuns ?? []).map((run) => (
               <Panel key={run.id}>
-                <View style={{ flexDirection: "row", justifyContent: "space-between", gap: 10 }}>
-                  <View style={{ flex: 1 }}><Text style={rowTitleStyle}>{run.title}</Text><Text style={mutedStyle}>{run.operation} · {run.model} · {run.status}</Text></View>
-                  <View style={{ paddingHorizontal: 9, paddingVertical: 4, borderRadius: 99, backgroundColor: run.status === "proposed" ? "#fef3c7" : run.status === "accepted" ? "#dcfce7" : "#fee2e2" }}><Text style={{ fontSize: 11, fontWeight: "900", textTransform: "uppercase" }}>{run.status}</Text></View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    gap: 10,
+                  }}
+                >
+                  <View style={{ flex: 1 }}>
+                    <Text style={rowTitleStyle}>{run.title}</Text>
+                    <Text style={mutedStyle}>
+                      {run.operation} · {run.model} · {run.status}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      paddingHorizontal: 9,
+                      paddingVertical: 4,
+                      borderRadius: 99,
+                      backgroundColor:
+                        run.status === "proposed"
+                          ? "#fef3c7"
+                          : run.status === "accepted"
+                            ? "#dcfce7"
+                            : "#fee2e2",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 11,
+                        fontWeight: "900",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      {run.status}
+                    </Text>
+                  </View>
                 </View>
-                <Text style={{ color: "#475569", lineHeight: 20 }}>{run.summary}</Text>
-                {run.proposedText ? <View style={{ maxHeight: 320, padding: 12, borderRadius: 10, backgroundColor: "#f8fafc" }}><ScrollView nestedScrollEnabled><Text selectable style={{ color: "#1f2937", lineHeight: 21 }}>{run.proposedText}</Text></ScrollView></View> : null}
+                <Text style={{ color: "#475569", lineHeight: 20 }}>
+                  {run.summary}
+                </Text>
+                {run.proposedText ? (
+                  <View
+                    style={{
+                      maxHeight: 320,
+                      padding: 12,
+                      borderRadius: 10,
+                      backgroundColor: "#f8fafc",
+                    }}
+                  >
+                    <ScrollView nestedScrollEnabled>
+                      <Text
+                        selectable
+                        style={{ color: "#1f2937", lineHeight: 21 }}
+                      >
+                        {run.proposedText}
+                      </Text>
+                    </ScrollView>
+                  </View>
+                ) : null}
                 <StructureProposalEditor
                   run={run}
                   project={project}
                   onChange={(nextRun) => updateModelRun(run.id, () => nextRun)}
                 />
-                {run.warnings.length ? <View style={{ padding: 10, borderRadius: 9, backgroundColor: "#fff7ed" }}>{run.warnings.map((warning, index) => <Text key={`${run.id}-warning-${index}`} style={{ color: "#9a3412" }}>• {warning}</Text>)}</View> : null}
-                {run.status === "proposed" ? <><TextInput value={run.editorCritique ?? ""} onChangeText={(editorCritique) => updateModelRun(run.id, (current) => ({ ...current, editorCritique }))} placeholder="Editor critique, structural concerns, or recommendations for the next pass" multiline style={[inputStyle, { minHeight: 80 }]} /><ActionButton label="Save structure edits and critique" icon="save" disabled={isBusy} onPress={() => void saveModelProposal(run)} /><View style={{ flexDirection: "row", gap: 8 }}><View style={{ flex: 1 }}><ActionButton label="Accept and apply" icon="check" disabled={isBusy} onPress={() => void reviewModelRun(run.id, "accepted")} /></View><View style={{ flex: 1 }}><ActionButton label="Reject" icon="close" disabled={isBusy} onPress={() => void reviewModelRun(run.id, "rejected")} /></View></View></> : null}
+                {run.warnings.length ? (
+                  <View
+                    style={{
+                      padding: 10,
+                      borderRadius: 9,
+                      backgroundColor: "#fff7ed",
+                    }}
+                  >
+                    {run.warnings.map((warning, index) => (
+                      <Text
+                        key={`${run.id}-warning-${index}`}
+                        style={{ color: "#9a3412" }}
+                      >
+                        • {warning}
+                      </Text>
+                    ))}
+                  </View>
+                ) : null}
+                {run.status === "proposed" ? (
+                  <>
+                    <TextInput
+                      value={run.editorCritique ?? ""}
+                      onChangeText={(editorCritique) =>
+                        updateModelRun(run.id, (current) => ({
+                          ...current,
+                          editorCritique,
+                        }))
+                      }
+                      placeholder="Editor critique, structural concerns, or recommendations for the next pass"
+                      multiline
+                      style={[inputStyle, { minHeight: 80 }]}
+                    />
+                    <ActionButton
+                      label="Save structure edits and critique"
+                      icon="save"
+                      disabled={isBusy}
+                      onPress={() => void saveModelProposal(run)}
+                    />
+                    <View style={{ flexDirection: "row", gap: 8 }}>
+                      <View style={{ flex: 1 }}>
+                        <ActionButton
+                          label="Accept and apply"
+                          icon="check"
+                          disabled={isBusy}
+                          onPress={() =>
+                            void reviewModelRun(run.id, "accepted")
+                          }
+                        />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <ActionButton
+                          label="Reject"
+                          icon="close"
+                          disabled={isBusy}
+                          onPress={() =>
+                            void reviewModelRun(run.id, "rejected")
+                          }
+                        />
+                      </View>
+                    </View>
+                  </>
+                ) : null}
               </Panel>
             ))}
           </>
@@ -504,28 +1122,121 @@ export default function PublisherWorkspace({
 
         {tab === "review" ? (
           <>
-            <SectionTitle title="Editorial Review" subtitle="Track theological, factual, scripture, and source-verification questions." />
+            <SectionTitle
+              title="Editorial Review"
+              subtitle="Track theological, factual, scripture, and source-verification questions."
+            />
             <Panel>
-              <TextInput value={reviewText} onChangeText={setReviewText} placeholder="Add a review note" multiline style={[inputStyle, { minHeight: 80 }]} />
-              <ActionButton label="Add review note" icon="rate-review" disabled={!reviewText.trim()} onPress={() => {
-                const note: PublicationReviewNote = { id: globalThis.crypto?.randomUUID?.() ?? `review-${Date.now()}`, chapterId: selectedChapterId ?? undefined, text: reviewText.trim(), resolved: false, createdAt: new Date().toISOString() };
-                setProject({ ...project, reviewNotes: [...project.reviewNotes, note] }); setReviewText("");
-              }} />
+              <TextInput
+                value={reviewText}
+                onChangeText={setReviewText}
+                placeholder="Add a review note"
+                multiline
+                style={[inputStyle, { minHeight: 80 }]}
+              />
+              <ActionButton
+                label="Add review note"
+                icon="rate-review"
+                disabled={!reviewText.trim()}
+                onPress={() => {
+                  const note: PublicationReviewNote = {
+                    id:
+                      globalThis.crypto?.randomUUID?.() ??
+                      `review-${Date.now()}`,
+                    chapterId: selectedChapterId ?? undefined,
+                    text: reviewText.trim(),
+                    resolved: false,
+                    createdAt: new Date().toISOString(),
+                  };
+                  setProject({
+                    ...project,
+                    reviewNotes: [...project.reviewNotes, note],
+                  });
+                  setReviewText("");
+                }}
+              />
             </Panel>
-            {project.reviewNotes.map((note) => <Pressable key={note.id} onPress={() => setProject({ ...project, reviewNotes: project.reviewNotes.map((item) => item.id === note.id ? { ...item, resolved: !item.resolved } : item) })} style={rowStyle}><MaterialIcons name={note.resolved ? "check-circle" : "radio-button-unchecked"} size={23} color={note.resolved ? "#15803d" : "#b45309"} /><Text style={[{ flex: 1, color: "#334155" }, note.resolved && { textDecorationLine: "line-through" }]}>{note.text}</Text></Pressable>)}
+            {project.reviewNotes.map((note) => (
+              <Pressable
+                key={note.id}
+                onPress={() =>
+                  setProject({
+                    ...project,
+                    reviewNotes: project.reviewNotes.map((item) =>
+                      item.id === note.id
+                        ? { ...item, resolved: !item.resolved }
+                        : item
+                    ),
+                  })
+                }
+                style={rowStyle}
+              >
+                <MaterialIcons
+                  name={
+                    note.resolved ? "check-circle" : "radio-button-unchecked"
+                  }
+                  size={23}
+                  color={note.resolved ? "#15803d" : "#b45309"}
+                />
+                <Text
+                  style={[
+                    { flex: 1, color: "#334155" },
+                    note.resolved && { textDecorationLine: "line-through" },
+                  ]}
+                >
+                  {note.text}
+                </Text>
+              </Pressable>
+            ))}
           </>
         ) : null}
 
         {tab === "export" ? (
           <>
-            <SectionTitle title="Export Preparation" subtitle="Review project readiness before producing Word, PDF, EPUB, or a web edition." />
+            <SectionTitle
+              title="Export Preparation"
+              subtitle="Review project readiness before producing Word, PDF, EPUB, or a web edition."
+            />
             <Panel>
               <Text style={labelStyle}>Project details</Text>
-              <TextInput value={project.author} onChangeText={(author) => setProject({ ...project, author })} placeholder="Author or editor" style={inputStyle} />
-              <TextInput value={project.description} onChangeText={(description) => setProject({ ...project, description })} placeholder="Book description" multiline style={[inputStyle, { minHeight: 100 }]} />
-              <Text style={mutedStyle}>{project.chapters.filter((item) => item.manuscript.trim()).length} of {project.chapters.length} chapters contain manuscript text.</Text>
-              <Text style={mutedStyle}>{project.reviewNotes.filter((item) => !item.resolved).length} unresolved review notes.</Text>
-              <View style={{ padding: 12, borderRadius: 10, backgroundColor: "#eff6ff" }}><Text style={{ color: "#1e40af", fontWeight: "800" }}>Document export will be the next phase. The complete structured project is already retained for that workflow.</Text></View>
+              <TextInput
+                value={project.author}
+                onChangeText={(author) => setProject({ ...project, author })}
+                placeholder="Author or editor"
+                style={inputStyle}
+              />
+              <TextInput
+                value={project.description}
+                onChangeText={(description) =>
+                  setProject({ ...project, description })
+                }
+                placeholder="Book description"
+                multiline
+                style={[inputStyle, { minHeight: 100 }]}
+              />
+              <Text style={mutedStyle}>
+                {
+                  project.chapters.filter((item) => item.manuscript.trim())
+                    .length
+                }{" "}
+                of {project.chapters.length} chapters contain manuscript text.
+              </Text>
+              <Text style={mutedStyle}>
+                {project.reviewNotes.filter((item) => !item.resolved).length}{" "}
+                unresolved review notes.
+              </Text>
+              <View
+                style={{
+                  padding: 12,
+                  borderRadius: 10,
+                  backgroundColor: "#eff6ff",
+                }}
+              >
+                <Text style={{ color: "#1e40af", fontWeight: "800" }}>
+                  Document export will be the next phase. The complete
+                  structured project is already retained for that workflow.
+                </Text>
+              </View>
             </Panel>
           </>
         ) : null}
@@ -588,7 +1299,9 @@ function StructureProposalEditor({
       <View style={{ gap: 5 }}>
         {run.proposedChapters.map((chapter, index) => (
           <Text key={`${run.id}-${index}`} style={{ color: "#334155" }}>
-            {index + 1}. <Text style={{ fontWeight: "900" }}>{chapter.title}</Text> — {chapter.summary}
+            {index + 1}.{" "}
+            <Text style={{ fontWeight: "900" }}>{chapter.title}</Text> —{" "}
+            {chapter.summary}
           </Text>
         ))}
       </View>
@@ -598,21 +1311,117 @@ function StructureProposalEditor({
   return (
     <View style={{ gap: 12 }}>
       {parts.map((part, partIndex) => (
-        <View key={`${run.id}-part-${partIndex}`} style={{ padding: 12, gap: 9, borderRadius: 10, borderWidth: 1, borderColor: "#dbe4dc", backgroundColor: "#fbfdfb" }}>
-          <Text style={{ fontSize: 11, fontWeight: "900", color: "#668c43" }}>PART {partIndex + 1}</Text>
-          <TextInput editable={editable} value={part.title} onChangeText={(title) => updatePart(partIndex, { title })} style={[inputStyle, { fontSize: 17, fontWeight: "900" }]} />
-          <TextInput editable={editable} value={part.summary} onChangeText={(summary) => updatePart(partIndex, { summary })} multiline style={inputStyle} />
+        <View
+          key={`${run.id}-part-${partIndex}`}
+          style={{
+            padding: 12,
+            gap: 9,
+            borderRadius: 10,
+            borderWidth: 1,
+            borderColor: "#dbe4dc",
+            backgroundColor: "#fbfdfb",
+          }}
+        >
+          <Text style={{ fontSize: 11, fontWeight: "900", color: "#668c43" }}>
+            PART {partIndex + 1}
+          </Text>
+          <TextInput
+            editable={editable}
+            value={part.title}
+            onChangeText={(title) => updatePart(partIndex, { title })}
+            style={[inputStyle, { fontSize: 17, fontWeight: "900" }]}
+          />
+          <TextInput
+            editable={editable}
+            value={part.summary}
+            onChangeText={(summary) => updatePart(partIndex, { summary })}
+            multiline
+            style={inputStyle}
+          />
           {part.chapters.map((chapter, chapterIndex) => (
-            <View key={`${run.id}-${partIndex}-${chapterIndex}`} style={{ marginLeft: 8, paddingLeft: 12, gap: 7, borderLeftWidth: 3, borderLeftColor: "#86a873" }}>
-              <Text style={{ fontSize: 11, fontWeight: "900", color: "#64748b" }}>CHAPTER {chapterIndex + 1}</Text>
-              <TextInput editable={editable} value={chapter.title} onChangeText={(title) => updateChapter(partIndex, chapterIndex, { title })} style={[inputStyle, { fontWeight: "900" }]} />
-              <TextInput editable={editable} value={chapter.summary} onChangeText={(summary) => updateChapter(partIndex, chapterIndex, { summary })} multiline style={inputStyle} />
-              <Text style={mutedStyle}>Sources: {chapter.sourceIds.map((sourceId) => project.sources.find((source) => source.id === sourceId)?.title ?? sourceId).join(" · ") || "None assigned"}</Text>
+            <View
+              key={`${run.id}-${partIndex}-${chapterIndex}`}
+              style={{
+                marginLeft: 8,
+                paddingLeft: 12,
+                gap: 7,
+                borderLeftWidth: 3,
+                borderLeftColor: "#86a873",
+              }}
+            >
+              <Text
+                style={{ fontSize: 11, fontWeight: "900", color: "#64748b" }}
+              >
+                CHAPTER {chapterIndex + 1}
+              </Text>
+              <TextInput
+                editable={editable}
+                value={chapter.title}
+                onChangeText={(title) =>
+                  updateChapter(partIndex, chapterIndex, { title })
+                }
+                style={[inputStyle, { fontWeight: "900" }]}
+              />
+              <TextInput
+                editable={editable}
+                value={chapter.summary}
+                onChangeText={(summary) =>
+                  updateChapter(partIndex, chapterIndex, { summary })
+                }
+                multiline
+                style={inputStyle}
+              />
+              <Text style={mutedStyle}>
+                Sources:{" "}
+                {chapter.sourceIds
+                  .map(
+                    (sourceId) =>
+                      project.sources.find((source) => source.id === sourceId)
+                        ?.title ?? sourceId
+                  )
+                  .join(" · ") || "None assigned"}
+              </Text>
               {chapter.sections.map((section, sectionIndex) => (
-                <View key={`${run.id}-${partIndex}-${chapterIndex}-${sectionIndex}`} style={{ marginLeft: 10, padding: 9, gap: 5, borderRadius: 8, backgroundColor: "#f1f5f9" }}>
-                  <Text style={{ fontSize: 10, fontWeight: "900", color: "#64748b" }}>SECTION {sectionIndex + 1}</Text>
-                  <TextInput editable={editable} value={section.title} onChangeText={(title) => updateSection(partIndex, chapterIndex, sectionIndex, { title })} style={inputStyle} />
-                  <TextInput editable={editable} value={section.summary} onChangeText={(summary) => updateSection(partIndex, chapterIndex, sectionIndex, { summary })} multiline style={inputStyle} />
+                <View
+                  key={`${run.id}-${partIndex}-${chapterIndex}-${sectionIndex}`}
+                  style={{
+                    marginLeft: 10,
+                    padding: 9,
+                    gap: 5,
+                    borderRadius: 8,
+                    backgroundColor: "#f1f5f9",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 10,
+                      fontWeight: "900",
+                      color: "#64748b",
+                    }}
+                  >
+                    SECTION {sectionIndex + 1}
+                  </Text>
+                  <TextInput
+                    editable={editable}
+                    value={section.title}
+                    onChangeText={(title) =>
+                      updateSection(partIndex, chapterIndex, sectionIndex, {
+                        title,
+                      })
+                    }
+                    style={inputStyle}
+                  />
+                  <TextInput
+                    editable={editable}
+                    value={section.summary}
+                    onChangeText={(summary) =>
+                      updateSection(partIndex, chapterIndex, sectionIndex, {
+                        summary,
+                      })
+                    }
+                    multiline
+                    style={inputStyle}
+                  />
                 </View>
               ))}
             </View>
@@ -620,29 +1429,161 @@ function StructureProposalEditor({
         </View>
       ))}
       {(run.editorialObservations ?? []).length ? (
-        <View style={{ padding: 10, gap: 4, borderRadius: 9, backgroundColor: "#eff6ff" }}>
-          <Text style={{ fontWeight: "900", color: "#1e40af" }}>Editorial observations</Text>
-          {run.editorialObservations.map((observation, index) => <Text key={`${run.id}-observation-${index}`} style={{ color: "#1e40af" }}>• {observation}</Text>)}
+        <View
+          style={{
+            padding: 10,
+            gap: 4,
+            borderRadius: 9,
+            backgroundColor: "#eff6ff",
+          }}
+        >
+          <Text style={{ fontWeight: "900", color: "#1e40af" }}>
+            Editorial observations
+          </Text>
+          {run.editorialObservations.map((observation, index) => (
+            <Text
+              key={`${run.id}-observation-${index}`}
+              style={{ color: "#1e40af" }}
+            >
+              • {observation}
+            </Text>
+          ))}
         </View>
       ) : null}
       {(run.unplacedSourceIds ?? []).length ? (
-        <Text style={{ color: "#9a3412" }}>Unplaced material: {run.unplacedSourceIds.map((sourceId) => project.sources.find((source) => source.id === sourceId)?.title ?? sourceId).join(" · ")}</Text>
+        <Text style={{ color: "#9a3412" }}>
+          Unplaced material:{" "}
+          {run.unplacedSourceIds
+            .map(
+              (sourceId) =>
+                project.sources.find((source) => source.id === sourceId)
+                  ?.title ?? sourceId
+            )
+            .join(" · ")}
+        </Text>
       ) : null}
     </View>
   );
 }
 
-function SectionTitle({ title, subtitle }: { title: string; subtitle: string }) { return <View><Text style={{ fontSize: 24, fontWeight: "900", color: "#173a2a" }}>{title}</Text><Text style={[mutedStyle, { marginTop: 4 }]}>{subtitle}</Text></View>; }
-function Panel({ children }: { children: React.ReactNode }) { return <View style={{ padding: 14, gap: 10, borderWidth: 1, borderColor: "#dbe4dc", borderRadius: 14, backgroundColor: "#ffffff" }}>{children}</View>; }
-function ActionButton({ label, icon, onPress, disabled, compact }: { label: string; icon: keyof typeof MaterialIcons.glyphMap; onPress: () => void; disabled?: boolean; compact?: boolean }) { return <Pressable onPress={onPress} disabled={disabled} style={({ pressed }) => ({ minHeight: compact ? 38 : 44, paddingHorizontal: 14, borderRadius: 10, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 7, backgroundColor: "#28523b", opacity: disabled ? 0.45 : pressed ? 0.78 : 1 })}><MaterialIcons name={icon} size={18} color="#ffffff" /><Text style={{ color: "#ffffff", fontWeight: "900" }}>{label}</Text></Pressable>; }
+function SectionTitle({
+  title,
+  subtitle,
+}: {
+  title: string;
+  subtitle: string;
+}) {
+  return (
+    <View>
+      <Text style={{ fontSize: 24, fontWeight: "900", color: "#173a2a" }}>
+        {title}
+      </Text>
+      <Text style={[mutedStyle, { marginTop: 4 }]}>{subtitle}</Text>
+    </View>
+  );
+}
+function Panel({ children }: { children: React.ReactNode }) {
+  return (
+    <View
+      style={{
+        padding: 14,
+        gap: 10,
+        borderWidth: 1,
+        borderColor: "#dbe4dc",
+        borderRadius: 14,
+        backgroundColor: "#ffffff",
+      }}
+    >
+      {children}
+    </View>
+  );
+}
+function ActionButton({
+  label,
+  icon,
+  onPress,
+  disabled,
+  compact,
+}: {
+  label: string;
+  icon: keyof typeof MaterialIcons.glyphMap;
+  onPress: () => void;
+  disabled?: boolean;
+  compact?: boolean;
+}) {
+  return (
+    <Pressable
+      onPress={onPress}
+      disabled={disabled}
+      style={({ pressed }) => ({
+        minHeight: compact ? 38 : 44,
+        paddingHorizontal: 14,
+        borderRadius: 10,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 7,
+        backgroundColor: "#28523b",
+        opacity: disabled ? 0.45 : pressed ? 0.78 : 1,
+      })}
+    >
+      <MaterialIcons name={icon} size={18} color="#ffffff" />
+      <Text style={{ color: "#ffffff", fontWeight: "900" }}>{label}</Text>
+    </Pressable>
+  );
+}
 
-const inputStyle = { minHeight: 44, paddingHorizontal: 12, paddingVertical: 9, borderWidth: 1, borderColor: "#cbd5e1", borderRadius: 10, backgroundColor: "#ffffff", color: "#1f2937" } as const;
-const labelStyle = { fontSize: 14, fontWeight: "900", color: "#334155" } as const;
+const inputStyle = {
+  minHeight: 44,
+  paddingHorizontal: 12,
+  paddingVertical: 9,
+  borderWidth: 1,
+  borderColor: "#cbd5e1",
+  borderRadius: 10,
+  backgroundColor: "#ffffff",
+  color: "#1f2937",
+} as const;
+const labelStyle = {
+  fontSize: 14,
+  fontWeight: "900",
+  color: "#334155",
+} as const;
 const mutedStyle = { fontSize: 12, lineHeight: 18, color: "#64748b" } as const;
-const messageStyle = { padding: 10, color: "#28523b", fontWeight: "800" } as const;
-const rowStyle = { minHeight: 54, padding: 10, flexDirection: "row", alignItems: "center", gap: 10, borderBottomWidth: 1, borderBottomColor: "#edf2ef" } as const;
-const rowTitleStyle = { fontSize: 15, fontWeight: "900", color: "#1f2937" } as const;
-const tabStyle = { paddingHorizontal: 13, paddingVertical: 8, borderRadius: 999, backgroundColor: "#e8f1ea" } as const;
+const messageStyle = {
+  padding: 10,
+  color: "#28523b",
+  fontWeight: "800",
+} as const;
+const rowStyle = {
+  minHeight: 54,
+  padding: 10,
+  flexDirection: "row",
+  alignItems: "center",
+  gap: 10,
+  borderBottomWidth: 1,
+  borderBottomColor: "#edf2ef",
+} as const;
+const rowTitleStyle = {
+  fontSize: 15,
+  fontWeight: "900",
+  color: "#1f2937",
+} as const;
+const tabStyle = {
+  paddingHorizontal: 13,
+  paddingVertical: 8,
+  borderRadius: 999,
+  backgroundColor: "#e8f1ea",
+} as const;
 const activeTabStyle = { backgroundColor: "#28523b" } as const;
-const choiceStyle = { paddingHorizontal: 10, paddingVertical: 8, borderRadius: 9, borderWidth: 1, borderColor: "#cbd5e1", backgroundColor: "#ffffff" } as const;
-const selectedChoiceStyle = { borderColor: "#4d7c0f", backgroundColor: "#ecfccb" } as const;
+const choiceStyle = {
+  paddingHorizontal: 10,
+  paddingVertical: 8,
+  borderRadius: 9,
+  borderWidth: 1,
+  borderColor: "#cbd5e1",
+  backgroundColor: "#ffffff",
+} as const;
+const selectedChoiceStyle = {
+  borderColor: "#4d7c0f",
+  backgroundColor: "#ecfccb",
+} as const;
