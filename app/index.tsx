@@ -1465,6 +1465,8 @@ export default function HomeScreen() {
               <StudyBoxLibraryView
                 height={viewportHeight - 72}
                 teachingId={selectedLibraryTeachingId}
+                adminToken={canManageTimeline ? adminToken : null}
+                teachings={libraryTeachings}
               />
             )}
           </ScrollView>

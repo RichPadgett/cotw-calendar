@@ -21,6 +21,7 @@ import commandResourceRoutes from "./routes/commandResourceRoutes";
 import groupRoutes from "./routes/groupRoutes";
 import hebrewRoutes from "./routes/hebrewRoutes";
 import perpetualMarkerRoutes from "./routes/perpetualMarkerRoutes";
+import publicationRoutes from "./routes/publicationRoutes";
 import shabbatRecordingRoutes from "./routes/shabbatRecordingRoutes";
 import shabbatRoutes from "./routes/shabbatRoutes";
 import timelineRoutes from "./routes/timelineRoutes";
@@ -63,6 +64,7 @@ app.use("/api/hebrew", hebrewRoutes);
 app.use("/api/calendar/perpetual-markers", perpetualMarkerRoutes);
 app.use("/api/timeline", timelineRoutes);
 app.use("/api/library", studyboxLibraryRoutes);
+app.use("/api/publications", publicationRoutes);
 
 const PORT = 3001;
 
