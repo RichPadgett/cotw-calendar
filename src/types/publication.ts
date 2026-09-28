@@ -17,7 +17,13 @@ export type PublicationChapter = {
   title: string;
   summary: string;
   sourceIds: string[];
-  sections: Array<{ id: string; title: string; summary: string; sourceIds: string[]; manuscript: string }>;
+  sections: Array<{
+    id: string;
+    title: string;
+    summary: string;
+    sourceIds: string[];
+    manuscript: string;
+  }>;
   manuscript: string;
   sortOrder: number;
 };
@@ -38,7 +44,11 @@ export type PublicationReviewNote = {
   createdAt: string;
 };
 
-export type PublicationModelOperation = "clean" | "outline" | "draft" | "verify";
+export type PublicationModelOperation =
+  | "clean"
+  | "outline"
+  | "draft"
+  | "verify";
 
 export type PublicationModelRun = {
   id: string;
@@ -52,7 +62,11 @@ export type PublicationModelRun = {
   title: string;
   summary: string;
   proposedText: string;
-  proposedChapters: Array<{ title: string; summary: string; sourceIds: string[] }>;
+  proposedChapters: Array<{
+    title: string;
+    summary: string;
+    sourceIds: string[];
+  }>;
   proposedParts: Array<{
     title: string;
     summary: string;
@@ -95,4 +109,15 @@ export type PublicationProjectSummary = Omit<
   sourceCount: number;
   chapterCount: number;
   openReviewCount: number;
+};
+
+export type PublishedPublicationSummary = {
+  id: string;
+  projectId: string;
+  title: string;
+  description: string;
+  author: string;
+  edition: number;
+  publishedAt: string;
+  chapterCount: number;
 };

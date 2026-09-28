@@ -54,7 +54,11 @@ export type PublicationReviewNote = {
   createdAt: string;
 };
 
-export type PublicationModelOperation = "clean" | "outline" | "draft" | "verify";
+export type PublicationModelOperation =
+  | "clean"
+  | "outline"
+  | "draft"
+  | "verify";
 
 export type PublicationModelRun = {
   id: string;
@@ -110,4 +114,10 @@ export type PublicationProject = {
   modelRuns: PublicationModelRun[];
   createdAt: string;
   updatedAt: string;
+};
+
+export type PublishedPublication = PublicationProject & {
+  projectId: string;
+  edition: number;
+  publishedAt: string;
 };

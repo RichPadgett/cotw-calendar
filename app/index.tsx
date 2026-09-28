@@ -1466,6 +1466,7 @@ export default function HomeScreen() {
                 height={viewportHeight - 72}
                 teachingId={selectedLibraryTeachingId}
                 adminToken={canManageTimeline ? adminToken : null}
+                memberToken={memberToken ?? ""}
                 teachings={libraryTeachings}
               />
             )}

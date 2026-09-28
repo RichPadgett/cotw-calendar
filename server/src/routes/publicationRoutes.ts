@@ -3,6 +3,7 @@ import { Router } from "express";
 import multer from "multer";
 
 import { requireAdminTokenForGroup } from "../middleware/requireAdminToken";
+import { requireMemberTokenForGroup } from "../middleware/requireMemberToken";
 import {
   addPublicationFileSource,
   addPublicationModelRun,
@@ -11,8 +12,11 @@ import {
   deletePublicationProject,
   getPublicationFile,
   getPublicationProject,
+  getPublishedPublication,
   getPublicationUploadFolder,
   listPublicationProjects,
+  listPublishedPublications,
+  publishPublicationProject,
   reviewPublicationModelRun,
   updatePublicationModelProposal,
   updatePublicationProject,
@@ -26,6 +30,36 @@ import type { PublicationModelOperation } from "../types/publication";
 
 const router = Router();
 const requireChurchAdmin = requireAdminTokenForGroup("church-of-the-word");
+const requireChurchMember = requireMemberTokenForGroup("church-of-the-word");
+
+router.get("/published", requireChurchMember, (_req, res) => {
+  res.json({ items: listPublishedPublications() });
+});
+
+router.get(
+  "/published/:releaseId/pdf",
+  requireChurchMember,
+  async (req, res, next) => {
+    try {
+      const release = getPublishedPublication(String(req.params.releaseId));
+      if (!release) {
+        return res.status(404).json({ error: "Published edition not found." });
+      }
+      const pdf = await generatePublicationPdf(release);
+      const fileName = `${
+        release.title
+          .replace(/[^a-z0-9]+/gi, "-")
+          .replace(/^-|-$/g, "")
+          .toLowerCase() || "publication"
+      }-edition-${release.edition}.pdf`;
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Content-Disposition", `inline; filename="${fileName}"`);
+      res.send(pdf);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 router.use(requireChurchAdmin);
 
@@ -87,6 +121,14 @@ router.put("/:id", (req, res) => {
   res.json(project);
 });
 
+router.post("/:id/publish", (req, res) => {
+  const release = publishPublicationProject(String(req.params.id));
+  if (!release) {
+    return res.status(404).json({ error: "Publication project not found." });
+  }
+  res.status(201).json(release);
+});
+
 router.delete("/:id", (req, res) => {
   const result = deletePublicationProject(
     String(req.params.id),
@@ -96,11 +138,9 @@ router.delete("/:id", (req, res) => {
     return res.status(404).json({ error: "Publication project not found." });
   }
   if (result.status === "title-mismatch") {
-    return res
-      .status(400)
-      .json({
-        error: "Type the complete project title exactly to confirm deletion.",
-      });
+    return res.status(400).json({
+      error: "Type the complete project title exactly to confirm deletion.",
+    });
   }
   res.json({ deleted: true, title: result.title });
 });

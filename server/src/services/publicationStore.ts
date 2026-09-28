@@ -4,6 +4,7 @@ import path from "node:path";
 
 import type {
   PublicationChapter,
+  PublishedPublication,
   PublicationProject,
   PublicationModelRun,
   PublicationReviewNote,
@@ -14,6 +15,8 @@ import type {
 const PUBLICATION_ROOT =
   process.env.COTW_PUBLICATION_ROOT ??
   path.join(process.cwd(), "content/groups/church-of-the-word/publications");
+
+const RELEASE_ROOT = path.join(PUBLICATION_ROOT, "releases");
 
 function ensureRoot() {
   fs.mkdirSync(PUBLICATION_ROOT, { recursive: true });
@@ -34,6 +37,90 @@ function writeProject(project: PublicationProject) {
   if (!filePath) throw new Error("Invalid publication project id.");
   fs.writeFileSync(filePath, `${JSON.stringify(project, null, 2)}\n`, "utf8");
   return project;
+}
+
+function ensureReleaseRoot() {
+  fs.mkdirSync(RELEASE_ROOT, { recursive: true });
+}
+
+function releasePath(releaseId: string) {
+  if (!/^[a-f0-9-]{36}$/.test(releaseId)) return null;
+  return path.join(RELEASE_ROOT, `${releaseId}.json`);
+}
+
+function readPublicationReleases() {
+  ensureReleaseRoot();
+  return fs
+    .readdirSync(RELEASE_ROOT, { withFileTypes: true })
+    .filter((entry) => entry.isFile() && entry.name.endsWith(".json"))
+    .flatMap((entry) => {
+      try {
+        return [
+          JSON.parse(
+            fs.readFileSync(path.join(RELEASE_ROOT, entry.name), "utf8")
+          ) as PublishedPublication,
+        ];
+      } catch {
+        return [];
+      }
+    });
+}
+
+export function listPublishedPublications() {
+  const latestByProject = new Map<string, PublishedPublication>();
+  for (const release of readPublicationReleases().sort((left, right) =>
+    right.publishedAt.localeCompare(left.publishedAt)
+  )) {
+    if (!latestByProject.has(release.projectId)) {
+      latestByProject.set(release.projectId, release);
+    }
+  }
+  return [...latestByProject.values()].map((release) => ({
+    id: release.id,
+    projectId: release.projectId,
+    title: release.title,
+    description: release.description,
+    author: release.author,
+    edition: release.edition,
+    publishedAt: release.publishedAt,
+    chapterCount: release.chapters.length,
+  }));
+}
+
+export function getPublishedPublication(releaseId: string) {
+  const filePath = releasePath(releaseId);
+  if (!filePath || !fs.existsSync(filePath)) return null;
+  return JSON.parse(fs.readFileSync(filePath, "utf8")) as PublishedPublication;
+}
+
+export function publishPublicationProject(projectId: string) {
+  const project = getPublicationProject(projectId);
+  if (!project) return null;
+  const priorEditions = readPublicationReleases().filter(
+    (release) => release.projectId === projectId
+  );
+  const publishedAt = new Date().toISOString();
+  const release: PublishedPublication = {
+    ...JSON.parse(JSON.stringify(project)),
+    id: crypto.randomUUID(),
+    projectId,
+    edition:
+      priorEditions.reduce(
+        (highest, item) => Math.max(highest, item.edition),
+        0
+      ) + 1,
+    status: "published",
+    publishedAt,
+    updatedAt: publishedAt,
+  };
+  ensureReleaseRoot();
+  const filePath = releasePath(release.id);
+  if (!filePath) throw new Error("Invalid publication release id.");
+  fs.writeFileSync(filePath, `${JSON.stringify(release, null, 2)}\n`, "utf8");
+  project.status = "published";
+  project.updatedAt = publishedAt;
+  writeProject(project);
+  return release;
 }
 
 export function listPublicationProjects() {

@@ -281,6 +281,32 @@ export default function PublisherWorkspace({
     }
   }
 
+  async function publishCurrentEdition() {
+    if (!project) return;
+    await saveProject(project);
+    setIsBusy(true);
+    setMessage("Publishing current edition…");
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/publications/${project.id}/publish`,
+        { method: "POST", headers: authHeaders }
+      );
+      const data = await response.json();
+      if (!response.ok)
+        throw new Error(data.error ?? "Unable to publish this edition.");
+      await openProject(project.id);
+      setMessage(`Edition ${data.edition} is now available in Publications.`);
+    } catch (error) {
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Unable to publish this edition."
+      );
+    } finally {
+      setIsBusy(false);
+    }
+  }
+
   function addChapter() {
     if (!project) return;
     const chapter: PublicationChapter = {
@@ -1630,6 +1656,16 @@ export default function PublisherWorkspace({
                 disabled={isBusy || !hasExportableContent}
                 onPress={() => void downloadPdf()}
               />
+              <ActionButton
+                label={isBusy ? "Publishing…" : "Publish current edition"}
+                icon="publish"
+                disabled={isBusy || !hasExportableContent}
+                onPress={() => void publishCurrentEdition()}
+              />
+              <Text style={mutedStyle}>
+                Publishing creates a member-facing snapshot. Later manuscript
+                edits remain private until another edition is published.
+              </Text>
               {!hasExportableContent ? (
                 <Text style={mutedStyle}>
                   Add manuscript content to at least one chapter or section

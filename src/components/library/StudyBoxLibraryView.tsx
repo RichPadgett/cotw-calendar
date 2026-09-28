@@ -7,19 +7,24 @@ import { createElement, useState } from "react";
 import { Linking, Platform, Pressable, Text, View } from "react-native";
 import type { LibraryTeaching } from "../../types/library";
 import PublisherWorkspace from "./PublisherWorkspace";
+import PublicationsView from "./PublicationsView";
 
 export default function StudyBoxLibraryView({
   height,
   teachingId,
   adminToken,
+  memberToken,
   teachings = [],
 }: {
   height: number;
   teachingId?: string | null;
   adminToken?: string | null;
+  memberToken: string;
   teachings?: LibraryTeaching[];
 }) {
-  const [section, setSection] = useState<"library" | "publisher">("library");
+  const [section, setSection] = useState<
+    "library" | "publications" | "publisher"
+  >("library");
 
   if (Platform.OS === "web") {
     const query = teachingId
@@ -39,12 +44,14 @@ export default function StudyBoxLibraryView({
       },
     });
 
-    if (!adminToken) return libraryFrame;
+    const availableSections = adminToken
+      ? (["library", "publications", "publisher"] as const)
+      : (["library", "publications"] as const);
 
     return (
       <View style={{ minHeight: Math.max(680, height), gap: 10 }}>
         <View style={{ flexDirection: "row", gap: 8 }}>
-          {(["library", "publisher"] as const).map((item) => (
+          {availableSections.map((item) => (
             <Pressable
               key={item}
               onPress={() => setSection(item)}
@@ -55,14 +62,44 @@ export default function StudyBoxLibraryView({
                 backgroundColor: section === item ? "#28523b" : "#e8f1ea",
               }}
             >
-              <Text style={{ fontWeight: "900", color: section === item ? "#ffffff" : "#28523b", textTransform: "capitalize" }}>
+              <Text
+                style={{
+                  fontWeight: "900",
+                  color: section === item ? "#ffffff" : "#28523b",
+                  textTransform: "capitalize",
+                }}
+              >
                 {item}
               </Text>
             </Pressable>
           ))}
         </View>
-        {section === "library" ? libraryFrame : (
-          <View style={{ height: Math.max(680, height), borderWidth: 1, borderColor: "#dfe5db", borderRadius: 14, overflow: "hidden", backgroundColor: "#f8faf8" }}>
+        {section === "library" ? (
+          libraryFrame
+        ) : section === "publications" ? (
+          <View
+            style={{
+              minHeight: Math.max(680, height),
+              borderWidth: 1,
+              borderColor: "#dfe5db",
+              borderRadius: 14,
+              overflow: "hidden",
+              backgroundColor: "#f8faf8",
+            }}
+          >
+            <PublicationsView height={height} memberToken={memberToken} />
+          </View>
+        ) : (
+          <View
+            style={{
+              height: Math.max(680, height),
+              borderWidth: 1,
+              borderColor: "#dfe5db",
+              borderRadius: 14,
+              overflow: "hidden",
+              backgroundColor: "#f8faf8",
+            }}
+          >
             <PublisherWorkspace adminToken={adminToken} teachings={teachings} />
           </View>
         )}
