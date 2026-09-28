@@ -40,6 +40,7 @@ export default function PublisherWorkspace({
   const [projects, setProjects] = useState<PublicationProjectSummary[]>([]);
   const [project, setProject] = useState<PublicationProject | null>(null);
   const projectRef = useRef<PublicationProject | null>(null);
+  const titleRef = useRef("");
   const [tab, setTab] = useState<WorkspaceTab>("sources");
   const [message, setMessage] = useState("");
   const [isBusy, setIsBusy] = useState(false);
@@ -104,6 +105,8 @@ export default function PublisherWorkspace({
       );
       if (!response.ok) throw new Error("Unable to open the project.");
       const nextProject = (await response.json()) as PublicationProject;
+      projectRef.current = nextProject;
+      titleRef.current = nextProject.title;
       setProject(nextProject);
       setShowDeleteProject(false);
       setDeleteConfirmation("");
@@ -132,6 +135,8 @@ export default function PublisherWorkspace({
       });
       if (!response.ok) throw new Error("Unable to create the project.");
       const nextProject = (await response.json()) as PublicationProject;
+      projectRef.current = nextProject;
+      titleRef.current = nextProject.title;
       setProject(nextProject);
       setNewTitle("");
       setNewAuthor("");
@@ -146,8 +151,12 @@ export default function PublisherWorkspace({
   }
 
   async function saveProject(nextProject?: PublicationProject | null) {
-    const projectToSave = nextProject ?? projectRef.current;
-    if (!projectToSave) return;
+    const currentProject = nextProject ?? projectRef.current;
+    if (!currentProject) return null;
+    const projectToSave = {
+      ...currentProject,
+      title: titleRef.current || currentProject.title,
+    };
     setIsBusy(true);
     setMessage("");
     try {
@@ -162,13 +171,16 @@ export default function PublisherWorkspace({
       if (!response.ok) throw new Error("Unable to save the project.");
       const savedProject = (await response.json()) as PublicationProject;
       projectRef.current = savedProject;
+      titleRef.current = savedProject.title;
       setProject(savedProject);
       setMessage("Project saved.");
       await loadProjects();
+      return savedProject;
     } catch (error) {
       setMessage(
         error instanceof Error ? error.message : "Unable to save project."
       );
+      return null;
     } finally {
       setIsBusy(false);
     }
@@ -257,12 +269,13 @@ export default function PublisherWorkspace({
 
   async function downloadPdf() {
     if (!project || Platform.OS !== "web") return;
-    await saveProject();
+    const savedProject = await saveProject();
+    if (!savedProject) return;
     setIsBusy(true);
     setMessage("Preparing PDF…");
     try {
       const response = await fetch(
-        `${API_BASE_URL}/api/publications/${project.id}/export/pdf`,
+        `${API_BASE_URL}/api/publications/${savedProject.id}/export/pdf`,
         { headers: { Authorization: `Bearer ${adminToken}` } }
       );
       if (!response.ok) throw new Error("Unable to generate the PDF.");
@@ -270,7 +283,7 @@ export default function PublisherWorkspace({
       const anchor = document.createElement("a");
       anchor.href = objectUrl;
       anchor.download = `${
-        project.title
+        savedProject.title
           .replace(/[^a-z0-9]+/gi, "-")
           .replace(/^-|-$/g, "")
           .toLowerCase() || "publication"
@@ -291,18 +304,19 @@ export default function PublisherWorkspace({
 
   async function publishCurrentEdition() {
     if (!project) return;
-    await saveProject();
+    const savedProject = await saveProject();
+    if (!savedProject) return;
     setIsBusy(true);
     setMessage("Publishing current edition…");
     try {
       const response = await fetch(
-        `${API_BASE_URL}/api/publications/${project.id}/publish`,
+        `${API_BASE_URL}/api/publications/${savedProject.id}/publish`,
         { method: "POST", headers: authHeaders }
       );
       const data = await response.json();
       if (!response.ok)
         throw new Error(data.error ?? "Unable to publish this edition.");
-      await openProject(project.id);
+      await openProject(savedProject.id);
       setMessage(`Edition ${data.edition} is now available in Publications.`);
     } catch (error) {
       setMessage(
@@ -644,6 +658,7 @@ export default function PublisherWorkspace({
                   title,
                 };
                 projectRef.current = nextProject;
+                titleRef.current = title;
                 setProject(nextProject);
               }}
               onBlur={() => void saveProject()}
