@@ -631,6 +631,7 @@ export default function PublisherWorkspace({
             <TextInput
               value={project.title}
               onChangeText={(title) => setProject({ ...project, title })}
+              onBlur={() => void saveProject()}
               style={{ fontSize: 21, fontWeight: "900", color: "#10231a" }}
             />
             <Text style={mutedStyle}>

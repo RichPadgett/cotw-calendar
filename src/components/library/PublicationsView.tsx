@@ -23,6 +23,8 @@ export default function PublicationsView({
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [pdfObjectUrl, setPdfObjectUrl] = useState<string | null>(null);
+  const [isLoadingPdf, setIsLoadingPdf] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -49,6 +51,41 @@ export default function PublicationsView({
   }, [memberToken]);
 
   const selected = items.find((item) => item.id === selectedId) ?? items[0];
+
+  useEffect(() => {
+    if (!selected || Platform.OS !== "web") return;
+    let active = true;
+    let nextObjectUrl: string | null = null;
+    setIsLoadingPdf(true);
+    setPdfObjectUrl(null);
+    fetch(`${API_BASE_URL}/api/publications/published/${selected.id}/pdf`, {
+      headers: { "X-COTW-Session": memberToken },
+      credentials: "include",
+    })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Unable to open this publication.");
+        nextObjectUrl = URL.createObjectURL(
+          new Blob([await response.arrayBuffer()], { type: "application/pdf" })
+        );
+        if (active) setPdfObjectUrl(nextObjectUrl);
+      })
+      .catch((error) => {
+        if (active) {
+          setMessage(
+            error instanceof Error
+              ? error.message
+              : "Unable to open publication."
+          );
+        }
+      })
+      .finally(() => {
+        if (active) setIsLoadingPdf(false);
+      });
+    return () => {
+      active = false;
+      if (nextObjectUrl) URL.revokeObjectURL(nextObjectUrl);
+    };
+  }, [memberToken, selected?.id]);
 
   async function downloadPublication() {
     if (!selected || Platform.OS !== "web") return;
@@ -191,20 +228,33 @@ export default function PublicationsView({
               </Text>
             </Pressable>
           </View>
-          {Platform.OS === "web"
-            ? createElement("iframe" as any, {
-                title: `${selected.title} PDF reader`,
-                src: `${API_BASE_URL}/api/publications/published/${selected.id}/pdf#view=FitH`,
-                style: {
-                  display: "block",
-                  width: "100%",
-                  height: `${Math.max(620, height - 250)}px`,
-                  border: "1px solid #dbe4dc",
-                  borderRadius: "12px",
-                  background: "#f8fafc",
-                },
-              })
-            : null}
+          {isLoadingPdf ? (
+            <View
+              style={{
+                minHeight: 280,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <ActivityIndicator color="#28523b" />
+              <Text style={{ marginTop: 10, color: "#64748b" }}>
+                Loading book…
+              </Text>
+            </View>
+          ) : Platform.OS === "web" && pdfObjectUrl ? (
+            createElement("iframe" as any, {
+              title: `${selected.title} PDF reader`,
+              src: `${pdfObjectUrl}#view=FitH`,
+              style: {
+                display: "block",
+                width: "100%",
+                height: `${Math.max(620, height - 250)}px`,
+                border: "1px solid #dbe4dc",
+                borderRadius: "12px",
+                background: "#f8fafc",
+              },
+            })
+          ) : null}
         </View>
       ) : null}
       {message ? (
