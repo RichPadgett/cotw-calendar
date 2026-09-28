@@ -84,9 +84,20 @@ export function generatePublicationPdf(
       index += 1
     ) {
       document.switchToPage(index);
+      const bottomMargin = document.page.margins.bottom;
+      document.page.margins.bottom = 0;
       document.fillColor(COLORS.muted).font("Helvetica").fontSize(9);
-      document.text(project.title, 64, 742, { width: 390, ellipsis: true });
-      document.text(String(index + 1), 490, 742, { width: 55, align: "right" });
+      document.text(project.title, 64, 742, {
+        width: 390,
+        ellipsis: true,
+        lineBreak: false,
+      });
+      document.text(String(index + 1), 490, 742, {
+        width: 55,
+        align: "right",
+        lineBreak: false,
+      });
+      document.page.margins.bottom = bottomMargin;
     }
     document.end();
   });
