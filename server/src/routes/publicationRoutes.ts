@@ -36,6 +36,38 @@ router.get("/published", requireChurchMember, (_req, res) => {
   res.json({ items: listPublishedPublications() });
 });
 
+router.get("/published/:releaseId", requireChurchMember, (req, res) => {
+  const release = getPublishedPublication(String(req.params.releaseId));
+  if (!release) {
+    return res.status(404).json({ error: "Published edition not found." });
+  }
+  res.json({
+    id: release.id,
+    projectId: release.projectId,
+    title: release.title,
+    description: release.description,
+    author: release.author,
+    edition: release.edition,
+    publishedAt: release.publishedAt,
+    chapterCount: release.chapters.length,
+    parts: release.parts,
+    chapters: release.chapters.map((chapter) => ({
+      id: chapter.id,
+      partId: chapter.partId,
+      title: chapter.title,
+      summary: chapter.summary,
+      manuscript: chapter.manuscript,
+      sortOrder: chapter.sortOrder,
+      sections: chapter.sections.map((section) => ({
+        id: section.id,
+        title: section.title,
+        summary: section.summary,
+        manuscript: section.manuscript,
+      })),
+    })),
+  });
+});
+
 router.get(
   "/published/:releaseId/pdf",
   requireChurchMember,

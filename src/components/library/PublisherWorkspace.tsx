@@ -1,4 +1,4 @@
-import { createElement, useEffect, useState } from "react";
+import { createElement, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Platform,
@@ -39,6 +39,7 @@ export default function PublisherWorkspace({
 }) {
   const [projects, setProjects] = useState<PublicationProjectSummary[]>([]);
   const [project, setProject] = useState<PublicationProject | null>(null);
+  const projectRef = useRef<PublicationProject | null>(null);
   const [tab, setTab] = useState<WorkspaceTab>("sources");
   const [message, setMessage] = useState("");
   const [isBusy, setIsBusy] = useState(false);
@@ -81,6 +82,10 @@ export default function PublisherWorkspace({
   useEffect(() => {
     void loadProjects().catch((error) => setMessage(error.message));
   }, [adminToken]);
+
+  useEffect(() => {
+    projectRef.current = project;
+  }, [project]);
 
   useEffect(() => {
     if (!selectedTeachingId && teachings[0]?.id)
@@ -140,21 +145,24 @@ export default function PublisherWorkspace({
     }
   }
 
-  async function saveProject(nextProject = project) {
-    if (!nextProject) return;
+  async function saveProject(nextProject?: PublicationProject | null) {
+    const projectToSave = nextProject ?? projectRef.current;
+    if (!projectToSave) return;
     setIsBusy(true);
     setMessage("");
     try {
       const response = await fetch(
-        `${API_BASE_URL}/api/publications/${nextProject.id}`,
+        `${API_BASE_URL}/api/publications/${projectToSave.id}`,
         {
           method: "PUT",
           headers: authHeaders,
-          body: JSON.stringify(nextProject),
+          body: JSON.stringify(projectToSave),
         }
       );
       if (!response.ok) throw new Error("Unable to save the project.");
-      setProject((await response.json()) as PublicationProject);
+      const savedProject = (await response.json()) as PublicationProject;
+      projectRef.current = savedProject;
+      setProject(savedProject);
       setMessage("Project saved.");
       await loadProjects();
     } catch (error) {
@@ -249,7 +257,7 @@ export default function PublisherWorkspace({
 
   async function downloadPdf() {
     if (!project || Platform.OS !== "web") return;
-    await saveProject(project);
+    await saveProject();
     setIsBusy(true);
     setMessage("Preparing PDF…");
     try {
@@ -283,7 +291,7 @@ export default function PublisherWorkspace({
 
   async function publishCurrentEdition() {
     if (!project) return;
-    await saveProject(project);
+    await saveProject();
     setIsBusy(true);
     setMessage("Publishing current edition…");
     try {
@@ -630,7 +638,14 @@ export default function PublisherWorkspace({
           <View style={{ flex: 1 }}>
             <TextInput
               value={project.title}
-              onChangeText={(title) => setProject({ ...project, title })}
+              onChangeText={(title) => {
+                const nextProject = {
+                  ...(projectRef.current ?? project),
+                  title,
+                };
+                projectRef.current = nextProject;
+                setProject(nextProject);
+              }}
               onBlur={() => void saveProject()}
               style={{ fontSize: 21, fontWeight: "900", color: "#10231a" }}
             />

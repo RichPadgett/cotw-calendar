@@ -121,3 +121,20 @@ export type PublishedPublicationSummary = {
   publishedAt: string;
   chapterCount: number;
 };
+
+export type PublishedPublicationReader = PublishedPublicationSummary & {
+  parts: PublicationPart[];
+  chapters: Array<
+    Pick<
+      PublicationChapter,
+      "id" | "partId" | "title" | "summary" | "manuscript" | "sortOrder"
+    > & {
+      sections: Array<
+        Pick<
+          PublicationChapter["sections"][number],
+          "id" | "title" | "summary" | "manuscript"
+        >
+      >;
+    }
+  >;
+};
