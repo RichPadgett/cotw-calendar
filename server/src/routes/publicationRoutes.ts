@@ -1,9 +1,9 @@
 import path from "node:path";
-import { Router } from "express";
+import { NextFunction, Request, Response, Router } from "express";
 import multer from "multer";
 
-import { requireAdminTokenForGroup } from "../middleware/requireAdminToken";
 import { requireMemberTokenForGroup } from "../middleware/requireMemberToken";
+import { verifyAdminToken, verifyMemberToken } from "../services/groupStore";
 import {
   addPublicationFileSource,
   addPublicationModelRun,
@@ -29,8 +29,46 @@ import { generatePublicationPdf } from "../services/publicationPdfService";
 import type { PublicationModelOperation } from "../types/publication";
 
 const router = Router();
-const requireChurchAdmin = requireAdminTokenForGroup("church-of-the-word");
 const requireChurchMember = requireMemberTokenForGroup("church-of-the-word");
+
+function requireChurchPublisher(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const authorization = req.headers.authorization ?? "";
+  const adminToken = authorization.startsWith("Bearer ")
+    ? authorization.slice("Bearer ".length)
+    : "";
+  if (
+    verifyAdminToken({ groupCode: "church-of-the-word", token: adminToken })
+  ) {
+    return next();
+  }
+
+  const username = String(req.headers["x-cotw-username"] ?? "")
+    .trim()
+    .toLowerCase();
+  const memberToken =
+    String(req.headers["x-cotw-session"] ?? "") ||
+    getCookie(req, "cotw-member-session");
+  if (
+    username === "tanner" &&
+    verifyMemberToken({ groupCode: "church-of-the-word", token: memberToken })
+  ) {
+    return next();
+  }
+
+  return res.status(403).json({ error: "Publisher access required." });
+}
+
+function getCookie(req: Request, name: string) {
+  const entry = (req.headers.cookie ?? "")
+    .split(";")
+    .map((value) => value.trim())
+    .find((value) => value.startsWith(`${name}=`));
+  return entry ? decodeURIComponent(entry.slice(name.length + 1)) : "";
+}
 
 router.get("/published", requireChurchMember, (_req, res) => {
   res.json({ items: listPublishedPublications() });
@@ -93,7 +131,7 @@ router.get(
   }
 );
 
-router.use(requireChurchAdmin);
+router.use(requireChurchPublisher);
 
 const upload = multer({
   storage: multer.diskStorage({

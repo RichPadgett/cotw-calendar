@@ -32,9 +32,13 @@ type WorkspaceTab =
 
 export default function PublisherWorkspace({
   adminToken,
+  memberToken,
+  username,
   teachings,
 }: {
-  adminToken: string;
+  adminToken?: string | null;
+  memberToken: string;
+  username: string;
   teachings: LibraryTeaching[];
 }) {
   const [projects, setProjects] = useState<PublicationProjectSummary[]>([]);
@@ -66,8 +70,14 @@ export default function PublisherWorkspace({
   const [showDeleteProject, setShowDeleteProject] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
 
+  const accessHeaders = adminToken
+    ? { Authorization: `Bearer ${adminToken}` }
+    : {
+        "X-COTW-Session": memberToken,
+        "X-COTW-Username": username,
+      };
   const authHeaders = {
-    Authorization: `Bearer ${adminToken}`,
+    ...accessHeaders,
     "Content-Type": "application/json",
   };
 
@@ -82,7 +92,7 @@ export default function PublisherWorkspace({
 
   useEffect(() => {
     void loadProjects().catch((error) => setMessage(error.message));
-  }, [adminToken]);
+  }, [adminToken, memberToken, username]);
 
   useEffect(() => {
     projectRef.current = project;
@@ -300,7 +310,7 @@ export default function PublisherWorkspace({
     if (!project || Platform.OS !== "web") return;
     const response = await fetch(
       `${API_BASE_URL}/api/publications/${project.id}/sources/${source.id}/file`,
-      { headers: { Authorization: `Bearer ${adminToken}` } }
+      { headers: accessHeaders }
     );
     if (!response.ok) throw new Error("Unable to open the uploaded file.");
     const objectUrl = URL.createObjectURL(await response.blob());
@@ -317,7 +327,7 @@ export default function PublisherWorkspace({
     try {
       const response = await fetch(
         `${API_BASE_URL}/api/publications/${savedProject.id}/export/pdf`,
-        { headers: { Authorization: `Bearer ${adminToken}` } }
+        { headers: accessHeaders }
       );
       if (!response.ok) throw new Error("Unable to generate the PDF.");
       const objectUrl = URL.createObjectURL(await response.blob());
@@ -444,7 +454,7 @@ export default function PublisherWorkspace({
       `${API_BASE_URL}/api/publications/${project.id}/sources/upload`,
       {
         method: "POST",
-        headers: { Authorization: `Bearer ${adminToken}` },
+        headers: accessHeaders,
         body: form,
       }
     );

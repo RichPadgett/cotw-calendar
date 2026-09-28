@@ -1467,6 +1467,7 @@ export default function HomeScreen() {
                 teachingId={selectedLibraryTeachingId}
                 adminToken={canManageTimeline ? adminToken : null}
                 memberToken={memberToken ?? ""}
+                username={commandContributorUsername}
                 teachings={libraryTeachings}
               />
             )}

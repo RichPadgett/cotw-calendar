@@ -14,12 +14,14 @@ export default function StudyBoxLibraryView({
   teachingId,
   adminToken,
   memberToken,
+  username,
   teachings = [],
 }: {
   height: number;
   teachingId?: string | null;
   adminToken?: string | null;
   memberToken: string;
+  username: string;
   teachings?: LibraryTeaching[];
 }) {
   const [section, setSection] = useState<
@@ -44,7 +46,9 @@ export default function StudyBoxLibraryView({
       },
     });
 
-    const availableSections = adminToken
+    const canPublish =
+      Boolean(adminToken) || username.trim().toLowerCase() === "tanner";
+    const availableSections = canPublish
       ? (["library", "publications", "publisher"] as const)
       : (["library", "publications"] as const);
 
@@ -100,7 +104,12 @@ export default function StudyBoxLibraryView({
               backgroundColor: "#f8faf8",
             }}
           >
-            <PublisherWorkspace adminToken={adminToken} teachings={teachings} />
+            <PublisherWorkspace
+              adminToken={adminToken}
+              memberToken={memberToken}
+              username={username}
+              teachings={teachings}
+            />
           </View>
         )}
       </View>
