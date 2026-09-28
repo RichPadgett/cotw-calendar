@@ -35,6 +35,7 @@ dotenv.config({
 const app = express();
 
 app.use(cors());
+app.use("/api/publications", express.json({ limit: "10mb" }));
 app.use(express.json());
 app.use("/api", logApiRequest);
 

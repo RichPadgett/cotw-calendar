@@ -186,6 +186,47 @@ export default function PublisherWorkspace({
     }
   }
 
+  async function saveProjectMetadata() {
+    const currentProject = projectRef.current;
+    if (!currentProject) return null;
+    setIsBusy(true);
+    setMessage("");
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/publications/${currentProject.id}/metadata`,
+        {
+          method: "PATCH",
+          headers: authHeaders,
+          body: JSON.stringify({
+            title: titleRef.current || currentProject.title,
+            description: currentProject.description,
+            author: currentProject.author,
+            status: currentProject.status,
+          }),
+        }
+      );
+      const data = await response.json();
+      if (!response.ok)
+        throw new Error(data.error ?? "Unable to save project details.");
+      const savedProject = data as PublicationProject;
+      projectRef.current = savedProject;
+      titleRef.current = savedProject.title;
+      setProject(savedProject);
+      setMessage("Project details saved.");
+      await loadProjects();
+      return savedProject;
+    } catch (error) {
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Unable to save project details."
+      );
+      return null;
+    } finally {
+      setIsBusy(false);
+    }
+  }
+
   async function deleteProject() {
     if (!project || deleteConfirmation !== project.title) return;
     setIsBusy(true);
@@ -661,7 +702,7 @@ export default function PublisherWorkspace({
                 titleRef.current = title;
                 setProject(nextProject);
               }}
-              onBlur={() => void saveProject()}
+              onBlur={() => void saveProjectMetadata()}
               style={{ fontSize: 21, fontWeight: "900", color: "#10231a" }}
             />
             <Text style={mutedStyle}>
@@ -672,7 +713,7 @@ export default function PublisherWorkspace({
           <ActionButton
             label={isBusy ? "Saving…" : "Save"}
             icon="save"
-            onPress={() => void saveProject()}
+            onPress={() => void saveProjectMetadata()}
             disabled={isBusy}
             compact
           />

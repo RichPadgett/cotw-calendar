@@ -153,6 +153,18 @@ router.put("/:id", (req, res) => {
   res.json(project);
 });
 
+router.patch("/:id/metadata", (req, res) => {
+  const project = updatePublicationProject(String(req.params.id), {
+    title: req.body?.title,
+    description: req.body?.description,
+    author: req.body?.author,
+    status: req.body?.status,
+  });
+  if (!project)
+    return res.status(404).json({ error: "Publication project not found." });
+  res.json(project);
+});
+
 router.post("/:id/publish", (req, res) => {
   const release = publishPublicationProject(String(req.params.id));
   if (!release) {
