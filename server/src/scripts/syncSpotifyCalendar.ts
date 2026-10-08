@@ -4,6 +4,10 @@ import { publishSpotifyEpisodeToCalendar } from "../services/calendarContentStor
 import { getSpotifyShowEpisodes } from "../services/spotifyEpisodeService";
 
 const START_DATE = process.env.SPOTIFY_CALENDAR_START_DATE ?? "2021-01-01";
+const RELEASE_DATE_OVERRIDES: Record<string, string> = {
+  "1Bne0ceOVfdgGUSDBm4Yxw": "2025-09-18",
+  "6QpayawYS8VuYZEL3Z8Dfb": "2025-09-18",
+};
 
 async function main() {
   const dryRun = process.argv.includes("--dry-run");
@@ -13,10 +17,10 @@ async function main() {
   let skipped = 0;
 
   for (const episode of episodes) {
-    if (
-      episode.releaseDatePrecision !== "day" ||
-      episode.releaseDate < START_DATE
-    ) {
+    const calendarDate =
+      RELEASE_DATE_OVERRIDES[episode.id] ?? episode.releaseDate;
+
+    if (episode.releaseDatePrecision !== "day" || calendarDate < START_DATE) {
       skipped++;
       continue;
     }
@@ -26,7 +30,7 @@ async function main() {
         episodeId: episode.id,
         title: episode.name,
         url: episode.url,
-        releaseDate: episode.releaseDate,
+        releaseDate: calendarDate,
       },
       { dryRun }
     );
@@ -39,7 +43,7 @@ async function main() {
     if (result.changed) {
       changed++;
       console.log(
-        `${dryRun ? "Would link" : "Linked"}: ${episode.releaseDate} -> ${result.enochDate} | ${episode.name}`
+        `${dryRun ? "Would link" : "Linked"}: ${calendarDate} -> ${result.enochDate} | ${episode.name}`
       );
     } else {
       unchanged++;
