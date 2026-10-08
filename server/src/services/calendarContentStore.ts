@@ -323,6 +323,64 @@ export function publishSpotifyEpisodeToCalendar(
   };
 }
 
+export function removeSpotifyEpisodeFromCalendar(
+  input: {
+    episodeId: string;
+    releaseDate: string;
+  },
+  options: { dryRun?: boolean } = {}
+): { changed: boolean; enochDate: string; groups: string[] } | null {
+  const enochDate = getEnochDateForGregorianDate(input.releaseDate);
+  if (!enochDate) return null;
+
+  const year = String(enochDate.enochYear);
+  const month = String(enochDate.month);
+  const day = String(enochDate.day);
+  const sourceId = `spotify:${input.episodeId}`;
+  const episodeUrl = `https://open.spotify.com/episode/${input.episodeId}`;
+  const changedGroups: string[] = [];
+
+  for (const groupCode of [CHURCH_GROUP_CODE, PUBLIC_GROUP_CODE]) {
+    const existing = getCalendarDayContent(groupCode, year, month, day);
+    if (!existing) continue;
+
+    let removed = false;
+    const sections = existing.sections.flatMap((section) => {
+      const items = section.items.filter((item) => {
+        const matches =
+          item.sourceId === sourceId || item.url?.startsWith(episodeUrl);
+        if (matches) removed = true;
+        return !matches;
+      });
+
+      if (
+        items.length === 0 &&
+        items.length !== section.items.length &&
+        section.displayStyle !== "notice"
+      ) {
+        return [];
+      }
+
+      return [{ ...section, items }];
+    });
+
+    if (!removed) continue;
+    changedGroups.push(groupCode);
+    if (!options.dryRun) {
+      saveCalendarDayContent(groupCode, year, month, day, {
+        ...existing,
+        sections,
+      });
+    }
+  }
+
+  return {
+    changed: changedGroups.length > 0,
+    enochDate: `${enochDate.enochYear}/${enochDate.month}/${enochDate.day}`,
+    groups: changedGroups,
+  };
+}
+
 function formatDateInCentralTime(value: string): string | null {
   if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
   const date = new Date(value);

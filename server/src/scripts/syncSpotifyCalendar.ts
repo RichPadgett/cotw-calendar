@@ -1,9 +1,16 @@
 import "dotenv/config";
 
-import { publishSpotifyEpisodeToCalendar } from "../services/calendarContentStore";
+import {
+  publishSpotifyEpisodeToCalendar,
+  removeSpotifyEpisodeFromCalendar,
+} from "../services/calendarContentStore";
 import { getSpotifyShowEpisodes } from "../services/spotifyEpisodeService";
 
 const START_DATE = process.env.SPOTIFY_CALENDAR_START_DATE ?? "2021-01-01";
+const RELEASE_DATE_OVERRIDES: Record<string, string> = {
+  "4mTi0YTg3Xi1gTWaOUVwtJ": "2026-10-03",
+  "4z2iS1PgnlLyEOMh3LWuKE": "2026-10-03",
+};
 
 async function main() {
   const dryRun = process.argv.includes("--dry-run");
@@ -13,20 +20,31 @@ async function main() {
   let skipped = 0;
 
   for (const episode of episodes) {
-    if (
-      episode.releaseDatePrecision !== "day" ||
-      episode.releaseDate < START_DATE
-    ) {
+    const calendarDate =
+      RELEASE_DATE_OVERRIDES[episode.id] ?? episode.releaseDate;
+
+    if (episode.releaseDatePrecision !== "day" || calendarDate < START_DATE) {
       skipped++;
       continue;
     }
+
+    const removedFromReleaseDate =
+      calendarDate !== episode.releaseDate
+        ? removeSpotifyEpisodeFromCalendar(
+            {
+              episodeId: episode.id,
+              releaseDate: episode.releaseDate,
+            },
+            { dryRun }
+          )
+        : null;
 
     const result = publishSpotifyEpisodeToCalendar(
       {
         episodeId: episode.id,
         title: episode.name,
         url: episode.url,
-        releaseDate: episode.releaseDate,
+        releaseDate: calendarDate,
       },
       { dryRun }
     );
@@ -36,10 +54,10 @@ async function main() {
       continue;
     }
 
-    if (result.changed) {
+    if (result.changed || removedFromReleaseDate?.changed) {
       changed++;
       console.log(
-        `${dryRun ? "Would link" : "Linked"}: ${episode.releaseDate} -> ${result.enochDate} | ${episode.name}`
+        `${dryRun ? "Would link" : "Linked"}: ${calendarDate} -> ${result.enochDate} | ${episode.name}`
       );
     } else {
       unchanged++;
