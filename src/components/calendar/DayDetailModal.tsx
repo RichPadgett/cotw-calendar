@@ -917,7 +917,7 @@ export default function DayDetailModal({
                             )}
                           </Text>
 
-                          {item.sourceId ? (
+                          {item.type === "internal-link" && item.sourceId ? (
                             <Pressable
                               onPress={() => onOpenTeaching(item.sourceId!)}
                               style={styles.linkButton}
