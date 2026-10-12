@@ -6,7 +6,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import {
-  Image,
   Linking,
   Modal,
   Platform,
@@ -17,7 +16,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import type { ImageSourcePropType, StyleProp, ViewStyle } from "react-native";
+import type { StyleProp, ViewStyle } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -99,7 +98,10 @@ const COMMAND_FILTER_DEFINITIONS: {
   },
 ];
 
-function createEmptyCommandFilters(): Record<CommandFilterKey, CommandFilterState> {
+function createEmptyCommandFilters(): Record<
+  CommandFilterKey,
+  CommandFilterState
+> {
   return {
     lovesGod: null,
     lovesNeighbor: null,
@@ -209,6 +211,40 @@ type CommandContributionType =
   | "clarification_note";
 
 type CommandContributionMode = "add" | "suggest_edit" | "suggest_remove";
+
+const COMMAND_CONTRIBUTION_OPTIONS: {
+  type: CommandContributionType;
+  title: string;
+  label: string;
+}[] = [
+  {
+    type: "requirement",
+    title: "Obedience Requirement",
+    label: "Obedience requirement",
+  },
+  { type: "study_note", title: "Study Note", label: "Study note" },
+  {
+    type: "story_reference",
+    title: "Scripture Example",
+    label: "Scripture example",
+  },
+  {
+    type: "non_canonical_story_reference",
+    title: "Ancient Writing Example",
+    label: "Ancient writing example",
+  },
+  { type: "source_term", title: "Source Term", label: "Source term" },
+  {
+    type: "translation_note",
+    title: "Translation Note",
+    label: "Translation note",
+  },
+  {
+    type: "clarification_note",
+    title: "Clarification",
+    label: "Clarification",
+  },
+];
 
 type CommandContributionTarget = {
   source: "prolog" | "contribution";
@@ -1307,9 +1343,7 @@ export default function CommandExplorerView({
           message={voteMessage}
           voteDraft={voteDraft}
           isSubmittingVote={isSubmittingVote}
-          onPrevious={() =>
-            setVoteIndex((current) => Math.max(0, current - 1))
-          }
+          onPrevious={() => setVoteIndex((current) => Math.max(0, current - 1))}
           onNext={() =>
             setVoteIndex((current) =>
               Math.min(voteContributions.length - 1, current + 1)
@@ -1462,7 +1496,9 @@ export default function CommandExplorerView({
                   [key]: cycleCommandFilterState(current[key]),
                 }))
               }
-              onClearFilters={() => setCommandFilters(createEmptyCommandFilters())}
+              onClearFilters={() =>
+                setCommandFilters(createEmptyCommandFilters())
+              }
             />
 
             {isLoading ? (
@@ -1479,18 +1515,18 @@ export default function CommandExplorerView({
                   <View key={group.key} style={styles.categorySection}>
                     <Pressable
                       onPress={() => toggleCategory(group.key)}
+                      accessibilityRole="button"
+                      accessibilityState={{ expanded: isExpanded }}
                       style={({ pressed }) => [
                         styles.categoryHeader,
-                        pressed && { backgroundColor: "#eef2f7" },
+                        pressed && styles.categoryHeaderPressed,
                       ]}
                     >
-                      {getCategoryIcon(group.key) ? (
-                        <Image
-                          source={getCategoryIcon(group.key)!}
-                          style={styles.categoryHeaderIcon}
-                          resizeMode="contain"
-                        />
-                      ) : null}
+                      <MaterialIcons
+                        name={isExpanded ? "expand-more" : "chevron-right"}
+                        size={17}
+                        color="#7a857e"
+                      />
 
                       <Text style={styles.categoryTitle}>
                         {formatKey(group.key)}
@@ -1506,7 +1542,6 @@ export default function CommandExplorerView({
                           <CommandListItem
                             key={`${group.key}-${item.key}`}
                             item={item}
-                            categoryKey={group.key}
                             isSelected={item.key === selectedCommandKey}
                             inlineContent={
                               !usesSplitPane &&
@@ -1598,19 +1633,13 @@ function CommandFilterMenu({
         ]}
       >
         <Text style={styles.filterMenuToggleText}>
-          Filters{activeCount > 0 ? ` (${activeCount})` : ""}
+          Filter{activeCount > 0 ? ` · ${activeCount}` : ""}
         </Text>
-
-        {activeCount > 0 ? (
-          <Text style={styles.filterMenuMatchCountText}>
-            {matchCount} of {totalCount} match
-          </Text>
-        ) : null}
 
         <MaterialIcons
           name={isOpen ? "expand-less" : "expand-more"}
           size={18}
-          color="#334155"
+          color="#1e6a50"
         />
       </Pressable>
 
@@ -1618,8 +1647,8 @@ function CommandFilterMenu({
         <View style={styles.filterMenuPanel}>
           <Text style={styles.filterMenuHelpText}>
             Tap a filter to require it (✓), tap again to exclude it (✗), tap
-            again to ignore it. Use these to find commands that still need
-            more study.
+            again to ignore it. Use these to find commands that still need more
+            study.
           </Text>
 
           <Text style={styles.filterMenuMatchCountInlineText}>
@@ -1658,7 +1687,10 @@ function CommandFilterMenu({
           </View>
 
           {activeCount > 0 ? (
-            <Pressable onPress={onClearFilters} style={styles.filterClearButton}>
+            <Pressable
+              onPress={onClearFilters}
+              style={styles.filterClearButton}
+            >
               <Text style={styles.filterClearButtonText}>Clear filters</Text>
             </Pressable>
           ) : null}
@@ -1668,54 +1700,20 @@ function CommandFilterMenu({
   );
 }
 
-const CATEGORY_ICONS: Record<string, ImageSourcePropType> = {
-  animal_welfare: require("../../../assets/command/icons/animal_welfare.png"),
-  appointed_times: require("../../../assets/command/icons/appointed_times.png"),
-  atonement: require("../../../assets/command/icons/atonement.png"),
-  clean_purity: require("../../../assets/command/icons/clean_purity.png"),
-  command_remembrance: require("../../../assets/command/icons/command_remembrance.png"),
-  community_care: require("../../../assets/command/icons/community_care.png"),
-  family_household: require("../../../assets/command/icons/family_household.png"),
-  firstfruits_omer: require("../../../assets/command/icons/firstfruits_omer.png"),
-  justice_neighbor: require("../../../assets/command/icons/justice_neighbor.png"),
-  leadership_warfare: require("../../../assets/command/icons/leadership_warfare.png"),
-  marriage_household: require("../../../assets/command/icons/marriage_household.png"),
-  mixed_kinds: require("../../../assets/command/icons/mixed_kinds.png"),
-  name_vows_remembrance: require("../../../assets/command/icons/name_vows_remembrance.png"),
-  offerings: require("../../../assets/command/icons/offerings.png"),
-  passover_unleavened_bread: require("../../../assets/command/icons/passover_unleavened_bread.png"),
-  priestly_holiness: require("../../../assets/command/icons/priestly_holiness.png"),
-  property_economics_land: require("../../../assets/command/icons/property_economics_land.png"),
-  refuge_court_procedure: require("../../../assets/command/icons/refuge_court_procedure.png"),
-  sabbath: require("../../../assets/command/icons/sabbath.png"),
-  sacred_assembly: require("../../../assets/command/icons/sacred_assembly.png"),
-  servants_release: require("../../../assets/command/icons/servants_release.png"),
-  tabernacles: require("../../../assets/command/icons/tabernacles.png"),
-  torah_teaching: require("../../../assets/command/icons/torah_teaching.png"),
-  vows_separation: require("../../../assets/command/icons/vows_separation.png"),
-  worship_idolatry: require("../../../assets/command/icons/worship_idolatry.png"),
-};
-
-function getCategoryIcon(categoryKey?: string): ImageSourcePropType | null {
-  return (categoryKey && CATEGORY_ICONS[categoryKey]) || null;
-}
-
 function CommandListItem({
   item,
-  categoryKey,
   itemRef,
   isSelected,
   inlineContent,
   onPress,
 }: {
   item: CommandSummary;
-  categoryKey?: string;
   itemRef?: (node: any) => void;
   isSelected: boolean;
   inlineContent?: ReactNode;
   onPress: () => void;
 }) {
-  const { reference, description } = splitCommandTitle(item.title);
+  const description = formatCommandTitle(item.title, []);
 
   return (
     <View
@@ -1730,25 +1728,17 @@ function CommandListItem({
         style={({ pressed }) => [
           styles.commandItem,
           isSelected && styles.commandItemSelected,
-          pressed && { opacity: 0.86 },
+          pressed && styles.commandItemPressed,
         ]}
       >
-        <View style={styles.commandItemRow}>
-          {getCategoryIcon(categoryKey) ? (
-            <Image
-              source={getCategoryIcon(categoryKey)!}
-              style={styles.commandItemCategoryIcon}
-              resizeMode="contain"
-            />
-          ) : null}
-
-          <Text style={[styles.commandTitle, { flex: 1 }]}>
-            {reference ? (
-              <Text style={styles.commandTitleReference}>{reference} — </Text>
-            ) : null}
-            {description}
-          </Text>
-        </View>
+        <Text
+          style={[
+            styles.commandTitle,
+            isSelected && styles.commandTitleSelected,
+          ]}
+        >
+          {description}
+        </Text>
       </Pressable>
 
       {inlineContent ? (
@@ -1805,19 +1795,18 @@ function CommandDetail({
   const requirementItems = (command.requirements ?? []).filter(
     (item) => item.trim().toLowerCase() !== commandTitle.trim().toLowerCase()
   );
+  const [isSuggestionMenuOpen, setIsSuggestionMenuOpen] = useState(false);
   const getPendingContributionsByType = (type: CommandContributionType) =>
     pendingContributions.filter((item) => item.type === type);
+
+  useEffect(() => {
+    setIsSuggestionMenuOpen(false);
+  }, [command.key]);
 
   return (
     <View style={{ gap: 16 }}>
       <View style={styles.commandSummaryBlock}>
         <View style={styles.commandSummaryTopRow}>
-          <View style={styles.commandDotRow} aria-hidden>
-            <View style={styles.commandDot} />
-            <View style={styles.commandDot} />
-            <View style={styles.commandDot} />
-          </View>
-
           <Text
             style={styles.commandSummaryTitle}
             numberOfLines={3}
@@ -1826,6 +1815,33 @@ function CommandDetail({
           >
             {commandTitle}
           </Text>
+
+          <Pressable
+            onPress={() => {
+              if (!canContribute) {
+                onRequestContributorUsername?.();
+                return;
+              }
+
+              setIsSuggestionMenuOpen((current) => !current);
+            }}
+            disabled={!canContribute && !onRequestContributorUsername}
+            accessibilityRole="button"
+            accessibilityState={{ expanded: isSuggestionMenuOpen }}
+            accessibilityLabel={
+              canContribute ? "Suggest an improvement" : "Sign in to suggest"
+            }
+            style={({ pressed }) => [
+              styles.suggestImprovementButton,
+              pressed && styles.suggestImprovementButtonPressed,
+              !canContribute &&
+                !onRequestContributorUsername && { opacity: 0.5 },
+            ]}
+          >
+            <Text style={styles.suggestImprovementButtonText}>
+              {canContribute ? "Suggest improvement" : "Sign in to suggest"}
+            </Text>
+          </Pressable>
         </View>
 
         {references.length > 0 ? (
@@ -1839,36 +1855,33 @@ function CommandDetail({
             ))}
           </View>
         ) : null}
-      </View>
 
-      {!canContribute ? (
-        <View style={styles.contributionLoginCard}>
-          <View style={{ flex: 1, minWidth: 0 }}>
-            <Text style={styles.contributionLoginTitle}>
-              Add a public comment
-            </Text>
-            <Text style={styles.contributionLoginText}>
-              Choose a username to suggest notes, source words, references, or
-              clarifications. Every suggestion stays under review until it is
-              approved.
-            </Text>
+        {canContribute && isSuggestionMenuOpen ? (
+          <View style={styles.suggestionMenu}>
+            {COMMAND_CONTRIBUTION_OPTIONS.map((option) => (
+              <Pressable
+                key={option.type}
+                onPress={() => {
+                  onOpenContribution({
+                    mode: "add",
+                    type: option.type,
+                    title: option.title,
+                  });
+                  setIsSuggestionMenuOpen(false);
+                }}
+                style={({ pressed }) => [
+                  styles.suggestionMenuItem,
+                  pressed && styles.suggestionMenuItemPressed,
+                ]}
+              >
+                <Text style={styles.suggestionMenuItemText}>
+                  {option.label}
+                </Text>
+              </Pressable>
+            ))}
           </View>
-
-          <Pressable
-            onPress={onRequestContributorUsername}
-            disabled={!onRequestContributorUsername}
-            style={({ pressed }) => [
-              styles.contributionLoginButton,
-              pressed && { opacity: 0.82 },
-              !onRequestContributorUsername && { opacity: 0.5 },
-            ]}
-          >
-            <Text style={styles.contributionLoginButtonText}>
-              Choose Username
-            </Text>
-          </Pressable>
-        </View>
-      ) : null}
+        ) : null}
+      </View>
 
       <DetailList
         title="Obedience Requirements"
@@ -2090,23 +2103,9 @@ function SourceTermList({
 
   return (
     <View style={{ gap: 8 }}>
-      <EditableSectionTitle
+      <CommandSectionTitle
         title={title}
         helpText={getContributionTypeGuidance("source_term")}
-        canContribute={canContribute}
-        isOpen={ownsDraft}
-        onToggle={() => {
-          if (ownsDraft) {
-            onCancelContribution();
-            return;
-          }
-
-          onOpenContribution({
-            mode: "add",
-            type: "source_term",
-            title,
-          });
-        }}
       />
 
       {items.length === 0 ? (
@@ -2160,6 +2159,7 @@ function SourceTermList({
           draft={contributionDraft}
           isSubmitting={isSubmittingContribution}
           onChange={onChangeContributionDraft}
+          onCancel={onCancelContribution}
           onSubmit={onSubmitContribution}
         />
       ) : null}
@@ -2218,23 +2218,9 @@ function StoryReferenceList({
 
   return (
     <View style={{ gap: 8 }}>
-      <EditableSectionTitle
+      <CommandSectionTitle
         title={title}
         helpText="Biblical examples where this command is practiced, violated, enforced, or illustrated."
-        canContribute={canContribute}
-        isOpen={ownsDraft}
-        onToggle={() => {
-          if (ownsDraft) {
-            onCancelContribution();
-            return;
-          }
-
-          onOpenContribution({
-            mode: "add",
-            type: "story_reference",
-            title,
-          });
-        }}
       />
 
       {items.length === 0 ? (
@@ -2285,6 +2271,7 @@ function StoryReferenceList({
           draft={contributionDraft}
           isSubmitting={isSubmittingContribution}
           onChange={onChangeContributionDraft}
+          onCancel={onCancelContribution}
           onSubmit={onSubmitContribution}
         />
       ) : null}
@@ -2343,23 +2330,9 @@ function NonCanonicalStoryReferenceList({
 
   return (
     <View style={{ gap: 8 }}>
-      <EditableSectionTitle
+      <CommandSectionTitle
         title={title}
         helpText="Examples from ancient writings outside the 66-book canon (such as Jubilees, Enoch, Meqabyan, or the wider deuterocanon) where this command is practiced, violated, enforced, or illustrated. These are historical and devotional references, not equal in authority to Torah and Tanakh."
-        canContribute={canContribute}
-        isOpen={ownsDraft}
-        onToggle={() => {
-          if (ownsDraft) {
-            onCancelContribution();
-            return;
-          }
-
-          onOpenContribution({
-            mode: "add",
-            type: "non_canonical_story_reference",
-            title,
-          });
-        }}
       />
 
       {items.length === 0 ? (
@@ -2410,6 +2383,7 @@ function NonCanonicalStoryReferenceList({
           draft={contributionDraft}
           isSubmitting={isSubmittingContribution}
           onChange={onChangeContributionDraft}
+          onCancel={onCancelContribution}
           onSubmit={onSubmitContribution}
         />
       ) : null}
@@ -2570,24 +2544,7 @@ function DetailList({
   return (
     <View style={{ gap: 6 }}>
       {canEditSection ? (
-        <EditableSectionTitle
-          title={title}
-          helpText={helpText}
-          canContribute
-          isOpen={ownsDraft}
-          onToggle={() => {
-            if (ownsDraft) {
-              onCancelContribution?.();
-              return;
-            }
-
-            onOpenContribution?.({
-              mode: "add",
-              type: contributionType!,
-              title,
-            });
-          }}
-        />
+        <CommandSectionTitle title={title} helpText={helpText} />
       ) : (
         <>
           <SectionTitle
@@ -2608,9 +2565,7 @@ function DetailList({
       ) : (
         items.map((item, index) => (
           <View key={`${title}-${index}`} style={styles.editableListItem}>
-            <Text style={styles.listText}>
-              {index + 1}. {formatKey(item)}
-            </Text>
+            <Text style={styles.listText}>{formatKey(item)}</Text>
 
             {canEditSection ? (
               <ContributionActions
@@ -2647,6 +2602,7 @@ function DetailList({
           draft={contributionDraft}
           isSubmitting={isSubmittingContribution}
           onChange={onChangeContributionDraft}
+          onCancel={onCancelContribution}
           onSubmit={onSubmitContribution}
         />
       ) : null}
@@ -2679,7 +2635,6 @@ function SectionTitle({
 }) {
   return (
     <View style={styles.sectionTitleBlock}>
-      <View style={styles.sectionTitleMarker} />
       <Text style={styles.sectionTitle}>{title}</Text>
 
       {helpText ? (
@@ -2687,7 +2642,9 @@ function SectionTitle({
           onPress={onToggleInfo}
           hitSlop={6}
           accessibilityRole="button"
-          accessibilityLabel={isInfoOpen ? "Hide section info" : "Show section info"}
+          accessibilityLabel={
+            isInfoOpen ? "Hide section info" : "Show section info"
+          }
         >
           <MaterialIcons
             name="info-outline"
@@ -2726,7 +2683,9 @@ function SectionDock({
           onPress={onToggle}
           accessibilityRole="button"
           accessibilityLabel={
-            isOpen ? `Hide ${title.toLowerCase()} tools` : `Show ${title.toLowerCase()} tools`
+            isOpen
+              ? `Hide ${title.toLowerCase()} tools`
+              : `Show ${title.toLowerCase()} tools`
           }
           style={({ pressed }) => [
             styles.communityReviewTab,
@@ -3446,46 +3405,23 @@ function PromotionForm({
   );
 }
 
-function EditableSectionTitle({
+function CommandSectionTitle({
   title,
   helpText,
-  canContribute,
-  isOpen,
-  onToggle,
 }: {
   title: string;
   helpText?: string;
-  canContribute: boolean;
-  isOpen: boolean;
-  onToggle: () => void;
 }) {
   const [isInfoOpen, setIsInfoOpen] = useState(false);
 
   return (
     <View style={{ gap: 6 }}>
-      <View style={styles.sectionTitleRow}>
-        <SectionTitle
-          title={title}
-          helpText={helpText}
-          isInfoOpen={isInfoOpen}
-          onToggleInfo={() => setIsInfoOpen((value) => !value)}
-        />
-
-        {canContribute ? (
-          <Pressable
-            onPress={onToggle}
-            style={({ pressed }) => [
-              styles.contributionSmallButton,
-              isOpen && styles.contributionSmallButtonOpen,
-              pressed && { opacity: 0.78 },
-            ]}
-          >
-            <Text style={styles.contributionSmallButtonText}>
-              {isOpen ? "-" : "+"}
-            </Text>
-          </Pressable>
-        ) : null}
-      </View>
+      <SectionTitle
+        title={title}
+        helpText={helpText}
+        isInfoOpen={isInfoOpen}
+        onToggleInfo={() => setIsInfoOpen((value) => !value)}
+      />
 
       {isInfoOpen && helpText ? (
         <Text style={styles.sectionHelpText}>{helpText}</Text>
@@ -3501,27 +3437,59 @@ function ContributionActions({
   onEdit: () => void;
   onRemove: () => void;
 }) {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <View style={styles.contributionActions}>
       <Pressable
-        onPress={onEdit}
+        onPress={() => setIsOpen((current) => !current)}
+        accessibilityRole="button"
+        accessibilityLabel="More suggestion actions"
+        accessibilityState={{ expanded: isOpen }}
         style={({ pressed }) => [
-          styles.contributionActionButton,
-          pressed && { opacity: 0.78 },
+          styles.contributionOverflowButton,
+          pressed && styles.contributionOverflowButtonPressed,
         ]}
       >
-        <Text style={styles.contributionActionText}>Suggest edit</Text>
+        <MaterialIcons name="more-horiz" size={18} color="#66746c" />
       </Pressable>
 
-      <Pressable
-        onPress={onRemove}
-        style={({ pressed }) => [
-          styles.contributionActionButton,
-          pressed && { opacity: 0.78 },
-        ]}
-      >
-        <Text style={styles.contributionActionText}>Suggest remove</Text>
-      </Pressable>
+      {isOpen ? (
+        <View style={styles.contributionActionMenu}>
+          <Pressable
+            onPress={() => {
+              setIsOpen(false);
+              onEdit();
+            }}
+            style={({ pressed }) => [
+              styles.contributionActionMenuItem,
+              pressed && styles.contributionActionMenuItemPressed,
+            ]}
+          >
+            <Text style={styles.contributionActionText}>Suggest edit</Text>
+          </Pressable>
+
+          <Pressable
+            onPress={() => {
+              setIsOpen(false);
+              onRemove();
+            }}
+            style={({ pressed }) => [
+              styles.contributionActionMenuItem,
+              pressed && styles.contributionRemoveMenuItemPressed,
+            ]}
+          >
+            <Text
+              style={[
+                styles.contributionActionText,
+                styles.contributionRemoveActionText,
+              ]}
+            >
+              Suggest removal
+            </Text>
+          </Pressable>
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -3530,11 +3498,13 @@ function ContributionForm({
   draft,
   isSubmitting,
   onChange,
+  onCancel,
   onSubmit,
 }: {
   draft: ContributionDraft;
   isSubmitting: boolean;
   onChange: (draft: ContributionDraft) => void;
+  onCancel: () => void;
   onSubmit: () => void;
 }) {
   const label =
@@ -3587,6 +3557,18 @@ function ContributionForm({
       />
 
       <View style={styles.contributionFormActions}>
+        <Pressable
+          onPress={onCancel}
+          disabled={isSubmitting}
+          style={({ pressed }) => [
+            styles.contributionCancelButton,
+            isSubmitting && { opacity: 0.65 },
+            pressed && { opacity: 0.78 },
+          ]}
+        >
+          <Text style={styles.contributionCancelText}>Cancel</Text>
+        </Pressable>
+
         <Pressable
           onPress={onSubmit}
           disabled={isSubmitting}
@@ -3656,21 +3638,6 @@ function PendingContributionList({
       ))}
     </View>
   );
-}
-
-function splitCommandTitle(title: string): {
-  reference: string | null;
-  description: string;
-} {
-  const match = title.match(
-    /^((?:Gen|Exod|Exo|Lev|Num|Deut|Deu|Genesis|Exodus|Leviticus|Numbers|Deuteronomy)\.?\s+\d+(?::\d+(?:-\d+)?)?)\s*[-:]\s*(.+)$/i
-  );
-
-  if (match) {
-    return { reference: match[1], description: match[2] };
-  }
-
-  return { reference: null, description: title };
 }
 
 function formatCommandTitle(title: string, references: string[]) {
@@ -4056,17 +4023,13 @@ const styles = {
     gap: 10,
   },
   listPaneContent: {
-    gap: 10,
+    gap: 4,
     paddingBottom: 10,
   },
   listPaneSplit: {
-    flex: 0.42,
+    flex: 0.36,
     minWidth: 250,
-    padding: 10,
-    borderRadius: 8,
-    backgroundColor: "#ffffff",
-    borderWidth: 1,
-    borderColor: "#e2e8f0",
+    paddingLeft: 12,
   },
   mobileInlineHint: {
     paddingHorizontal: 4,
@@ -4077,10 +4040,10 @@ const styles = {
   },
   detailPanel: {
     padding: 16,
-    borderRadius: 8,
-    backgroundColor: "#fffdf2",
+    borderRadius: 12,
+    backgroundColor: "#fffefa",
     borderWidth: 1,
-    borderColor: "#f3e6b3",
+    borderColor: "#e4e3db",
   },
   detailPaneContent: {
     paddingBottom: 4,
@@ -4092,7 +4055,7 @@ const styles = {
     marginRight: -11,
   },
   detailPaneSplit: {
-    flex: 0.58,
+    flex: 0.64,
     minWidth: 300,
     ...(Platform.OS === "web"
       ? {
@@ -4102,59 +4065,51 @@ const styles = {
       : {}),
   },
   categorySection: {
-    borderRadius: 8,
-    overflow: "hidden" as const,
-    backgroundColor: "#ffffff",
-    borderWidth: 1,
-    borderColor: "#e2e8f0",
+    paddingVertical: 3,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ecebe4",
   },
   categoryHeader: {
-    minHeight: 46,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    minHeight: 40,
+    paddingHorizontal: 6,
+    paddingVertical: 6,
     flexDirection: "row" as const,
     alignItems: "center" as const,
-    justifyContent: "space-between" as const,
-    gap: 10,
-    backgroundColor: "#f8fafc",
+    gap: 5,
+    borderRadius: 7,
+  },
+  categoryHeaderPressed: {
+    backgroundColor: "#efeee7",
   },
   categoryTitle: {
     flex: 1,
-    fontSize: 14,
-    fontWeight: "900" as const,
-    color: "#1e293b",
+    fontSize: 13,
+    fontWeight: "600" as const,
+    color: "#17231d",
     textTransform: "capitalize" as const,
   },
   categoryCount: {
-    minWidth: 34,
-    textAlign: "center" as const,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 999,
-    overflow: "hidden" as const,
-    backgroundColor: "#e0f2fe",
-    color: "#075985",
+    minWidth: 24,
+    textAlign: "right" as const,
+    color: "#9aa39d",
     fontSize: 12,
-    fontWeight: "900" as const,
+    fontWeight: "600" as const,
   },
   filterMenuContainer: {
     marginBottom: 10,
   },
   filterMenuToggle: {
+    alignSelf: "flex-end" as const,
     flexDirection: "row" as const,
     alignItems: "center" as const,
-    justifyContent: "center" as const,
     gap: 6,
-    height: 38,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#cbd5e1",
-    backgroundColor: "#f8fafc",
+    minHeight: 36,
+    paddingHorizontal: 4,
   },
   filterMenuToggleText: {
     fontSize: 13,
-    fontWeight: "800" as const,
-    color: "#334155",
+    fontWeight: "600" as const,
+    color: "#1e6a50",
   },
   filterMenuPanel: {
     marginTop: 8,
@@ -4190,20 +4145,17 @@ const styles = {
     gap: 4,
     paddingHorizontal: 10,
     paddingVertical: 6,
-    borderRadius: 999,
-    borderWidth: 1,
+    borderRadius: 6,
+    borderWidth: 0,
   },
   filterChipNeutral: {
-    backgroundColor: "#f1f5f9",
-    borderColor: "#cbd5e1",
+    backgroundColor: "#f8f7f1",
   },
   filterChipOn: {
-    backgroundColor: "#dcfce7",
-    borderColor: "#16a34a",
+    backgroundColor: "#e8f1ec",
   },
   filterChipOff: {
-    backgroundColor: "#fee2e2",
-    borderColor: "#dc2626",
+    backgroundColor: "#f6eeee",
   },
   filterChipMarker: {
     fontSize: 12,
@@ -4227,52 +4179,40 @@ const styles = {
     textDecorationLine: "underline" as const,
   },
   commandList: {
-    padding: 8,
-    gap: 8,
+    paddingLeft: 22,
+    paddingRight: 2,
+    paddingBottom: 6,
+    gap: 1,
   },
   commandItemShell: {
-    borderRadius: 8,
+    borderRadius: 7,
     overflow: "hidden" as const,
   },
   commandItemShellSelected: {
-    backgroundColor: "#f0f9ff",
+    backgroundColor: "transparent",
   },
   commandItem: {
-    padding: 10,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-    backgroundColor: "#ffffff",
-  },
-  commandItemRow: {
-    flexDirection: "row" as const,
-    alignItems: "flex-start" as const,
-    gap: 6,
-  },
-  commandItemCategoryIcon: {
-    width: 16,
-    height: 16,
-    marginTop: 1,
-  },
-  categoryHeaderIcon: {
-    width: 20,
-    height: 20,
+    minHeight: 38,
+    justifyContent: "center" as const,
+    paddingHorizontal: 8,
+    paddingVertical: 7,
+    borderRadius: 7,
   },
   commandItemSelected: {
-    borderColor: "#38bdf8",
-    backgroundColor: "#f0f9ff",
+    backgroundColor: "transparent",
+  },
+  commandItemPressed: {
+    backgroundColor: "#efeee7",
   },
   commandTitle: {
     fontSize: 13,
-    lineHeight: 18,
-    fontWeight: "900" as const,
-    color: "#111827",
+    lineHeight: 19,
+    fontWeight: "400" as const,
+    color: "#5b6961",
   },
-  commandTitleReference: {
-    fontSize: 12,
-    fontWeight: "600" as const,
-    fontStyle: "italic" as const,
-    color: "#0369a1",
+  commandTitleSelected: {
+    fontWeight: "800" as const,
+    color: "#17231d",
   },
   commandInlineDetail: {
     marginTop: 8,
@@ -4283,57 +4223,79 @@ const styles = {
     borderColor: "#f3e6b3",
   },
   commandSummaryBlock: {
-    gap: 10,
-    padding: 12,
-    borderRadius: 8,
-    backgroundColor: "#eef6ff",
-    borderWidth: 1,
-    borderColor: "#93c5fd",
-    borderLeftWidth: 5,
-    borderLeftColor: "#2563eb",
+    gap: 14,
+    paddingBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ecebe4",
   },
   commandSummaryTopRow: {
     flexDirection: "row" as const,
     alignItems: "flex-start" as const,
-    gap: 10,
-  },
-  commandDotRow: {
-    width: 18,
-    marginTop: 8,
-    gap: 4,
-    alignItems: "center" as const,
-  },
-  commandDot: {
-    width: 5,
-    height: 5,
-    borderRadius: 999,
-    backgroundColor: "#2563eb",
+    gap: 16,
   },
   commandSummaryTitle: {
     flex: 1,
-    fontSize: 21,
-    lineHeight: 27,
-    fontWeight: "800" as const,
-    color: "#172554",
+    fontSize: 24,
+    lineHeight: 31,
+    fontWeight: "700" as const,
+    color: "#17231d",
   },
   referenceWrap: {
     flexDirection: "row" as const,
     flexWrap: "wrap" as const,
-    gap: 6,
+    gap: 14,
   },
   referenceTag: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 999,
-    overflow: "hidden" as const,
-    backgroundColor: "#ecfeff",
-    borderWidth: 1,
-    borderColor: "#a5f3fc",
+    paddingVertical: 2,
   },
   referenceTagText: {
-    color: "#155e75",
-    fontSize: 12,
-    fontWeight: "900" as const,
+    color: "#1e6a50",
+    fontSize: 13,
+    fontWeight: "600" as const,
+    textDecorationLine: "underline" as const,
+  },
+  suggestImprovementButton: {
+    flexShrink: 0,
+    minHeight: 36,
+    paddingHorizontal: 12,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#dddcd3",
+  },
+  suggestImprovementButtonPressed: {
+    backgroundColor: "#f3f2ec",
+    borderColor: "#c8c9bf",
+  },
+  suggestImprovementButtonText: {
+    color: "#17231d",
+    fontSize: 13,
+    fontWeight: "600" as const,
+  },
+  suggestionMenu: {
+    alignSelf: "flex-end" as const,
+    width: 250,
+    padding: 6,
+    gap: 2,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#dddcd3",
+    backgroundColor: "#fffefa",
+  },
+  suggestionMenuItem: {
+    minHeight: 38,
+    paddingHorizontal: 10,
+    justifyContent: "center" as const,
+    borderRadius: 7,
+  },
+  suggestionMenuItemPressed: {
+    backgroundColor: "#eef3ef",
+  },
+  suggestionMenuItemText: {
+    color: "#17231d",
+    fontSize: 13,
+    fontWeight: "500" as const,
   },
   commandKey: {
     marginTop: 2,
@@ -4790,46 +4752,32 @@ const styles = {
   },
   sectionTitle: {
     flex: 1,
-    fontSize: 13,
-    lineHeight: 18,
-    fontWeight: "900" as const,
-    color: "#0f172a",
+    fontSize: 12,
+    lineHeight: 17,
+    fontWeight: "600" as const,
+    color: "#7a857e",
     textTransform: "uppercase" as const,
+    letterSpacing: 0.7,
   },
   sectionTitleBlock: {
     flex: 1,
-    minHeight: 34,
-    paddingHorizontal: 10,
-    paddingVertical: 7,
-    borderRadius: 8,
+    minHeight: 28,
     flexDirection: "row" as const,
     alignItems: "center" as const,
-    gap: 8,
-    backgroundColor: "#f1f5f9",
-    borderWidth: 1,
-    borderColor: "#cbd5e1",
-  },
-  sectionTitleMarker: {
-    width: 7,
-    height: 18,
-    borderRadius: 999,
-    backgroundColor: "#0f766e",
-  },
-  sectionTitleRow: {
-    flexDirection: "row" as const,
-    alignItems: "center" as const,
-    justifyContent: "space-between" as const,
-    gap: 8,
+    gap: 6,
   },
   listText: {
     flex: 1,
-    fontSize: 14,
-    lineHeight: 21,
-    color: "#475569",
+    fontSize: 15,
+    lineHeight: 24,
+    color: "#2f3d35",
   },
   editableListItem: {
-    gap: 8,
-    paddingBottom: 5,
+    position: "relative" as const,
+    flexDirection: "row" as const,
+    alignItems: "flex-start" as const,
+    gap: 6,
+    paddingVertical: 4,
   },
   mutedText: {
     fontSize: 14,
@@ -4850,7 +4798,7 @@ const styles = {
   tagWrap: {
     flexDirection: "row" as const,
     flexWrap: "wrap" as const,
-    gap: 6,
+    gap: 10,
   },
   smallTag: {
     paddingHorizontal: 8,
@@ -4865,23 +4813,16 @@ const styles = {
     color: "#475569",
   },
   tag: {
-    paddingHorizontal: 8,
-    paddingVertical: 5,
-    borderRadius: 999,
-    overflow: "hidden" as const,
-    backgroundColor: "#f8fafc",
-    borderWidth: 1,
-    borderColor: "#e2e8f0",
-    fontSize: 12,
-    fontWeight: "800" as const,
-    color: "#475569",
+    paddingVertical: 2,
+    fontSize: 13,
+    fontWeight: "600" as const,
+    color: "#526057",
   },
   termRow: {
-    padding: 10,
-    borderRadius: 8,
-    backgroundColor: "#ffffff",
-    borderWidth: 1,
-    borderColor: "#facc15",
+    position: "relative" as const,
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ecebe4",
   },
   termTitle: {
     fontSize: 14,
@@ -4894,78 +4835,48 @@ const styles = {
     lineHeight: 18,
     color: "#854d0e",
   },
-  contributionSmallButton: {
-    width: 28,
-    minHeight: 28,
-    borderRadius: 999,
-    alignItems: "center" as const,
-    justifyContent: "center" as const,
-    backgroundColor: "#0f766e",
-  },
-  contributionSmallButtonOpen: {
-    backgroundColor: "#64748b",
-  },
-  contributionSmallButtonText: {
-    fontSize: 18,
-    lineHeight: 22,
-    fontWeight: "900" as const,
-    color: "#ffffff",
-  },
   contributionActions: {
-    flexDirection: "row" as const,
-    flexWrap: "wrap" as const,
-    gap: 6,
+    position: "relative" as const,
+    alignItems: "flex-end" as const,
   },
-  contributionActionButton: {
-    minHeight: 26,
-    paddingHorizontal: 8,
-    borderRadius: 999,
+  contributionOverflowButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
     alignItems: "center" as const,
     justifyContent: "center" as const,
-    backgroundColor: "#f8fafc",
+  },
+  contributionOverflowButtonPressed: {
+    backgroundColor: "#f0efe8",
+  },
+  contributionActionMenu: {
+    width: 160,
+    padding: 6,
+    gap: 2,
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#cbd5e1",
+    borderColor: "#dddcd3",
+    backgroundColor: "#fffefa",
+  },
+  contributionActionMenuItem: {
+    minHeight: 36,
+    paddingHorizontal: 10,
+    justifyContent: "center" as const,
+    borderRadius: 7,
+  },
+  contributionActionMenuItemPressed: {
+    backgroundColor: "#eef3ef",
+  },
+  contributionRemoveMenuItemPressed: {
+    backgroundColor: "#f6eeee",
   },
   contributionActionText: {
-    fontSize: 11,
-    fontWeight: "800" as const,
-    color: "#475569",
+    fontSize: 13,
+    fontWeight: "600" as const,
+    color: "#17231d",
   },
-  contributionLoginCard: {
-    flexDirection: "row" as const,
-    flexWrap: "wrap" as const,
-    alignItems: "center" as const,
-    gap: 12,
-    padding: 12,
-    borderRadius: 8,
-    backgroundColor: "#f0fdfa",
-    borderWidth: 1,
-    borderColor: "#99f6e4",
-  },
-  contributionLoginTitle: {
-    fontSize: 14,
-    lineHeight: 19,
-    fontWeight: "900" as const,
-    color: "#134e4a",
-  },
-  contributionLoginText: {
-    marginTop: 3,
-    fontSize: 12,
-    lineHeight: 17,
-    color: "#0f766e",
-  },
-  contributionLoginButton: {
-    minHeight: 34,
-    paddingHorizontal: 12,
-    borderRadius: 999,
-    alignItems: "center" as const,
-    justifyContent: "center" as const,
-    backgroundColor: "#0f766e",
-  },
-  contributionLoginButtonText: {
-    fontSize: 12,
-    fontWeight: "900" as const,
-    color: "#ffffff",
+  contributionRemoveActionText: {
+    color: "#a64040",
   },
   contributionForm: {
     gap: 10,
@@ -5024,12 +4935,24 @@ const styles = {
   contributionFormActions: {
     flexDirection: "row" as const,
     justifyContent: "flex-end" as const,
+    alignItems: "center" as const,
     gap: 8,
+  },
+  contributionCancelButton: {
+    minHeight: 34,
+    paddingHorizontal: 10,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+  },
+  contributionCancelText: {
+    fontSize: 12,
+    fontWeight: "700" as const,
+    color: "#526057",
   },
   contributionSubmitButton: {
     minHeight: 34,
     paddingHorizontal: 14,
-    borderRadius: 999,
+    borderRadius: 8,
     alignItems: "center" as const,
     justifyContent: "center" as const,
     backgroundColor: "#0f766e",
@@ -5113,13 +5036,12 @@ const styles = {
     color: "#9a3412",
   },
   storyReferenceRow: {
+    position: "relative" as const,
     gap: 7,
     alignItems: "flex-start" as const,
-    padding: 10,
-    borderRadius: 8,
-    backgroundColor: "#f8fafc",
-    borderWidth: 1,
-    borderColor: "#dbeafe",
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ecebe4",
   },
   storyReferenceLabel: {
     fontSize: 13,
@@ -5130,11 +5052,9 @@ const styles = {
     flexDirection: "row" as const,
     alignItems: "center" as const,
     gap: 8,
-    padding: 10,
-    borderRadius: 8,
-    backgroundColor: "#f0fdf4",
-    borderWidth: 1,
-    borderColor: "#bbf7d0",
+    paddingVertical: 9,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ecebe4",
   },
   teachingLabel: {
     fontSize: 13,
@@ -5143,12 +5063,11 @@ const styles = {
     fontWeight: "600" as const,
   },
   teachingExternalButton: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    width: 32,
+    height: 32,
+    borderRadius: 8,
     alignItems: "center" as const,
     justifyContent: "center" as const,
-    backgroundColor: "#dcfce7",
   },
   teachingUrl: {
     fontSize: 11,
