@@ -1227,7 +1227,7 @@ export default function HomeScreen() {
               }}
               style={{
                 backgroundColor: "#ffffff",
-                paddingBottom: 12,
+                paddingBottom: activeTab === "commands" ? 0 : 12,
               }}
             >
               {activeTab === "calendar" && (
@@ -1446,6 +1446,7 @@ export default function HomeScreen() {
                 searchText={commandSearchText}
                 randomRequestId={commandRandomRequestId}
                 pendingRequestId={commandPendingRequestId}
+                stickyHeaderHeight={stickyHeaderHeight}
                 adminToken={adminToken}
                 groupCode={groupCode}
                 contributorUsername={commandContributorUsername}

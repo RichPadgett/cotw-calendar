@@ -324,6 +324,7 @@ type Props = {
   searchText: string;
   randomRequestId: number;
   pendingRequestId: number;
+  stickyHeaderHeight: number;
   adminToken?: string | null;
   groupCode?: string;
   contributorUsername: string;
@@ -351,6 +352,7 @@ export default function CommandExplorerView({
   searchText,
   randomRequestId,
   pendingRequestId,
+  stickyHeaderHeight,
   adminToken,
   groupCode,
   contributorUsername,
@@ -1437,7 +1439,18 @@ export default function CommandExplorerView({
     <View style={{ gap: 14 }}>
       <View style={[styles.studyGrid, usesSplitPane && styles.studyGridSplit]}>
         {usesSplitPane ? (
-          <View style={[styles.detailPanel, styles.detailPaneSplit]}>
+          <View
+            style={[
+              styles.detailPanel,
+              styles.detailPaneSplit,
+              Platform.OS === "web"
+                ? {
+                    position: "sticky" as const,
+                    top: stickyHeaderHeight,
+                  }
+                : null,
+            ]}
+          >
             <PaneScroll
               enabled
               height={desktopPaneHeight}
@@ -4102,12 +4115,6 @@ const styles = {
   detailPaneSplit: {
     flex: 0.64,
     minWidth: 300,
-    ...(Platform.OS === "web"
-      ? {
-          position: "sticky" as const,
-          top: 260,
-        }
-      : {}),
   },
   categorySection: {
     paddingVertical: 3,
