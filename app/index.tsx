@@ -454,6 +454,15 @@ export default function HomeScreen() {
     );
   }
 
+  function playSpotifyTeaching(teaching: { title: string; url: string }) {
+    setManualTeaching({ ...teaching, provider: "spotify" });
+    setIsTeachingPlayerOpen(true);
+    closeDay();
+    requestAnimationFrame(() =>
+      scrollViewRef.current?.scrollTo({ y: 0, animated: false })
+    );
+  }
+
   useEffect(() => {
     async function loadSavedCommandStudyState() {
       const [
@@ -1677,6 +1686,7 @@ export default function HomeScreen() {
           onDeleteScriptureReading={deleteScriptureReading}
           onSavePerpetualMarkers={savePerpetualMarkers}
           onOpenTeaching={openLibraryTeaching}
+          onPlaySpotifyTeaching={playSpotifyTeaching}
           adminToken={adminToken}
         />
       )}

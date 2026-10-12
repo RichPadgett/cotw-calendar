@@ -48,6 +48,7 @@ type Props = {
   onDeleteScriptureReading: (index: number) => Promise<void>;
   onSavePerpetualMarkers: (markers: PerpetualMarker[]) => Promise<void>;
   onOpenTeaching: (teachingId: string) => void;
+  onPlaySpotifyTeaching: (teaching: { title: string; url: string }) => void;
 };
 
 /**
@@ -74,6 +75,7 @@ export default function DayDetailModal({
   onDeleteScriptureReading,
   onSavePerpetualMarkers,
   onOpenTeaching,
+  onPlaySpotifyTeaching,
 }: Props) {
   const [selectedMarker, setSelectedMarker] = useState<PerpetualMarker | null>(
     null
@@ -201,13 +203,17 @@ export default function DayDetailModal({
     return isOpenableUrl(item.url) ? item.url : undefined;
   }
 
-  function renderOpenLinkButton(url: string, label = "Open") {
+  function renderOpenLinkButton(
+    url: string,
+    label = "Open",
+    onPress?: () => void
+  ) {
     const linkVariant = getLinkVariant(url);
     const isBrandedLink = linkVariant !== "default";
 
     return (
       <Pressable
-        onPress={() => openUrl(url)}
+        onPress={onPress ?? (() => openUrl(url))}
         style={[
           styles.linkButton,
           linkVariant === "spotify" && styles.spotifyLinkButton,
@@ -900,6 +906,10 @@ export default function DayDetailModal({
 
                   {Array.isArray(section.items) &&
                     section.items.map((item, itemIndex) => {
+                      const itemUrl = item.url;
+                      const isSpotifyItem =
+                        getLinkVariant(itemUrl) === "spotify";
+
                       return (
                         <View
                           key={`item-${sectionIndex}-${itemIndex}`}
@@ -926,8 +936,20 @@ export default function DayDetailModal({
                                 Open in Library
                               </Text>
                             </Pressable>
-                          ) : item.url ? (
-                            renderOpenLinkButton(item.url)
+                          ) : itemUrl ? (
+                            renderOpenLinkButton(
+                              itemUrl,
+                              "Open",
+                              isSpotifyItem
+                                ? () =>
+                                    onPlaySpotifyTeaching({
+                                      title: String(
+                                        item.label ?? "Spotify teaching"
+                                      ),
+                                      url: itemUrl,
+                                    })
+                                : undefined
+                            )
                           ) : null}
                         </View>
                       );
